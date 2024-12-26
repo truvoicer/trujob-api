@@ -1,0 +1,35 @@
+<?php
+
+namespace Database\Seeders\admin;
+
+use App\Models\Page;
+use App\Models\View;
+use Illuminate\Database\Seeder;
+
+class PageSeeder extends Seeder
+{
+
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $data = include_once(database_path('data/PageData.php'));
+        if (!$data) {
+            throw new \Exception('Error reading PageData.php file ' . database_path('data/PageData.php'));
+        }
+        foreach ($data as $item) {
+            $view = $item['view'];
+            unset($item['view']);
+            $create = Page::query()->updateOrCreate(
+                ['slug' => $item['slug']],
+                $item
+            );
+
+            $findView = View::query()->where('name', $view)->first();
+            if ($findView) {
+                $create->view()->associate($findView->id);
+            }
+        }
+    }
+}

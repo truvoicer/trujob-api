@@ -20,7 +20,9 @@ use App\Http\Controllers\Api\Locale\CurrencyController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupMessageController;
 use App\Http\Controllers\Api\Notification\NotificationController;
+use App\Http\Controllers\Api\PageController;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserSellerController;
@@ -33,6 +35,9 @@ Route::middleware(AppPublic::class)->group(function () {
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
     });
+
+    Route::get('/page/{page}', [PageController::class, 'edit'])->name('page.edit');
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('listing')->name('listing.')->group(function () {
         Route::get('/fetch', [ListingController::class, 'fetchPublicListings'])->name('fetch');
