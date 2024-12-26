@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Listing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\StoreListingTransactionRequest;
 use App\Http\Requests\Listing\UpdateListingTransactionRequest;
-use App\Models\ListingTransaction;
+use App\Models\ListingPrice;
 
 class ListingTransactionController extends Controller
 {
@@ -43,10 +43,10 @@ class ListingTransactionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ListingTransaction  $listingTransaction
+     * @param  \App\Models\ListingPrice  $listingTransaction
      * @return \Illuminate\Http\Response
      */
-    public function show(ListingTransaction $listingTransaction)
+    public function show(ListingPrice $listingTransaction)
     {
         //
     }
@@ -54,10 +54,10 @@ class ListingTransactionController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ListingTransaction  $listingTransaction
+     * @param  \App\Models\ListingPrice  $listingTransaction
      * @return \Illuminate\Http\Response
      */
-    public function edit(ListingTransaction $listingTransaction)
+    public function edit(ListingPrice $listingTransaction)
     {
         //
     }
@@ -66,10 +66,10 @@ class ListingTransactionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\Listing\UpdateListingTransactionRequest  $request
-     * @param  \App\Models\ListingTransaction  $listingTransaction
+     * @param  \App\Models\ListingPrice  $listingTransaction
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateListingTransactionRequest $request, ListingTransaction $listingTransaction)
+    public function update(UpdateListingTransactionRequest $request, ListingPrice $listingTransaction)
     {
         //
     }
@@ -77,10 +77,10 @@ class ListingTransactionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ListingTransaction  $listingTransaction
+     * @param  \App\Models\ListingPrice  $listingTransaction
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ListingTransaction $listingTransaction)
+    public function destroy(ListingPrice $listingTransaction)
     {
         //
     }

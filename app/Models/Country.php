@@ -28,6 +28,6 @@ class Country extends Model
 
     public function listingTransaction()
     {
-        return $this->belongsTo(ListingTransaction::class);
+        return $this->belongsTo(ListingPrice::class);
     }
 }

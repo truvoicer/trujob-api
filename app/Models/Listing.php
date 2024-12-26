@@ -39,7 +39,7 @@ class Listing extends Model
     }
     public function listingTransaction()
     {
-        return $this->hasMany(ListingTransaction::class);
+        return $this->hasMany(ListingPrice::class);
     }
 
     public function listingMessagingGroup()
