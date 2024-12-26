@@ -6,28 +6,27 @@ use App\Models\Listing;
 use App\Models\ListingFeature;
 use App\Models\ListingMedia;
 use App\Models\User;
+use App\Repositories\ListingRepository;
 use App\Services\Media\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ListingsAdminService
 {
 
     private User $user;
-    private Request $request;
-    private ImageUploadService $imageUploadService;
-    private ListingsMediaService $listingsMediaService;
 
     private Listing $listing;
     private ListingMedia $listingMedia;
     private array $errors = [];
 
 
-    public function __construct(Request $request, ImageUploadService $imageUploadService, ListingsMediaService $listingsMediaService)
+    public function __construct(
+        private ListingsMediaService $listingsMediaService,
+        private ListingRepository $listingRepository
+    )
     {
-        $this->request = $request;
-        $this->imageUploadService = $imageUploadService;
-        $this->listingsMediaService = $listingsMediaService;
     }
 
     public function initializeListing() {
@@ -47,6 +46,14 @@ class ListingsAdminService
         }
     }
     public function createListing(array $data) {
+        $slug = Str::slug($data['title']);
+        $data['slug'] = $this->listingRepository->buildCloneEntityStr(
+            $this->user->listing()->where('slug', $slug),
+            'slug',
+            $slug,
+            '-'
+        );
+
         $this->listing = new Listing($data);
         $createListing = $this->user->listing()->save($this->listing);
         if (!$createListing) {

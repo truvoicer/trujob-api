@@ -102,7 +102,7 @@ class ListingController extends Controller
 
     public function createListing(StoreListingRequest $request) {
         $this->listingsAdminService->setUser($request->user());
-        $createListing = $this->listingsAdminService->createListing($request->all());
+        $createListing = $this->listingsAdminService->createListing($request->validated());
         if (!$createListing) {
             return $this->sendErrorResponse(
                 'Error creating listing',

@@ -1,9 +1,8 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\admin;
 
 use App\Models\Permission;
-use App\Models\Role;
 use App\Services\Permission\PermissionService;
 use Illuminate\Database\Seeder;
 

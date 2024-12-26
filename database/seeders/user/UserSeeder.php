@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\user;
 
 use App\Models\Role;
 use App\Models\User;
@@ -35,7 +35,10 @@ class UserSeeder extends Seeder
 
         $createUser = $userAdminService->createUser([
             'email' => $testUserData['email'],
-            'password' => $testUserData['password']
+            'password' => $testUserData['password'],
+            'username' => $testUserData['username'],
+            'first_name' => $testUserData['first_name'],
+            'last_name' => $testUserData['last_name'],
         ], [$role->id]);
 
         if (!$createUser) {

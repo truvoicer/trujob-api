@@ -24,13 +24,9 @@ class StoreListingRequest extends FormRequest
     public function rules()
     {
         return [
-            'slug' => 'nullable',
             'title' => 'nullable',
             'description' => 'nullable',
             'allow_offers' => 'nullable|boolean',
-            'type' => 'nullable',
-            'size' => 'nullable',
-            'price' => 'nullable',
         ];
     }
 }

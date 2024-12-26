@@ -2,11 +2,27 @@
 
 namespace App\Models;
 
+use Database\Factories\listing\ListingFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Listing extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+      'slug',
+      'title',
+      'description',
+      'active',
+      'allow_offers',
+    ];
+
+    protected static function newFactory()
+    {
+        return ListingFactory::new();
+    }
 
     protected function active(): Attribute
     {

@@ -2,11 +2,39 @@
 
 namespace Database\Seeders;
 
+use App\Models\Listing;
+use App\Models\ListingBrand;
+use App\Models\ListingCategory;
+use App\Models\ListingColor;
+use App\Models\ListingFeature;
+use App\Models\ListingFollow;
+use App\Models\ListingMedia;
+use App\Models\ListingProductType;
+use App\Models\ListingReview;
+use App\Models\MessagingGroup;
+use App\Models\MessagingGroupMessage;
+use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\UserFollow;
+use App\Models\UserMedia;
+use App\Models\UserProfile;
+use App\Models\UserReview;
+use App\Models\UserReward;
+use App\Models\UserSetting;
+use App\Services\Admin\AuthService;
 use App\Services\Data\DefaultData;
 use App\Services\User\UserAdminService;
+use Database\Seeders\firebase\FirebaseTopicSeeder;
+use Database\Seeders\listing\BrandSeeder;
+use Database\Seeders\listing\CategorySeeder;
+use Database\Seeders\listing\ColorSeeder;
+use Database\Seeders\listing\ProductTypeSeeder;
+use Database\Seeders\locale\LocaleSeeder;
+use Database\Seeders\user\RoleSeeder;
+use Database\Seeders\user\UserSeeder;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,12 +43,67 @@ class DatabaseSeeder extends Seeder
      */
     public function run(UserAdminService $userAdminService): void
     {
-
         $this->call([
             RoleSeeder::class,
-            PermissionSeeder::class,
             UserSeeder::class,
+            LocaleSeeder::class,
+            FirebaseTopicSeeder::class,
+            ColorSeeder::class,
+            BrandSeeder::class,
+            CategorySeeder::class,
+            ProductTypeSeeder::class,
         ]);
+
+        $listingFactory = Listing::factory()
+            ->count(5)
+            ->has(ListingFeature::factory()->count(1))
+            ->has(ListingReview::factory()->count(5))
+            ->has(ListingFollow::factory()->count(5))
+            ->has(ListingBrand::factory()->count(1))
+            ->has(ListingColor::factory()->count(1))
+            ->has(ListingMedia::factory()->count(5))
+            ->has(ListingCategory::factory()->count(5))
+            ->has(ListingProductType::factory()->count(5));
+
+
+        $getSuperUserData = AuthService::getApiAbilityData(AuthService::ABILITY_SUPERUSER);
+        if (!$getSuperUserData) {
+            throw new \Exception('Error finding superuser ability data during seeding');
+        }
+        $findSuperUserRole = Role::where('name', $getSuperUserData['name'])->first();
+        if (!$findSuperUserRole instanceof Role) {
+            throw new \Exception('Error finding superuser role during seeding');
+        }
+
+        User::factory()
+            ->has($listingFactory)
+            ->has(UserFollow::factory()->count(5))
+            ->has(UserProfile::factory()->count(1))
+            ->has(UserReview::factory()->count(5))
+            ->has(UserReward::factory()->count(5))
+            ->has(UserSetting::factory()->count(1))
+            ->has(UserMedia::factory()->count(1))
+            ->has(
+                MessagingGroup::factory()
+                    ->has(MessagingGroupMessage::factory()->count(5))
+                    ->count(5)
+            )->create();
+
+        User::factory()
+            ->count(10)
+            ->has($listingFactory)
+            ->has(UserFollow::factory()->count(5))
+            ->has(UserProfile::factory()->count(1))
+            ->has(UserReview::factory()->count(5))
+            ->has(UserReward::factory()->count(5))
+            ->has(UserSetting::factory()->count(1))
+            ->has(UserMedia::factory()->count(1))
+            ->has(
+                MessagingGroup::factory()
+                    ->has(MessagingGroupMessage::factory()->count(5))
+                    ->count(5)
+            )
+            ->create();
 
         $testUserData = DefaultData::TEST_USER_DATA;
         $user = $userAdminService->getUserRepository()->findOneBy(

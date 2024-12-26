@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\user;
 
 use App\Models\Role;
 use App\Services\Auth\AuthService;
@@ -9,7 +9,6 @@ use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      */
