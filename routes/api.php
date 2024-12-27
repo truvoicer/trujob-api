@@ -36,7 +36,7 @@ Route::middleware(AppPublic::class)->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
     });
 
-    Route::get('/page/{page}', [PageController::class, 'edit'])->name('page.edit');
+    Route::get('/page/{page:slug}', [PageController::class, 'edit'])->name('page.edit');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('listing')->name('listing.')->group(function () {

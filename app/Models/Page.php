@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ViewType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,6 +11,7 @@ class Page extends Model
     use HasFactory;
 
     protected $fillable = [
+        'view',
         'title',
         'slug',
         'content',
@@ -21,8 +23,7 @@ class Page extends Model
         'updated_by',
     ];
 
-    public function view()
-    {
-        return $this->belongsTo(View::class);
-    }
+    protected $casts = [
+        'view' => ViewType::class,
+    ];
 }

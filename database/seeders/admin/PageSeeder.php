@@ -19,17 +19,10 @@ class PageSeeder extends Seeder
             throw new \Exception('Error reading PageData.php file ' . database_path('data/PageData.php'));
         }
         foreach ($data as $item) {
-            $view = $item['view'];
-            unset($item['view']);
             $create = Page::query()->updateOrCreate(
                 ['slug' => $item['slug']],
                 $item
             );
-
-            $findView = View::query()->where('name', $view)->first();
-            if ($findView) {
-                $create->view()->associate($findView->id);
-            }
         }
     }
 }

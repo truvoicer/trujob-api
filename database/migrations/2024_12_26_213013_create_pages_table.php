@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ViewType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('view_id')->nullable()->constrained('views')->nullOnDelete();
+            $table->enum('view', array_map(fn($type) => $type->value, ViewType::cases()))->nullable();
             $table->string('slug')->nullable();
             $table->string('title')->nullable();
             $table->text('content')->nullable();
