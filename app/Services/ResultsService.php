@@ -4,8 +4,8 @@ namespace App\Services;
 
 class ResultsService
 {
-    private array $errors;
-    private array $results;
+    private array $errors = [];
+    private array $results = [];
 
     /**
      * @return array
@@ -53,4 +53,8 @@ class ResultsService
         $this->results = $results;
     }
 
+    public function hasErrors(): bool
+    {
+        return count($this->errors) > 0;
+    }
 }

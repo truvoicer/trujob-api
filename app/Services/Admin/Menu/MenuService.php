@@ -2,8 +2,8 @@
 
 namespace App\Services\Admin\Menu;
 
-use App\Models\AppMenu;
-use App\Models\AppMenuItem;
+use App\Models\Menu;
+use App\Models\MenuItem;
 use App\Services\BaseService;
 use App\Services\ResultsService;
 
@@ -11,70 +11,96 @@ class MenuService extends BaseService
 {
     private ResultsService $resultsService;
 
-    private AppMenu $appMenu;
-    private AppMenuItem $appMenuItem;
+    private Menu $menu;
+    private MenuItem $menuItem;
 
     public function __construct(ResultsService $resultsService)
     {
+        parent::__construct();
         $this->resultsService = $resultsService;
     }
 
-    public function appMenuFetch() {
-        return AppMenu::get();
+    public function menuFetch(string $menuName) {
+        return Menu::where('name', $menuName)->first();
     }
 
-    public function createAppMenu(array $data) {
-        $this->appMenu = new AppMenu($data);
-        if (!$this->appMenu->save()) {
+    public function createMenu(array $data) {
+        $this->menu = new Menu($data);
+        if (!$this->menu->save()) {
             $this->resultsService->addError('Error adding app menu', $data);
+            return false;
+        }
+        if (empty($data['menu_items'])) {
+            return true;
+        }
+        foreach ($data['menu_items'] as $menuItem) {
+            $this->createMenuItem($this->menu, $menuItem);
+        }
+        if ($this->resultsService->hasErrors()) {
             return false;
         }
         return true;
     }
 
-    public function updateAppMenu(array $data) {
-        $this->appMenu->fill($data);
-        if (!$this->appMenu->save()) {
+    public function updateMenu(array $data) {
+        $this->menu->fill($data);
+        if (!$this->menu->save()) {
             $this->resultsService->addError('Error updating app menu', $data);
             return false;
         }
         return true;
     }
 
-    public function deleteAppMenu() {
-        if (!$this->appMenu->delete()) {
+    public function deleteMenu() {
+        if (!$this->menu->delete()) {
             $this->resultsService->addError('Error deleting app menu');
             return false;
         }
         return true;
     }
-    public function createAppMenuItem(array $data) {
-        $this->appMenuItem = new AppMenuItem($data);
-        if (!$this->appMenu->menuItems()->save($this->appMenuItem)) {
+    public function createMenuItem(Menu $menu, array $data) {
+        $this->menuItem = $menu->menuItems()->create($data);
+        if (!$this->menu->menuItems()->save($this->menuItem)) {
             $this->resultsService->addError('Error adding app menu item', $data);
             return false;
         }
         return true;
     }
 
-    public function updateAppMenuItem(array $data) {
-        $this->appMenuItem->fill($data);
-        if (!$this->appMenuItem->save()) {
+    public function addMenuToMenuItem(MenuItem $menuItem, array $data) {
+        $this->menuItem = $menuItem;
+        $this->menu = $this->menuItem->menus()->create($data);
+
+        if (empty($data['menu_items'])) {
+            return true;
+        }
+        foreach ($data['menu_items'] as $menuItem) {
+            $this->createMenuItem($this->menu, $menuItem);
+        }
+        if ($this->resultsService->hasErrors()) {
+            return false;
+        }
+        return true;
+    }
+    public function updateMenuItem(MenuItem $menuItem, array $data) {
+        $this->menuItem = $menuItem;
+        $this->menuItem->fill($data);
+        if (!$this->menuItem->save()) {
             $this->resultsService->addError('Error updating app menu item', $data);
             return false;
         }
         return true;
     }
 
-    public function removeAppMenuItem() {
-        if (!$this->appMenu->menuItems()->delete($this->appMenuItem)) {
+    public function removeMenuItem() {
+        if (!$this->menu->menuItems()->delete($this->menuItem)) {
             $this->resultsService->addError('Error deleting app menu item');
             return false;
         }
         return true;
     }
-    public function deleteAppMenuItem() {
-        if (!$this->appMenuItem->delete()) {
+    public function deleteMenuItem() {
+        if (!$this->menuItem->delete()) {
             $this->resultsService->addError('Error deleting app menu item');
             return false;
         }
@@ -90,19 +116,19 @@ class MenuService extends BaseService
     }
 
     /**
-     * @param AppMenu $appMenu
+     * @param Menu $menu
      */
-    public function setAppMenu(AppMenu $appMenu): void
+    public function setMenu(Menu $menu): void
     {
-        $this->appMenu = $appMenu;
+        $this->menu = $menu;
     }
 
     /**
-     * @param AppMenuItem $appMenuItem
+     * @param MenuItem $menuItem
      */
-    public function setAppMenuItem(AppMenuItem $appMenuItem): void
+    public function setMenuItem(MenuItem $menuItem): void
     {
-        $this->appMenuItem = $appMenuItem;
+        $this->menuItem = $menuItem;
     }
 
 

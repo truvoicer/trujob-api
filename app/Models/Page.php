@@ -12,18 +12,27 @@ class Page extends Model
 
     protected $fillable = [
         'view',
-        'title',
         'slug',
+        'title',
         'content',
-        'status',
-        'meta_title',
-        'meta_description',
-        'meta_keywords',
-        'created_by',
-        'updated_by',
+        'is_active',
+        'is_home',
+        'is_featured',
+        'is_protected',
+        'settings',
     ];
 
     protected $casts = [
         'view' => ViewType::class,
+        'settings' => 'array',
+        'is_active' => 'boolean',
+        'is_home' => 'boolean',
+        'is_featured' => 'boolean',
     ];
+
+    public function blocks() {
+        return $this->hasMany(
+            PageBlock::class
+        );
+    }
 }

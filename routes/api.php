@@ -17,6 +17,10 @@ use App\Http\Controllers\Api\Listing\ListingProductTypeController;
 use App\Http\Controllers\Api\Listing\ProductTypeController;
 use App\Http\Controllers\Api\Locale\CountryController;
 use App\Http\Controllers\Api\Locale\CurrencyController;
+use App\Http\Controllers\Api\Menu\AppMenuController;
+use App\Http\Controllers\Api\Menu\AppMenuItemController;
+use App\Http\Controllers\Api\Menu\MenuController;
+use App\Http\Controllers\Api\Menu\MenuItemController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupMessageController;
 use App\Http\Controllers\Api\Notification\NotificationController;
@@ -36,7 +40,7 @@ Route::middleware(AppPublic::class)->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
     });
 
-    Route::get('/page/{page:slug}', [PageController::class, 'edit'])->name('page.edit');
+    Route::get('/page/{page:slug}', [PageController::class, 'view'])->name('page.view');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('listing')->name('listing.')->group(function () {
@@ -47,6 +51,17 @@ Route::middleware(AppPublic::class)->group(function () {
         Route::get('/product-type/fetch', [ProductTypeController::class, 'fetchProductType'])->name('product_type.fetch');
         Route::prefix('{listing}')->name('item.')->group(function () {
             Route::get('/fetch', [ListingController::class, 'fetchSinglePublicListing'])->name('fetch');
+        });
+    });
+
+    Route::prefix('app-menu')->name('app_menu.')->group(function () {
+        Route::prefix('{appMenu}')->group(function () {
+            Route::get('/', [AppMenuController::class, 'fetchAppMenu'])->name('fetch');
+        });
+    });
+    Route::prefix('menu')->name('menu.')->group(function () {
+        Route::prefix('{menu}')->group(function () {
+            Route::get('/', [MenuController::class, 'fetchMenu'])->name('fetch');
         });
     });
 });
@@ -69,55 +84,55 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/initialize', [ListingController::class, 'initializeListing'])->name('initialize');
         Route::prefix('category')->name('category.')->group(function () {
             Route::post('/create', [CategoryController::class, 'createCategory'])->name('create');
-            Route::post('/{category}/update', [CategoryController::class, 'updateCategory'])->name('update');
-            Route::post('/{category}/delete', [CategoryController::class, 'deleteCategory'])->name('delete');
+            Route::patch('/{category}/update', [CategoryController::class, 'updateCategory'])->name('update');
+            Route::delete('/{category}/delete', [CategoryController::class, 'deleteCategory'])->name('delete');
         });
         Route::prefix('brand')->name('brand.')->group(function () {
             Route::post('/create', [BrandController::class, 'createBrand'])->name('create');
-            Route::post('/{brand}/update', [BrandController::class, 'updateBrand'])->name('update');
+            Route::patch('/{brand}/update', [BrandController::class, 'updateBrand'])->name('update');
             Route::delete('/{brand}/delete', [BrandController::class, 'deleteBrand'])->name('delete');
         });
         Route::prefix('color')->name('color.')->group(function () {
             Route::post('/create', [ColorController::class, 'createColor'])->name('create');
-            Route::post('/{color}/update', [ColorController::class, 'updateColor'])->name('update');
+            Route::patch('/{color}/update', [ColorController::class, 'updateColor'])->name('update');
             Route::delete('/{color}/delete', [ColorController::class, 'deleteColor'])->name('delete');
         });
         Route::prefix('product-type')->name('product_type.')->group(function () {
             Route::post('/create', [ProductTypeController::class, 'createProductType'])->name('create');
-            Route::post('/{productType}/update', [CategoryController::class, 'updateCategory'])->name('update');
+            Route::patch('/{productType}/update', [CategoryController::class, 'updateCategory'])->name('update');
             Route::delete('/{productType}/delete', [CategoryController::class, 'deleteCategory'])->name('delete');
         });
 
         Route::prefix('{listing?}')->group(function () {
             Route::post('/save', [ListingController::class, 'saveListing'])->name('save');
-            Route::post('/update', [ListingController::class, 'updateListing'])->name('update');
+            Route::patch('/update', [ListingController::class, 'updateListing'])->name('update');
             Route::delete('/delete', [ListingController::class, 'deleteListing'])->name('delete');
 
             Route::prefix('category')->name('category.')->group(function () {
                 Route::post('/{category}/add', [ListingCategoryController::class, 'addCategoryToListing'])->name('add');
-                Route::post('/{category}/remove', [ListingCategoryController::class, 'removeCategoryFromListing'])->name('remove');
+                Route::delete('/{category}/remove', [ListingCategoryController::class, 'removeCategoryFromListing'])->name('remove');
             });
             Route::prefix('brand')->name('brand.')->group(function () {
                 Route::post('/{brand}/add', [ListingBrandController::class, 'addBrandToListing'])->name('add');
-                Route::post('/{brand}/remove', [ListingBrandController::class, 'removeBrandFromListing'])->name('remove');
+                Route::delete('/{brand}/remove', [ListingBrandController::class, 'removeBrandFromListing'])->name('remove');
             });
             Route::prefix('color')->name('color.')->group(function () {
                 Route::post('/{color}/add', [ListingColorController::class, 'addColorToListing'])->name('add');
-                Route::post('/{color}/remove', [ListingColorController::class, 'removeColorFromListing'])->name('remove');
+                Route::delete('/{color}/remove', [ListingColorController::class, 'removeColorFromListing'])->name('remove');
             });
             Route::prefix('product-type')->name('product_type.')->group(function () {
                 Route::post('/{productType}/add', [ListingProductTypeController::class, 'addProductTypeToListing'])->name('add');
-                Route::post('/{productType}/remove', [ListingProductTypeController::class, 'removeProductTypeFromListing'])->name('remove');
+                Route::delete('/{productType}/remove', [ListingProductTypeController::class, 'removeProductTypeFromListing'])->name('remove');
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/create', [MessagingGroupController::class, 'createMessageGroup'])->name('create');
                 Route::prefix('{messagingGroup}')->name('message_group.')->group(function () {
-                    Route::post('/delete', [MessagingGroupController::class, 'deleteMessageGroup'])->name('delete');
+                    Route::delete('/delete', [MessagingGroupController::class, 'deleteMessageGroup'])->name('delete');
                     Route::prefix('message')->name('message.')->group(function () {
                         Route::post('/create', [MessagingGroupMessageController::class, 'createMessage'])->name('create');
                         Route::prefix('/{messagingGroupMessage}')->group(function () {
-                            Route::post('/update', [MessagingGroupMessageController::class, 'updateMessage'])->name('update');
-                            Route::post('/delete', [MessagingGroupMessageController::class, 'deleteMessage'])->name('delete');
+                            Route::patch('/update', [MessagingGroupMessageController::class, 'updateMessage'])->name('update');
+                            Route::delete('/delete', [MessagingGroupMessageController::class, 'deleteMessage'])->name('delete');
                         });
                     });
                 });
@@ -128,7 +143,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
             Route::prefix('{listingMedia?}')->name('item.')->group(function () {
                 Route::get('/fetch', [ListingMediaController::class, 'fetchMedia'])->name('fetch');
-                Route::post('/update', [ListingMediaController::class, 'updateListingMedia'])->name('update');
+                Route::patch('/update', [ListingMediaController::class, 'updateListingMedia'])->name('update');
                 Route::delete('/delete', [ListingMediaController::class, 'deleteListingMedia'])->name('delete');
             });
 
@@ -176,13 +191,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user'])->group(function () {
+
     Route::prefix('tools')->name('tools.')->group(function () {
         Route::prefix('filesystem')->name('filesystem.')->group(function () {
             Route::get('/list', [FileSystemController::class, 'getFiles'])->name('list');
             Route::get('/{file}', [FileSystemController::class, 'getSingleFile'])->name('detail');
             Route::prefix('{file}')->name('single.')->group(function () {
                 Route::get('/download', [FileSystemController::class, 'downloadFile'])->name('download');
-                Route::post('/delete', [FileSystemController::class, 'deleteFile'])->name('delete');
+                Route::delete('/delete', [FileSystemController::class, 'deleteFile'])->name('delete');
             });
         });
     });
@@ -197,53 +213,45 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
 
     Route::prefix('permission')->name('permission.')->group(function () {
         Route::get('/{permission}', [PermissionController::class, 'getSinglePermission'])->name('detail');
-        Route::post('/{permission}/update', [PermissionController::class, 'updatePermission'])->name('update');
+        Route::patch('/{permission}/update', [PermissionController::class, 'updatePermission'])->name('update');
         Route::get('/list', [PermissionController::class, 'getPermissions'])->name('list');
         Route::post('/create', [PermissionController::class, 'createPermission'])->name('create');
-        Route::post('/delete', [PermissionController::class, 'deletePermission'])->name('delete');
+        Route::delete('/delete', [PermissionController::class, 'deletePermission'])->name('delete');
     });
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::prefix('user')->name('user.')->group(function () {
+        Route::prefix('/user')->name('user.')->group(function () {
             Route::get('/list', [AdminController::class, 'getUsersList'])->name('list');
-            Route::post('/create', [AdminController::class, 'createUser'])->name('create');
             Route::prefix('batch')->name('batch.')->group(function () {
                 Route::delete('/delete', [AdminController::class, 'deleteBatchUser'])->name('delete');
             });
-            Route::get('/{user}', [AdminController::class, 'getSingleUser'])->name('detail');
             Route::prefix('{user}')->name('single.')->group(function () {
+                Route::get('/', [AdminController::class, 'getSingleUser'])->name('detail');
                 Route::patch('/update', [AdminController::class, 'updateUser'])->name('update');
                 Route::delete('/delete', [AdminController::class, 'deleteUser'])->name('delete');
                 Route::prefix('api-token')->name('api-token.')->group(function () {
                     Route::get('/list', [AdminController::class, 'getUserApiTokens'])->name('list');
                     Route::post('/generate', [AdminController::class, 'generateNewApiToken'])->name('generate');
-                    Route::post('/delete', [AdminController::class, 'deleteSessionUserApiToken'])->name('session.delete');
+                    Route::delete('/delete', [AdminController::class, 'deleteSessionUserApiToken'])->name('session.delete');
                     Route::get('/{personalAccessToken}', [AdminController::class, 'getApiToken'])->name('detail');
                     Route::patch('/{personalAccessToken}/update', [AdminController::class, 'updateApiTokenExpiry'])->name('update');
                     Route::delete('/{personalAccessToken}/delete', [AdminController::class, 'deleteApiToken'])->name('delete');
                 });
-            });
-        });
-    });
-
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::prefix('/user')->name('user.')->group(function () {
-            Route::post('/create', [AdminController::class, 'createUser'])->name('create');
-            Route::prefix('{user}')->name('role.')->group(function () {
                 Route::prefix('seller')->name('seller.')->group(function () {
                     Route::post('/add', [UserSellerController::class, 'addUserSeller'])->name('create');
                     Route::delete('/remove', [UserSellerController::class, 'removeUserSeller'])->name('delete');
                 });
                 Route::prefix('role')->name('role.')->group(function () {
-                    Route::post('/{role}/update', [RoleController::class, 'updateUserRole'])->name('update');
+                    Route::patch('/{role}/update', [RoleController::class, 'updateUserRole'])->name('update');
                 });
             });
+            Route::post('/create', [AdminController::class, 'createUser'])->name('create');
         });
         Route::prefix('role')->name('role.')->group(function () {
             Route::post('/create', [RoleController::class, 'createRole'])->name('create');
-            Route::post('/{role}/update', [RoleController::class, 'updateRole'])->name('update');
+            Route::patch('/{role}/update', [RoleController::class, 'updateRole'])->name('update');
             Route::delete('/{role}/delete', [RoleController::class, 'deleteRole'])->name('delete');
         });
     });
@@ -256,8 +264,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::post('/register', [FirebaseDeviceController::class, 'registerFirebaseDevice'])->name('register');
             Route::post('/create', [FirebaseDeviceController::class, 'createFirebaseDevice'])->name('create');
             Route::prefix('{firebaseDevice}')->group(function () {
-                Route::post('/update', [FirebaseDeviceController::class, 'updateFirebaseDevice'])->name('update');
-                Route::post('/delete', [FirebaseDeviceController::class, 'deleteFirebaseDevice'])->name('delete');
+                Route::patch('/update', [FirebaseDeviceController::class, 'updateFirebaseDevice'])->name('update');
+                Route::delete('/delete', [FirebaseDeviceController::class, 'deleteFirebaseDevice'])->name('delete');
 
             });
         });
@@ -266,8 +274,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::post('/send', [FirebaseMessageController::class, 'sendMessageToTopic'])->name('send');
             });
             Route::prefix('{firebaseTopic}')->group(function () {
-                Route::post('/update', [FirebaseTopicController::class, 'updateFirebaseTopic'])->name('update');
-                Route::post('/delete', [FirebaseTopicController::class, 'deleteFirebaseTopic'])->name('delete');
+                Route::patch('/update', [FirebaseTopicController::class, 'updateFirebaseTopic'])->name('update');
+                Route::delete('/delete', [FirebaseTopicController::class, 'deleteFirebaseTopic'])->name('delete');
 
             });
         });
@@ -277,14 +285,52 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('country')->name('country.')->group(function () {
             Route::post('/create', [CountryController::class, 'createCountry'])->name('create');
             Route::post('/create/batch', [CountryController::class, 'createCountryBatch'])->name('create_batch');
-            Route::post('/{country}/update', [CountryController::class, 'updateCountry'])->name('update');
-            Route::post('/{country}/delete', [CountryController::class, 'deleteCountry'])->name('delete');
+            Route::patch('/{country}/update', [CountryController::class, 'updateCountry'])->name('update');
+            Route::delete('/{country}/delete', [CountryController::class, 'deleteCountry'])->name('delete');
         });
         Route::prefix('currency')->name('currency.')->group(function () {
             Route::post('/create', [CurrencyController::class, 'createCurrency'])->name('create');
             Route::post('/create/batch', [CurrencyController::class, 'createCurrencyBatch'])->name('create_batch');
-            Route::post('/{currency}/update', [CurrencyController::class, 'updateCurrency'])->name('update');
-            Route::post('/{currency}/delete', [CurrencyController::class, 'deleteCurrency'])->name('delete');
+            Route::patch('/{currency}/update', [CurrencyController::class, 'updateCurrency'])->name('update');
+            Route::delete('/{currency}/delete', [CurrencyController::class, 'deleteCurrency'])->name('delete');
+        });
+    });
+
+
+    Route::prefix('page')->name('page.')->group(function () {
+        Route::post('/create', [PageController::class, 'create'])->name('create');
+        Route::prefix('{page}')->group(function () {
+            Route::patch('/update', [PageController::class, 'update'])->name('update');
+            Route::delete('/delete', [PageController::class, 'delete'])->name('delete');
+        });
+    });
+    Route::prefix('app-menu')->name('app_menu.')->group(function () {
+        Route::post('/create', [AppMenuController::class, 'createAppMenu'])->name('create');
+        Route::prefix('{appMenu}')->group(function () {
+            Route::patch('/update', [AppMenuController::class, 'updateAppMenu'])->name('update');
+            Route::delete('/delete', [AppMenuController::class, 'deleteAppMenu'])->name('delete');
+            Route::prefix('item')->name('item')->group(function () {
+                Route::post('/create', [AppMenuItemController::class, 'createAppMenuItem'])->name('create');
+                Route::prefix('{appMenuItem}')->group(function () {
+                    Route::patch('/update', [AppMenuItemController::class, 'updateAppMenuItem'])->name('update');
+                    Route::delete('/delete', [AppMenuItemController::class, 'deleteAppMenuItem'])->name('delete');
+                });
+            });
+        });
+    });
+    Route::prefix('menu')->name('menu.')->group(function () {
+        Route::post('/create', [MenuController::class, 'createMenu'])->name('create');
+        Route::prefix('{menu}')->group(function () {
+            Route::patch('/update', [MenuController::class, 'updateMenu'])->name('update');
+            Route::delete('/delete', [MenuController::class, 'deleteMenu'])->name('delete');
+            Route::prefix('item')->name('item')->group(function () {
+                Route::post('/create', [MenuItemController::class, 'createMenuItem'])->name('create');
+                Route::prefix('{menuItem}')->group(function () {
+                    Route::post('/menu/add', [MenuItemController::class, 'addMenuToMenuItem'])->name('update');
+                    Route::patch('/update', [MenuItemController::class, 'updateMenuItem'])->name('update');
+                    Route::delete('/delete', [MenuItemController::class, 'deleteMenuItem'])->name('delete');
+                });
+            });
         });
     });
 });

@@ -23,6 +23,7 @@ class PageSeeder extends Seeder
                 ['slug' => $item['slug']],
                 $item
             );
+            $create->blocks()->createMany($item['blocks']);
         }
     }
 }

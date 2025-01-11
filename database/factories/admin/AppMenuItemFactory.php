@@ -5,7 +5,7 @@ namespace Database\Factories\admin;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AppMenuItem>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MenuItem>
  */
 class AppMenuItemFactory extends Factory
 {

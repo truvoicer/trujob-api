@@ -25,6 +25,9 @@ use App\Models\UserSetting;
 use App\Services\Admin\AuthService;
 use App\Services\Data\DefaultData;
 use App\Services\User\UserAdminService;
+use Database\Seeders\admin\PageSeeder;
+use Database\Seeders\admin\PermissionSeeder;
+use Database\Seeders\admin\SettingSeeder;
 use Database\Seeders\firebase\FirebaseTopicSeeder;
 use Database\Seeders\listing\BrandSeeder;
 use Database\Seeders\listing\CategorySeeder;
@@ -52,6 +55,9 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,
             CategorySeeder::class,
             ProductTypeSeeder::class,
+            PageSeeder::class,
+            PermissionSeeder::class,
+            SettingSeeder::class
         ]);
 
         $listingFactory = Listing::factory()
