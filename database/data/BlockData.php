@@ -10,7 +10,6 @@ return [
             'subtitle' => 'We are a team of professionals',
             'background_image' => 'https://via.placeholder.com/1920x1080',
         ],
-        'order' => 0,
     ],
     [
         'type' => BlockType::FEATURED,
@@ -19,7 +18,6 @@ return [
             'subtitle' => 'What we offer',
             'background_image' => 'https://via.placeholder.com/1920x1080',
         ],
-        'order' => 1,
     ],
     [
         'type' => BlockType::ICON_GRID,
@@ -28,7 +26,6 @@ return [
             'subtitle' => 'We are the best',
             'background_image' => 'https://via.placeholder.com/1920x1080',
         ],
-        'order' => 2,
     ],
     [
         'type' => BlockType::LISTINGS_GRID,
@@ -38,6 +35,5 @@ return [
             'background_image' => 'https://via.placeholder.com/1920x1080',
             'item_container_class' => 'grid grid-cols-3 gap-4',
         ],
-        'order' => 3,
     ],
 ];

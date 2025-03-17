@@ -17,10 +17,6 @@ use Laravel\Sanctum\PersonalAccessToken;
  */
 class UserController extends Controller
 {
-    public function __construct(
-    ) {
-    }
-
     public function getSessionUserDetail(Request $request)
     {
         return $this->sendSuccessResponse(

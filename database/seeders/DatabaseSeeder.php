@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Block;
 use App\Models\Listing;
 use App\Models\ListingBrand;
 use App\Models\ListingCategory;
@@ -25,6 +26,7 @@ use App\Models\UserSetting;
 use App\Services\Admin\AuthService;
 use App\Services\Data\DefaultData;
 use App\Services\User\UserAdminService;
+use Database\Seeders\admin\BlockSeeder;
 use Database\Seeders\admin\PageSeeder;
 use Database\Seeders\admin\PermissionSeeder;
 use Database\Seeders\admin\SettingSeeder;
@@ -55,6 +57,7 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,
             CategorySeeder::class,
             ProductTypeSeeder::class,
+            BlockSeeder::class,
             PageSeeder::class,
             PermissionSeeder::class,
             SettingSeeder::class

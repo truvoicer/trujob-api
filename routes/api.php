@@ -8,13 +8,16 @@ use App\Http\Controllers\Api\Firebase\FirebaseTopicController;
 use App\Http\Controllers\Api\Listing\BrandController;
 use App\Http\Controllers\Api\Listing\CategoryController;
 use App\Http\Controllers\Api\Listing\ColorController;
+use App\Http\Controllers\Api\Listing\InitialiseListingController;
 use App\Http\Controllers\Api\Listing\ListingBrandController;
 use App\Http\Controllers\Api\Listing\ListingCategoryController;
 use App\Http\Controllers\Api\Listing\ListingColorController;
 use App\Http\Controllers\Api\Listing\ListingController;
 use App\Http\Controllers\Api\Listing\ListingMediaController;
 use App\Http\Controllers\Api\Listing\ListingProductTypeController;
+use App\Http\Controllers\Api\Listing\ListingPublicController;
 use App\Http\Controllers\Api\Listing\ProductTypeController;
+use App\Http\Controllers\Api\Listing\UserListingController;
 use App\Http\Controllers\Api\Locale\CountryController;
 use App\Http\Controllers\Api\Locale\CurrencyController;
 use App\Http\Controllers\Api\Menu\AppMenuController;
@@ -44,13 +47,13 @@ Route::middleware(AppPublic::class)->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('listing')->name('listing.')->group(function () {
-        Route::get('/fetch', [ListingController::class, 'fetchPublicListings'])->name('fetch');
+        Route::get('/', [ListingPublicController::class, 'index'])->name('fetch');
         Route::get('/category/fetch', [CategoryController::class, 'fetchCategories'])->name('category.fetch');
         Route::get('/brand/fetch', [BrandController::class, 'fetchBrands'])->name('brand.fetch');
         Route::get('/color/fetch', [ColorController::class, 'fetchColors'])->name('color.fetch');
         Route::get('/product-type/fetch', [ProductTypeController::class, 'fetchProductType'])->name('product_type.fetch');
         Route::prefix('{listing}')->name('item.')->group(function () {
-            Route::get('/fetch', [ListingController::class, 'fetchSinglePublicListing'])->name('fetch');
+            Route::get('/fetch', [ListingController::class, 'view'])->name('fetch');
         });
     });
 
@@ -75,13 +78,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
     Route::prefix('user')->name('user.')->group(function () {
         Route::prefix('listing')->name('listing.')->group(function () {
-            Route::get('/', [ListingController::class, 'fetchUserListings'])->name('index');
-            Route::get('/{listing?}', [ListingController::class, 'fetchSinglePrivateListing'])->name('edit');
+            Route::get('/', [UserListingController::class, 'index'])->name('index');
+            Route::get('/{listing?}', [UserListingController::class, 'view'])->name('edit');
         });
     });
     Route::prefix('listing')->name('listing.')->group(function () {
-        Route::post('/create', [ListingController::class, 'createListing'])->name('create');
-        Route::get('/initialize', [ListingController::class, 'initializeListing'])->name('initialize');
+        Route::post('/create', [ListingController::class, 'create'])->name('create');
+        Route::get('/initialize', InitialiseListingController::class)->name('initialize');
         Route::prefix('category')->name('category.')->group(function () {
             Route::post('/create', [CategoryController::class, 'createCategory'])->name('create');
             Route::patch('/{category}/update', [CategoryController::class, 'updateCategory'])->name('update');
@@ -104,9 +107,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
 
         Route::prefix('{listing?}')->group(function () {
-            Route::post('/save', [ListingController::class, 'saveListing'])->name('save');
-            Route::patch('/update', [ListingController::class, 'updateListing'])->name('update');
-            Route::delete('/delete', [ListingController::class, 'deleteListing'])->name('delete');
+            Route::patch('/update', [ListingController::class, 'update'])->name('update');
+            Route::delete('/delete', [ListingController::class, 'destroy'])->name('delete');
 
             Route::prefix('category')->name('category.')->group(function () {
                 Route::post('/{category}/add', [ListingCategoryController::class, 'addCategoryToListing'])->name('add');
@@ -309,7 +311,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{appMenu}')->group(function () {
             Route::patch('/update', [AppMenuController::class, 'updateAppMenu'])->name('update');
             Route::delete('/delete', [AppMenuController::class, 'deleteAppMenu'])->name('delete');
-            Route::prefix('item')->name('item')->group(function () {
+            Route::prefix('item')->name('item.')->group(function () {
                 Route::post('/create', [AppMenuItemController::class, 'createAppMenuItem'])->name('create');
                 Route::prefix('{appMenuItem}')->group(function () {
                     Route::patch('/update', [AppMenuItemController::class, 'updateAppMenuItem'])->name('update');
@@ -323,10 +325,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'updateMenu'])->name('update');
             Route::delete('/delete', [MenuController::class, 'deleteMenu'])->name('delete');
-            Route::prefix('item')->name('item')->group(function () {
+            Route::prefix('item')->name('item.')->group(function () {
                 Route::post('/create', [MenuItemController::class, 'createMenuItem'])->name('create');
                 Route::prefix('{menuItem}')->group(function () {
-                    Route::post('/menu/add', [MenuItemController::class, 'addMenuToMenuItem'])->name('update');
                     Route::patch('/update', [MenuItemController::class, 'updateMenuItem'])->name('update');
                     Route::delete('/delete', [MenuItemController::class, 'deleteMenuItem'])->name('delete');
                 });

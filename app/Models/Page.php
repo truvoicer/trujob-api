@@ -31,8 +31,9 @@ class Page extends Model
     ];
 
     public function blocks() {
-        return $this->hasMany(
-            PageBlock::class
-        );
+        return $this->belongsToMany(
+            Block::class,
+            PageBlock::class,
+        )->withPivot('order');
     }
 }

@@ -7,17 +7,11 @@ use App\Http\Requests\User\StoreUserSellerRequest;
 use App\Http\Requests\User\UpdateUserSellerRequest;
 use App\Models\User;
 use App\Models\UserSeller;
-use App\Services\User\UserAdminService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserSellerController extends Controller
 {
-    private UserAdminService $userAdminService;
-    public function __construct(UserAdminService $userAdminService)
-    {
-        $this->userAdminService = $userAdminService;
-    }
 
     public function addUserSeller(User $user, Request $request) {
         $this->userAdminService->setUser($user);

@@ -3,8 +3,8 @@ namespace App\Enums;
 
 enum BlockType: string
 {
-    case HERO = 'hero';
-    case FEATURED = 'featured';
-    case ICON_GRID = 'icon_grid';
-    case LISTINGS_GRID = 'listings_grid';
+    case HERO = 'hero-block';
+    case FEATURED = 'featured-block';
+    case ICON_GRID = 'icon-grid-block';
+    case LISTINGS_GRID = 'listings-grid-block';
 }

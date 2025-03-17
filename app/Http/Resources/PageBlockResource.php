@@ -14,12 +14,10 @@ class PageBlockResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         return [
-            'id' => $this->id,
             'type' => $this->type,
             'properties' => $this->properties,
-            'order' => $this->order,
+            'order' => $this->pivot->order,
         ];
     }
 }
