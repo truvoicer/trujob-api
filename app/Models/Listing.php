@@ -79,7 +79,10 @@ class Listing extends Model
     {
         return $this->hasMany(ListingProductType::class);
     }
-
+    public function listingType()
+    {
+        return $this->belongsTo(ListingType::class);
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

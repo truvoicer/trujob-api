@@ -34,10 +34,12 @@ use Database\Seeders\firebase\FirebaseTopicSeeder;
 use Database\Seeders\listing\BrandSeeder;
 use Database\Seeders\listing\CategorySeeder;
 use Database\Seeders\listing\ColorSeeder;
+use Database\Seeders\listing\ListingTypeSeeder;
 use Database\Seeders\listing\ProductTypeSeeder;
 use Database\Seeders\locale\LocaleSeeder;
 use Database\Seeders\user\RoleSeeder;
 use Database\Seeders\user\UserSeeder;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -57,14 +59,18 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,
             CategorySeeder::class,
             ProductTypeSeeder::class,
+            ListingTypeSeeder::class,
             BlockSeeder::class,
             PageSeeder::class,
             PermissionSeeder::class,
             SettingSeeder::class
         ]);
 
+
+
         $listingFactory = Listing::factory()
             ->count(5)
+            ->has(ListingFeature::factory()->count(1))
             ->has(ListingFeature::factory()->count(1))
             ->has(ListingReview::factory()->count(5))
             ->has(ListingFollow::factory()->count(5))

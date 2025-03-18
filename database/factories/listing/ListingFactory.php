@@ -19,9 +19,15 @@ class ListingFactory extends Factory
      */
     public function definition()
     {
+        $data = include(database_path('data/ListingTypeData.php'));
+        if (!$data) {
+            throw new \Exception('Error reading ListingTypeData.php file ' . database_path('data/ListingTypeData.php'));
+        }
+
         $fake = fake();
         $title = $fake->text(20);
         return [
+            'listing_type_id' => $this->faker->numberBetween(1, count($data)),
             "slug" => HelperService::toSlug($title),
             "title" => $title,
             "description" => $fake->text(100),

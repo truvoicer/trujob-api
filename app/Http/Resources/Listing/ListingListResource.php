@@ -18,6 +18,7 @@ class ListingListResource extends JsonResource
     public function toArray($request)
     {
         $data = parent::toArray($request);
+        $data['listingType'] = ListingTypeResource::make($this->listingType);
         $data['listingUser'] = UserResource::make($this->user);
         $data['listingMedia'] = ListingMediaResource::make($this->listingMedia->where('category', 'thumbnail')->first());
         return $data;
