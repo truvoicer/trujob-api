@@ -19,7 +19,7 @@ class ListingsFetchService extends BaseService
                 $this->getLimit(),
                 ['*'],
                 'page',
-                $this->getOffset() ?? null
+                $this->getPage() ?? null
             );
         }
         return $listing->get();
@@ -33,7 +33,7 @@ class ListingsFetchService extends BaseService
                 $this->getLimit(),
                 ['*'],
                 'page',
-                $this->getOffset() ?? null
+                $this->getPage() ?? null
             );
         }
         return $listing->get();

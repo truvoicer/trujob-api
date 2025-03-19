@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ListingPublicController extends ListingBaseController
 {
-    
+
     /**
      * Show the form for creating a new resource.
      *
@@ -16,13 +16,11 @@ class ListingPublicController extends ListingBaseController
      */
     public function index(Request $request)
     {
-        $this->listingsFetchService->setLimit($request->get('limit'));
-//        $listingsFetchService->setOffset($request->get('offset'));
-        $this->listingsFetchService->setPagination(true);
+        $this->listingsFetchService->setLimit($request->query->getInt('limit', 10));
+        $this->listingsFetchService->setPage($request->query->getInt('page', 1));
+
         return ListingListResource::collection(
             $this->listingsFetchService->listingsFetch()
         );
     }
-
-
 }

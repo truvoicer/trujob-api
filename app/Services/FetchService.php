@@ -9,11 +9,13 @@ trait FetchService
     private array $where = [];
     private string $groupBy;
     private string $orderBy;
-    private ?int $limit = 10;
-    private ?int $offset = null;
+
+    private int $limit = 10;
+    private int $offset = 0;
+    private int $page = 1;
     private string $orderDir = 'desc';
 
-    private ?bool $pagination = false;
+    private bool $pagination = true;
 
     /**
      * @return array
@@ -80,35 +82,45 @@ trait FetchService
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getLimit(): ?int
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
     /**
-     * @param int|null $limit
+     * @param int $limit
      */
-    public function setLimit(?int $limit): void
+    public function setLimit(int $limit): void
     {
         $this->limit = $limit;
     }
 
     /**
-     * @return int|null
+     * @return int
      */
-    public function getOffset(): ?int
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
     /**
-     * @param int|null $offset
+     * @param int $offset
      */
-    public function setOffset(?int $offset): void
+    public function setOffset(int $offset): void
     {
         $this->offset = $offset;
+    }
+
+    public function getPage(): int
+    {
+        return $this->page;
+    }
+
+    public function setPage(int $page): void
+    {
+        $this->page = $page;
     }
 
     /**
@@ -128,17 +140,17 @@ trait FetchService
     }
 
     /**
-     * @return bool|null
+     * @return bool
      */
-    public function getPagination(): ?bool
+    public function getPagination(): bool
     {
         return $this->pagination;
     }
 
     /**
-     * @param bool|null $pagination
+     * @param bool $pagination
      */
-    public function setPagination(?bool $pagination): void
+    public function setPagination(bool $pagination): void
     {
         $this->pagination = $pagination;
     }
