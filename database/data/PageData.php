@@ -13,29 +13,24 @@ return [
             [
                 'type' => BlockType::HERO,
                 'order' => 0,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
                 'type' => BlockType::FEATURED,
                 'order' => 1,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
                 'type' => BlockType::LISTINGS_GRID,
                 'order' => 2,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
+                'pagination' => true,
             ],
         ]
     ],
@@ -48,29 +43,24 @@ return [
             [
                 'type' => BlockType::HERO,
                 'order' => 0,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
                 'type' => BlockType::ICON_GRID,
                 'order' => 1,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
                 'type' => BlockType::LISTINGS_GRID,
                 'order' => 2,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
+                'pagination' => true,
             ],
 
         ]
@@ -84,20 +74,16 @@ return [
             [
                 'type' => BlockType::HERO,
                 'order' => 0,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
                 'type' => BlockType::FEATURED,
                 'order' => 1,
-                'properties' => [
-                    'title' => 'Welcome to our website',
-                    'subtitle' => 'We are a team of professionals',
-                    'background_image' => 'https://via.placeholder.com/1920x1080',
-                ],
+                'title' => 'Welcome to our website',
+                'subtitle' => 'We are a team of professionals',
+                'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
         ]
     ],

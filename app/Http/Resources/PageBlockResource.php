@@ -16,7 +16,15 @@ class PageBlockResource extends JsonResource
     {
         return [
             'type' => $this->type,
-            'properties' => $this->properties,
+            'title' => $this->pivot?->title,
+            'subtitle' => $this->pivot?->subtitle,
+            'background_image' => $this->pivot?->background_image,
+            'background_color' => $this->pivot?->background_color,
+            'pagination_type' => $this->pivot?->pagination_type,
+            'pagination' => (bool)$this->pivot?->pagination,
+            'pagination_scroll_type' => $this->pivot?->pagination_scroll_type,
+            'content' => $this->pivot?->content,
+            'properties' => $this->pivot?->properties,
             'order' => $this->pivot->order,
         ];
     }

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Block extends Model
 {
+    protected $fillable = [
+        'type',
+        'properties',
+    ];
     protected $casts = [
         'type' => BlockType::class,
         'properties' => 'array'

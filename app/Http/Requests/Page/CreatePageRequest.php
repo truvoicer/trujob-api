@@ -44,7 +44,7 @@ class CreatePageRequest extends FormRequest
                 'max:255',
             ],
             'content' => [
-                'required',
+                'sometimes',
                 'string',
             ],
             'is_active' => [

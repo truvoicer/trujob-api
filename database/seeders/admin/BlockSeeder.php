@@ -18,9 +18,15 @@ class BlockSeeder extends Seeder
             throw new \Exception('Error reading BlockData.php file ' . database_path('data/BlockData.php'));
         }
         foreach ($data as $item) {
+            $type = $item['type'];
+            unset($item['type']);
+            $atts = $item;
+            if (!empty($item['properties'])) {
+                $atts['properties'] = json_encode($item['properties']);
+            }
             $create = Block::query()->updateOrCreate(
-                ['type' => $item['type']],
-                $item
+                ['type' => $type],
+                $atts
             );
         }
     }

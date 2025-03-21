@@ -4,6 +4,8 @@ namespace App\Http\Requests\Page;
 
 use App\Enums\BlockType;
 use App\Enums\ListingsBlockSidebarWidget;
+use App\Enums\Pagination\PaginationScrollType;
+use App\Enums\Pagination\PaginationType;
 use App\Enums\ViewType;
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Requests\Menu\CreateMenuItemRequest;
@@ -32,30 +34,42 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'sometimes',
                 'array',
             ],
-            'properties.*.title' => [
+            'title' => [
                 'sometimes',
                 'string',
                 'max:255',
             ],
-            'properties.*.subtitle' => [
+            'subtitle' => [
                 'sometimes',
                 'string',
                 'max:255',
             ],
-            'properties.*.sidebar_widgets' => [
+            'pagination' => [
+                'sometimes',
+                'boolean',
+            ],
+            'pagination_type' => [
+                'sometimes',
+                Rule::enum(PaginationType::class),
+            ],
+            'pagination_scroll_type' => [
+                'sometimes',
+                Rule::enum(PaginationScrollType::class),
+            ],
+            'sidebar_widgets' => [
                 'sometimes',
                 'array',
             ],
-            'properties.*.sidebar_widgets.*.name' => [
+            'sidebar_widgets.*.name' => [
                 'required_if:type,' . BlockType::LISTINGS_GRID->value,
                 Rule::enum(ListingsBlockSidebarWidget::class)
             ],
-            'properties.*.sidebar_widgets.*.title' => [
+            'sidebar_widgets.*.title' => [
                 'sometimes',
                 'string',
                 'max:255',
             ],
-            'properties.*.sidebar_widgets.*.has_container' => [
+            'sidebar_widgets.*.has_container' => [
                 'required',
                 'boolean',
             ],

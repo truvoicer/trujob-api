@@ -14,29 +14,39 @@ class ListingsFetchService extends BaseService
     public function listingsFetch()
     {
         $listing = Listing::query();
+
         if ($this->getPagination()) {
-            return $listing->paginate(
+            $results = $listing->paginate(
                 $this->getLimit(),
                 ['*'],
                 'page',
                 $this->getPage() ?? null
             );
+            $this->setTotal($results->total());
+            return $results;
         }
-        return $listing->get();
+        $results = $listing->get();
+        $this->setTotal($results->count());
+        return $results;
     }
 
     public function userListingsFetch()
     {
         $listing = $this->getUser()->listing();
+        
         if ($this->getPagination()) {
-            return $listing->paginate(
+            $results = $listing->paginate(
                 $this->getLimit(),
                 ['*'],
                 'page',
                 $this->getPage() ?? null
             );
+            $this->setTotal($results->total());
+            return $results;
         }
-        return $listing->get();
+        $results = $listing->get();
+        $this->setTotal($results->count());
+        return $results;
     }
 
 }

@@ -18,9 +18,13 @@ class ListingPublicController extends ListingBaseController
     {
         $this->listingsFetchService->setLimit($request->query->getInt('limit', 10));
         $this->listingsFetchService->setPage($request->query->getInt('page', 1));
-
+        
         return ListingListResource::collection(
             $this->listingsFetchService->listingsFetch()
-        );
+        )->additional([
+            'meta' => [
+                'has_more' => $this->listingsFetchService->hasMore(),
+            ]
+        ]);
     }
 }

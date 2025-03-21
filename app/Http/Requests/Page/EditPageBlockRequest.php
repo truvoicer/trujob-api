@@ -27,11 +27,6 @@ class EditPageBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'page_id' => [
-                'required',
-                'integer',
-                Rule::exists('pages', 'id'),
-            ],
             'type' => [
                 'sometimes',
                 Rule::enum(BlockType::class)

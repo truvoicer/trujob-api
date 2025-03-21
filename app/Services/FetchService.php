@@ -16,6 +16,7 @@ trait FetchService
     private string $orderDir = 'desc';
 
     private bool $pagination = true;
+    private int $total = 0;
 
     /**
      * @return array
@@ -153,5 +154,20 @@ trait FetchService
     public function setPagination(bool $pagination): void
     {
         $this->pagination = $pagination;
+    }
+
+    public function getTotal(): int
+    {
+        return $this->total;
+    }
+
+    public function setTotal(int $total): void
+    {
+        $this->total = $total;
+    }
+
+    public function hasMore(): bool
+    {
+        return $this->getLimit() * $this->getPage() < $this->getTotal();
     }
 }

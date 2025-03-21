@@ -30,10 +30,23 @@ class Page extends Model
         'is_featured' => 'boolean',
     ];
 
-    public function blocks() {
+    public function blocks()
+    {
         return $this->belongsToMany(
             Block::class,
             PageBlock::class,
-        )->withPivot('order');
+        )->withPivot(
+            'order',
+            'properties',
+            'order',
+            'title',
+            'subtitle',
+            'background_image',
+            'background_color',
+            'pagination',
+            'pagination_type',
+            'pagination_scroll_type',
+            'content',
+        );
     }
 }

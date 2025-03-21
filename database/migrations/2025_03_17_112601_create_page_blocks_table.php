@@ -15,6 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('page_id')->constrained()->onDelete('cascade');
             $table->foreignId('block_id')->constrained()->onDelete('cascade');
+            $table->string('title')->nullable();
+            $table->string('subtitle')->nullable();
+            $table->string('background_image')->nullable();
+            $table->string('background_color')->nullable();
+            $table->boolean('pagination')->nullable()->default(false);
+            $table->string('pagination_type')->nullable()->default('page');
+            $table->string('pagination_scroll_type')->nullable()->default('block');
+            $table->text('content')->nullable();
             $table->integer('order')->default(0);
             $table->json('properties')->nullable();
             $table->timestamps();
