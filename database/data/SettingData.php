@@ -1,27 +1,25 @@
 <?php
 return [
-    [
-        'key' => 'site_name',
-        'value' => 'Laravel',
-    ],
-    [
-        'key' => 'site_description',
-        'value' => 'The PHP Framework For Web Artisans',
-    ],
-    [
-        'key' => 'site_logo',
-        'value' => 'logo.png',
-    ],
-    [
-        'key' => 'site_favicon',
-        'value' => 'favicon.png',
-    ],
-    [
-        'key' => 'site_keywords',
-        'value' => 'laravel, php, framework, web, artisans',
-    ],
-    [
-        'key' => 'site_author',
-        'value' => 'Taylor Otwell',
-    ]
+    'name' => 'TruJob',
+    'title' => 'TruJob',
+    'description' => 'The PHP Framework For Web Artisans',
+    'keywords' => 'laravel, php, framework, web, artisans',
+    'author' => 'Taylor Otwell',
+    'logo' => 'logo.png',
+    'favicon' => 'favicon.png',
+    'address' => '123 Street, City, Country',
+    'phone' => '+1234567890',
+    'email' => null,
+    'google_login_client_id' => null,
+    'google_tag_manager_id' => null,
+    'hubspot_access_token' => null,
+    'facebook_app_id' => null,
+    'facebook_app_secret' => null,
+    'facebook_graph_version' => null,
+    'facebook_follow_url' => null,
+    'instagram_follow_url' => null,
+    'tiktok_follow_url' => null,
+    'pinterest_follow_url' => null,
+    'x_follow_url' => null,
+    'timezone' => 'UTC',
 ];

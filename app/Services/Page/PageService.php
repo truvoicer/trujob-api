@@ -38,8 +38,7 @@ class PageService extends BaseService
     public function updatePage(Page $page, array $data)
     {
         $this->page = $page;
-        $this->page->fill($data);
-        if (!$this->page->save()) {
+        if (!$this->page->update($data)) {
             $this->resultsService->addError('Error updating page', $data);
             return false;
         }
@@ -153,13 +152,5 @@ class PageService extends BaseService
     public function setPage(Page $menu): void
     {
         $this->page = $menu;
-    }
-
-    /**
-     * @param PageItem $menuItem
-     */
-    public function setPageItem(PageItem $menuItem): void
-    {
-        $this->pageItem = $menuItem;
     }
 }

@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Page\BatchDeletePageBlockController;
 use App\Http\Controllers\Api\Page\PageBlockController;
 use App\Http\Controllers\Api\Page\PageController;
+use App\Http\Controllers\Api\Page\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
@@ -314,6 +315,16 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/delete', [PageBlockController::class, 'destroy'])->name('delete');
                 });
             });
+        });
+    });
+
+    Route::prefix('site')->name('site.')->group(function () {
+        Route::get('/', [SiteController::class, 'index'])->name('index');
+        Route::post('/create', [SiteController::class, 'create'])->name('create');
+        Route::prefix('{site}')->group(function () {
+            Route::get('/', [SiteController::class, 'view'])->name('view');
+            Route::patch('/update', [SiteController::class, 'update'])->name('update');
+            Route::delete('/delete', [SiteController::class, 'destroy'])->name('destroy');
         });
     });
     Route::prefix('app-menu')->name('app_menu.')->group(function () {
