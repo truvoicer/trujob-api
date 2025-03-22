@@ -60,7 +60,7 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'sometimes',
                 'array',
             ],
-            'sidebar_widgets.*.name' => [
+            'sidebar_widgets.*.type' => [
                 'required_if:type,' . BlockType::LISTINGS_GRID->value,
                 Rule::enum(ListingsBlockSidebarWidget::class)
             ],

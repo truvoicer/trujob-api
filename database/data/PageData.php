@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\BlockType;
+use App\Enums\ListingsBlockSidebarWidget;
 use App\Enums\ViewType;
 
 return [
@@ -31,6 +32,25 @@ return [
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
                 'pagination' => true,
+                'pagination_type' => 'page',
+                'pagination_scroll_type' => 'block',
+                'sidebar_widgets' => [
+                    [
+                        'type' => ListingsBlockSidebarWidget::SEARCH_FILTER->value,
+                        'has_container' => false,
+                        'title' => 'Search',
+                    ],
+                    [
+                        'type' => ListingsBlockSidebarWidget::PROXIMITY_FILTER->value,
+                        'has_container' => false,
+                        'title' => 'Set Proximity',
+                    ],
+                    [
+                        'type' => ListingsBlockSidebarWidget::CATEGORY_FILTER->value,
+                        'has_container' => false,
+                        'title' => 'Choose Category/s',
+                    ],
+                ],
             ],
         ]
     ],
@@ -61,6 +81,25 @@ return [
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
                 'pagination' => true,
+                'pagination_type' => 'page',
+                'pagination_scroll_type' => 'block',
+                'sidebar_widgets' => [
+                    [
+                        'type' => ListingsBlockSidebarWidget::SEARCH_FILTER->value,
+                        'has_container' => false,
+                        'title' => 'Search',
+                    ],
+                    [
+                        'type' => ListingsBlockSidebarWidget::PROXIMITY_FILTER->value,
+                        'has_container' => false,
+                        'title' => 'Set Proximity',
+                    ],
+                    [
+                        'type' => ListingsBlockSidebarWidget::CATEGORY_FILTER->value,
+                        'has_container' => false,
+                        'title' => 'Choose Category/s',
+                    ],
+                ],
             ],
 
         ]

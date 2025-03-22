@@ -93,8 +93,11 @@ class PageService extends BaseService
             unset($data['type']);
         }
         $atts = $data;
-        if (!empty($data['properties'])) {
+        if (!empty($data['properties']) && is_array($data['properties'])) {
             $atts['properties'] = json_encode($data['properties']);
+        }
+        if (!empty($data['sidebar_widgets']) && is_array($data['sidebar_widgets'])) {
+            $atts['sidebar_widgets'] = json_encode($data['sidebar_widgets']);
         }
         $page->blocks()->attach($block->id, $atts);
         return true;
@@ -102,6 +105,14 @@ class PageService extends BaseService
 
     public function updatePageBlock(PageBlock $pageBlock, array $data)
     {   
+        $properties = $pageBlock->properties ?? [];
+        if (!empty($data['properties']) && is_array($data['properties'])) {
+            $data['properties'] = [
+                ...$properties,
+                ...$data['properties']
+            ];
+        }
+        
         if (!$pageBlock->update($data)) {
             $this->resultsService->addError('Error updating page block', $data);
             return false;

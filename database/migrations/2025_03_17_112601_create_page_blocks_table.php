@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('pagination_scroll_type')->nullable()->default('block');
             $table->text('content')->nullable();
             $table->integer('order')->default(0);
+            $table->json('sidebar_widgets')->nullable();
             $table->json('properties')->nullable();
             $table->timestamps();
         });

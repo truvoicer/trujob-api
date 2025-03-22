@@ -24,7 +24,8 @@ class PageBlockResource extends JsonResource
             'pagination' => (bool)$this->pivot?->pagination,
             'pagination_scroll_type' => $this->pivot?->pagination_scroll_type,
             'content' => $this->pivot?->content,
-            'properties' => $this->pivot?->properties,
+            'properties' => json_decode($this->pivot?->properties),
+            'sidebar_widgets' => json_decode($this->pivot?->sidebar_widgets),
             'order' => $this->pivot->order,
         ];
     }

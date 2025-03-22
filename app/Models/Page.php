@@ -37,6 +37,7 @@ class Page extends Model
             PageBlock::class,
         )->withPivot(
             'order',
+            'sidebar_widgets',
             'properties',
             'order',
             'title',
