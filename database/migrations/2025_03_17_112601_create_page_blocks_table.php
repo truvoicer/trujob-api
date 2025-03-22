@@ -23,9 +23,10 @@ return new class extends Migration
             $table->string('pagination_type')->nullable()->default('page');
             $table->string('pagination_scroll_type')->nullable()->default('block');
             $table->text('content')->nullable();
-            $table->integer('order')->default(0);
+            $table->boolean('has_sidebar')->nullable()->default(false);
             $table->json('sidebar_widgets')->nullable();
             $table->json('properties')->nullable();
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
     }

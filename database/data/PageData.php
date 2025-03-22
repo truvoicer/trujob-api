@@ -34,6 +34,7 @@ return [
                 'pagination' => true,
                 'pagination_type' => 'page',
                 'pagination_scroll_type' => 'block',
+                'has_sidebar' => true,
                 'sidebar_widgets' => [
                     [
                         'type' => ListingsBlockSidebarWidget::SEARCH_FILTER->value,
@@ -83,6 +84,7 @@ return [
                 'pagination' => true,
                 'pagination_type' => 'page',
                 'pagination_scroll_type' => 'block',
+                'has_sidebar' => true,
                 'sidebar_widgets' => [
                     [
                         'type' => ListingsBlockSidebarWidget::SEARCH_FILTER->value,

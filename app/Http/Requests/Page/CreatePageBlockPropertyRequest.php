@@ -56,6 +56,10 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'sometimes',
                 Rule::enum(PaginationScrollType::class),
             ],
+            'has_sidebar' => [
+                'sometimes',
+                'boolean',
+            ],
             'sidebar_widgets' => [
                 'sometimes',
                 'array',

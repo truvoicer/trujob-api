@@ -9,6 +9,7 @@ class PageBlock extends Model
     //
     protected $fillable = [
         'properties',
+        'has_sidebar',
         'sidebar_widgets',
         'order',
         'title',
