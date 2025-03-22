@@ -22,6 +22,8 @@ class PageResource extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'blocks' => $this->whenLoaded('blocks', PageBlockResource::collection($this->blocks)),
+            'has_sidebar' => $this->has_sidebar,
+            'sidebar_widgets' => $this->sidebar_widgets,
             'settings' => [
                 'meta_title' => $this->settings['meta_title'] ?? '',
                 'meta_description' => $this->settings['meta_description'] ?? '',

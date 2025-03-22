@@ -22,6 +22,8 @@ return new class extends Migration
             $table->boolean('is_home')->default(false);
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_protected')->default(false);
+            $table->boolean('has_sidebar')->nullable()->default(false);
+            $table->json('sidebar_widgets')->nullable();
             $table->json('settings')->nullable();
             $table->softDeletes();
 

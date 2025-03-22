@@ -19,15 +19,20 @@ class Page extends Model
         'is_home',
         'is_featured',
         'is_protected',
+        'has_sidebar',
+        'sidebar_widgets',
         'settings',
     ];
 
     protected $casts = [
         'view' => ViewType::class,
         'settings' => 'array',
+        'sidebar_widgets' => 'array',
         'is_active' => 'boolean',
         'is_home' => 'boolean',
         'is_featured' => 'boolean',
+        'is_protected' => 'boolean',
+        'has_sidebar' => 'boolean',
     ];
 
     public function blocks()

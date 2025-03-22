@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Page;
 
+use App\Enums\PageSidebarWidget;
 use App\Enums\ViewType;
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Requests\Menu\CreateMenuItemRequest;
@@ -62,6 +63,35 @@ class CreatePageRequest extends FormRequest
             'is_protected' => [
                 'sometimes',
                 'boolean',
+            ],
+            'has_sidebar' => [
+                'sometimes',
+                'boolean',
+            ],
+            'sidebar_widgets' => [
+                'sometimes',
+                'array',
+            ],
+            'sidebar_widgets.*.type' => [
+                'required_if:has_sidebar,true',
+                Rule::enum(PageSidebarWidget::class)
+            ],
+            'sidebar_widgets.*.title' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
+            'sidebar_widgets.*.has_container' => [
+                'required',
+                'boolean',
+            ],
+            'sidebar_widgets.*.order' => [
+                'sometimes',
+                'integer',
+            ],
+            'sidebar_widgets.*.properties' => [
+                'sometimes',
+                'array',
             ],
             'settings' => [
                 'sometimes',
