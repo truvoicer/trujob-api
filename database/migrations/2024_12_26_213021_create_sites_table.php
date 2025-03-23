@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('title')->nullable();
             $table->string('description')->nullable();
-            $table->string('keywords')->nullable();
+            $table->string('seo_title')->nullable();
+            $table->string('seo_description')->nullable();
+            $table->string('seo_keywords')->nullable();
             $table->string('author')->nullable();
             $table->string('logo')->nullable();
             $table->string('favicon')->nullable();

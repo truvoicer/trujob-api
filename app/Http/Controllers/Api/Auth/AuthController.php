@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\GenerateApiTokenRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\AccessTokenResource;
 use App\Http\Resources\PersonalAccessTokenResource;
@@ -94,12 +95,12 @@ class AuthController extends Controller
         return $this->sendSuccessResponse("Success", $user);
     }
 
-    public function newToken(Request $request): \Illuminate\Http\JsonResponse
+    public function newToken(GenerateApiTokenRequest $request): \Illuminate\Http\JsonResponse
     {
         $generateToken = $this->userAdminService->createUserTokenByRoleId(
             $request->user(),
-            $request->get('role_id'),
-            $request->get('expires_at', null),
+            $request->validated('role_id'),
+            $request->validated('expires_at', null),
         );
 
         if (!$generateToken) {

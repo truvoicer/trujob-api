@@ -196,8 +196,8 @@ class AdminController extends Controller
         }
         $generateToken = $this->userAdminService->createUserTokenByRoleId(
             $user,
-            $request->get('role_id'),
-            $request->get('expires_at', null),
+            $request->validated('role_id'),
+            $request->validated('expires_at', null),
         );
         if (!$generateToken) {
             return $this->sendErrorResponse(

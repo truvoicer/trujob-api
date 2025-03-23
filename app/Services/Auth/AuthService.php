@@ -2,48 +2,51 @@
 
 namespace App\Services\Auth;
 
+use App\Enums\Auth\ApiAbility;
 use App\Helpers\Db\DbHelpers;
 use App\Repositories\RoleRepository;
 use Illuminate\Database\Eloquent\Collection;
 
 class AuthService
 {
-    const ABILITY_SUPERUSER = 'superuser';
-    const ABILITY_ADMIN = 'admin';
-    const ABILITY_APP_USER = 'app_user';
-    const ABILITY_USER = 'user';
     const DEFAULT_ROLES = [
         [
-            'name' => self::ABILITY_SUPERUSER,
+            'name' => ApiAbility::SUPERUSER->value,
             'label' => 'Super User',
             'ability' => 'api:superuser',
             'available_roles' => [
-                self::ABILITY_ADMIN,
-                self::ABILITY_USER,
-                self::ABILITY_APP_USER
+                ApiAbility::ADMIN->value,
+                ApiAbility::USER->value,
+                ApiAbility::APP_USER->value
             ]
         ],
         [
-            'name' => self::ABILITY_ADMIN,
+            'name' => ApiAbility::ADMIN->value,
             'label' => 'Admin',
             'ability' => 'api:admin',
             'available_roles' => [
-                self::ABILITY_USER,
-                self::ABILITY_APP_USER
+                ApiAbility::USER->value,
+                ApiAbility::APP_USER->value
             ]
         ],
         [
-            'name' => self::ABILITY_USER,
+            'name' => ApiAbility::USER->value,
             'label' => 'User',
             'ability' => 'api:user',
             'available_roles' => [
-                self::ABILITY_APP_USER
+                ApiAbility::APP_USER->value
             ]
         ],
         [
-            'name' => self::ABILITY_APP_USER,
+            'name' => ApiAbility::APP_USER->value,
             'label' => 'App User',
             'ability' => 'api:app_user',
+            'available_roles' => []
+        ],
+        [
+            'name' => ApiAbility::SITE->value,
+            'label' => 'Site',
+            'ability' => 'api:site',
             'available_roles' => []
         ],
     ];

@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\Page;
+namespace App\Http\Controllers\Api\Site;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Page\CreatePageRequest;
 use App\Http\Requests\Page\EditPageRequest;
+use App\Http\Requests\Site\CreateSiteRequest;
+use App\Http\Requests\Site\EditSiteRequest;
 use App\Http\Resources\PageResource;
+use App\Http\Resources\SiteResource;
 use App\Models\Page;
 use App\Models\Site;
 use App\Services\Page\PageService;
@@ -27,15 +30,15 @@ class SiteController extends Controller
 
     public function index(Request $request)
     {
-        return [];
+        return SiteResource::collection(Site::all());
     }
 
-    public function view(Page $page)
+    public function view(Site $site)
     {
-        return new PageResource($page);
+        return new SiteResource($site);
     }
 
-    public function create(CreatePageRequest $request)
+    public function create(CreateSiteRequest $request)
     {
         $this->siteService->setUser($request->user());
         $create = $this->siteService->createSite($request->validated());
@@ -49,7 +52,7 @@ class SiteController extends Controller
         ]);
     }
 
-    public function update(EditPageRequest $request, Site $site)
+    public function update(EditSiteRequest $request, Site $site)
     {
         $this->siteService->setUser($request->user());
         $create = $this->siteService->updateSite($site, $request->validated());

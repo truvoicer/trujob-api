@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Auth\ApiAbility;
 use App\Models\Block;
 use App\Models\Listing;
 use App\Models\ListingBrand;
@@ -15,6 +16,7 @@ use App\Models\ListingReview;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\Role;
+use App\Models\Site;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\UserFollow;
@@ -25,11 +27,13 @@ use App\Models\UserReward;
 use App\Models\UserSetting;
 use App\Services\Admin\AuthService;
 use App\Services\Data\DefaultData;
+use App\Services\Site\SiteService;
 use App\Services\User\UserAdminService;
 use Database\Seeders\admin\BlockSeeder;
 use Database\Seeders\admin\PageSeeder;
 use Database\Seeders\admin\PermissionSeeder;
 use Database\Seeders\admin\SettingSeeder;
+use Database\Seeders\admin\SiteSeeder;
 use Database\Seeders\firebase\FirebaseTopicSeeder;
 use Database\Seeders\listing\BrandSeeder;
 use Database\Seeders\listing\CategorySeeder;
@@ -48,7 +52,7 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(UserAdminService $userAdminService): void
+    public function run(UserAdminService $userAdminService, SiteService $siteService): void
     {
         $this->call([
             RoleSeeder::class,
@@ -63,6 +67,7 @@ class DatabaseSeeder extends Seeder
             BlockSeeder::class,
             PageSeeder::class,
             PermissionSeeder::class,
+            SiteSeeder::class,
             SettingSeeder::class
         ]);
 
@@ -81,7 +86,7 @@ class DatabaseSeeder extends Seeder
             ->has(ListingProductType::factory()->count(5));
 
 
-        $getSuperUserData = AuthService::getApiAbilityData(AuthService::ABILITY_SUPERUSER);
+        $getSuperUserData = AuthService::getApiAbilityData(ApiAbility::SUPERUSER->value);
         if (!$getSuperUserData) {
             throw new \Exception('Error finding superuser ability data during seeding');
         }
@@ -129,10 +134,17 @@ class DatabaseSeeder extends Seeder
         }
         $token = $userAdminService->createUserToken($user);
         $tokenData = [
-//            'data' => $token->accessToken->toArray(),
-            'token' => $token->plainTextToken,
+            'user_token' => $token->plainTextToken,
         ];
-        $this->command->info('User token created successfully');
+        foreach (Site::all() as $site) {
+            $siteToken = $siteService->createToken($site);
+            if (!$siteToken) {
+                throw new \Exception('Error creating site token');
+            }
+            $tokenData['sites'] = [];
+            $tokenData['sites'][$site->slug] = $siteToken->plainTextToken;
+        }
+        $this->command->info('Tokens generated:');
         var_dump($tokenData);
     }
 }

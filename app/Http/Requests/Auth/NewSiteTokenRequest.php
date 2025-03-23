@@ -3,11 +3,10 @@
 namespace App\Http\Requests\Auth;
 
 use App\Enums\Auth\ApiTokenExpiry;
-use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class GenerateApiTokenRequest extends FormRequest
+class NewSiteTokenRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,9 +25,6 @@ class GenerateApiTokenRequest extends FormRequest
     {
         return [
             'expires_at' => Rule::enum(ApiTokenExpiry::class),
-            'role_id' => [
-                Rule::exists(Role::TABLE_NAME, 'id')
-            ]
         ];
     }
 }

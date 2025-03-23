@@ -17,11 +17,11 @@ class SettingSeeder extends Seeder
         if (!$data) {
             throw new \Exception('Error reading SettingData.php file ' . database_path('data/SettingData.php'));
         }
-        foreach ($data as $item) {
-            $create = Setting::query()->updateOrCreate(
-                ['key' => $item['key']],
-                $item
-            );
+        $setting = Setting::query()->first();
+        if (!$setting) {
+            Setting::query()->create($data);
+        } else {
+            $setting->update($data);
         }
     }
 }

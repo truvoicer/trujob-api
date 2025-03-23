@@ -2,9 +2,9 @@
 
 namespace Database\Seeders\user;
 
+use App\Enums\Auth\ApiAbility;
 use App\Models\Role;
 use App\Models\User;
-use App\Services\Auth\AuthService;
 use App\Services\Data\DefaultData;
 use App\Services\User\RoleService;
 use App\Services\User\UserAdminService;
@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
     {
         $testUserData = DefaultData::TEST_USER_DATA;
         $role = $roleService->getRoleRepository()->findOneBy(
-            [['name', '=', AuthService::ABILITY_SUPERUSER]]
+            [['name', '=', ApiAbility::SUPERUSER->value]]
         );
 
         if (!$role instanceof Role) {

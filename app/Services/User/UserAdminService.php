@@ -2,6 +2,8 @@
 
 namespace App\Services\User;
 
+use App\Enums\Auth\ApiAbility;
+use App\Enums\Auth\ApiTokenExpiry;
 use App\Helpers\Db\DbHelpers;
 use App\Models\Role;
 use App\Models\User;
@@ -10,15 +12,17 @@ use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
 use App\Services\Auth\AuthService;
 use App\Services\BaseService;
+use App\Traits\ApiTokenTrait;
 use Laravel\Sanctum\PersonalAccessToken;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserAdminService extends BaseService
 {
-    const DEFAULT_TOKEN_EXPIRY = '+1 days';
-    const NO_TOKEN_EXPIRY = 'NO_TOKEN_EXPIRY';
+    use ApiTokenTrait;
+
     private PersonalAccessTokenRepository $personalAccessTokenRepository;
     private RoleRepository $roleRepository;
+
     public function __construct(
         private AuthService $authService
     )
@@ -29,9 +33,6 @@ class UserAdminService extends BaseService
         $this->roleRepository = new RoleRepository();
     }
 
-    public static function userTokenHasAbility(User $user, string $ability) {
-        return $user->tokenCan(AuthService::getApiAbility($ability));
-    }
 
     public function findByParams(string $sort, string $order, ?int $count = null) {
         $this->userRepository->setPagination(true);
@@ -51,33 +52,51 @@ class UserAdminService extends BaseService
         return $this->userRepository->createUser($userData, $roleIds);
     }
 
-    public function getUserToken(User $user) {
-        $token = $this->personalAccessTokenRepository->getLatestAccessToken($user);
-        if ($token instanceof PersonalAccessToken) {
+    public function getUserToken(User $model) {
+        $token = $this->getlatestToken($model);
+        if ($token) {
             return $token;
         }
-        return $this->createUserToken($user);
+        return $this->createUserToken($model);
+    }
+
+    public static function userTokenHasAbility(User $user, string $ability) {
+        return $user->tokenCan(AuthService::getApiAbility($ability));
     }
 
     public function getUserRoles(User $user) {
-        $appUserRoleData = AuthService::getApiAbilityData(AuthService::ABILITY_APP_USER);
+        $appUserRoleData = AuthService::getApiAbilityData(ApiAbility::APP_USER->value);
         return $this->roleRepository->fetchUserRoles($user, [$appUserRoleData['name']]);
     }
+
+    public function createUserTokenByRole(User $user, Role $role, ?\DateTime $expiry = null)
+    {
+        return $user->createToken($role->name, [$role->ability], $expiry);
+    }
+    
     /**
      * @throws \Exception
      */
-    public function createUserTokenByRoleId(User $user, int $roleId, ?string $expiry = null)
+    public function createUserTokenByRoleId(User $user, int $roleId, ?ApiTokenExpiry $expiry = ApiTokenExpiry::ONE_DAY)
     {
         $role = $this->roleRepository::findUserRoleBy($user, ['role_id' => $roleId]);
         if (!$role instanceof Role) {
             return false;
         }
+
         if (empty($expiry)) {
-            $expiry = self::DEFAULT_TOKEN_EXPIRY;
+            $expiry = ApiTokenExpiry::ONE_DAY;
         }
-        return $this->createUserTokenByRole($user, $role, new \DateTime($expiry));
+        
+        if ($expiry !== ApiTokenExpiry::NEVER) {
+            $expiryDate = new \DateTime($expiry->value);
+        } else {
+            $expiryDate = null;
+        }
+
+        return $this->createUserTokenByRole($user, $role, $expiryDate);
     }
-    public function createUserToken(User $user, ?string $expiry = self::DEFAULT_TOKEN_EXPIRY)
+    public function createUserToken(User $user, ?ApiTokenExpiry $expiry = ApiTokenExpiry::ONE_DAY)
     {
         $availableRoles = AuthService::DEFAULT_ROLES;
         $roles = $user->roles()
@@ -96,17 +115,17 @@ class UserAdminService extends BaseService
         if (!$role instanceof Role) {
             return false;
         }
-        switch ($expiry) {
-            case self::NO_TOKEN_EXPIRY:
-                $expiry = null;
-                break;
+        
+        if (empty($expiry)) {
+            $expiry = ApiTokenExpiry::ONE_DAY;
         }
-
-        return $this->createUserTokenByRole($user, $role, new \DateTime($expiry));
-    }
-    public function createUserTokenByRole(User $user, Role $role, \DateTime $expiry)
-    {
-        return $user->createToken($role->name, [$role->ability], $expiry);
+        
+        if ($expiry !== ApiTokenExpiry::NEVER) {
+            $expiryDate = new \DateTime($expiry->value);
+        } else {
+            $expiryDate = null;
+        }
+        return $this->createUserTokenByRole($user, $role, $expiryDate);
     }
 
     public function getUserByEmail(string $email)
@@ -122,11 +141,6 @@ class UserAdminService extends BaseService
         );
     }
 
-    public function findApiTokensByParams(User $user, string $sort, string $order, ?int $count = null)
-    {
-        return $user->tokens()->orderBy($sort, $order)->limit($count)->paginate();
-    }
-
     public function updateUser(User $user, array $data, ?array $roles = [])
     {
         $roleIds = $this->authService->getRoleIds($roles);
@@ -139,35 +153,12 @@ class UserAdminService extends BaseService
         return $this->userRepository->delete();
     }
 
-    public function deleteUserExpiredTokens(User $user)
-    {
-        return $user->tokens()->where('expires_at', '<', now())->delete();
-    }
-
-    public function deleteApiTokenById(int $id)
-    {
-        $apiToken = PersonalAccessToken::where('id', $id)->first();
-        if (!$apiToken instanceof PersonalAccessToken) {
-            throw new BadRequestHttpException("ApiToken does not exist in database...");
-        }
-        return $apiToken->delete();
-    }
-
-    public function deleteApiToken(PersonalAccessToken $apiToken)
-    {
-        return $apiToken->delete();
-    }
-
     public function deleteBatchUser(array $ids)
     {
         if (!count($ids)) {
             throw new BadRequestHttpException("No user ids provided.");
         }
         return $this->userRepository->deleteBatch($ids);
-    }
-    public function getPersonalAccessTokenRepository(): PersonalAccessTokenRepository
-    {
-        return $this->personalAccessTokenRepository;
     }
 
 }

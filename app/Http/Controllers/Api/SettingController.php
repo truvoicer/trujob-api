@@ -16,7 +16,7 @@ class SettingController extends Controller
 
     public function index(Request $request)
     {
-        return SettingsResource::collection(Setting::all());
+        return new SettingsResource(Setting::first());
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Site;
 use App\Models\User;
 use DateTime;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -30,10 +31,10 @@ class PersonalAccessTokenRepository extends BaseRepository
         }
         return true;
     }
-    public function getLatestAccessToken(User $user) {
+    public function getLatestAccessToken(User|Site $model) {
         $dateTime = new DateTime();
 
-        $token = $user->tokens()
+        $token = $model->tokens()
             ->where('expires_at', '>', $dateTime->format('Y-m-d H:i:s'))
             ->orderBy('created_at', 'desc')
             ->first();

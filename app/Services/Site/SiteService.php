@@ -2,12 +2,18 @@
 
 namespace App\Services\Site;
 
+use App\Enums\Auth\ApiAbility;
+use App\Enums\Auth\ApiTokenExpiry;
 use App\Models\Site;
+use App\Services\Admin\AuthService;
 use App\Services\BaseService;
 use App\Services\ResultsService;
+use App\Traits\ApiTokenTrait;
 
 class SiteService extends BaseService
 {
+    use ApiTokenTrait;
+
     private ResultsService $resultsService;
 
     private Site $site;
@@ -26,6 +32,26 @@ class SiteService extends BaseService
     public function findOneBy(string $key, string|int $value)
     {
         return Site::where($key, $value)->first();
+    }
+
+    public function createToken(Site $site, ?ApiTokenExpiry $expiry = ApiTokenExpiry::NEVER)
+    {
+
+        if (empty($expiry)) {
+            $expiry = ApiTokenExpiry::NEVER;
+        }
+        
+        if ($expiry !== ApiTokenExpiry::NEVER) {
+            $expiryDate = new \DateTime($expiry->value);
+        } else {
+            $expiryDate = null;
+        }
+        
+        $siteAbilityData = AuthService::getApiAbilityData(ApiAbility::SITE->value);
+        if (!$siteAbilityData) {
+            throw new \Exception('Site ability not found');
+        }
+        return $site->createToken(ApiAbility::SITE->value, [$siteAbilityData['ability']], $expiryDate);
     }
 
     public function createSite(array $data)

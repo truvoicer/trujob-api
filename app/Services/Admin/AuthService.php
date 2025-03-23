@@ -2,33 +2,42 @@
 
 namespace App\Services\Admin;
 
+use App\Enums\Auth\ApiAbility;
+
 class AuthService
 {
-    const ABILITY_SUPERUSER = 'superuser';
-    const ABILITY_PUBLIC = 'public';
-    const ABILITY_ADMIN = 'admin';
-    const ABILITY_APP_USER = 'app_user';
+
     const API_ABILITIES = [
         [
-            'name' => 'superuser',
+            'name' => ApiAbility::SUPERUSER->value,
             'label' => 'Superuser',
             'ability' => 'api:superuser'
         ],
         [
-            'name' => 'public',
+            'name' => ApiAbility::PUBLIC->value,
             'label' => 'Public',
             'ability' => 'api:public'
         ],
         [
-            'name' => 'admin',
+            'name' => ApiAbility::ADMIN->value,
             'label' => 'Admin',
             'ability' => 'api:admin'
         ],
         [
-            'name' => 'app_user',
+            'name' => ApiAbility::APP_USER->value,
             'label' => 'App User',
             'ability' => 'api:app_user'
-        ]
+        ],
+        [
+            'name' => ApiAbility::USER->value,
+            'label' => 'User',
+            'ability' => 'api:user'
+        ],
+        [
+            'name' => ApiAbility::SITE->value,
+            'label' => 'Site',
+            'ability' => 'api:site'
+        ],
     ];
 
     public static function getApiAbility(string $name)
