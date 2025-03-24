@@ -15,4 +15,10 @@ return [
     [
         'type' => BlockType::LISTINGS_GRID,
     ],
+    [
+        'type' => BlockType::LOGIN,
+    ],
+    [
+        'type' => BlockType::REGISTER,
+    ],
 ];
