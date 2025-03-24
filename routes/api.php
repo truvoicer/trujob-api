@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\AuthLoginController;
+use App\Http\Controllers\Api\Auth\AuthRegisterController;
 use App\Http\Controllers\Api\Firebase\FirebaseDeviceController;
 use App\Http\Controllers\Api\Firebase\FirebaseMessageController;
 use App\Http\Controllers\Api\Firebase\FirebaseTopicController;
@@ -43,9 +45,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(AppPublic::class)->group(function () {
-    Route::prefix('auth')->name('auth.')->group(function () {
-        Route::post('/login', [AuthController::class, 'login'])->name('login');
-    });
 
     Route::get('/page/{page:slug}', [PageController::class, 'view'])->name('page.view');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
@@ -74,6 +73,10 @@ Route::middleware(AppPublic::class)->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::post('/login', AuthLoginController::class)->name('login');
+        Route::post('/register', AuthRegisterController::class)->name('register');
+    });
     Route::prefix('site')->name('site.')->group(function () {
         Route::prefix('{site:slug}')->group(function () {
             Route::get('/', [SiteController::class, 'view'])->name('view');
