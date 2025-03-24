@@ -55,6 +55,7 @@ class DatabaseSeeder extends Seeder
     public function run(UserAdminService $userAdminService, SiteService $siteService): void
     {
         $this->call([
+            SiteSeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
             LocaleSeeder::class,
@@ -67,7 +68,6 @@ class DatabaseSeeder extends Seeder
             BlockSeeder::class,
             PageSeeder::class,
             PermissionSeeder::class,
-            SiteSeeder::class,
             SettingSeeder::class
         ]);
 

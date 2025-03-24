@@ -6,6 +6,7 @@ use App\Enums\ViewType;
 
 return [
     [
+        'site_id' => 1,
         'slug' => 'home',
         'title' => 'Home',
         'content' => 'Welcome to our home page',
