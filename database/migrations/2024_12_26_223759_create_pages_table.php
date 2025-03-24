@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('site_id')->after('id')->constrained('sites')->onDelete('cascade');
             $table->string('view')->nullable();
             $table->string('slug')->nullable();
             $table->string('title')->nullable();

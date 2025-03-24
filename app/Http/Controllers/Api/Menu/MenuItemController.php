@@ -3,50 +3,48 @@
 namespace App\Http\Controllers\Api\Menu;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Menu\CreateMenuItemRequest;
 use App\Http\Requests\Menu\CreateMenuRequest;
+use App\Http\Requests\Menu\EditMenuItemRequest;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Services\Admin\Menu\MenuService;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class MenuItemController extends Controller
 {
-    protected MenuService $menuService;
 
-    public function __construct(MenuService $menuService, Request $request)
-    {
-        $this->menuService = $menuService;
-    }
+    public function __construct(
+        private MenuService $menuService
+    )
+    {}
 
-    public function createMenuItem(Menu $menu, Request $request) {
+    public function create(Menu $menu, CreateMenuItemRequest $request) {
         $this->menuService->setUser($request->user());
         $this->menuService->setMenu($menu);
-        $create = $this->menuService->createMenuItem($request->all());
+        $create = $this->menuService->createMenuItem($menu, $request->validated());
         if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating app  menu item',
-                [],
-                $this->menuService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error creating app menu item',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('App Menu created', [], $this->menuService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'MenuItem created',
+        ]);
     }
 
-    public function updateMenuItem(MenuItem $menuItem, Request $request) {
+    public function update(MenuItem $menuItem, EditMenuItemRequest $request) {
         $this->menuService->setUser($request->user());
         $this->menuService->setMenuItem($menuItem);
-        $update = $this->menuService->updateMenuItem($request->all());
+        $update = $this->menuService->updateMenuItem($menuItem, $request->validated());
         if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating app menu item',
-                [],
-                $this->menuService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error updating app menu item',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('MenuItem updated', [], $this->menuService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'MenuItem updated',
+        ]);
     }
     public function addMenuToMenuItem(Menu $menu, MenuItem $menuItem, CreateMenuRequest $request) {
         $this->menuService->setUser($request->user());
@@ -77,17 +75,15 @@ class MenuItemController extends Controller
         }
         return $this->sendSuccessResponse('MenuItem removed', [], $this->menuService->getResultsService()->getErrors());
     }
-    public function deleteMenuItem(MenuItem $menuItem) {
+    public function destroy(MenuItem $menuItem) {
         $this->menuService->setMenuItem($menuItem);
-        $delete = $this->menuService->deleteMenuItem();
-        if (!$delete) {
-            return $this->sendErrorResponse(
-                'Error deleting app menu item',
-                [],
-                $this->menuService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+        if (!$this->menuService->deleteMenuItem()) {
+            return response()->json([
+                'message' => 'Error deleting app menu item',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('MenuItem deleted', [], $this->menuService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'MenuItem deleted',
+        ]);
     }
 }

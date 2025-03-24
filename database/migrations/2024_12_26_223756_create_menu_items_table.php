@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('menu_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('site_id')->after('id')->constrained('sites')->onDelete('cascade');
             $table->foreignId('page_id')->nullable()->constrained('pages')->nullOnDelete();
             $table->boolean('active')->default(true);
             $table->string('title')->nullable();

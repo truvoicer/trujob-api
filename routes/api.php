@@ -63,12 +63,12 @@ Route::middleware(AppPublic::class)->group(function () {
 
     Route::prefix('app-menu')->name('app_menu.')->group(function () {
         Route::prefix('{appMenu}')->group(function () {
-            Route::get('/', [AppMenuController::class, 'fetchAppMenu'])->name('fetch');
+            Route::get('/', [AppMenuController::class, 'view'])->name('view');
         });
     });
     Route::prefix('menu')->name('menu.')->group(function () {
         Route::prefix('{menu}')->group(function () {
-            Route::get('/', [MenuController::class, 'fetchMenu'])->name('fetch');
+            Route::get('/', [MenuController::class, 'view'])->name('view');
         });
     });
 });
@@ -343,29 +343,29 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
     });
     Route::prefix('app-menu')->name('app_menu.')->group(function () {
-        Route::post('/create', [AppMenuController::class, 'createAppMenu'])->name('create');
+        Route::post('/create', [AppMenuController::class, 'create'])->name('create');
         Route::prefix('{appMenu}')->group(function () {
-            Route::patch('/update', [AppMenuController::class, 'updateAppMenu'])->name('update');
-            Route::delete('/delete', [AppMenuController::class, 'deleteAppMenu'])->name('delete');
+            Route::patch('/update', [AppMenuController::class, 'update'])->name('update');
+            Route::delete('/delete', [AppMenuController::class, 'destroy'])->name('delete');
             Route::prefix('item')->name('item.')->group(function () {
-                Route::post('/create', [AppMenuItemController::class, 'createAppMenuItem'])->name('create');
+                Route::post('/create', [AppMenuItemController::class, 'create'])->name('create');
                 Route::prefix('{appMenuItem}')->group(function () {
-                    Route::patch('/update', [AppMenuItemController::class, 'updateAppMenuItem'])->name('update');
-                    Route::delete('/delete', [AppMenuItemController::class, 'deleteAppMenuItem'])->name('delete');
+                    Route::patch('/update', [AppMenuItemController::class, 'update'])->name('update');
+                    Route::delete('/delete', [AppMenuItemController::class, 'destroy'])->name('delete');
                 });
             });
         });
     });
     Route::prefix('menu')->name('menu.')->group(function () {
-        Route::post('/create', [MenuController::class, 'createMenu'])->name('create');
+        Route::post('/create', [MenuController::class, 'create'])->name('create');
         Route::prefix('{menu}')->group(function () {
-            Route::patch('/update', [MenuController::class, 'updateMenu'])->name('update');
-            Route::delete('/delete', [MenuController::class, 'deleteMenu'])->name('delete');
+            Route::patch('/update', [MenuController::class, 'update'])->name('update');
+            Route::delete('/delete', [MenuController::class, 'destroy'])->name('delete');
             Route::prefix('item')->name('item.')->group(function () {
-                Route::post('/create', [MenuItemController::class, 'createMenuItem'])->name('create');
+                Route::post('/create', [MenuItemController::class, 'create'])->name('create');
                 Route::prefix('{menuItem}')->group(function () {
-                    Route::patch('/update', [MenuItemController::class, 'updateMenuItem'])->name('update');
-                    Route::delete('/delete', [MenuItemController::class, 'deleteMenuItem'])->name('delete');
+                    Route::patch('/update', [MenuItemController::class, 'update'])->name('update');
+                    Route::delete('/delete', [MenuItemController::class, 'destroy'])->name('delete');
                 });
             });
         });

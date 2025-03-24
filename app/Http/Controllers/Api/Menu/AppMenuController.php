@@ -18,13 +18,13 @@ class AppMenuController extends Controller
         $this->menuService = $menuService;
     }
 
-    public function fetchAppMenu(string $menu) {
+    public function view(string $menu) {
         return new AppMenuResource(
             $this->menuService->appMenuFetch($menu)
         );
     }
 
-    public function createAppMenu(Request $request) {
+    public function create(Request $request) {
         $this->menuService->setUser($request->user());
         $create = $this->menuService->createAppMenu($request->all());
         if (!$create) {
@@ -38,7 +38,7 @@ class AppMenuController extends Controller
         return $this->sendSuccessResponse('App Menu created', [], $this->menuService->getResultsService()->getErrors());
     }
 
-    public function updateAppMenu(AppMenu $appMenu, Request $request) {
+    public function update(AppMenu $appMenu, Request $request) {
         $this->menuService->setUser($request->user());
         $this->menuService->setAppMenu($appMenu);
         $update = $this->menuService->updateAppMenu($request->all());
@@ -52,7 +52,7 @@ class AppMenuController extends Controller
         }
         return $this->sendSuccessResponse('AppMenu updated', [], $this->menuService->getResultsService()->getErrors());
     }
-    public function deleteAppMenu(AppMenu $appMenu) {
+    public function destroy(AppMenu $appMenu) {
         $this->menuService->setAppMenu($appMenu);
         $delete = $this->menuService->deleteAppMenu();
         if (!$delete) {

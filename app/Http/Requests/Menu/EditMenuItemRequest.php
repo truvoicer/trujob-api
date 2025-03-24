@@ -24,6 +24,11 @@ class EditMenuItemRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'site_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('sites', 'id')
+            ],
             'page_id' => [
                 'sometimes',
                 'integer',

@@ -29,6 +29,11 @@ class EditPageRequest extends FormRequest
         $blocksRules = ValidationHelpers::nestedValidation('blocks', (new EditPageBlockRequest())->rules());
         unset($blocksRules['blocks.*.page_id']);
         return [
+            'site_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('sites', 'id')
+            ],
             'view' => [
                 'sometimes',
                 Rule::enum(ViewType::class)

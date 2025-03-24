@@ -18,7 +18,7 @@ class AppMenuItemController extends Controller
         $this->menuService = $menuService;
     }
 
-    public function createAppMenuItem(AppMenu $appMenu, Request $request) {
+    public function create(AppMenu $appMenu, Request $request) {
         $this->menuService->setUser($request->user());
         $this->menuService->setAppMenu($appMenu);
         $create = $this->menuService->createAppMenuItem($request->all());
@@ -33,7 +33,7 @@ class AppMenuItemController extends Controller
         return $this->sendSuccessResponse('App Menu created', [], $this->menuService->getResultsService()->getErrors());
     }
 
-    public function updateAppMenuItem(AppMenuItem $appMenuItem, Request $request) {
+    public function update(AppMenuItem $appMenuItem, Request $request) {
         $this->menuService->setUser($request->user());
         $this->menuService->setAppMenuItem($appMenuItem);
         $update = $this->menuService->updateAppMenuItem($request->all());
@@ -60,7 +60,7 @@ class AppMenuItemController extends Controller
         }
         return $this->sendSuccessResponse('AppMenuItem removed', [], $this->menuService->getResultsService()->getErrors());
     }
-    public function deleteAppMenuItem(AppMenuItem $appMenuItem) {
+    public function destroy(AppMenuItem $appMenuItem) {
         $this->menuService->setAppMenuItem($appMenuItem);
         $delete = $this->menuService->deleteAppMenuItem();
         if (!$delete) {

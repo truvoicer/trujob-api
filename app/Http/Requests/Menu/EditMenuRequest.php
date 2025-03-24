@@ -4,6 +4,7 @@ namespace App\Http\Requests\Menu;
 
 use App\Helpers\Tools\ValidationHelpers;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class EditMenuRequest extends FormRequest
 {
@@ -25,6 +26,11 @@ class EditMenuRequest extends FormRequest
         $menuItemsRules = ValidationHelpers::nestedValidation('menu_items', (new CreateMenuItemRequest())->rules());
         unset($menuItemsRules['menu_items.*.menu_id']);
         return [
+            'site_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('sites', 'id')
+            ],
             'name' => [
                 'sometimes',
                 'string',

@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -13,11 +14,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::table('menu_menu_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->after('id')->constrained('sites')->onDelete('cascade');
-            $table->string('name')->unique();
-            $table->timestamps();
+            $table->foreignId('menu_id')->after('id')->constrained('menus')->onDelete('cascade');
+            $table->foreignId('menu_item_id')->after('menu_id')->constrained('menu_items')->onDelete('cascade');
         });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('menu_menu_items');
     }
 };

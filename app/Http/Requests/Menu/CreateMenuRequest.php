@@ -26,6 +26,11 @@ class CreateMenuRequest extends FormRequest
         $menuItemsRules = ValidationHelpers::nestedValidation('menu_items', (new CreateMenuItemRequest())->rules());
         unset($menuItemsRules['menu_items.*.menu_id']);
         return [
+            'site_id' => [
+                'required',
+                'integer',
+                Rule::exists('sites', 'id')
+            ],
             'name' => [
                 'required',
                 'string',
