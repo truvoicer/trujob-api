@@ -57,6 +57,7 @@ return [
         ]
     ],
     [
+        'site_id' => 1,
         'slug' => 'about',
         'title' => 'About',
         'content' => 'Welcome to our about page',
@@ -108,6 +109,7 @@ return [
         ]
     ],
     [
+        'site_id' => 1,
         'slug' => 'contact',
         'title' => 'Contact',
         'content' => 'Welcome to our contact page',
@@ -126,6 +128,34 @@ return [
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
+            ],
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'slug' => 'login',
+        'title' => 'Login',
+        'content' => 'Welcome to our login page',
+        'view' => ViewType::Page,
+        'blocks' => [
+            [
+                'type' => BlockType::LOGIN,
+                'order' => 0,
+                'title' => 'Log into your account',
+            ],
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'slug' => 'register',
+        'title' => 'Register',
+        'content' => 'Welcome to our register page',
+        'view' => ViewType::Page,
+        'blocks' => [
+            [
+                'type' => BlockType::REGISTER,
+                'order' => 0,
+                'title' => 'Register for an account',
             ],
         ]
     ],

@@ -24,6 +24,8 @@ class MenuItemResource extends JsonResource
             'target' => $this->target,
             'order' => $this->order,
             'icon' => $this->icon,
+            'li_class' => $this->li_class,
+            'a_class' => $this->a_class,
             'menus' => $this->whenLoaded('menus', MenuResource::collection($this->menus)),
         ];
     }

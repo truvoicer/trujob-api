@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Menu;
 
-use App\Helpers\Tools\ValidationHelpers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,13 +22,16 @@ class CreateMenuRequest extends FormRequest
      */
     public function rules(): array
     {
-        $menuItemsRules = ValidationHelpers::nestedValidation('menu_items', (new CreateMenuItemRequest())->rules());
-        unset($menuItemsRules['menu_items.*.menu_id']);
         return [
             'site_id' => [
                 'required',
                 'integer',
                 Rule::exists('sites', 'id')
+            ],
+            'menu_item_id' => [
+                'sometimes',
+                'integer',
+                Rule::exists('menu_items', 'id'),
             ],
             'name' => [
                 'required',
@@ -37,11 +39,15 @@ class CreateMenuRequest extends FormRequest
                 'max:255',
                 Rule::unique('menus', 'name')
             ],
+            'ul_class' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
             'menu_items' => [
                 'sometimes',
                 'array',
             ],
-            ...$menuItemsRules
         ];
     }
 }

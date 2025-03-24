@@ -17,6 +17,8 @@ class MenuResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'ul_class' => $this->ul_class,
+            'active' => $this->active,
             'menuItems' => $this->whenLoaded('menuItems', MenuItemResource::collection($this->menuItems))
         ];
     }

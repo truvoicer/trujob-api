@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('app_menus', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('site_id')->constrained('sites')->onDelete('cascade');
+            $table->foreignId('app_menu_item_id')->nullable()->constrained('app_menu_items')->onDelete('cascade');
             $table->string('name')->unique();
             $table->timestamps();
         });

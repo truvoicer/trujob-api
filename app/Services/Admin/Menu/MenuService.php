@@ -4,20 +4,22 @@ namespace App\Services\Admin\Menu;
 
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\Page;
+use App\Repositories\MenuRepository;
 use App\Services\BaseService;
 use App\Services\ResultsService;
 
 class MenuService extends BaseService
 {
-    private ResultsService $resultsService;
 
     private Menu $menu;
     private MenuItem $menuItem;
 
-    public function __construct(ResultsService $resultsService)
-    {
+    public function __construct(
+        private ResultsService $resultsService, 
+        private MenuRepository $menuRepository
+    ){
         parent::__construct();
-        $this->resultsService = $resultsService;
     }
 
     public function menuFetch(string $menuName) {
@@ -25,16 +27,21 @@ class MenuService extends BaseService
     }
 
     public function createMenu(array $data) {
-        $this->menu = new Menu($data);
-        if (!$this->menu->save()) {
+        $menuItems = [];
+        if (!empty($data['menu_items']) && is_array($data['menu_items'])) {
+            $menuItems = $data['menu_items'];
+            unset($data['menu_items']);
+        }
+        $menu = new Menu($data);
+        if (!$menu->save()) {
             $this->resultsService->addError('Error adding app menu', $data);
             return false;
         }
-        if (empty($data['menu_items'])) {
+        if (empty($menuItems)) {
             return true;
         }
-        foreach ($data['menu_items'] as $menuItem) {
-            $this->createMenuItem($this->menu, $menuItem);
+        foreach ($menuItems as $menuItem) {
+            $this->createMenuItem($menu, $menuItem);
         }
         if ($this->resultsService->hasErrors()) {
             return false;
@@ -59,10 +66,32 @@ class MenuService extends BaseService
         return true;
     }
     public function createMenuItem(Menu $menu, array $data) {
-        $this->menuItem = $menu->menuItems()->create($data);
-        if (!$this->menu->menuItems()->save($this->menuItem)) {
+        $menus = [];
+        if (!empty($data['menus']) && is_array($data['menus'])) {
+            $menus = $data['menus'];
+            unset($data['menus']);
+        }
+
+        if (!empty($data['page'])) {
+            $page = Page::where('slug', $data['page'])->first();
+            if (!$page) {
+                throw new \Exception('Page not found: ' . $data['page']);
+            }
+            unset($data['page']);
+            $data['page_id'] = $page->id;
+        }
+        if (!array_key_exists('order', $data)) {
+            $data['order'] = $this->menuRepository->getHighestOrder($menu->menuItems());
+        }
+        $menuItem = $menu->menuItems()->create($data);
+        if (!$menu->menuItems()->save($menuItem)) {
             $this->resultsService->addError('Error adding app menu item', $data);
             return false;
+        }
+        foreach ($menus as $subMenu) {
+            $subMenu['menu_item_id'] = $menuItem->id;
+            $subMenu['site_id'] = $menu->site->id;
+            $this->createMenu($subMenu);
         }
         return true;
     }

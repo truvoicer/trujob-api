@@ -30,6 +30,7 @@ use App\Services\Data\DefaultData;
 use App\Services\Site\SiteService;
 use App\Services\User\UserAdminService;
 use Database\Seeders\admin\BlockSeeder;
+use Database\Seeders\admin\MenuSeeder;
 use Database\Seeders\admin\PageSeeder;
 use Database\Seeders\admin\PermissionSeeder;
 use Database\Seeders\admin\SettingSeeder;
@@ -68,7 +69,8 @@ class DatabaseSeeder extends Seeder
             BlockSeeder::class,
             PageSeeder::class,
             PermissionSeeder::class,
-            SettingSeeder::class
+            SettingSeeder::class,
+            MenuSeeder::class,
         ]);
 
 

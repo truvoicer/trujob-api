@@ -13,7 +13,7 @@ class EditMenuItemRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,11 +24,6 @@ class EditMenuItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'site_id' => [
-                'sometimes',
-                'integer',
-                Rule::exists('sites', 'id')
-            ],
             'page_id' => [
                 'sometimes',
                 'integer',
@@ -70,6 +65,22 @@ class EditMenuItemRequest extends FormRequest
             'order' => [
                 'sometimes',
                 'integer',
+            ],
+            'li_class' => [
+                'sometimes',
+                'string',
+                'nullable',
+                'max:255',
+            ],
+            'a_class' => [
+                'sometimes',
+                'string',
+                'nullable',
+                'max:255',
+            ],
+            'menus' => [
+                'sometimes',
+                'array',
             ],
         ];
     }

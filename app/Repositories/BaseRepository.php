@@ -53,6 +53,10 @@ class BaseRepository
         $this->dbHelpers = new DbHelpers();
     }
 
+    public function getHighestOrder($query, string $field = 'order'): int
+    {
+        return $query->max($field) + 1;
+    }
     public function buildCloneEntityStr($query, string $field, string $str, string $separator = '-cloned-'): string{
 
         $all = $query->pluck($field)->toArray();

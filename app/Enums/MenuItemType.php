@@ -5,5 +5,7 @@ enum MenuItemType: string
 {
     case PAGE = 'page';
     case URL = 'url';
-    case MENU = 'menu';
+    case LOGIN = 'login';
+    case LOGOUT = 'logout';
+    case REGISTER = 'register';
 }

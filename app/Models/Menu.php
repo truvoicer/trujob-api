@@ -10,7 +10,15 @@ class Menu extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'site_id',
+        'menu_item_id',
+        'name',
+        'ul_class',
+        'active',
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
     ];
 
     public function menuItems() {
@@ -19,7 +27,13 @@ class Menu extends Model
         );
     }
 
-    public function parentMenuItem() {
+    public function site() {
+        return $this->belongsTo(
+            Site::class
+        );
+    }
+
+    public function menuItem() {
         return $this->belongsTo(
             MenuItem::class
         );

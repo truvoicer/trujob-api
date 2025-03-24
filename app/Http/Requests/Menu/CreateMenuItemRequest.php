@@ -24,11 +24,6 @@ class CreateMenuItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'site_id' => [
-                'required',
-                'integer',
-                Rule::exists('sites', 'id')
-            ],
             'page_id' => [
                 'sometimes',
                 'integer',
@@ -71,6 +66,20 @@ class CreateMenuItemRequest extends FormRequest
             'order' => [
                 'sometimes',
                 'integer',
+            ],
+            'li_class' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
+            'a_class' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
+            'menus' => [
+                'sometimes',
+                'array',
             ],
         ];
     }

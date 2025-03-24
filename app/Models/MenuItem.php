@@ -10,6 +10,7 @@ class MenuItem extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'site_id',
         'page_id',
         'active',
         'title',
@@ -18,6 +19,8 @@ class MenuItem extends Model
         'target',
         'order',
         'icon',
+        'li_class',
+        'a_class',
     ];
 
     protected $casts = [
@@ -42,4 +45,9 @@ class MenuItem extends Model
         );
     }
 
+    public function site() {
+        return $this->belongsTo(
+            Site::class
+        );
+    }
 }

@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->after('id')->constrained('sites')->onDelete('cascade');
+            $table->foreignId('site_id')->constrained('sites')->onDelete('cascade');
+            $table->foreignId('menu_item_id')->nullable()->constrained('menu_items')->onDelete('cascade');
             $table->string('name')->unique();
+            $table->string('ul_class')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

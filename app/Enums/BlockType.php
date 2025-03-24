@@ -7,4 +7,6 @@ enum BlockType: string
     case FEATURED = 'featured-block';
     case ICON_GRID = 'icon-grid-block';
     case LISTINGS_GRID = 'listings-grid-block';
+    case LOGIN = 'login-block';
+    case REGISTER = 'register-block';
 }

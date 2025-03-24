@@ -5,7 +5,6 @@ namespace App\Http\Requests\Page;
 use App\Enums\PageSidebarWidget;
 use App\Enums\ViewType;
 use App\Helpers\Tools\ValidationHelpers;
-use App\Http\Requests\Menu\CreateMenuItemRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +25,7 @@ class EditPageRequest extends FormRequest
      */
     public function rules(): array
     {
-        $blocksRules = ValidationHelpers::nestedValidation('blocks', (new EditPageBlockRequest())->rules());
+        $blocksRules = ValidationHelpers::nestedValidationRules((new EditPageBlockRequest())->rules(), 'blocks');
         unset($blocksRules['blocks.*.page_id']);
         return [
             'site_id' => [
