@@ -101,6 +101,15 @@ class CreatePageRequest extends FormRequest
                 'sometimes',
                 'array',
             ],
+            'roles' => [
+                'sometimes',
+                'array',
+            ],
+            'roles.*' => [
+                'required',
+                'integer',
+                Rule::exists('roles', 'id')
+            ],
             'blocks' => [
                 'sometimes',
                 'array',

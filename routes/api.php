@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\AuthLoginController;
 use App\Http\Controllers\Api\Auth\AuthRegisterController;
+use App\Http\Controllers\Api\Auth\AuthUserController;
 use App\Http\Controllers\Api\Firebase\FirebaseDeviceController;
 use App\Http\Controllers\Api\Firebase\FirebaseMessageController;
 use App\Http\Controllers\Api\Firebase\FirebaseTopicController;
@@ -74,6 +75,7 @@ Route::middleware(AppPublic::class)->group(function () {
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
     Route::prefix('auth')->name('auth.')->group(function () {
+        Route::get('/', [AuthUserController::class, 'view'])->name('view');
         Route::post('/login', AuthLoginController::class)->name('login');
         Route::post('/register', AuthRegisterController::class)->name('register');
     });

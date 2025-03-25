@@ -35,6 +35,11 @@ class Page extends Model
         'has_sidebar' => 'boolean',
     ];
 
+    public function pageBlocks()
+    {
+        return $this->hasMany(PageBlock::class);
+    }
+
     public function blocks()
     {
         return $this->belongsToMany(
@@ -55,5 +60,10 @@ class Page extends Model
             'pagination_scroll_type',
             'content',
         );
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
     }
 }

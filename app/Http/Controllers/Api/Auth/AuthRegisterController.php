@@ -6,12 +6,9 @@ use App\Enums\Auth\ApiAbility;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthRegisterUserRequest;
 use App\Http\Resources\AccessTokenResource;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\Role;
-use App\Models\User;
 use App\Services\User\RoleService;
-use App\Services\User\UserAdminService;
-use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthRegisterController extends Controller

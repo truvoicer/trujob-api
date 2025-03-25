@@ -32,6 +32,15 @@ class CreatePageBlockRequest extends FormRequest
                 'required',
                 'integer',
             ],
+            'roles' => [
+                'sometimes',
+                'array',
+            ],
+            'roles.*' => [
+                'required',
+                'integer',
+                Rule::exists('roles', 'id')
+            ],
             ...(new CreatePageBlockPropertyRequest())->rules(),
         ];
     }

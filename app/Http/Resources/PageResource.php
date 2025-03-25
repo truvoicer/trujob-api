@@ -21,7 +21,7 @@ class PageResource extends JsonResource
             'slug' => $this->slug,
             'title' => $this->title,
             'content' => $this->content,
-            'blocks' => $this->whenLoaded('blocks', PageBlockResource::collection($this->blocks)),
+            'blocks' => $this->whenLoaded('pageBlocks', PageBlockResource::collection($this->pageBlocks)),
             'has_sidebar' => $this->has_sidebar,
             'sidebar_widgets' => $this->sidebar_widgets,
             'settings' => [
@@ -46,6 +46,7 @@ class PageResource extends JsonResource
             'deleted_at' => $this->deleted_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
         ];
     }
 }

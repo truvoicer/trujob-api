@@ -28,4 +28,14 @@ class Role extends Model
             'user_id'
         );
     }
+
+    public function pages()
+    {
+        return $this->belongsToMany(Page::class);
+    }
+
+    public function pageBlocks()
+    {
+        return $this->belongsToMany(PageBlock::class);
+    }
 }

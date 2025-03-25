@@ -27,4 +27,18 @@ class PageBlock extends Model
         'properties' => 'array'
     ];
 
+    public function page()
+    {
+        return $this->belongsTo(Page::class);
+    }
+
+    public function block()
+    {
+        return $this->belongsTo(Block::class);
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 }

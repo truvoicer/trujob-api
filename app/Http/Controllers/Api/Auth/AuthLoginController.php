@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Resources\AccessTokenResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,16 +30,16 @@ class AuthLoginController extends Controller
         $token = $this->userAdminService->createUserToken($user);
 
         if (!$token) {
-            return $this->sendErrorResponse(
-                'Error generating token',
-                [],
-                [],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error creating token'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        return $this->sendSuccessResponse(
-            'Authenticated',
-            new AccessTokenResource($token)
-        );
+        return response()->json([
+            'message' => 'User logged in',
+            'data' => [
+                'user' => new UserResource($user),
+                'token' => new AccessTokenResource($token),
+            ]
+        ], Response::HTTP_OK);
     }
 }

@@ -15,19 +15,20 @@ class PageBlockResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'type' => $this->type,
-            'title' => $this->pivot?->title,
-            'subtitle' => $this->pivot?->subtitle,
-            'background_image' => $this->pivot?->background_image,
-            'background_color' => $this->pivot?->background_color,
-            'pagination_type' => $this->pivot?->pagination_type,
-            'pagination' => (bool)$this->pivot?->pagination,
-            'pagination_scroll_type' => $this->pivot?->pagination_scroll_type,
-            'content' => $this->pivot?->content,
-            'properties' => json_decode($this->pivot?->properties),
-            'has_sidebar' => (bool)$this->pivot?->has_sidebar,
-            'sidebar_widgets' => json_decode($this->pivot?->sidebar_widgets),
-            'order' => $this->pivot->order,
+            'type' => $this->block->type,
+            'title' => $this->title,
+            'subtitle' => $this->subtitle,
+            'background_image' => $this->background_image,
+            'background_color' => $this->background_color,
+            'pagination_type' => $this->pagination_type,
+            'pagination' => (bool)$this->pagination,
+            'pagination_scroll_type' => $this->pagination_scroll_type,
+            'content' => $this->content,
+            'properties' => json_decode($this->properties),
+            'has_sidebar' => (bool)$this->has_sidebar,
+            'sidebar_widgets' => json_decode($this->sidebar_widgets),
+            'order' => $this->order,
+            'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
         ];
     }
 }
