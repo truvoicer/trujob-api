@@ -75,7 +75,7 @@ Route::middleware(AppPublic::class)->group(function () {
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
     Route::prefix('auth')->name('auth.')->group(function () {
-        Route::get('/', [AuthUserController::class, 'view'])->name('view');
+        Route::get('/view', [AuthUserController::class, 'view'])->name('view');
         Route::post('/login', AuthLoginController::class)->name('login');
         Route::post('/register', AuthRegisterController::class)->name('register');
     });
