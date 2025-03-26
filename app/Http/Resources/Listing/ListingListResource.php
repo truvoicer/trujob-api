@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Listing;
 
+use App\Http\Resources\MediaResource;
 use App\Http\Resources\User\UserResource;
 use App\Services\Listing\ListingsFetchService;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,10 +18,23 @@ class ListingListResource extends JsonResource
      */
     public function toArray($request)
     {
-        $data = parent::toArray($request);
-        $data['listingType'] = ListingTypeResource::make($this->listingType);
-        $data['listingUser'] = UserResource::make($this->user);
-        $data['listingMedia'] = ListingMediaResource::make($this->listingMedia->where('category', 'thumbnail')->first());
-        return $data;
+        return [
+            'id' => $this->id,
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'description' => $this->description,
+            'active' => $this->active,
+            'allow_offers' => $this->allow_offers,
+            'type' => $this->whenLoaded('listingType', ListingTypeResource::make($this->listingType)),
+            'listingUser' => $this->whenLoaded('user', UserResource::make($this->user)),
+            'listingFollow' => $this->whenLoaded('listingFollow', ListingFollowResource::collection($this->listingFollow)),
+            'listingFeature' => $this->whenLoaded('listingFeature', ListingFeatureResource::collection($this->listingFeature)),
+            'listingReview' => $this->whenLoaded('listingReview', ListingReviewResource::collection($this->listingReview)),
+            'listingCategory' => $this->whenLoaded('listingCategory', ListingCategoryResource::collection($this->listingCategory)),
+            'listingBrand' => $this->whenLoaded('listingBrand', ListingBrandResource::collection($this->listingBrand)),
+            'listingColor' => $this->whenLoaded('listingColor', ListingColorResource::collection($this->listingColor)),
+            'listingProductType' => $this->whenLoaded('listingProductType', ListingProductTypeResource::collection($this->listingProductType)),
+            'media' => $this->whenLoaded('media', MediaResource::collection($this->media)),
+        ];
     }
 }

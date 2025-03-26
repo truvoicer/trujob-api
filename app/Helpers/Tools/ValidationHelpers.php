@@ -13,7 +13,7 @@ class ValidationHelpers
         $nestedRules = [];
         foreach ($rules as $key => $rule) {
             if ($name) {
-                $key = "$name.$key";
+                $key = "$name.*.$key";
             } else {
                 $key = "*.$key";
             }

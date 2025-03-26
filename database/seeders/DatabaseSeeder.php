@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\Auth\ApiAbility;
+use App\Enums\Media\FileSystemType;
+use App\Enums\Media\MediaType;
+use App\Enums\Media\Types\Image\ImageCategory;
 use App\Models\Block;
 use App\Models\Listing;
 use App\Models\ListingBrand;
@@ -13,6 +16,7 @@ use App\Models\ListingFollow;
 use App\Models\ListingMedia;
 use App\Models\ListingProductType;
 use App\Models\ListingReview;
+use App\Models\Media;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\Role;
@@ -83,7 +87,21 @@ class DatabaseSeeder extends Seeder
             ->has(ListingFollow::factory()->count(5))
             ->has(ListingBrand::factory()->count(1))
             ->has(ListingColor::factory()->count(1))
-            ->has(ListingMedia::factory()->count(5))
+            ->has(
+                Media::factory()
+                ->count(1)
+                ->state(function (array $attributes, Listing $listing) {
+                    $randomNumberBetween = random_int(1, 100);
+                    return[
+                        'type' => MediaType::IMAGE,
+                        'filesystem' => FileSystemType::EXTERNAL,
+                        'category' => ImageCategory::THUMBNAIL,
+                        'alt' => fake()->text(20),
+                        'url' => "https://picsum.photos/id/{$randomNumberBetween}/700/700",
+                    ];
+                })
+            )
+            ->has(Media::factory()->count(5))
             ->has(ListingCategory::factory()->count(5))
             ->has(ListingProductType::factory()->count(5));
 
@@ -126,6 +144,7 @@ class DatabaseSeeder extends Seeder
                     ->count(5)
             )
             ->create();
+            
 
         $testUserData = DefaultData::TEST_USER_DATA;
         $user = $userAdminService->getUserRepository()->findOneBy(

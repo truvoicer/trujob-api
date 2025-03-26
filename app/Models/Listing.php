@@ -45,10 +45,7 @@ class Listing extends Model
     {
         return $this->hasMany(ListingReview::class);
     }
-    public function listingMedia()
-    {
-        return $this->hasMany(ListingMedia::class);
-    }
+    
     public function listingFollow()
     {
         return $this->hasMany(ListingFollow::class);
@@ -86,5 +83,10 @@ class Listing extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function media()
+    {
+        return $this->belongsToMany(Media::class);
     }
 }

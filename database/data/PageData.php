@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Auth\ApiAbility;
 use App\Enums\BlockType;
 use App\Enums\ListingsBlockSidebarWidget;
 use App\Enums\ViewType;
@@ -54,6 +55,10 @@ return [
                     ],
                 ],
             ],
+        ],
+        'roles' => [
+            ApiAbility::USER->value,
+            ApiAbility::SITE->value,
         ]
     ],
     [
@@ -105,7 +110,10 @@ return [
                     ],
                 ],
             ],
-
+        ],
+        'roles' => [
+            ApiAbility::USER->value,
+            ApiAbility::SITE->value,
         ]
     ],
     [
@@ -129,6 +137,10 @@ return [
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
+        ],
+        'roles' => [
+            ApiAbility::USER->value,
+            ApiAbility::SITE->value,
         ]
     ],
     [
@@ -143,6 +155,10 @@ return [
                 'order' => 0,
                 'title' => 'Log into your account',
             ],
+        ],
+        'roles' => [
+            ApiAbility::USER->value,
+            ApiAbility::SITE->value,
         ]
     ],
     [
@@ -157,6 +173,10 @@ return [
                 'order' => 0,
                 'title' => 'Register for an account',
             ],
+        ],
+        'roles' => [
+            ApiAbility::USER->value,
+            ApiAbility::SITE->value,
         ]
     ],
 ];

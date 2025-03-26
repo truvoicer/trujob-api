@@ -40,6 +40,7 @@ class SiteResource extends JsonResource
             'pinterest_follow_url' => $this->pinterest_follow_url,
             'x_follow_url' => $this->x_follow_url,
             'timezone' => $this->timezone,
+            'media' => $this->whenLoaded('media', MediaResource::collection($this->media)),
         ];
     }
 }

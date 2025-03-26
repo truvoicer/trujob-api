@@ -36,6 +36,12 @@ class PageService extends BaseService
             unset($data['roles']);
         }
 
+        $blocks = [];
+        if (!empty($data['blocks']) && is_array($data['blocks'])) {
+            $blocks = $data['blocks'];
+            unset($data['blocks']);
+        }
+
         $this->page = new Page($data);
         if (!$this->page->save()) {
             $this->resultsService->addError('Error creating page', $data);
@@ -46,7 +52,7 @@ class PageService extends BaseService
             $this->syncRoles($this->page->roles(), $roles);
         }
 
-        return $this->createBlockBatch($this->page, !empty($data['blocks']) ? $data['blocks'] : []);
+        return $this->createBlockBatch($this->page, $blocks);
     }
 
     public function updatePage(Page $page, array $data)
@@ -55,6 +61,12 @@ class PageService extends BaseService
         if (!empty($data['roles']) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
+        }
+
+        $blocks = [];
+        if (!empty($data['blocks']) && is_array($data['blocks'])) {
+            $blocks = $data['blocks'];
+            unset($data['blocks']);
         }
 
         $this->page = $page;
@@ -73,7 +85,7 @@ class PageService extends BaseService
 
         $this->detachPageBlocks($this->page);
 
-        return $this->createBlockBatch($this->page, !empty($data['blocks']) ? $data['blocks'] : []);
+        return $this->createBlockBatch($this->page, $blocks);
     }
 
     public function deletePage(Page $page)

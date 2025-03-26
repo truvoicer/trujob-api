@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Admin\User;
 
 use App\Models\Role;
+use App\Rules\IdOrNameExists;
+use App\Rules\StringOrIntger;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -29,12 +31,15 @@ class CreateUserRequest extends FormRequest
         return [
             'email' => 'required|email|unique:users,email',
             'password' => ['required', 'confirmed', Password::min(8)],
-            'roles.*' => Rule::forEach(function ($value, string $attribute) {
-                return [
-                    Rule::exists(Role::class, 'id'),
-                ];
-            })
-
+            'roles' => [
+                'sometimes',
+                'array',
+            ],
+            'roles.*' => [
+                'required',
+                new StringOrIntger,
+                new IdOrNameExists(new Role())
+            ],
         ];
     }
 }

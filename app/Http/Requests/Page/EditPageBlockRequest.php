@@ -3,6 +3,9 @@
 namespace App\Http\Requests\Page;
 
 use App\Enums\BlockType;
+use App\Models\Role;
+use App\Rules\IdOrNameExists;
+use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -38,8 +41,8 @@ class EditPageBlockRequest extends FormRequest
             ],
             'roles.*' => [
                 'required',
-                'integer',
-                Rule::exists('roles', 'id')
+                new StringOrIntger,
+                new IdOrNameExists(new Role())
             ],
             ...(new CreatePageBlockPropertyRequest())->rules(),
         ];

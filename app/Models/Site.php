@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
 class Site extends Model
 {
-    use HasApiTokens;
+    use HasApiTokens, HasFactory;
     
     protected $fillable = [
         'slug',
@@ -35,4 +36,9 @@ class Site extends Model
         'x_follow_url',
         'timezone',
     ];
+
+    public function media()
+    {
+        return $this->belongsToMany(Media::class);
+    }
 }

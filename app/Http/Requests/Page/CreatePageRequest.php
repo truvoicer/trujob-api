@@ -2,9 +2,13 @@
 
 namespace App\Http\Requests\Page;
 
+use Illuminate\Database\Query\Builder;
 use App\Enums\PageSidebarWidget;
 use App\Enums\ViewType;
 use App\Helpers\Tools\ValidationHelpers;
+use App\Models\Role;
+use App\Rules\IdOrNameExists;
+use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -107,8 +111,8 @@ class CreatePageRequest extends FormRequest
             ],
             'roles.*' => [
                 'required',
-                'integer',
-                Rule::exists('roles', 'id')
+                new StringOrIntger,
+                new IdOrNameExists(new Role())
             ],
             'blocks' => [
                 'sometimes',

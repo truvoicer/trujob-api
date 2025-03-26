@@ -20,20 +20,7 @@ class PageSeeder extends Seeder
             throw new \Exception('Error reading PageData.php file ' . database_path('data/PageData.php'));
         }
         foreach ($data as $item) {
-            $blocks = [];
-            if (!empty($item['blocks']) && is_array($item['blocks'])) {
-                $blocks = $item['blocks'];
-            }
-            if (!empty($item['blocks'])) {
-                unset($item['blocks']);
-            }
-            $create = Page::query()->updateOrCreate(
-                ['slug' => $item['slug']],
-                $item
-            );
-            foreach ($blocks as $block) {
-                $pageService->createPageBlock($create, $block);
-            }
+            $pageService->createPage($item);
         }
     }
 }
