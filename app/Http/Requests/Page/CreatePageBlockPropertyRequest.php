@@ -26,14 +26,14 @@ class CreatePageBlockPropertyRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules(?string $type = null): array
     {
         return [
             'properties' => [
                 'sometimes',
                 'array',
             ],
-            ...ValidationHelpers::buildRequestPropertyRules($this->input('type')),
+            ...ValidationHelpers::buildRequestPropertyRules($type),
             'title' => [
                 'sometimes',
                 'string',

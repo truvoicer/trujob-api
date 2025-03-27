@@ -10,12 +10,12 @@ use Illuminate\Validation\Validator as ValidationValidator;
 
 class ValidationHelpers
 {
-    public static function nestedValidationRules(array $rules, ?string $name = null): array
+    public static function nestedValidationRules(array $rules, ?string $prefix = null): array
     {
         $nestedRules = [];
         foreach ($rules as $key => $rule) {
-            if ($name) {
-                $key = "$name.*.$key";
+            if ($prefix) {
+                $key = "$prefix.$key";
             } else {
                 $key = "*.$key";
             }
@@ -58,7 +58,13 @@ class ValidationHelpers
     {
         switch ($type) {
             case BlockType::LISTINGS_GRID->value:
-                return ValidationHelpers::nestedValidationRules((new ListingFetchRequest())->rules(), 'properties');
+                return [
+                    'properties.init' => [
+                        'sometimes',
+                        'array',
+                    ],
+                    ...ValidationHelpers::nestedValidationRules((new ListingFetchRequest())->rules(), 'properties.init')
+                ];
             default:
                 return [];
         }

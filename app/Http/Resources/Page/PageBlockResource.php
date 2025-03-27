@@ -25,9 +25,9 @@ class PageBlockResource extends JsonResource
             'pagination' => (bool)$this->pagination,
             'pagination_scroll_type' => $this->pagination_scroll_type,
             'content' => $this->content,
-            'properties' => json_decode($this->properties),
+            'properties' => $this->properties,
             'has_sidebar' => (bool)$this->has_sidebar,
-            'sidebar_widgets' => json_decode($this->sidebar_widgets),
+            'sidebar_widgets' => $this->sidebar_widgets,
             'order' => $this->order,
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
         ];

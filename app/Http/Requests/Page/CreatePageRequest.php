@@ -29,7 +29,7 @@ class CreatePageRequest extends FormRequest
      */
     public function rules(): array
     {
-        $blocksRules = ValidationHelpers::nestedValidationRules((new CreatePageBlockRequest())->rules(), 'blocks');
+        $blocksRules = ValidationHelpers::nestedValidationRules((new CreatePageBlockRequest())->rules(), 'blocks.*');
         unset($blocksRules['blocks.*.page_id']);
         return [
             'site_id' => [

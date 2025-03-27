@@ -28,7 +28,7 @@ class EditPageRequest extends FormRequest
      */
     public function rules(): array
     {
-        $blocksRules = ValidationHelpers::nestedValidationRules((new EditPageBlockRequest())->rules(), 'blocks');
+        $blocksRules = ValidationHelpers::nestedValidationRules((new EditPageBlockRequest())->rules(), 'blocks.*');
         unset($blocksRules['blocks.*.page_id']);
         return [
             'site_id' => [

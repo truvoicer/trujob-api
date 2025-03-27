@@ -24,7 +24,9 @@ class PageBlock extends Model
 
     protected $casts = [
         'pagination' => 'boolean',
-        'properties' => 'array'
+        'properties' => 'array',
+        'sidebar_widgets' => 'array',
+        'has_sidebar' => 'boolean',
     ];
 
     public function page()

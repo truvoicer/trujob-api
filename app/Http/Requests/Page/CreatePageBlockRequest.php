@@ -44,7 +44,7 @@ class CreatePageBlockRequest extends FormRequest
                 new StringOrIntger,
                 new IdOrNameExists(new Role())
             ],
-            ...(new CreatePageBlockPropertyRequest())->rules(),
+            ...(new CreatePageBlockPropertyRequest())->rules($this->get('type')),
         ];
     }
 }

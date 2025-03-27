@@ -37,7 +37,14 @@ trait ListingsTrait
             case ListingFetchProperty::UPDATED_AT:
                 return $query->where('updated_at', $data);
             case ListingFetchProperty::TYPE:
-                return $query->whereRelation('type', 'slug', $data);
+                if (is_array($data)) {
+                    return $query->whereInRelation('type', 'slug', $data);
+                } else if (is_string($data)) {
+                    return $query->whereRelation('type', 'slug', $data);
+                } else if (is_int($data)) {
+                    return $query->whereRelation('type', 'id', $data);
+                }
+                return $query;
             case ListingFetchProperty::CATEGORIES:
                 return $query->whereRelation('categories', 'slug', $data);
             case ListingFetchProperty::IMAGES:

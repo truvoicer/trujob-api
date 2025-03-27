@@ -4,6 +4,7 @@ namespace App\Http\Requests\Listing;
 
 use App\Enums\Listing\ListingFetchProperty;
 use App\Models\Category;
+use App\Models\ListingType;
 use App\Rules\IdOrSlugExists;
 use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;
@@ -47,7 +48,12 @@ class ListingFetchRequest extends FormRequest
             ],
             ListingFetchProperty::TYPE->value => [
                 'sometimes',
-                new StringOrIntger
+                'array',
+            ],
+            ListingFetchProperty::TYPE->value . '.*' => [
+                'sometimes',
+                new StringOrIntger,
+                new IdOrSlugExists(new ListingType())
             ],
             ListingFetchProperty::CATEGORIES->value => [
                 'sometimes',

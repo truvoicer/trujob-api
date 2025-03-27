@@ -27,10 +27,6 @@ class EditPageBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => [
-                'sometimes',
-                Rule::enum(BlockType::class)
-            ],
             'order' => [
                 'sometimes',
                 'integer',
@@ -44,7 +40,7 @@ class EditPageBlockRequest extends FormRequest
                 new StringOrIntger,
                 new IdOrNameExists(new Role())
             ],
-            ...(new CreatePageBlockPropertyRequest())->rules(),
+            ...(new CreatePageBlockPropertyRequest())->rules($this->pageBlock?->block?->type->value),
         ];
     }
 }
