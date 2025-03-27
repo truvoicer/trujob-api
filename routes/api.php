@@ -51,7 +51,7 @@ Route::middleware(AppPublic::class)->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('listing')->name('listing.')->group(function () {
-        Route::get('/', [ListingPublicController::class, 'index'])->name('fetch');
+        Route::post('/', [ListingPublicController::class, 'index'])->name('fetch');
         Route::get('/category/fetch', [CategoryController::class, 'fetchCategories'])->name('category.fetch');
         Route::get('/brand/fetch', [BrandController::class, 'fetchBrands'])->name('brand.fetch');
         Route::get('/color/fetch', [ColorController::class, 'fetchColors'])->name('color.fetch');
@@ -183,16 +183,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::delete('/{notification}/delete', [NotificationController::class, 'destroy'])->name('delete');
         Route::delete('/delete-all', [NotificationController::class, 'deleteAll'])->name('delete-all');
     });
-    Route::prefix('auth')->name('auth.')->group(function () {
-        Route::post('/api-token/generate', [AuthController::class, 'newToken'])->name('token.generate');
-        Route::prefix('account')->name('account.')->group(function () {
-            Route::post('/details', [AuthController::class, 'getAccountDetails'])->name('details');
-        });
-        Route::prefix('token')->name('token.')->group(function () {
-            Route::get('/validate', [AuthController::class, 'validateToken'])->name('validate');
-            Route::get('/user', [AuthController::class, 'getSingleUserByApiToken'])->name('user');
-        });
-    });
 
     Route::prefix('session')->name('session.')->group(function () {
         Route::prefix('user')->name('user.')->group(function () {
@@ -210,7 +200,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user'])->group(function () {
-
     Route::prefix('tools')->name('tools.')->group(function () {
         Route::prefix('filesystem')->name('filesystem.')->group(function () {
             Route::get('/list', [FileSystemController::class, 'getFiles'])->name('list');

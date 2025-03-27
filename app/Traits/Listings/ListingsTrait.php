@@ -3,17 +3,21 @@
 namespace App\Traits\Listings;
 
 use App\Enums\Listing\ListingFetchProperty;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait ListingsTrait
 {
-    public function buildListingsQuery($query, array $data) {
+    public function buildListingsQuery($query, array $data)
+    {
         foreach ($data as $key => $value) {
             $query = $this->buildPropertyQuery($query, $key, $value);
         }
         return $query;
     }
 
-    public function buildPropertyQuery($query, string $property, mixed $data) {
+    public function buildPropertyQuery(Builder $query, string $property, mixed $data)
+    {
         $getProperty = ListingFetchProperty::tryFrom($property);
         if ($getProperty === null) {
             return $query;
@@ -37,16 +41,35 @@ trait ListingsTrait
             case ListingFetchProperty::UPDATED_AT:
                 return $query->where('updated_at', $data);
             case ListingFetchProperty::TYPE:
-                if (is_array($data)) {
-                    return $query->whereInRelation('type', 'slug', $data);
-                } else if (is_string($data)) {
-                    return $query->whereRelation('type', 'slug', $data);
-                } else if (is_int($data)) {
-                    return $query->whereRelation('type', 'id', $data);
-                }
+                return $query->whereHas('listingType', function ($query) use ($data) {
+                    if (is_array($data)) {
+                        if (count(array_map('is_int', $data)) === count($data)) {
+                            $query->whereIn('id', $data);
+                        } else if (count(array_map('is_string', $data)) === count($data)) {
+                            $query->whereIn('slug', $data);
+                        }
+                    } else if (is_string($data)) {
+                        $query->where('slug', $data);
+                    } else if (is_int($data)) {
+                        $query->where('id', $data);
+                    }
+                });
                 return $query;
             case ListingFetchProperty::CATEGORIES:
-                return $query->whereRelation('categories', 'slug', $data);
+                return $query->whereHas('categories', function ($query) use ($data) {
+                    if (is_array($data)) {
+                        if (count(array_map('is_int', $data)) === count($data)) {
+                            $query->whereIn('id', $data);
+                        } else if (count(array_map('is_string', $data)) === count($data)) {
+                            $query->whereIn('slug', $data);
+                        }
+                    } else if (is_string($data)) {
+                        $query->where('slug', $data);
+                    } else if (is_int($data)) {
+                        $query->where('id', $data);
+                    }
+                });
+                return $query;
             case ListingFetchProperty::IMAGES:
             case ListingFetchProperty::VIEWS:
             case ListingFetchProperty::STATUS:
@@ -61,5 +84,4 @@ trait ListingsTrait
                 return $query;
         }
     }
-
 }
