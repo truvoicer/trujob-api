@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Menu;
 
+use App\Http\Resources\RoleResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MenuResource extends JsonResource
@@ -19,6 +20,7 @@ class MenuResource extends JsonResource
             'name' => $this->name,
             'ul_class' => $this->ul_class,
             'active' => $this->active,
+            'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
             'menuItems' => $this->whenLoaded('menuItems', MenuItemResource::collection($this->menuItems))
         ];
     }

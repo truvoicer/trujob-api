@@ -50,4 +50,9 @@ class MenuItem extends Model
             Site::class
         );
     }
+    
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 }

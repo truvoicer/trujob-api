@@ -8,9 +8,11 @@ use App\Models\Page;
 use App\Repositories\MenuRepository;
 use App\Services\BaseService;
 use App\Services\ResultsService;
+use App\Traits\RoleTrait;
 
 class MenuService extends BaseService
 {
+    use RoleTrait;
 
     private Menu $menu;
     private MenuItem $menuItem;
@@ -28,6 +30,11 @@ class MenuService extends BaseService
 
     public function createMenu(array $data) {
         $menuItems = [];
+        $roles = null;
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
+            $roles = $data['roles'];
+            unset($data['roles']);
+        }
         if (!empty($data['menu_items']) && is_array($data['menu_items'])) {
             $menuItems = $data['menu_items'];
             unset($data['menu_items']);
@@ -36,6 +43,9 @@ class MenuService extends BaseService
         if (!$menu->save()) {
             $this->resultsService->addError('Error adding app menu', $data);
             return false;
+        }
+        if (is_array($roles)) {
+            $this->syncRoles($menu->roles(), $roles);
         }
         if (empty($menuItems)) {
             return true;
@@ -50,10 +60,18 @@ class MenuService extends BaseService
     }
 
     public function updateMenu(array $data) {
-        $this->menu->fill($data);
-        if (!$this->menu->save()) {
+        $roles = null;
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
+            $roles = $data['roles'];
+            unset($data['roles']);
+        }
+        
+        if (!$this->menu->update($data)) {
             $this->resultsService->addError('Error updating app menu', $data);
             return false;
+        }
+        if (is_array($roles)) {
+            $this->syncRoles($this->menu->roles(), $roles);
         }
         return true;
     }
@@ -67,6 +85,11 @@ class MenuService extends BaseService
     }
     public function createMenuItem(Menu $menu, array $data) {
         $menus = [];
+        $roles = null;
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
+            $roles = $data['roles'];
+            unset($data['roles']);
+        }
         if (!empty($data['menus']) && is_array($data['menus'])) {
             $menus = $data['menus'];
             unset($data['menus']);
@@ -85,8 +108,11 @@ class MenuService extends BaseService
         }
         $menuItem = $menu->menuItems()->create($data);
         if (!$menu->menuItems()->save($menuItem)) {
-            $this->resultsService->addError('Error adding app menu item', $data);
+            $this->resultsService->addError('Error adding menu item', $data);
             return false;
+        }
+        if (is_array($roles)) {
+            $this->syncRoles($menuItem->roles(), $roles);
         }
         foreach ($menus as $subMenu) {
             $subMenu['menu_item_id'] = $menuItem->id;
@@ -103,6 +129,7 @@ class MenuService extends BaseService
         if (empty($data['menu_items'])) {
             return true;
         }
+
         foreach ($data['menu_items'] as $menuItem) {
             $this->createMenuItem($this->menu, $menuItem);
         }
@@ -113,10 +140,21 @@ class MenuService extends BaseService
     }
     public function updateMenuItem(MenuItem $menuItem, array $data) {
         $this->menuItem = $menuItem;
-        $this->menuItem->fill($data);
-        if (!$this->menuItem->save()) {
+        
+        $roles = null;
+        
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
+            $roles = $data['roles'];
+            unset($data['roles']);
+        }
+        
+        if (!$this->menuItem->update($data)) {
             $this->resultsService->addError('Error updating app menu item', $data);
             return false;
+        }
+
+        if (is_array($roles)) {
+            $this->syncRoles($this->menuItem->roles(), $roles);
         }
         return true;
     }

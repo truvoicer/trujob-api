@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests\Menu;
 
+use App\Models\Role;
+use App\Rules\IdOrNameExists;
+use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -47,6 +50,15 @@ class CreateMenuRequest extends FormRequest
             'menu_items' => [
                 'sometimes',
                 'array',
+            ],
+            'roles' => [
+                'sometimes',
+                'array',
+            ],
+            'roles.*' => [
+                'required',
+                new StringOrIntger,
+                new IdOrNameExists(new Role())
             ],
         ];
     }

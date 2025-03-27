@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Page;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Page\CreatePageRequest;
 use App\Http\Requests\Page\EditPageRequest;
-use App\Http\Resources\PageResource;
+use App\Http\Resources\Page\PageResource;
 use App\Models\Page;
 use App\Services\Page\PageService;
 use Illuminate\Http\Request;

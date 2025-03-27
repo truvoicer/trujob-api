@@ -179,4 +179,37 @@ return [
             ApiAbility::SITE->value,
         ]
     ],
+    [
+        'site_id' => 1,
+        'slug' => 'account',
+        'title' => 'My Account',
+        'content' => 'Welcome to your account page',
+        'view' => ViewType::Page,
+        'blocks' => [],
+        'roles' => [
+            ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'slug' => 'dashboard',
+        'title' => 'Dashboard',
+        'content' => 'Welcome to your dashboard page',
+        'view' => ViewType::Page,
+        'blocks' => [],
+        'roles' => [
+            ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'slug' => 'profile',
+        'title' => 'Profile',
+        'content' => 'Welcome to your profile page',
+        'view' => ViewType::Page,
+        'blocks' => [],
+        'roles' => [
+            ApiAbility::USER->value,
+        ]
+    ],
 ];

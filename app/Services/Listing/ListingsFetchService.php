@@ -5,16 +5,17 @@ namespace App\Services\Listing;
 use App\Models\Listing;
 use App\Services\BaseService;
 use App\Services\FetchService;
+use App\Traits\Listings\ListingsTrait;
 
 class ListingsFetchService extends BaseService
 {
-    use FetchService;
+    use FetchService, ListingsTrait;
 
 
-    public function listingsFetch()
+    public function listingsFetch(?array $data = [])
     {
-        $listing = Listing::query();
-
+        $listing = $this->buildListingsQuery(Listing::query(), $data);
+        
         if ($this->getPagination()) {
             $results = $listing->paginate(
                 $this->getLimit(),
@@ -30,10 +31,11 @@ class ListingsFetchService extends BaseService
         return $results;
     }
 
-    public function userListingsFetch()
+    public function userListingsFetch(?array $data = [])
     {
         $listing = $this->getUser()->listing();
         
+        $listing = $this->buildListingsQuery($this->getUser()->listing(), $data);
         if ($this->getPagination()) {
             $results = $listing->paginate(
                 $this->getLimit(),

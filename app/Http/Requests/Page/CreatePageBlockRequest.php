@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Page;
 
 use App\Enums\BlockType;
+use App\Models\Role;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;

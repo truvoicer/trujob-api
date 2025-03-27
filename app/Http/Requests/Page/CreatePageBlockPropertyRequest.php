@@ -6,6 +6,8 @@ use App\Enums\BlockType;
 use App\Enums\ListingsBlockSidebarWidget;
 use App\Enums\Pagination\PaginationScrollType;
 use App\Enums\Pagination\PaginationType;
+use App\Helpers\Tools\ValidationHelpers;
+use App\Http\Requests\Listing\ListingFetchRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -31,6 +33,7 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'sometimes',
                 'array',
             ],
+            ...ValidationHelpers::buildRequestPropertyRules($this->input('type')),
             'title' => [
                 'sometimes',
                 'string',

@@ -2,6 +2,8 @@
 
 namespace App\Helpers\Tools;
 
+use App\Enums\BlockType;
+use App\Http\Requests\Listing\ListingFetchRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Validator as ValidationValidator;
@@ -50,5 +52,15 @@ class ValidationHelpers
             }
         }
         return true;
+    }
+
+    public static function buildRequestPropertyRules(?string $type = null): array
+    {
+        switch ($type) {
+            case BlockType::LISTINGS_GRID->value:
+                return ValidationHelpers::nestedValidationRules((new ListingFetchRequest())->rules(), 'properties');
+            default:
+                return [];
+        }
     }
 }

@@ -38,4 +38,14 @@ class Role extends Model
     {
         return $this->belongsToMany(PageBlock::class);
     }
+
+    public function menus()
+    {
+        return $this->belongsToMany(Menu::class);
+    }
+
+    public function menuItems()
+    {
+        return $this->belongsToMany(MenuItem::class);
+    }
 }

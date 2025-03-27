@@ -7,7 +7,7 @@ use App\Http\Requests\Page\CreatePageRequest;
 use App\Http\Requests\Page\EditPageRequest;
 use App\Http\Requests\Site\CreateSiteRequest;
 use App\Http\Requests\Site\EditSiteRequest;
-use App\Http\Resources\PageResource;
+use App\Http\Resources\Page\PageResource;
 use App\Http\Resources\SiteResource;
 use App\Models\Page;
 use App\Models\Site;

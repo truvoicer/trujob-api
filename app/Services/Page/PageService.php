@@ -6,6 +6,7 @@ use App\Models\Block;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Services\BaseService;
+use App\Services\Block\BlockService;
 use App\Services\ResultsService;
 use App\Traits\RoleTrait;
 
@@ -31,13 +32,13 @@ class PageService extends BaseService
     public function createPage(array $data)
     {
         $roles = null;
-        if (!empty($data['roles']) && is_array($data['roles'])) {
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
 
         $blocks = [];
-        if (!empty($data['blocks']) && is_array($data['blocks'])) {
+        if (array_key_exists('blocks', $data) && is_array($data['blocks'])) {
             $blocks = $data['blocks'];
             unset($data['blocks']);
         }
@@ -58,13 +59,13 @@ class PageService extends BaseService
     public function updatePage(Page $page, array $data)
     {
         $roles = null;
-        if (!empty($data['roles']) && is_array($data['roles'])) {
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
 
         $blocks = [];
-        if (!empty($data['blocks']) && is_array($data['blocks'])) {
+        if (array_key_exists('blocks', $data) && is_array($data['blocks'])) {
             $blocks = $data['blocks'];
             unset($data['blocks']);
         }
@@ -125,7 +126,7 @@ class PageService extends BaseService
     public function attachPageBlock(Page $page, Block $block, array $data)
     {
         $roles = null;
-        if (!empty($data['roles']) && is_array($data['roles'])) {
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
@@ -152,7 +153,7 @@ class PageService extends BaseService
     public function updatePageBlock(PageBlock $pageBlock, array $data)
     {
         $roles = null;
-        if (!empty($data['roles']) && is_array($data['roles'])) {
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
@@ -164,7 +165,8 @@ class PageService extends BaseService
                 ...$data['properties']
             ];
         }
-
+        $data = BlockService::buildBlockData($pageBlock->block, $data);
+        dd($data);
         if (!$pageBlock->update($data)) {
             $this->resultsService->addError('Error updating page block', $data);
             return false;
