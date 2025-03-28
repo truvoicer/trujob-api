@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Listing\Type\Event\EventProperty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,19 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('events', function (Blueprint $table) {
+        Schema::create('event_listings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId( 'user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId( 'created_by_user_id')->constrained('users');
             $table->foreignId( 'listing_id')->constrained('listings')->onDelete('cascade');
-            $table->text('notes')->nullable();
-            $table->string('location')->nullable();
-            $table->dateTime('start_date')->nullable();
-            $table->dateTime('end_date')->nullable();
-            $table->string('status')->nullable();
-            $table->boolean('is_public')->default(false);
-            $table->boolean('is_all_day')->default(false);
-            $table->boolean('is_recurring')->default(false);
+            $table->text(EventProperty::NOTES->value)->nullable();
+            $table->string(EventProperty::LOCATION->value)->nullable();
+            $table->string(EventProperty::LATITUDE->value)->nullable();
+            $table->string(EventProperty::LONGITUDE->value)->nullable();
+            $table->dateTime(EventProperty::START_DATE->value)->nullable();
+            $table->dateTime(EventProperty::END_DATE->value)->nullable();
+            $table->string(EventProperty::STATUS->value)->nullable();
+            $table->boolean(EventProperty::IS_PUBLIC->value)->default(false);
+            $table->boolean(EventProperty::IS_ALL_DAY->value)->default(false);
+            $table->boolean(EventProperty::IS_RECURRING->value)->default(false);
             $table->timestamps();
         });
     }
