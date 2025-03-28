@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Page;
 
-use App\Enums\Block\BlockType;
+use App\Enums\Block\PageBlockType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +26,7 @@ class BatchDeletePageBlockRequest extends FormRequest
         return [
             'type' => [
                 'required',
-                Rule::enum(BlockType::class)
+                Rule::enum(PageBlockType::class)
             ],
         ];
     }

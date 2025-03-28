@@ -1,24 +1,24 @@
 <?php
 
-use App\Enums\Block\BlockType;
+use App\Enums\Block\PageBlockType;
 
 return [
     [
-        'type' => BlockType::HERO,
+        'type' => PageBlockType::HERO,
     ],
     [
-        'type' => BlockType::FEATURED,
+        'type' => PageBlockType::FEATURED,
     ],
     [
-        'type' => BlockType::ICON_GRID,
+        'type' => PageBlockType::ICON_GRID,
     ],
     [
-        'type' => BlockType::LISTINGS_GRID,
+        'type' => PageBlockType::LISTINGS_GRID,
     ],
     [
-        'type' => BlockType::LOGIN,
+        'type' => PageBlockType::LOGIN,
     ],
     [
-        'type' => BlockType::REGISTER,
+        'type' => PageBlockType::REGISTER,
     ],
 ];

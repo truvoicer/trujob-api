@@ -1,7 +1,7 @@
 <?php
 namespace App\Enums\Block;
 
-enum BlockType: string
+enum PageBlockType: string
 {
     case HERO = 'hero-block';
     case FEATURED = 'featured-block';

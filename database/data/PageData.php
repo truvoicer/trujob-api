@@ -1,7 +1,8 @@
 <?php
 
 use App\Enums\Auth\ApiAbility;
-use App\Enums\Block\BlockType;
+use App\Enums\Block\AdminPageBlockType;
+use App\Enums\Block\PageBlockType;
 use App\Enums\Listing\ListingFetchProperty;
 use App\Enums\Listing\ListingBlockSidebarWidget;
 use App\Enums\Listing\ListingType;
@@ -16,21 +17,21 @@ return [
         'view' => ViewType::Page,
         'blocks' => [
             [
-                'type' => BlockType::HERO,
+                'type' => PageBlockType::HERO,
                 'order' => 0,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
-                'type' => BlockType::FEATURED,
+                'type' => PageBlockType::FEATURED,
                 'order' => 1,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
-                'type' => BlockType::LISTINGS_GRID,
+                'type' => PageBlockType::LISTINGS_GRID,
                 'order' => 2,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
@@ -76,21 +77,21 @@ return [
         'view' => ViewType::Page,
         'blocks' => [
             [
-                'type' => BlockType::HERO,
+                'type' => PageBlockType::HERO,
                 'order' => 0,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
-                'type' => BlockType::ICON_GRID,
+                'type' => PageBlockType::ICON_GRID,
                 'order' => 1,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
-                'type' => BlockType::LISTINGS_GRID,
+                'type' => PageBlockType::LISTINGS_GRID,
                 'order' => 2,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
@@ -131,14 +132,14 @@ return [
         'view' => ViewType::Page,
         'blocks' => [
             [
-                'type' => BlockType::HERO,
+                'type' => PageBlockType::HERO,
                 'order' => 0,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
-                'type' => BlockType::FEATURED,
+                'type' => PageBlockType::FEATURED,
                 'order' => 1,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
@@ -158,7 +159,7 @@ return [
         'view' => ViewType::Page,
         'blocks' => [
             [
-                'type' => BlockType::LOGIN,
+                'type' => PageBlockType::LOGIN,
                 'order' => 0,
                 'title' => 'Log into your account',
             ],
@@ -176,7 +177,7 @@ return [
         'view' => ViewType::Page,
         'blocks' => [
             [
-                'type' => BlockType::REGISTER,
+                'type' => PageBlockType::REGISTER,
                 'order' => 0,
                 'title' => 'Register for an account',
             ],
@@ -217,6 +218,25 @@ return [
         'blocks' => [],
         'roles' => [
             ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'name' => 'admin_manage_pages',
+        'title' => 'Manage Pages',
+        'content' => 'Welcome to the admin manage pages page',
+        'view' => ViewType::AdminPage,
+        'blocks' => [
+            [
+                'type' => AdminPageBlockType::MANAGE_PAGES,
+                'order' => 0,
+                'title' => 'Manage Pages',
+                'subtitle' => 'Manage your pages here',
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
         ]
     ],
 ];

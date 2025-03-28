@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Tools;
 
-use App\Enums\Block\BlockType;
+use App\Enums\Block\PageBlockType;
 use App\Http\Requests\Listing\ListingFetchRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
@@ -57,7 +57,7 @@ class ValidationHelpers
     public static function buildRequestPropertyRules(?string $type = null): array
     {
         switch ($type) {
-            case BlockType::LISTINGS_GRID->value:
+            case PageBlockType::LISTINGS_GRID->value:
                 return [
                     'properties.init' => [
                         'sometimes',

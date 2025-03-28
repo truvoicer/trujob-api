@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Page;
 
-use App\Enums\Block\BlockType;
+use App\Enums\Block\PageBlockType;
 use App\Models\Role;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;

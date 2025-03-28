@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Page;
 
-use App\Enums\Block\BlockType;
+use App\Enums\Block\PageBlockType;
 use App\Enums\Listing\ListingBlockSidebarWidget;
 use App\Enums\Pagination\PaginationScrollType;
 use App\Enums\Pagination\PaginationType;
@@ -65,7 +65,7 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'array',
             ],
             'sidebar_widgets.*.type' => [
-                'required_if:type,' . BlockType::LISTINGS_GRID->value,
+                'required_if:type,' . PageBlockType::LISTINGS_GRID->value,
                 Rule::enum(ListingBlockSidebarWidget::class)
             ],
             'sidebar_widgets.*.title' => [
