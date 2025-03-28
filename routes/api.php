@@ -47,11 +47,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(AppPublic::class)->group(function () {
 
-    Route::get('/page/{page:slug}', [PageController::class, 'view'])->name('page.view');
+    Route::get('/page/{page:name}', [PageController::class, 'view'])->name('page.view');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('listing')->name('listing.')->group(function () {
-        Route::post('/', [ListingPublicController::class, 'index'])->name('fetch');
+        Route::get('/', [ListingPublicController::class, 'index'])->name('fetch');
         Route::get('/category/fetch', [CategoryController::class, 'fetchCategories'])->name('category.fetch');
         Route::get('/brand/fetch', [BrandController::class, 'fetchBrands'])->name('brand.fetch');
         Route::get('/color/fetch', [ColorController::class, 'fetchColors'])->name('color.fetch');
@@ -80,7 +80,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/register', AuthRegisterController::class)->name('register');
     });
     Route::prefix('site')->name('site.')->group(function () {
-        Route::prefix('{site:slug}')->group(function () {
+        Route::prefix('{site:name}')->group(function () {
             Route::get('/', [SiteController::class, 'view'])->name('view');
         });
     });

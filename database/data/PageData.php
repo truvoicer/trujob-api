@@ -2,13 +2,15 @@
 
 use App\Enums\Auth\ApiAbility;
 use App\Enums\BlockType;
+use App\Enums\Listing\ListingFetchProperty;
 use App\Enums\ListingsBlockSidebarWidget;
+use App\Enums\ListingType;
 use App\Enums\ViewType;
 
 return [
     [
         'site_id' => 1,
-        'slug' => 'home',
+        'name' => 'home',
         'title' => 'Home',
         'content' => 'Welcome to our home page',
         'view' => ViewType::Page,
@@ -54,6 +56,11 @@ return [
                         'title' => 'Choose Category/s',
                     ],
                 ],
+                'properties' => [
+                    'init' => [
+                        ListingFetchProperty::TYPE->value => [ListingType::EVENT->value],
+                    ],
+                ],
             ],
         ],
         'roles' => [
@@ -63,7 +70,7 @@ return [
     ],
     [
         'site_id' => 1,
-        'slug' => 'about',
+        'name' => 'about',
         'title' => 'About',
         'content' => 'Welcome to our about page',
         'view' => ViewType::Page,
@@ -118,7 +125,7 @@ return [
     ],
     [
         'site_id' => 1,
-        'slug' => 'contact',
+        'name' => 'contact',
         'title' => 'Contact',
         'content' => 'Welcome to our contact page',
         'view' => ViewType::Page,
@@ -145,7 +152,7 @@ return [
     ],
     [
         'site_id' => 1,
-        'slug' => 'login',
+        'name' => 'login',
         'title' => 'Login',
         'content' => 'Welcome to our login page',
         'view' => ViewType::Page,
@@ -163,7 +170,7 @@ return [
     ],
     [
         'site_id' => 1,
-        'slug' => 'register',
+        'name' => 'register',
         'title' => 'Register',
         'content' => 'Welcome to our register page',
         'view' => ViewType::Page,
@@ -181,7 +188,7 @@ return [
     ],
     [
         'site_id' => 1,
-        'slug' => 'account',
+        'name' => 'account',
         'title' => 'My Account',
         'content' => 'Welcome to your account page',
         'view' => ViewType::Page,
@@ -192,7 +199,7 @@ return [
     ],
     [
         'site_id' => 1,
-        'slug' => 'dashboard',
+        'name' => 'dashboard',
         'title' => 'Dashboard',
         'content' => 'Welcome to your dashboard page',
         'view' => ViewType::Page,
@@ -203,7 +210,7 @@ return [
     ],
     [
         'site_id' => 1,
-        'slug' => 'profile',
+        'name' => 'profile',
         'title' => 'Profile',
         'content' => 'Welcome to your profile page',
         'view' => ViewType::Page,

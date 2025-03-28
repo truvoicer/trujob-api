@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('page_id')->nullable()->constrained('pages')->nullOnDelete();
             $table->boolean('active')->default(true);
-            $table->string('title')->nullable();
+            $table->string('label')->nullable();
             $table->string('type');
             $table->string('url')->nullable();
             $table->string('target')->nullable();

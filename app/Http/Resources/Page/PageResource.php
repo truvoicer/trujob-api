@@ -19,7 +19,7 @@ class PageResource extends JsonResource
         return [
             'id' => $this->id,
             'view' => $this->view,
-            'slug' => $this->slug,
+            'name' => $this->name,
             'title' => $this->title,
             'content' => $this->content,
             'blocks' => $this->whenLoaded('pageBlocks', PageBlockResource::collection($this->pageBlocks)),

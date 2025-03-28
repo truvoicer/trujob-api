@@ -24,9 +24,9 @@ class PageService extends BaseService
         $this->resultsService = $resultsService;
     }
 
-    public function menuFetch(string $slug)
+    public function menuFetch(string $name)
     {
-        return Page::where('slug', $slug)->first();
+        return Page::where('name', $name)->first();
     }
 
     public function createPage(array $data)
@@ -135,12 +135,12 @@ class PageService extends BaseService
             unset($data['type']);
         }
         $atts = $data;
-        // if (!empty($data['properties']) && is_array($data['properties'])) {
-        //     $atts['properties'] = json_encode($data['properties']);
-        // }
-        // if (!empty($data['sidebar_widgets']) && is_array($data['sidebar_widgets'])) {
-        //     $atts['sidebar_widgets'] = json_encode($data['sidebar_widgets']);
-        // }
+        if (!empty($data['properties']) && is_array($data['properties'])) {
+            $atts['properties'] = json_encode($data['properties']);
+        }
+        if (!empty($data['sidebar_widgets']) && is_array($data['sidebar_widgets'])) {
+            $atts['sidebar_widgets'] = json_encode($data['sidebar_widgets']);
+        }
 
         $page->blocks()->attach($block->id, $atts);
 

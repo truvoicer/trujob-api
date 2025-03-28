@@ -46,11 +46,11 @@ class ListingsAdminService
         }
     }
     public function createListing(array $data) {
-        $slug = Str::slug($data['title']);
-        $data['slug'] = $this->listingRepository->buildCloneEntityStr(
-            $this->user->listing()->where('slug', $slug),
-            'slug',
-            $slug,
+        $name = Str::slug($data['title']);
+        $data['name'] = $this->listingRepository->buildCloneEntityStr(
+            $this->user->listing()->where('name', $name),
+            'name',
+            $name,
             '-'
         );
 

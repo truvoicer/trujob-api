@@ -1,8 +1,8 @@
 <?php
 return [
     [
-        'slug' => 'tru-job',
-        'title' => 'TruJob',
+        'name' => 'tru-job',
+        'label' => 'TruJob',
         'description' => 'The PHP Framework For Web Artisans',
         'seo_title' => 'TruJob',
         'seo_description' => 'The PHP Framework For Web Artisans',

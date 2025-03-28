@@ -11,8 +11,8 @@ class Site extends Model
     use HasApiTokens, HasFactory;
     
     protected $fillable = [
-        'slug',
-        'title',
+        'name',
+        'label',
         'description',
         'seo_title',
         'seo_description',

@@ -19,8 +19,8 @@ class MenuPageResource extends JsonResource
         return [
             'id' => $this->id,
             'view' => $this->view,
-            'slug' => $this->slug,
-            'title' => $this->title,
+            'name' => $this->name,
+            'label' => $this->label,
             'is_active' => $this->is_active,
             'is_home' => $this->is_home,
             'is_featured' => $this->is_featured,

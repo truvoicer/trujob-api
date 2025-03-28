@@ -40,11 +40,11 @@ class EditPageRequest extends FormRequest
                 'sometimes',
                 Rule::enum(ViewType::class)
             ],
-            'slug' => [
+            'name' => [
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('pages', 'slug')
+                Rule::unique('pages', 'name')
             ],
             'title' => [
                 'sometimes',

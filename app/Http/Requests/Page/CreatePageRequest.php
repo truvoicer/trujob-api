@@ -41,11 +41,11 @@ class CreatePageRequest extends FormRequest
                 'required',
                 Rule::enum(ViewType::class)
             ],
-            'slug' => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('pages', 'slug')
+                Rule::unique('pages', 'name')
             ],
             'title' => [
                 'required',

@@ -43,13 +43,13 @@ trait ListingsTrait
             case ListingFetchProperty::TYPE:
                 return $query->whereHas('listingType', function ($query) use ($data) {
                     if (is_array($data)) {
-                        if (count(array_map('is_int', $data)) === count($data)) {
+                        if (count(array_filter($data, 'is_numeric')) === count($data)) {
                             $query->whereIn('id', $data);
-                        } else if (count(array_map('is_string', $data)) === count($data)) {
-                            $query->whereIn('slug', $data);
+                        } else if (count(array_filter($data, 'is_string')) === count($data)) {
+                            $query->whereIn('name', $data);
                         }
                     } else if (is_string($data)) {
-                        $query->where('slug', $data);
+                        $query->where('name', $data);
                     } else if (is_int($data)) {
                         $query->where('id', $data);
                     }
@@ -58,13 +58,13 @@ trait ListingsTrait
             case ListingFetchProperty::CATEGORIES:
                 return $query->whereHas('categories', function ($query) use ($data) {
                     if (is_array($data)) {
-                        if (count(array_map('is_int', $data)) === count($data)) {
+                        if (count(array_filter($data, 'is_numeric')) === count($data)) {
                             $query->whereIn('id', $data);
-                        } else if (count(array_map('is_string', $data)) === count($data)) {
-                            $query->whereIn('slug', $data);
+                        } else if (count(array_filter($data, 'is_string')) === count($data)) {
+                            $query->whereIn('name', $data);
                         }
                     } else if (is_string($data)) {
-                        $query->where('slug', $data);
+                        $query->where('name', $data);
                     } else if (is_int($data)) {
                         $query->where('id', $data);
                     }

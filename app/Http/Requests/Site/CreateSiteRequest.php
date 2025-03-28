@@ -23,11 +23,11 @@ class CreateSiteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'slug' => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('sites', 'slug')
+                Rule::unique('sites', 'name')
             ],
             'title' => [
                 'required',

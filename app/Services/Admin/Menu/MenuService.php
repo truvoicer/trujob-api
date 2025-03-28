@@ -96,7 +96,7 @@ class MenuService extends BaseService
         }
 
         if (!empty($data['page'])) {
-            $page = Page::where('slug', $data['page'])->first();
+            $page = Page::where('name', $data['page'])->first();
             if (!$page) {
                 throw new \Exception('Page not found: ' . $data['page']);
             }

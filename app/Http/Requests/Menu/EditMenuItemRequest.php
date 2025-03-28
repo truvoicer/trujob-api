@@ -36,12 +36,12 @@ class EditMenuItemRequest extends FormRequest
                 'sometimes',
                 'boolean',
             ],
-            'title' => [
+            'label' => [
                 'sometimes',
                 'string',
                 'max:255',
             ],
-            'slug' => [
+            'name' => [
                 'sometimes',
                 'string',
                 'max:255',

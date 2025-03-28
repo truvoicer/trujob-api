@@ -23,8 +23,8 @@ class SiteFactory extends Factory
         $title = $this->faker->sentence(3);
         $description = $this->faker->sentence(10);
         return [
-            'slug' => Str::slug($title),
-            'title' => $title,
+            'name' => Str::slug($title),
+            'label' => $title,
             'description' => $description,
             'seo_title' => $title,
             'seo_description' => $description,

@@ -10,14 +10,14 @@ return [
         'menu_items' => [
             [
                 'page' => 'home',
-                'title' => 'Home',
+                'label' => 'Home',
                 'url' => '/',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,
             ],
             [
-                'title' => 'About',
+                'label' => 'About',
                 'url' => '/about',
                 'active' => true,
                 'type' => MenuItemType::URL->value,
@@ -28,7 +28,7 @@ return [
                         'menu_items' => [
                             [
                                 'page' => 'about',
-                                'title' => 'About Us',
+                                'label' => 'About Us',
                                 'url' => '/about',
                                 'active' => true,
                                 'type' => MenuItemType::PAGE->value,
@@ -36,7 +36,7 @@ return [
                             ],
                             [
                                 'page' => 'contact',
-                                'title' => 'Contact',
+                                'label' => 'Contact',
                                 'url' => '/contact',
                                 'active' => true,
                                 'type' => MenuItemType::PAGE->value,
@@ -48,7 +48,7 @@ return [
             ],
             [
                 'page' => 'login',
-                'title' => 'Login',
+                'label' => 'Login',
                 'url' => '/login',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,
@@ -56,14 +56,14 @@ return [
             ],
             [
                 'page' => 'register',
-                'title' => 'Register',
+                'label' => 'Register',
                 'url' => '/register',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,
                 'order' => 3,
             ],
             [
-                'title' => 'My Account',
+                'label' => 'My Account',
                 'url' => '/account',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,
@@ -77,7 +77,7 @@ return [
                         'menu_items' => [
                             [
                                 'page' => 'dashboard',
-                                'title' => 'Dashboard',
+                                'label' => 'Dashboard',
                                 'url' => '/dashboard',
                                 'active' => true,
                                 'type' => MenuItemType::PAGE->value,
@@ -85,14 +85,14 @@ return [
                             ],
                             [
                                 'page' => 'profile',
-                                'title' => 'Profile',
+                                'label' => 'Profile',
                                 'url' => '/profile',
                                 'active' => true,
                                 'type' => MenuItemType::PAGE->value,
                                 'order' => 1,
                             ],
                             [
-                                'title' => 'Logout',
+                                'label' => 'Logout',
                                 'url' => '/logout',
                                 'active' => true,
                                 'type' => MenuItemType::LOGOUT->value,

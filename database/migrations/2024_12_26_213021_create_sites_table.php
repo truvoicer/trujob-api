@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('sites', function (Blueprint $table) {
             $table->id();
-            $table->string('slug')->unique();
-            $table->string('title')->nullable();
+            $table->string('name')->unique();
+            $table->string('label')->nullable();
             $table->string('description')->nullable();
             $table->string('seo_title')->nullable();
             $table->string('seo_description')->nullable();

@@ -13,7 +13,7 @@ class MenuItem extends Model
         'site_id',
         'page_id',
         'active',
-        'title',
+        'label',
         'type',
         'url',
         'target',

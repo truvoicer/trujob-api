@@ -108,4 +108,12 @@ class UtilHelpers
         }
         return $matches;
     }
+
+    public static function stringToArray(?string $string = null, ?string $delimiter = ','): array
+    {
+        if (empty($string)) {
+            return [];
+        }
+        return explode($delimiter, $string);
+    }
 }

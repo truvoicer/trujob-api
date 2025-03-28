@@ -3,10 +3,11 @@
 namespace App\Http\Requests\Listing;
 
 use App\Enums\Listing\ListingFetchProperty;
+use App\Helpers\Tools\UtilHelpers;
 use App\Models\Category;
 use App\Models\ListingType;
-use App\Rules\IdOrSlugExists;
-use App\Rules\StringOrIntger;
+use App\Models\User;
+use App\Rules\StringArrayExists;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListingFetchRequest extends FormRequest
@@ -48,31 +49,39 @@ class ListingFetchRequest extends FormRequest
             ],
             ListingFetchProperty::TYPE->value => [
                 'sometimes',
-                'array',
-            ],
-            ListingFetchProperty::TYPE->value . '.*' => [
-                'sometimes',
-                new StringOrIntger,
-                new IdOrSlugExists(new ListingType())
+                new StringArrayExists(
+                    new ListingType(),
+                    [
+                        ['name' => 'id', 'type' => 'integer'],
+                        ['name' => 'name']
+                    ]
+                ),
             ],
             ListingFetchProperty::CATEGORIES->value => [
                 'sometimes',
-                'array',
-            ],
-            ListingFetchProperty::CATEGORIES->value . '.*' => [
-                'sometimes',
-                new StringOrIntger,
-                new IdOrSlugExists(new Category())
+                new StringArrayExists(
+                    new Category(),
+                    [
+                        ['name' => 'id', 'type' => 'integer'],
+                        ['name' => 'name']
+                    ]
+                ),
             ],
             ListingFetchProperty::USER->value => [
                 'sometimes',
-                'integer',
-                'exists:users,id',
+                new StringArrayExists(
+                    new User(),
+                    [
+                        ['name' => 'id', 'type' => 'integer'],
+                        ['name' => 'username'],
+                        ['name' => 'email']
+                    ]
+                ),
             ],
-            ListingFetchProperty::IMAGES->value => [
-                'sometimes',
-                'array',
-            ],
+            // ListingFetchProperty::IMAGES->value => [
+            //     'sometimes',
+            //     'array',
+            // ],
             ListingFetchProperty::VIEWS->value => [
                 'sometimes',
                 'integer',

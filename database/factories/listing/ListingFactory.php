@@ -28,7 +28,7 @@ class ListingFactory extends Factory
         $title = $fake->text(20);
         return [
             'listing_type_id' => $this->faker->numberBetween(1, count($data)),
-            "slug" => HelperService::toSlug($title),
+            "name" => HelperService::toSlug($title),
             "title" => $title,
             "description" => $fake->text(100),
             "active" => $fake->boolean(),

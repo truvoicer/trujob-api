@@ -163,7 +163,7 @@ class DatabaseSeeder extends Seeder
                 throw new \Exception('Error creating site token');
             }
             $tokenData['sites'] = [];
-            $tokenData['sites'][$site->slug] = $siteToken->plainTextToken;
+            $tokenData['sites'][$site->name] = $siteToken->plainTextToken;
         }
         $this->command->info('Tokens generated:');
         var_dump($tokenData);

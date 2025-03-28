@@ -24,7 +24,7 @@ class IdOrSlugExists implements ValidationRule
         if (is_numeric($value)) {
             $this->validateId($attribute, $value, $fail);
         } else {
-            $this->validateSlug($attribute, $value, $fail);
+            $this->validateName($attribute, $value, $fail);
         }
     }
 
@@ -35,9 +35,9 @@ class IdOrSlugExists implements ValidationRule
         }
     }
 
-    public function validateSlug(string $attribute, mixed $value, Closure $fail): void
+    public function validateName(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!$this->model->where('slug', $value)->exists()) {
+        if (!$this->model->where('name', $value)->exists()) {
             $fail("The $attribute does not exist.");
         }
     }

@@ -22,7 +22,7 @@ class MenuSeeder extends Seeder
             throw new \Exception('Error reading MenuData.php file ' . database_path('data/MenuData.php'));
         }
         foreach ($data as $index => $menu) {
-            $site = Site::where('slug', $menu['site'])->first();
+            $site = Site::where('name', $menu['site'])->first();
             if (!$site) {
                 throw new \Exception('Site not found: ' . $menu['site']);
             }

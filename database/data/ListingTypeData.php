@@ -4,63 +4,63 @@ use App\Enums\ListingType;
 
 return [
     [
-        'slug' => ListingType::EVENT,
-        'title' => 'Event',
+        'name' => ListingType::EVENT,
+        'label' => 'Event',
         'description' => 'Event description',
     ],
     [
-        'slug' => ListingType::VEHICLE,
-        'title' => 'Vehicle',
+        'name' => ListingType::VEHICLE,
+        'label' => 'Vehicle',
         'description' => 'Vehicle description',
     ],
     [
-        'slug' => ListingType::SERVICE,
-        'title' => 'Service',
+        'name' => ListingType::SERVICE,
+        'label' => 'Service',
         'description' => 'Service description',
     ],
     [
-        'slug' => ListingType::REAL_ESTATE,
-        'title' => 'Real Estate',
+        'name' => ListingType::REAL_ESTATE,
+        'label' => 'Real Estate',
         'description' => 'Real Estate description',
     ],
     [
-        'slug' => ListingType::JOB,
-        'title' => 'Job',
+        'name' => ListingType::JOB,
+        'label' => 'Job',
         'description' => 'Job description',
     ],
     [
-        'slug' => ListingType::PET,
-        'title' => 'Pet',
+        'name' => ListingType::PET,
+        'label' => 'Pet',
         'description' => 'Pet description',
     ],
     [
-        'slug' => ListingType::ITEM,
-        'title' => 'Item',
+        'name' => ListingType::ITEM,
+        'label' => 'Item',
         'description' => 'Item description',
     ],
     [
-        'slug' => ListingType::PROPERTY,
-        'title' => 'Property',
+        'name' => ListingType::PROPERTY,
+        'label' => 'Property',
         'description' => 'Property description',
     ],
     [
-        'slug' => ListingType::BUSINESS,
-        'title' => 'Business',
+        'name' => ListingType::BUSINESS,
+        'label' => 'Business',
         'description' => 'Business description',
     ],
     [
-        'slug' => ListingType::TICKET,
-        'title' => 'Ticket',
+        'name' => ListingType::TICKET,
+        'label' => 'Ticket',
         'description' => 'Ticket description',
     ],
     [
-        'slug' => ListingType::COURSE,
-        'title' => 'Course',
+        'name' => ListingType::COURSE,
+        'label' => 'Course',
         'description' => 'Course description',
     ],
     [
-        'slug' => ListingType::FOOD,
-        'title' => 'Food',
+        'name' => ListingType::FOOD,
+        'label' => 'Food',
         'description' => 'Food description',
     ]
 ];

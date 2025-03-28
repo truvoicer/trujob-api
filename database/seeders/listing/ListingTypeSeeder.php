@@ -19,19 +19,19 @@ class ListingTypeSeeder extends Seeder
             throw new \Exception('Error reading ListingTypeData.php file ' . database_path('data/ListingTypeData.php'));
         }
         foreach ($data as $index => $item) {
-            if (empty($item['slug'])) {
+            if (empty($item['name'])) {
                 throw new \Exception(
                     sprintf(
-                        'Error at %d, slug is required | ListingTypeData.php',
+                        'Error at %d, name is required | ListingTypeData.php',
                         $index
                     )
                 );
             }
-            if (empty($item['title'])) {
-                $item['title'] = ucfirst($item['slug']);
+            if (empty($item['label'])) {
+                $item['label'] = ucfirst($item['name']);
             }
             $create = ListingType::query()->updateOrCreate(
-                ['slug' => $item['slug']],
+                ['name' => $item['name']],
                 $item
             );
         }
