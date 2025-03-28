@@ -1,7 +1,7 @@
 <?php
 namespace App\Enums\Block;
 
-use App\Enums\BlockType;
+use App\Enums\Block\BlockType;
 use App\Services\Block\Type\ListingsBlockType;
 
 enum BlockTypeClass: string

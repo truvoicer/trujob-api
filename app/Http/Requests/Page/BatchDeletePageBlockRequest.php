@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Page;
 
-use App\Enums\BlockType;
+use App\Enums\Block\BlockType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

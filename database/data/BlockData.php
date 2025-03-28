@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\BlockType;
+use App\Enums\Block\BlockType;
 
 return [
     [

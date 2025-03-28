@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\BlockType;
+use App\Enums\Block\BlockType;
 use Illuminate\Database\Eloquent\Model;
 
 class Block extends Model

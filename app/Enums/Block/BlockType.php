@@ -1,5 +1,5 @@
 <?php
-namespace App\Enums;
+namespace App\Enums\Block;
 
 enum BlockType: string
 {

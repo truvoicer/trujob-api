@@ -1,10 +1,10 @@
 <?php
 
 use App\Enums\Auth\ApiAbility;
-use App\Enums\BlockType;
+use App\Enums\Block\BlockType;
 use App\Enums\Listing\ListingFetchProperty;
-use App\Enums\ListingsBlockSidebarWidget;
-use App\Enums\ListingType;
+use App\Enums\Listing\ListingBlockSidebarWidget;
+use App\Enums\Listing\ListingType;
 use App\Enums\ViewType;
 
 return [
@@ -41,17 +41,17 @@ return [
                 'has_sidebar' => true,
                 'sidebar_widgets' => [
                     [
-                        'type' => ListingsBlockSidebarWidget::SEARCH_FILTER->value,
+                        'type' => ListingBlockSidebarWidget::SEARCH_FILTER->value,
                         'has_container' => false,
                         'title' => 'Search',
                     ],
                     [
-                        'type' => ListingsBlockSidebarWidget::PROXIMITY_FILTER->value,
+                        'type' => ListingBlockSidebarWidget::PROXIMITY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Set Proximity',
                     ],
                     [
-                        'type' => ListingsBlockSidebarWidget::CATEGORY_FILTER->value,
+                        'type' => ListingBlockSidebarWidget::CATEGORY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Choose Category/s',
                     ],
@@ -101,17 +101,17 @@ return [
                 'has_sidebar' => true,
                 'sidebar_widgets' => [
                     [
-                        'type' => ListingsBlockSidebarWidget::SEARCH_FILTER->value,
+                        'type' => ListingBlockSidebarWidget::SEARCH_FILTER->value,
                         'has_container' => false,
                         'title' => 'Search',
                     ],
                     [
-                        'type' => ListingsBlockSidebarWidget::PROXIMITY_FILTER->value,
+                        'type' => ListingBlockSidebarWidget::PROXIMITY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Set Proximity',
                     ],
                     [
-                        'type' => ListingsBlockSidebarWidget::CATEGORY_FILTER->value,
+                        'type' => ListingBlockSidebarWidget::CATEGORY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Choose Category/s',
                     ],

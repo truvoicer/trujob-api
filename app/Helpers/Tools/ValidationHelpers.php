@@ -2,7 +2,7 @@
 
 namespace App\Helpers\Tools;
 
-use App\Enums\BlockType;
+use App\Enums\Block\BlockType;
 use App\Http\Requests\Listing\ListingFetchRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
