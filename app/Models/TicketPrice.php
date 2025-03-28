@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TicketListing extends Model
+class TicketPrice extends Model
 {
     //
 }

@@ -17,10 +17,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('listing_prices', function (Blueprint $table) {
+        Schema::create('prices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId( 'user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId( 'listing_id')->constrained('listings')->onDelete('cascade');
+            $table->foreignId( 'created_by_user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId( 'country_id')->constrained('countries')->onDelete('cascade');
             $table->foreignId( 'currency_id')->constrained('currencies')->onDelete('cascade');
             $table->string('type');
@@ -36,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('listing_prices');
+        Schema::dropIfExists('prices');
     }
 };

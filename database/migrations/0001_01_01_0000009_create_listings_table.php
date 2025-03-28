@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->boolean('active')->default(false);
             $table->boolean('allow_offers')->default(false);
+            $table->integer('quantity')->default(1);
             $table->timestamps();
         });
     }

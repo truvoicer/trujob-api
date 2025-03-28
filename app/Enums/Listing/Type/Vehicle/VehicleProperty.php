@@ -4,9 +4,7 @@ namespace App\Enums\Listing\Type\Vehicle;
 
 enum VehicleProperty: string
 {
-    case LOCATION = 'location';
-    case LATITUDE = 'latitude';
-    case LONGITUDE = 'longitude';
+    case TYPE = 'type';
     case MAKE = 'make';
     case MODEL = 'model';
     case YEAR = 'year';
@@ -16,13 +14,7 @@ enum VehicleProperty: string
     case BODY_TYPE = 'body_type';
     case ENGINE_SIZE = 'engine_size';
     case COLOUR = 'colour';
-    case PRICE = 'price';   
-    case IMAGES = 'images';
-    case VIDEOS = 'videos';
-    case DOCUMENTS = 'documents';
-    case CATEGORIES = 'categories';
-    case FEATURES = 'features';
-    case TAGS = 'tags';
-    case STATUS = 'status';
-    case EXPIRES_AT = 'expires_at';
+    case CONDITION = 'condition';
+    case VIN = 'vin';
+    case PLATE_NUMBER = 'plate_number';
 }

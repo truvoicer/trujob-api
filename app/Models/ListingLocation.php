@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EventListing extends Model
+class ListingLocation extends Model
 {
     //
 }

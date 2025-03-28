@@ -4,10 +4,6 @@ namespace App\Enums\Listing\Type\RealEstate;
 
 enum RealEstateProperty: string
 {
-    case LOCATION = 'location';
-    case LATITUDE = 'latitude';
-    case LONGITUDE = 'longitude';
-    case PRICE = 'price';
     case BEDROOMS = 'bedrooms';
     case BATHROOMS = 'bathrooms';
     case SIZE = 'size';
@@ -22,11 +18,15 @@ enum RealEstateProperty: string
     case COOLING = 'cooling';
     case FLOORING = 'flooring';
     case AMENITIES = 'amenities';
-    case IMAGES = 'images';
-    case VIDEOS = 'videos';
-    case DOCUMENTS = 'documents';
-    case CATEGORIES = 'categories';
-    case FEATURES = 'features';
-    case TAGS = 'tags';
-    case STATUS = 'status';
+    case VIEW = 'view';
+    case BALCONY = 'balcony';
+    case GARDEN = 'garden';
+    case POOL = 'pool';
+    case GARAGE = 'garage';
+    case BASEMENT = 'basement';
+    case ROOF_TYPE = 'roof_type';
+    case LOT_SIZE = 'lot_size';
+    case PROPERTY_TAX = 'property_tax';
+    case HOA_FEES = 'hoa_fees';
+    case ZONING = 'zoning';
 }
