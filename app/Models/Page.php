@@ -12,6 +12,7 @@ class Page extends Model
 
     protected $fillable = [
         'site_id',
+        'permalink',
         'view',
         'name',
         'title',
@@ -66,5 +67,10 @@ class Page extends Model
     public function roles()
     {
         return $this->belongsToMany(Role::class);
+    }
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class);
     }
 }

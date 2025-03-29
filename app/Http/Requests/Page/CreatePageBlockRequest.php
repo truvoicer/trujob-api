@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Page;
 
-use App\Enums\Block\PageBlockType;
+use App\Enums\Block\BlockType;
 use App\Models\Role;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
@@ -29,7 +29,7 @@ class CreatePageBlockRequest extends FormRequest
         return [
             'type' => [
                 'required',
-                Rule::enum(PageBlockType::class)
+                Rule::enum(BlockType::class)
             ],
             'order' => [
                 'required',

@@ -5,7 +5,7 @@ namespace App\Services\Block\Type;
 use App\Models\PageBlock;
 use App\Traits\Listings\ListingsTrait;
 
-class ListingsPageBlockType extends PageBlockTypeBase
+class ListingsBlockType extends BlockTypeBase
 {
    use ListingsTrait;
 

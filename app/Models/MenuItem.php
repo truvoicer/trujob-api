@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\MenuItemType;
+use App\Helpers\MenuHelpers;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,8 +27,16 @@ class MenuItem extends Model
 
     protected $casts = [
         'active' => 'boolean',
+        'type' => MenuItemType::class,
     ];
 
+    protected function url (): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => MenuHelpers::getMenuItemUrl($this->type, $value, $this->page),
+        );
+    }
+    
     public function menu() {
         return $this->belongsTo(
             Menu::class

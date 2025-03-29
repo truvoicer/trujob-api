@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Page;
 
-use App\Enums\Block\BlockType;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class BatchDeletePageBlockRequest extends FormRequest
+class SitePageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,13 @@ class BatchDeletePageBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => [
+            'permalink' => [
                 'required',
-                Rule::enum(BlockType::class)
-            ],
+                'string',
+                'max:255',
+                Rule::exists('pages', 'permalink')
+                    ->where('site_id', $this->user()?->id)
+            ]
         ];
     }
 }

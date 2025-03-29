@@ -107,4 +107,40 @@ return [
             ],
         ],
     ],
+    [
+        'site' => 'tru-job',
+        'name' => 'admin-header-menu',
+        'menu_items' => [
+            [
+                'label' => 'Admin',
+                'url' => '/dashboard',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+                'roles' => [
+                    ApiAbility::SUPERUSER->value,
+                    ApiAbility::ADMIN->value,
+                ],
+                'menus' => [
+                    [
+                        'name' => 'admin-header-admin-menu',
+                        'menu_items' => [
+                            [
+                                'page' => 'admin_manage_pages',
+                                'label' => 'Manage Pages',
+                                'url' => '/admin/manage-pages',
+                                'active' => true,
+                                'type' => MenuItemType::PAGE->value,
+                                'order' => 0,
+                            ],
+                        ],
+                        'roles' => [
+                            ApiAbility::SUPERUSER->value,
+                            ApiAbility::ADMIN->value,
+                        ],
+                    ]
+                ]
+            ],
+        ],
+    ],
 ];

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('site_id')->constrained('sites')->onDelete('cascade');
             $table->string('view')->nullable();
             $table->string('name')->nullable();
+            $table->string('permalink')->nullable();
             $table->string('title')->nullable();
             $table->text('content')->nullable();
             $table->boolean('is_active')->default(true);

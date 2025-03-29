@@ -5,6 +5,7 @@ namespace App\Services\Page;
 use App\Models\Block;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Models\Site;
 use App\Services\BaseService;
 use App\Services\Block\BlockService;
 use App\Services\ResultsService;
@@ -22,6 +23,24 @@ class PageService extends BaseService
     {
         parent::__construct();
         $this->resultsService = $resultsService;
+    }
+
+    public function getPageById(Site $site, int $id)
+    {
+        return $site->pages()->where('id', $id)
+        ->first();
+    }
+
+    public function getPageByPermalink(Site $site, string $permalink): ?Page
+    {
+        return $site->pages()->where('permalink', $permalink)
+        ->first();
+    }
+
+    public function getPageByName(Site $site, string $name)
+    {
+        return $site->pages()->where('name', $name)
+        ->first();
     }
 
     public function menuFetch(string $name)
@@ -103,8 +122,7 @@ class PageService extends BaseService
     {
         foreach ($data as $blockData) {
             if (!$this->createPageBlock($page, $blockData)) {
-                $this->addError('Error creating page block', $blockData);
-                return false;
+                throw new \Exception('Error creating page block');
             }
         }
         if ($this->resultsService->hasErrors()) {
@@ -117,8 +135,7 @@ class PageService extends BaseService
     {
         $block = Block::where('type', $data['type'])->first();
         if (!$block) {
-            $this->resultsService->addError('Block not found', $data);
-            return false;
+            throw new \Exception('Block not found');
         }
         return $this->attachPageBlock($page, $block, $data);
     }

@@ -41,6 +41,15 @@ class CreatePageRequest extends FormRequest
                 'required',
                 Rule::enum(ViewType::class)
             ],
+            'permalink' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('pages', 'permalink')
+                    ->where(function (Builder $query) {
+                        return $query->where('site_id', $this->user()?->id);
+                    })
+            ],
             'name' => [
                 'required',
                 'string',

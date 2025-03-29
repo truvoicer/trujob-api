@@ -31,14 +31,19 @@ class EditPageRequest extends FormRequest
         $blocksRules = ValidationHelpers::nestedValidationRules((new EditPageBlockRequest())->rules(), 'blocks.*');
         unset($blocksRules['blocks.*.page_id']);
         return [
-            'site_id' => [
-                'sometimes',
-                'integer',
-                Rule::exists('sites', 'id')
-            ],
             'view' => [
                 'sometimes',
                 Rule::enum(ViewType::class)
+            ],
+            'permalink' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('pages', 'permalink')
+                    ->where(function ($query) {
+                        return $query->where('site_id', $this->user()?->id);
+                    })
+                    ->ignore($this->route('page'))
             ],
             'name' => [
                 'sometimes',

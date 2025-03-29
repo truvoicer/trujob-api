@@ -19,6 +19,7 @@ class PageResource extends JsonResource
         return [
             'id' => $this->id,
             'view' => $this->view,
+            'permalink' => $this->permalink,
             'name' => $this->name,
             'title' => $this->title,
             'content' => $this->content,

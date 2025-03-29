@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\Block\PageBlockType;
+use App\Enums\Block\BlockType;
 use Illuminate\Database\Eloquent\Model;
 
 class Block extends Model
@@ -12,7 +12,7 @@ class Block extends Model
         'properties',
     ];
     protected $casts = [
-        'type' => PageBlockType::class,
+        'type' => BlockType::class,
         'properties' => 'array'
     ];
 

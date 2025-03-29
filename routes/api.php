@@ -33,6 +33,7 @@ use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Page\BatchDeletePageBlockController;
 use App\Http\Controllers\Api\Page\PageBlockController;
 use App\Http\Controllers\Api\Page\PageController;
+use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SettingController;
@@ -46,9 +47,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(AppPublic::class)->group(function () {
-
-    Route::get('/page/{page:name}', [PageController::class, 'view'])->name('page.view');
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('listing')->name('listing.')->group(function () {
         Route::get('/', [ListingPublicController::class, 'index'])->name('fetch');
@@ -74,12 +72,16 @@ Route::middleware(AppPublic::class)->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/view', [AuthUserController::class, 'view'])->name('view');
         Route::post('/login', AuthLoginController::class)->name('login');
         Route::post('/register', AuthRegisterController::class)->name('register');
     });
     Route::prefix('site')->name('site.')->group(function () {
+        Route::get('/page', [SitePageController::class, 'view'])->name('page.view');
         Route::prefix('{site:name}')->group(function () {
             Route::get('/', [SiteController::class, 'view'])->name('view');
         });
@@ -306,6 +308,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('page')->name('page.')->group(function () {
         Route::post('/create', [PageController::class, 'create'])->name('create');
         Route::prefix('{page}')->group(function () {
+            Route::get('/', [PageController::class, 'view'])->name('view');
             Route::patch('/update', [PageController::class, 'update'])->name('update');
             Route::delete('/delete', [PageController::class, 'delete'])->name('delete');
             Route::prefix('block')->name('block.')->group(function () {
