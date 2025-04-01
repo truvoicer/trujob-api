@@ -61,6 +61,12 @@ class MenuService extends BaseService
 
     public function updateMenu(array $data) {
         $roles = null;
+        $menuItems = [];
+
+        if (!empty($data['menu_items']) && is_array($data['menu_items'])) {
+            $menuItems = $data['menu_items'];
+            unset($data['menu_items']);
+        }
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
@@ -72,6 +78,14 @@ class MenuService extends BaseService
         }
         if (is_array($roles)) {
             $this->syncRoles($this->menu->roles(), $roles);
+        }
+
+        if (!count($menuItems)) {
+            return true;
+        }
+        $this->menu->menuItems()->delete();
+        foreach ($menuItems as $menuItem) {
+            $this->createMenuItem($this->menu, $menuItem);
         }
         return true;
     }

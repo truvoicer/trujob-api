@@ -229,6 +229,18 @@ return [
     ],
     [
         'site_id' => 1,
+        'permalink' => '/account/settings',
+        'name' => 'account_settings',
+        'title' => 'Account Settings',
+        'content' => 'Welcome to your account settings page',
+        'view' => ViewType::AdminPage,
+        'blocks' => [],
+        'roles' => [
+            ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
         'permalink' => '/admin/manage-pages',
         'name' => 'admin_manage_pages',
         'title' => 'Manage Pages',

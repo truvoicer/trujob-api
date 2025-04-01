@@ -28,8 +28,16 @@ class MenuSeeder extends Seeder
             }
             unset($menu['site']);
             $menu['site_id'] = $site->id;
-            if (!$menuService->createMenu($menu)) {
-                throw new \Exception('Error creating menu: ' . $index);
+            $getMenu = Menu::where('name', $menu['name'])->where('site_id', $site->id)->first();
+            if (!$getMenu) {
+                if (!$menuService->createMenu($menu)) {
+                    throw new \Exception('Error creating menu: ' . $index);
+                }
+            } else {
+                $menuService->setMenu($getMenu);
+                if (!$menuService->updateMenu($menu)) {
+                    throw new \Exception('Error updating menu: ' . $index);
+                }
             }
         }
     }

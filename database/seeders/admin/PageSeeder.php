@@ -20,6 +20,13 @@ class PageSeeder extends Seeder
             throw new \Exception('Error reading PageData.php file ' . database_path('data/PageData.php'));
         }
         foreach ($data as $item) {
+            $findPage = Page::where('name', $item['name'])->where('site_id', $item['site_id'])->first();
+            if ($findPage) {
+                if (!$pageService->updatePage($findPage, $item)) {
+                    throw new \Exception('Error updating page: ' . $item['name']);
+                }
+                continue;
+            }
             $pageService->createPage($item);
         }
     }

@@ -112,6 +112,8 @@ return [
         'name' => 'admin-header-menu',
         'menu_items' => [
             [
+
+                'page' => 'dashboard',
                 'label' => 'Admin',
                 'url' => '/dashboard',
                 'active' => true,
@@ -140,6 +142,25 @@ return [
                         ],
                     ]
                 ]
+            ],
+        ],
+    ],
+    [
+        'site' => 'tru-job',
+        'name' => 'admin-header-user-dropdown-menu',
+        'menu_items' => [
+            [
+
+                'page' => 'account_settings',
+                'label' => 'Account Settings',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+                'roles' => [
+                    ApiAbility::SUPERUSER->value,
+                    ApiAbility::ADMIN->value,
+                    ApiAbility::USER->value,
+                ],
             ],
         ],
     ],
