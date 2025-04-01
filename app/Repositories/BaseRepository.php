@@ -211,7 +211,11 @@ class BaseRepository
         return $this->modelClassName::query();
     }
     protected function buildQuery() {
-        $query = $this->modelClassName::query();
+        if ($this->query) {
+         $query = $this->query;
+        } else {
+            $query = $this->modelClassName::query();
+        }
         foreach ($this->where as $index => $where) {
             if ($index === 0) {
                 $query = $this->buildWhereQuery($query, $where);

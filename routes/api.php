@@ -48,6 +48,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(AppPublic::class)->group(function () {
 
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::post('/login', AuthLoginController::class)->name('login');
+    });
     Route::prefix('listing')->name('listing.')->group(function () {
         Route::get('/', [ListingPublicController::class, 'index'])->name('fetch');
         Route::get('/category/fetch', [CategoryController::class, 'fetchCategories'])->name('category.fetch');
@@ -77,7 +80,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
     Route::prefix('auth')->name('auth.')->group(function () {
         Route::get('/view', [AuthUserController::class, 'view'])->name('view');
-        Route::post('/login', AuthLoginController::class)->name('login');
         Route::post('/register', AuthRegisterController::class)->name('register');
     });
     Route::prefix('site')->name('site.')->group(function () {
@@ -306,6 +308,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
 
     Route::prefix('page')->name('page.')->group(function () {
+        Route::get('/', [PageController::class, 'index'])->name('index');
         Route::post('/create', [PageController::class, 'create'])->name('create');
         Route::prefix('{page}')->group(function () {
             Route::get('/', [PageController::class, 'view'])->name('view');

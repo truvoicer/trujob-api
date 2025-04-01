@@ -6,6 +6,7 @@ use App\Models\Block;
 use App\Models\Page;
 use App\Models\PageBlock;
 use App\Models\Site;
+use App\Repositories\PageRepository;
 use App\Services\BaseService;
 use App\Services\Block\BlockService;
 use App\Services\ResultsService;
@@ -15,14 +16,17 @@ class PageService extends BaseService
 {
     use RoleTrait;
 
-    private ResultsService $resultsService;
-
     private Page $page;
 
-    public function __construct(ResultsService $resultsService)
+    public function __construct(private ResultsService $resultsService, private PageRepository $pageRepository)
     {
         parent::__construct();
         $this->resultsService = $resultsService;
+    }
+
+    public function getSitePages(Site $site)
+    {
+        return $this->pageRepository->getSitePages($site);
     }
 
     public function getPageById(Site $site, int $id)
@@ -30,7 +34,7 @@ class PageService extends BaseService
         return $site->pages()->where('id', $id)
         ->first();
     }
-
+    
     public function getPageByPermalink(Site $site, string $permalink): ?Page
     {
         return $site->pages()->where('permalink', $permalink)

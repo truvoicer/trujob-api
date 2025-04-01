@@ -7,6 +7,7 @@ use App\Http\Requests\Page\CreatePageRequest;
 use App\Http\Requests\Page\EditPageRequest;
 use App\Http\Resources\Page\PageResource;
 use App\Models\Page;
+use App\Repositories\PageRepository;
 use App\Services\Page\PageService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,14 +19,28 @@ use Symfony\Component\HttpFoundation\Response;
 class PageController extends Controller
 {
     public function __construct(
-        private PageService $pageService
+        private PageService $pageService,
+        private PageRepository $pageRepository
     )
     {
     }
 
     public function index(Request $request)
     {
-        return [];
+        dd($request->user());
+        $this->pageRepository->setQuery(
+            $request->user()->pages()
+        );
+        $this->pageRepository->setWith([
+            'blocks' => function ($query) {
+                $query->orderBy('order');
+            }
+        ]);
+        $this->pageRepository->setSortField('created_at');
+        $this->pageRepository->setOrderDir('desc');
+        return PageResource::collection(
+            $this->pageRepository->findMany()
+        );
     }
 
     public function view(Page $page)
