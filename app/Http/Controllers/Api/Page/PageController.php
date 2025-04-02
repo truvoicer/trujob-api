@@ -48,6 +48,7 @@ class PageController extends Controller
         $this->pageRepository->setPage(
             $request->get('page', 1)
         );
+        
         return PageResource::collection(
             $this->pageRepository->findMany()
         );

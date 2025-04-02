@@ -30,12 +30,12 @@ class PageBlockController extends Controller
 
     public function index(Page $page)
     {
-        return PageBlockResource::collection($page->blocks);
+        return PageBlockResource::collection($page->pageBlocks);
     }
 
     public function view(Page $page, Block $block)
     {
-        return new PageBlockResource($block);
+        return new PageBlockResource($page->pageBlocks);
     }
 
     public function create(Page $page, CreatePageBlockRequest $request)
