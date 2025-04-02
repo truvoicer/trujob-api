@@ -2,6 +2,7 @@
 
 namespace App\Services\Permission;
 
+use App\Enums\Auth\ApiAbility;
 use App\Services\Auth\AuthService;
 use App\Services\User\UserAdminService;
 use App\Traits\User\UserTrait;
@@ -14,7 +15,7 @@ class AccessControlService
     {
         $user = $this->getUser();
         return (
-            UserAdminService::userTokenHasAbility($user, AuthService::ABILITY_SUPERUSER)
+            UserAdminService::userTokenHasAbility($user, ApiAbility::SUPERUSER)
         );
     }
 

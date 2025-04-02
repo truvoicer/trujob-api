@@ -17,7 +17,7 @@ class AuthUserController extends Controller
         return response()->json([
             'message' => 'User logged in',
             'data' => [
-                'user' => new UserResource($request->user()),
+                'user' => new UserResource($request->user()->user),
                 'token' => new AccessTokenResource($token),
             ]
         ], Response::HTTP_OK);

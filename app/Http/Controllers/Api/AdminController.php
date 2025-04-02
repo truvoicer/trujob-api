@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\User\DeleteBatchUserRequest;
 use App\Http\Requests\Auth\GenerateApiTokenRequest;
 use App\Http\Resources\PersonalAccessTokenResource;
 use App\Http\Resources\RoleResource;
+use App\Http\Resources\User\UserResource as UserUserResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\Permission\AccessControlService;
@@ -40,7 +41,7 @@ class AdminController extends Controller
             $request->get('order', "asc"),
             $request->get('count', -1)
         );
-        return UserResource::collection($getUsers);
+        return UserUserResource::collection($getUsers);
     }
     public function getUserRoleList(Request $request)
     {

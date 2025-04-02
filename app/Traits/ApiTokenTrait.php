@@ -3,6 +3,7 @@ namespace App\Traits;
 
 use App\Models\Role;
 use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
 use App\Repositories\PersonalAccessTokenRepository;
 use App\Services\Admin\AuthService;
@@ -16,7 +17,7 @@ trait ApiTokenTrait
         private PersonalAccessTokenRepository $personalAccessTokenRepository
     ){}
 
-    public function getlatestToken(User|Site $model) {
+    public function getlatestToken(User|Site|SiteUser $model) {
         $token = $this->personalAccessTokenRepository->getLatestAccessToken($model);
         if ($token instanceof PersonalAccessToken) {
             return $token;

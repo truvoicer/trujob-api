@@ -8,6 +8,8 @@ use App\Http\Requests\Auth\AuthRegisterUserRequest;
 use App\Http\Resources\AccessTokenResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Role;
+use App\Models\Site;
+use App\Models\User;
 use App\Services\User\RoleService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,6 +23,14 @@ class AuthRegisterController extends Controller
     }
     public function __invoke(AuthRegisterUserRequest $request): \Illuminate\Http\JsonResponse
     {
+        $site = $request->user();
+
+        if (!$site instanceof Site) {
+            return response()->json([
+                'message' => 'Invalid site'
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         $role = $this->roleService->getRoleRepository()->findOneBy(
             [['name', '=', ApiAbility::USER->value]]
         );
@@ -28,11 +38,21 @@ class AuthRegisterController extends Controller
         if (!$role instanceof Role) {
             throw new \Exception("Error finding role");
         }
-        if (!$this->userAdminService->createUser($request->validated(), [$role->id])) {
-            throw new \Exception("Error creating user");
+        
+        $user = User::where('email', $request->get('email'))->first();
+        if ($user) {
+            $token = $this->userAdminService->createSiteUserToken(
+                $this->userAdminService->registerSiteUser($site, $user)
+            );
+        } else {
+            if (!$this->userAdminService->createUser($request->validated(), [$role->id])) {
+                throw new \Exception("Error creating user");
+            }
+            $user = $this->userAdminService->getUserRepository()->getModel();
+            $token = $this->userAdminService->createSiteUserToken(
+                $this->userAdminService->registerSiteUser($site, $user)
+            );
         }
-        $user = $this->userAdminService->getUserRepository()->getModel();
-        $token = $this->userAdminService->createUserTokenByRoleId($user, $role->id);
         if (!$token) {
             throw new \Exception("Error creating token");
         }

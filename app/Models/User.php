@@ -50,10 +50,16 @@ class User extends Authenticatable
         ];
     }
 
-    protected static function newFactory() {
+    protected static function newFactory()
+    {
         return UserFactory::new();
     }
 
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+    
     public function roles()
     {
         return $this->belongsToMany(
@@ -111,5 +117,12 @@ class User extends Authenticatable
     public function userMedia()
     {
         return $this->hasMany(UserMedia::class);
+    }
+
+    public function sites()
+    {
+        return $this->belongsToMany(Site::class)
+            ->withPivot('status', 'id')
+            ->withTimestamps();
     }
 }

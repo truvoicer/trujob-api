@@ -48,4 +48,9 @@ class Role extends Model
     {
         return $this->belongsToMany(MenuItem::class);
     }
+
+    public function siteUsers()
+    {
+        return $this->belongsToMany(SiteUser::class);
+    }
 }

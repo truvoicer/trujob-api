@@ -58,18 +58,18 @@ class AuthService
         $this->roleRepository = new RoleRepository();
     }
 
-    public static function getApiAbility(string $name)
+    public static function getApiAbility(ApiAbility $ability): string
     {
-        $findAbilityIndex = array_search($name, array_column(self::DEFAULT_ROLES, 'name'));
+        $findAbilityIndex = array_search($ability->value, array_column(self::DEFAULT_ROLES, 'name'));
         if ($findAbilityIndex === false) {
             return false;
         }
         return self::DEFAULT_ROLES[$findAbilityIndex]['ability'];
     }
 
-    public static function getApiAbilityData(string $name)
+    public static function getApiAbilityData(ApiAbility $ability)
     {
-        $findAbilityIndex = array_search($name, array_column(self::DEFAULT_ROLES, 'name'));
+        $findAbilityIndex = array_search($ability->value, array_column(self::DEFAULT_ROLES, 'name'));
         if ($findAbilityIndex === false) {
             return false;
         }

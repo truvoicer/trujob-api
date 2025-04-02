@@ -27,17 +27,27 @@ class PageController extends Controller
 
     public function index(Request $request)
     {
-        dd($request->user());
         $this->pageRepository->setQuery(
-            $request->user()->pages()
+            $request->user()->site->pages()
         );
+        $this->pageRepository->setPagination(true);
         $this->pageRepository->setWith([
             'blocks' => function ($query) {
                 $query->orderBy('order');
             }
         ]);
-        $this->pageRepository->setSortField('created_at');
-        $this->pageRepository->setOrderDir('desc');
+        $this->pageRepository->setSortField(
+            $request->get('sort', 'created_at')
+        );
+        $this->pageRepository->setOrderDir(
+            $request->get('order', 'desc')
+        );
+        $this->pageRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->pageRepository->setPage(
+            $request->get('page', 1)
+        );
         return PageResource::collection(
             $this->pageRepository->findMany()
         );

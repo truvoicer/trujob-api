@@ -4,8 +4,11 @@ namespace App\Services\User;
 
 use App\Enums\Auth\ApiAbility;
 use App\Enums\Auth\ApiTokenExpiry;
+use App\Enums\SiteStatus;
 use App\Helpers\Db\DbHelpers;
 use App\Models\Role;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
 use App\Repositories\PersonalAccessTokenRepository;
 use App\Repositories\RoleRepository;
@@ -25,8 +28,7 @@ class UserAdminService extends BaseService
 
     public function __construct(
         private AuthService $authService
-    )
-    {
+    ) {
         parent::__construct();
         $this->setUserRepository(new UserRepository());
         $this->personalAccessTokenRepository = new PersonalAccessTokenRepository();
@@ -34,11 +36,13 @@ class UserAdminService extends BaseService
     }
 
 
-    public function findByParams(string $sort, string $order, ?int $count = null) {
+    public function findByParams(string $sort, string $order, ?int $count = null)
+    {
         $this->userRepository->setPagination(true);
         return $this->userRepository->findAllWithParams($sort, $order, $count);
     }
-    public function findUserRoles(string $sort, string $order, ?int $count = null) {
+    public function findUserRoles(string $sort, string $order, ?int $count = null)
+    {
         return $this->roleRepository->findAllWithParams($sort, $order, $count);
     }
 
@@ -51,8 +55,27 @@ class UserAdminService extends BaseService
         $roleIds = $this->authService->getRoleIds($roles);
         return $this->userRepository->createUser($userData, $roleIds);
     }
+    public function createSiteUser(Site $site, User $user, array $roles)
+    {
+        $siteUser = $site->users()->where('user_id', $user->id)->first();
+        if ($siteUser instanceof SiteUser) {
+            $update = $siteUser->update([
+                'status' => 'active'
+            ]);
+            if (!$update) {
+                return false;
+            }
+            $siteUser->roles()->sync($roles);
+            return $siteUser;
+        }
+        $site->users()->attach($user, [
+            'status' => 'active'
+        ]);
+        $siteUser->roles()->sync($roles);
+    }
 
-    public function getUserToken(User $model) {
+    public function getUserToken(User $model)
+    {
         $token = $this->getlatestToken($model);
         if ($token) {
             return $token;
@@ -60,12 +83,14 @@ class UserAdminService extends BaseService
         return $this->createUserToken($model);
     }
 
-    public static function userTokenHasAbility(User $user, string $ability) {
+    public static function userTokenHasAbility(User $user, ApiAbility $ability): bool
+    {
         return $user->tokenCan(AuthService::getApiAbility($ability));
     }
 
-    public function getUserRoles(User $user) {
-        $appUserRoleData = AuthService::getApiAbilityData(ApiAbility::APP_USER->value);
+    public function getUserRoles(User $user)
+    {
+        $appUserRoleData = AuthService::getApiAbilityData(ApiAbility::APP_USER);
         return $this->roleRepository->fetchUserRoles($user, [$appUserRoleData['name']]);
     }
 
@@ -73,12 +98,18 @@ class UserAdminService extends BaseService
     {
         return $user->createToken($role->name, [$role->ability], $expiry);
     }
-    
+
+    public function createSiteUserTokenByRole(SiteUser $siteUser, Role $role, ?\DateTime $expiry = null)
+    {
+        return $siteUser->createToken($role->name, [$role->ability], $expiry);
+    }
+
     /**
      * @throws \Exception
      */
     public function createUserTokenByRoleId(User $user, int $roleId, ?ApiTokenExpiry $expiry = ApiTokenExpiry::ONE_DAY)
     {
+
         $role = $this->roleRepository::findUserRoleBy($user, ['role_id' => $roleId]);
         if (!$role instanceof Role) {
             return false;
@@ -87,7 +118,7 @@ class UserAdminService extends BaseService
         if (empty($expiry)) {
             $expiry = ApiTokenExpiry::ONE_DAY;
         }
-        
+
         if ($expiry !== ApiTokenExpiry::NEVER) {
             $expiryDate = new \DateTime($expiry->value);
         } else {
@@ -96,7 +127,47 @@ class UserAdminService extends BaseService
 
         return $this->createUserTokenByRole($user, $role, $expiryDate);
     }
+
+    public function registerSiteUser(Site $site, User $user): SiteUser
+    {
+        $siteUser = SiteUser::where('site_id', $site->id)
+            ->where('user_id', $user->id)
+            ->first();
+        if (!$siteUser instanceof SiteUser) {
+            $site->users()->attach($user->id, [
+                'site_id' => $site->id,
+                'status' => SiteStatus::ACTIVE,
+            ]);
+            $siteUser = SiteUser::where('site_id', $site->id)
+                ->where('user_id', $user->id)
+                ->first();
+        }
+        if (!$siteUser instanceof SiteUser) {
+            throw new BadRequestHttpException("Error creating site user");
+        }
+        
+        $siteUser->roles()->sync(
+            $siteUser->user->roles()->get()
+        );
+        return $siteUser;
+    }
+
+    public function createSiteUserToken(SiteUser $siteUser, ?ApiTokenExpiry $expiry = ApiTokenExpiry::ONE_DAY)
+    {
+        return $this->createSiteUserTokenByRole(
+            $siteUser,
+            $this->getUserRole($siteUser->user),
+            $this->buildExpiryDate($expiry)
+        );
+    }
+
     public function createUserToken(User $user, ?ApiTokenExpiry $expiry = ApiTokenExpiry::ONE_DAY)
+    {
+
+        return $this->createUserTokenByRole($user, $this->getUserRole($user), $this->buildExpiryDate($expiry));
+    }
+
+    public function getUserRole(User $user): ?Role
     {
         $availableRoles = AuthService::DEFAULT_ROLES;
         $roles = $user->roles()
@@ -113,19 +184,19 @@ class UserAdminService extends BaseService
 
         $role = $roles->first();
         if (!$role instanceof Role) {
-            return false;
+            return null;
         }
-        
+        return $role;
+    }
+    public function buildExpiryDate(?ApiTokenExpiry $expiry = ApiTokenExpiry::ONE_DAY)
+    {
         if (empty($expiry)) {
             $expiry = ApiTokenExpiry::ONE_DAY;
         }
-        
         if ($expiry !== ApiTokenExpiry::NEVER) {
-            $expiryDate = new \DateTime($expiry->value);
-        } else {
-            $expiryDate = null;
+            return new \DateTime($expiry->value);
         }
-        return $this->createUserTokenByRole($user, $role, $expiryDate);
+        return null;
     }
 
     public function getUserByEmail(string $email)
@@ -160,5 +231,4 @@ class UserAdminService extends BaseService
         }
         return $this->userRepository->deleteBatch($ids);
     }
-
 }

@@ -307,7 +307,10 @@ class BaseRepository
     {
         if ($this->paginate) {
             return $query->paginate(
-                ($this->perPage > -1) ? $this->perPage : 10000
+                ($this->perPage > -1) ? $this->perPage : 10000,
+                ['*'],
+                'page',
+                ($this->page > -1) ? $this->page : 1
             );
         }
         return $this->getResultsQuery($query)->get();
