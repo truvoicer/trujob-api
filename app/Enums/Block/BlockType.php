@@ -1,6 +1,8 @@
 <?php
 namespace App\Enums\Block;
 
+use App\Enums\Listing\ListingBlockSidebarWidget;
+
 enum BlockType: string
 {
     case HERO = 'hero-block';
@@ -18,6 +20,14 @@ enum BlockType: string
             BlockType::MANAGE_PAGES,
             BlockType::MANAGE_LISTINGS => true,
             default => false,
+        };
+    }
+
+    public function getSidebarWidgets(): array
+    {
+        return match ($this) {
+            BlockType::LISTINGS_GRID => ListingBlockSidebarWidget::cases(),
+            default => [],
         };
     }
 }

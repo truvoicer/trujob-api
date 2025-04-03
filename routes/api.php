@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\AuthLoginController;
 use App\Http\Controllers\Api\Auth\AuthRegisterController;
 use App\Http\Controllers\Api\Auth\AuthUserController;
+use App\Http\Controllers\Api\Block\BlockController;
+use App\Http\Controllers\Api\Block\BlockSidebarController;
 use App\Http\Controllers\Api\Firebase\FirebaseDeviceController;
 use App\Http\Controllers\Api\Firebase\FirebaseMessageController;
 use App\Http\Controllers\Api\Firebase\FirebaseTopicController;
@@ -303,7 +305,17 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::delete('/{currency}/delete', [CurrencyController::class, 'deleteCurrency'])->name('delete');
         });
     });
-
+    Route::prefix('block')->name('block.')->group(function () {
+        Route::get('/', [BlockController::class, 'index'])->name('index');
+        // Route::post('/create', [PageBlockController::class, 'create'])->name('create');
+        Route::prefix('{block}')->group(function () {
+            Route::get('/', [BlockController::class, 'view'])->name('view');
+            Route::get('/sidebar', [BlockSidebarController::class, 'index'])->name('sidebar');
+            
+            // Route::patch('/update', [PageBlockController::class, 'update'])->name('update');
+            // Route::delete('/delete', [PageBlockController::class, 'destroy'])->name('delete');
+        });
+    });
 
     Route::prefix('page')->name('page.')->group(function () {
         Route::get('/', [PageController::class, 'index'])->name('index');
