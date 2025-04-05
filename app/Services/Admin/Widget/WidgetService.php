@@ -2,11 +2,13 @@
 
 namespace App\Services\Admin\Widget;
 
+use App\Models\Site;
 use App\Models\Widget;
 use App\Repositories\WidgetRepository;
 use App\Services\BaseService;
 use App\Services\ResultsService;
 use App\Traits\RoleTrait;
+use Illuminate\Support\Str;
 
 class WidgetService extends BaseService
 {
@@ -25,13 +27,19 @@ class WidgetService extends BaseService
         return Widget::where('name', $widgetName)->first();
     }
 
-    public function createWidget(array $data) {
+    public function createWidget(Site $site, array $data) {
+        if (empty($data['name'])) {
+            $data['name'] = Str::slug($data['title']);
+        }
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
-        $widget = new Widget($data);
+        $widget = new Widget([
+            'site_id' => $site->id,
+            ...$data
+        ]);
         if (!$widget->save()) {
             $this->resultsService->addError('Error adding app widget', $data);
             return false;
@@ -87,6 +95,8 @@ class WidgetService extends BaseService
         $this->widget = $widget;
     }
 
-
-
+    public function getWidgetRepository(): WidgetRepository
+    {
+        return $this->widgetRepository;
+    }
 }

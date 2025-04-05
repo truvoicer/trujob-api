@@ -3,6 +3,7 @@
 namespace Database\Seeders\admin;
 
 use App\Models\Widget;
+use App\Services\Admin\Widget\WidgetService;
 use Illuminate\Database\Seeder;
 
 class WidgetSeeder extends Seeder
@@ -11,7 +12,7 @@ class WidgetSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run(WidgetService $widgetService): void
     {
         $data = include_once(database_path('data/WidgetData.php'));
         if (!$data) {

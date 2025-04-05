@@ -21,6 +21,14 @@ class WidgetController extends Controller
         $this->widgetService = $widgetService;
     }
 
+    public function index(Request $request) {
+        $this->widgetService->setUser($request->user()->user);
+        return WidgetResource::collection(
+            $this->widgetService->getWidgetRepository()->findBySite(
+                $request->user()->site
+            )
+        );
+    }
     public function view(string $widget) {
         $widget = $this->widgetService->widgetFetch($widget);
         if (!$widget) {
@@ -30,8 +38,11 @@ class WidgetController extends Controller
     }
 
     public function create(CreateWidgetRequest $request) {
-        $this->sidebarService->setUser($request->user()->user);
-        $create = $this->widgetService->createWidget($request->validated());
+        $this->widgetService->setUser($request->user()->user);
+        $create = $this->widgetService->createWidget(
+            $request->user()->site,
+            $request->validated()
+        );
         if (!$create) {
             return response()->json([
                 'message' => 'Error creating app widget',
@@ -44,7 +55,7 @@ class WidgetController extends Controller
     }
 
     public function update(Widget $widget, EditWidgetRequest $request) {
-        $this->sidebarService->setUser($request->user()->user);
+        $this->widgetService->setUser($request->user()->user);
         $this->widgetService->setWidget($widget);
         $update = $this->widgetService->updateWidget($request->all());
         if (!$update) {

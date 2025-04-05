@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Sidebar;
+use App\Models\Site;
 
 class SidebarRepository extends BaseRepository
 {
@@ -24,6 +25,12 @@ class SidebarRepository extends BaseRepository
     public function findByQuery($query)
     {
         return $this->findAll();
+    }
+
+    public function findBySite(Site $site)
+    {
+        $this->setQuery($site->sidebars());
+        return $this->findMany();
     }
 
 }

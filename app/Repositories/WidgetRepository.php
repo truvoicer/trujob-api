@@ -26,4 +26,10 @@ class WidgetRepository extends BaseRepository
         return $this->findAll();
     }
 
+    public function findBySite($site)
+    {
+        $this->setQuery($site->widgets());
+        return $this->findMany();
+    }
+
 }

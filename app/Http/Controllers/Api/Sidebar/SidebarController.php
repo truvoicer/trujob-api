@@ -21,17 +21,24 @@ class SidebarController extends Controller
         $this->sidebarService = $sidebarService;
     }
 
-    public function view(string $sidebar) {
-        $sidebar = $this->sidebarService->sidebarFetch($sidebar);
-        if (!$sidebar) {
-            throw new SidebarNotFoundException();
-        }
+    public function index(Request $request) {
+        $this->sidebarService->setUser($request->user()->user);
+        return SidebarResource::collection(
+            $this->sidebarService->getSidebarRepository()->findBySite(
+                $request->user()->site
+            )
+        );
+    }
+    public function view(Sidebar $sidebar) {
         return new SidebarResource($sidebar);
     }
 
     public function create(CreateSidebarRequest $request) {
         $this->sidebarService->setUser($request->user()->user);
-        $create = $this->sidebarService->createSidebar($request->validated());
+        $create = $this->sidebarService->createSidebar(
+            $request->user()->site,
+            $request->validated()
+        );
         if (!$create) {
             return response()->json([
                 'message' => 'Error creating app sidebar',

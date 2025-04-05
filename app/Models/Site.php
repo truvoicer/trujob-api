@@ -53,4 +53,24 @@ class Site extends Model
             ->withPivot('status', 'id')
             ->withTimestamps();
     }
+
+    public function sidebars()
+    {
+        return $this->hasMany(Sidebar::class);
+    }
+    public function menus()
+    {
+        return $this->hasMany(Menu::class);
+    }
+
+    public function menuItems()
+    {
+        return $this->hasMany(MenuItem::class);
+    }
+
+    public function widgets()
+    {
+        return $this->hasMany(Widget::class);
+    }
+
 }

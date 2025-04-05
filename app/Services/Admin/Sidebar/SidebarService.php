@@ -4,10 +4,12 @@ namespace App\Services\Admin\Sidebar;
 
 use App\Models\Sidebar;
 use App\Models\SidebarWidget;
+use App\Models\Site;
 use App\Repositories\SidebarRepository;
 use App\Services\BaseService;
 use App\Services\ResultsService;
 use App\Traits\RoleTrait;
+use Illuminate\Support\Str;
 
 class SidebarService extends BaseService
 {
@@ -22,12 +24,15 @@ class SidebarService extends BaseService
     ){
         parent::__construct();
     }
-
+    
     public function sidebarFetch(string $sidebarName) {
         return Sidebar::where('name', $sidebarName)->first();
     }
 
-    public function createSidebar(array $data) {
+    public function createSidebar(Site $site, array $data) {
+        if (empty($data['name'])) {
+            $data['name'] = Str::slug($data['title']);
+        }
         $sidebarWidgets = [];
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
@@ -177,5 +182,8 @@ class SidebarService extends BaseService
         $this->sidebarWidget = $sidebarWidget;
     }
 
-
+    public function getSidebarRepository(): SidebarRepository
+    {
+        return $this->sidebarRepository;
+    }
 }

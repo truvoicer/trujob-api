@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('widgets', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('site_id')->constrained('sites')->onDelete('cascade');
             $table->string('name')->unique();
             $table->string('title');
             $table->string('icon')->nullable();
