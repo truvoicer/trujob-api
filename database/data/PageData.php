@@ -3,9 +3,9 @@
 use App\Enums\Auth\ApiAbility;
 use App\Enums\Block\BlockType;
 use App\Enums\Listing\ListingFetchProperty;
-use App\Enums\Listing\ListingBlockSidebarWidget;
 use App\Enums\Listing\ListingType;
 use App\Enums\ViewType;
+use App\Enums\Widget\Widget;
 
 return [
     [
@@ -42,17 +42,17 @@ return [
                 'has_sidebar' => true,
                 'sidebar_widgets' => [
                     [
-                        'type' => ListingBlockSidebarWidget::SEARCH_FILTER->value,
+                        'type' => Widget::SEARCH_FILTER->value,
                         'has_container' => false,
                         'title' => 'Search',
                     ],
                     [
-                        'type' => ListingBlockSidebarWidget::PROXIMITY_FILTER->value,
+                        'type' => Widget::PROXIMITY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Set Proximity',
                     ],
                     [
-                        'type' => ListingBlockSidebarWidget::CATEGORY_FILTER->value,
+                        'type' => Widget::CATEGORY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Choose Category/s',
                     ],
@@ -103,17 +103,17 @@ return [
                 'has_sidebar' => true,
                 'sidebar_widgets' => [
                     [
-                        'type' => ListingBlockSidebarWidget::SEARCH_FILTER->value,
+                        'type' => Widget::SEARCH_FILTER->value,
                         'has_container' => false,
                         'title' => 'Search',
                     ],
                     [
-                        'type' => ListingBlockSidebarWidget::PROXIMITY_FILTER->value,
+                        'type' => Widget::PROXIMITY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Set Proximity',
                     ],
                     [
-                        'type' => ListingBlockSidebarWidget::CATEGORY_FILTER->value,
+                        'type' => Widget::CATEGORY_FILTER->value,
                         'has_container' => false,
                         'title' => 'Choose Category/s',
                     ],

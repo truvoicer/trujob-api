@@ -1,7 +1,7 @@
 <?php
 namespace App\Enums\Block;
 
-use App\Enums\Listing\ListingBlockSidebarWidget;
+use App\Enums\Widget\Widget;
 
 enum BlockType: string
 {
@@ -26,7 +26,7 @@ enum BlockType: string
     public function getSidebarWidgets(): array
     {
         return match ($this) {
-            BlockType::LISTINGS_GRID => ListingBlockSidebarWidget::cases(),
+            BlockType::LISTINGS_GRID => Widget::cases(),
             default => [],
         };
     }

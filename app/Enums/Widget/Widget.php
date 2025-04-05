@@ -1,7 +1,7 @@
 <?php
-namespace App\Enums;
+namespace App\Enums\Widget;
 
-enum PageSidebarWidget: string
+enum Widget: string
 {
     case SEARCH_FILTER = 'search_filter';
     case PROXIMITY_FILTER = 'proximity_filter';

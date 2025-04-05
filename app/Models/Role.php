@@ -53,4 +53,14 @@ class Role extends Model
     {
         return $this->belongsToMany(SiteUser::class);
     }
+
+    public function sidebar()
+    {
+        return $this->belongsToMany(Sidebar::class, SidebarRole::class);
+    }
+    
+    public function sidebarWidgets()
+    {
+        return $this->belongsToMany(SidebarWidget::class, SidebarWidgetRole::class);
+    }
 }
