@@ -16,9 +16,13 @@ class Sidebar extends Model
         'properties' => 'array',
     ];
 
+    public function sidebarWidgets() {
+        return $this->hasMany(SidebarWidget::class);
+    }
+    
     public function widgets()
     {
-        return $this->hasMany(SidebarWidget::class);
+        return $this->belongsToMany(Widget::class);
     }
     public function roles()
     {

@@ -4,12 +4,26 @@ use App\Enums\Widget\Widget;
 
 return [
     [
-        'type' => Widget::SEARCH_FILTER,
+        'site_id' => 1,
+        'name' => Widget::SEARCH_FILTER,
+        'title' => 'Search Filter',
     ],
     [
-        'type' => Widget::PROXIMITY_FILTER,
+        'site_id' => 1,
+        'name' => Widget::PROXIMITY_FILTER,
+        'title' => 'Proximity Filter',
+        "roles" => [
+            1,
+            2
+        ],
     ],
     [
-        'type' => Widget::CATEGORY_FILTER,
+        'site_id' => 1,
+        'name' => Widget::CATEGORY_FILTER,
+        'title' => 'Categoryss Filter',
+        "roles" => [
+            1,
+            2
+        ],
     ],
 ];

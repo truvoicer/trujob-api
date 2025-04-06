@@ -8,6 +8,9 @@ use App\Enums\Pagination\PaginationType;
 use App\Enums\Widget\Widget;
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Requests\Listing\ListingFetchRequest;
+use App\Models\Sidebar;
+use App\Rules\IdOrNameExists;
+use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -60,22 +63,14 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'sometimes',
                 'boolean',
             ],
-            'sidebar_widgets' => [
+            'sidebars' => [
                 'sometimes',
                 'array',
             ],
-            'sidebar_widgets.*.type' => [
-                'required_if:type,' . BlockType::LISTINGS_GRID->value,
-                Rule::enum(Widget::class)
-            ],
-            'sidebar_widgets.*.title' => [
-                'sometimes',
-                'string',
-                'max:255',
-            ],
-            'sidebar_widgets.*.has_container' => [
+            'sidebars.*' => [
                 'required',
-                'boolean',
+                new StringOrIntger,
+                new IdOrNameExists(new Sidebar())
             ],
         ];
     }

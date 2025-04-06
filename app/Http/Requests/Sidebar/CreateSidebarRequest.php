@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Sidebar;
 
+use App\Helpers\Tools\ValidationHelpers;
+use App\Http\Requests\Widget\CreateWidgetRequest;
 use App\Models\Role;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
@@ -25,12 +27,24 @@ class CreateSidebarRequest extends FormRequest
      */
     public function rules(): array
     {
+        $widgetsRules = ValidationHelpers::nestedValidationRules(
+            (new CreateWidgetRequest())->rules(), 
+            'widgets.*'
+        );
+        $widgetsRules['widgets.*.name'] = [
+            'required',
+            'string',
+            'max:255',
+            Rule::exists('widgets', 'name')->where(function ($query) {
+                return $query->where('site_id', $this->user()?->site?->id);
+            }),
+        ];
         return [
             'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('menus', 'name')->where(function ($query) {
+                Rule::unique('sidebars', 'name')->where(function ($query) {
                     return $query->where('site_id', $this->user()?->site?->id);
                 }),
             ],
@@ -57,6 +71,11 @@ class CreateSidebarRequest extends FormRequest
                 new StringOrIntger,
                 new IdOrNameExists(new Role())
             ],
+            'widgets' => [
+                'sometimes',
+                'array',
+            ],
+            ...$widgetsRules
         ];
     }
 }

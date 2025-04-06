@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Sidebar;
 
 use App\Enums\MenuItemType;
+use App\Helpers\Tools\ValidationHelpers;
+use App\Http\Requests\Widget\CreateWidgetRequest;
 use App\Models\Role;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
@@ -26,12 +28,24 @@ class EditSidebarRequest extends FormRequest
      */
     public function rules(): array
     {
+        $widgetsRules = ValidationHelpers::nestedValidationRules(
+            (new CreateWidgetRequest())->rules(), 
+            'widgets.*'
+        );
+        $widgetsRules['widgets.*.name'] = [
+            'required',
+            'string',
+            'max:255',
+            Rule::exists('widgets', 'name')->where(function ($query) {
+                return $query->where('site_id', $this->user()?->site?->id);
+            }),
+        ];
         return [
             'name' => [
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('menus', 'name')->where(function ($query) {
+                Rule::unique('sidebars', 'name')->where(function ($query) {
                     return $query->where('site_id', $this->user()?->site?->id);
                 })->ignore($this->route('sidebar')->id)
             ],
@@ -58,6 +72,11 @@ class EditSidebarRequest extends FormRequest
                 new StringOrIntger,
                 new IdOrNameExists(new Role())
             ],
+            'widgets' => [
+                'sometimes',
+                'array',
+            ],
+            ...$widgetsRules,
         ];
     }
 }

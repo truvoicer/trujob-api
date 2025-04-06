@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\admin;
 
+use App\Models\Site;
 use App\Models\Widget;
 use App\Services\Admin\Widget\WidgetService;
 use Illuminate\Database\Seeder;
@@ -19,16 +20,22 @@ class WidgetSeeder extends Seeder
             throw new \Exception('Error reading WidgetData.php file ' . database_path('data/WidgetData.php'));
         }
         foreach ($data as $item) {
-            $name = $item['name'];
-            unset($item['name']);
-            $atts = $item;
-            if (!empty($item['properties'])) {
-                $atts['properties'] = json_encode($item['properties']);
+            if (empty($item['name'])) {
+                throw new \Exception('Error reading WidgetData.php file ' . database_path('data/WidgetData.php') . ' name is empty');
             }
-            $create = Widget::query()->updateOrCreate(
-                ['name' => $name],
-                $atts
-            );
+            if (empty($item['site_id'])) {
+                throw new \Exception('Error reading WidgetData.php file ' . database_path('data/WidgetData.php') . ' site_id is empty');
+            }
+            $site = Site::query()->find($item['site_id']);
+            if (!$site) {
+                throw new \Exception('Error reading WidgetData.php file ' . database_path('data/WidgetData.php') . ' site_id not found');
+            }
+            $widget = $widgetService->widgetFetch($site, $item['name']->value);
+            if ($widget) {
+                $widgetService->updateWidget($widget, $item);
+                continue;
+            }
+            $widgetService->createWidget($site, $item);
         }
     }
 }

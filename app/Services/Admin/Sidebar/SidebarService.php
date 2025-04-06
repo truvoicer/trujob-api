@@ -5,6 +5,7 @@ namespace App\Services\Admin\Sidebar;
 use App\Models\Sidebar;
 use App\Models\SidebarWidget;
 use App\Models\Site;
+use App\Models\Widget;
 use App\Repositories\SidebarRepository;
 use App\Services\BaseService;
 use App\Services\ResultsService;
@@ -43,8 +44,8 @@ class SidebarService extends BaseService
             $sidebarWidgets = $data['widgets'];
             unset($data['widgets']);
         }
-        $sidebar = new Sidebar($data);
-        if (!$sidebar->save()) {
+        $sidebar = $site->sidebars()->create($data);
+        if (!$sidebar->exists()) {
             $this->resultsService->addError('Error adding app sidebar', $data);
             return false;
         }
@@ -101,7 +102,7 @@ class SidebarService extends BaseService
         }
         return true;
     }
-    public function createSidebarWidget(Sidebar $sidebar, array $data) {
+    public function createSidebarWidget(Sidebar $sidebar, Widget $widget, array $data) {
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
@@ -111,10 +112,13 @@ class SidebarService extends BaseService
         if (!array_key_exists('order', $data)) {
             $data['order'] = $this->sidebarRepository->getHighestOrder($sidebar->widgets());
         }
-        $sidebarWidget = $sidebar->widgets()->create($data);
-        if (!$sidebar->widgets()->save($sidebarWidget)) {
-            $this->resultsService->addError('Error adding sidebar item', $data);
-            return false;
+        $sidebar->widgets()->attach(
+            $widget,
+            $data
+        );
+        $sidebarWidget = $sidebar->widgets()->where('widget_id', $widget->id)->first();
+        if (!$sidebarWidget) {
+            throw new \Exception('Error creating app sidebar item');
         }
         if (is_array($roles)) {
             $this->syncRoles($sidebarWidget->roles(), $roles);

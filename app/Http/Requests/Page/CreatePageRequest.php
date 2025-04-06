@@ -7,6 +7,7 @@ use App\Enums\PageSidebarWidget;
 use App\Enums\ViewType;
 use App\Helpers\Tools\ValidationHelpers;
 use App\Models\Role;
+use App\Models\Sidebar;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;
@@ -85,30 +86,14 @@ class CreatePageRequest extends FormRequest
                 'sometimes',
                 'boolean',
             ],
-            'sidebar_widgets' => [
+            'sidebars' => [
                 'sometimes',
                 'array',
             ],
-            'sidebar_widgets.*.type' => [
-                'required_if:has_sidebar,true',
-                Rule::enum(PageSidebarWidget::class)
-            ],
-            'sidebar_widgets.*.title' => [
-                'sometimes',
-                'string',
-                'max:255',
-            ],
-            'sidebar_widgets.*.has_container' => [
+            'sidebars.*' => [
                 'required',
-                'boolean',
-            ],
-            'sidebar_widgets.*.order' => [
-                'sometimes',
-                'integer',
-            ],
-            'sidebar_widgets.*.properties' => [
-                'sometimes',
-                'array',
+                new StringOrIntger,
+                new IdOrNameExists(new Sidebar())
             ],
             'settings' => [
                 'sometimes',

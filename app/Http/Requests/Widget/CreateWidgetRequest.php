@@ -30,7 +30,7 @@ class CreateWidgetRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('menus', 'name')->where(function ($query) {
+                Rule::unique('widgets', 'name')->where(function ($query) {
                     return $query->where('site_id', $this->user()?->site?->id);
                 }),
             ],

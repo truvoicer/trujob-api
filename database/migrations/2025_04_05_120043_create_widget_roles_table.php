@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('widgets', function (Blueprint $table) {
+        Schema::create('widget_roles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->constrained('sites')->onDelete('cascade');
-            $table->string('name');
-            $table->string('title');
-            $table->string('icon')->nullable();
-            $table->string('description')->nullable();
-            $table->string('properties')->nullable();
+            $table->foreignId('widget_id')
+                ->constrained('widgets')
+                ->cascadeOnDelete();
+            $table->foreignId('role_id')
+                ->constrained('roles')
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('widgets');
+        Schema::dropIfExists('widget_roles');
     }
 };

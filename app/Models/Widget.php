@@ -18,7 +18,7 @@ class Widget extends Model
     protected $casts = [
         'properties' => 'array',
     ];
-    
+
     public function sidebarWidgets() {
         return $this->hasMany(SidebarWidget::class);
     }
@@ -28,6 +28,10 @@ class Widget extends Model
     }
 
     public function sidebars() {
-        return $this->belongsToMany(SidebarWidget::class);
+        return $this->belongsToMany(Sidebar::class);
+    }
+
+    public function roles() {
+        return $this->belongsToMany(Role::class, 'widget_roles');
     }
 }

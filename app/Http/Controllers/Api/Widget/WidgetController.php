@@ -57,7 +57,10 @@ class WidgetController extends Controller
     public function update(Widget $widget, EditWidgetRequest $request) {
         $this->widgetService->setUser($request->user()->user);
         $this->widgetService->setWidget($widget);
-        $update = $this->widgetService->updateWidget($request->all());
+        $update = $this->widgetService->updateWidget(
+            $widget,
+            $request->all()
+        );
         if (!$update) {
             return response()->json([
                 'message' => 'Error updating app widget',

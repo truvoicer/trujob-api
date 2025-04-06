@@ -23,8 +23,8 @@ class WidgetService extends BaseService
         parent::__construct();
     }
 
-    public function widgetFetch(string $widgetName) {
-        return Widget::where('name', $widgetName)->first();
+    public function widgetFetch(Site $site,string $widgetName) {
+        return $site->widgets()->where('name', $widgetName)->first();
     }
 
     public function createWidget(Site $site, array $data) {
@@ -53,28 +53,26 @@ class WidgetService extends BaseService
         return true;
     }
 
-    public function updateWidget(array $data) {
+    public function updateWidget(Widget $widget, array $data) {
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
         
-        if (!$this->widget->update($data)) {
-            $this->resultsService->addError('Error updating app widget', $data);
-            return false;
+        if (!$widget->update($data)) {
+            throw new \Exception('Error updating app widget');
         }
         if (is_array($roles)) {
-            $this->syncRoles($this->widget->roles(), $roles);
+            $this->syncRoles($widget->roles(), $roles);
         }
 
         return true;
     }
 
-    public function deleteWidget() {
-        if (!$this->widget->delete()) {
-            $this->resultsService->addError('Error deleting app widget');
-            return false;
+    public function deleteWidget(Widget $widget) {
+        if (!$widget->delete()) {
+            throw new \Exception('Error deleting app widget');
         }
         return true;
     }
