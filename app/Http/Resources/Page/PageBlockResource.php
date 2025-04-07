@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Page;
 
 use App\Http\Resources\RoleResource;
+use App\Http\Resources\Sidebar\SidebarResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,9 +27,9 @@ class PageBlockResource extends JsonResource
             'pagination_scroll_type' => $this->pagination_scroll_type,
             'content' => $this->content,
             'properties' => $this->properties,
-            'has_sidebar' => (bool)$this->has_sidebar,
-            'sidebar_widgets' => $this->sidebar_widgets,
             'order' => $this->order,
+            'has_sidebar' => (bool)$this->has_sidebar,
+            'sidebars' => $this->whenLoaded('sidebars', SidebarResource::collection($this->sidebars)),
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
         ];
     }

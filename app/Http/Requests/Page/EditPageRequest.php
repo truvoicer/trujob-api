@@ -51,6 +51,10 @@ class EditPageRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('pages', 'name')
+                ->where(function ($query) {
+                    return $query->where('site_id', $this->user()?->id);
+                })
+                ->ignore($this->route('page'))
             ],
             'title' => [
                 'sometimes',

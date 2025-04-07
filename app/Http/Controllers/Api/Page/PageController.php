@@ -62,7 +62,10 @@ class PageController extends Controller
     public function create(CreatePageRequest $request)
     {
         $this->pageService->setUser($request->user());
-        $create = $this->pageService->createPage($request->validated());
+        $create = $this->pageService->createPage(
+            $request->user()->site,
+            $request->validated()
+        );
         if (!$create) {
             return $this->sendErrorResponse(
                 'Error creating page',
@@ -76,7 +79,7 @@ class PageController extends Controller
 
     public function update(EditPageRequest $request, Page $page)
     {
-        $this->pageService->setUser($request->user());
+        $this->pageService->setUser($request->user()->user);
         $create = $this->pageService->updatePage($page, $request->validated());
         if (!$create) {
             return $this->sendErrorResponse(

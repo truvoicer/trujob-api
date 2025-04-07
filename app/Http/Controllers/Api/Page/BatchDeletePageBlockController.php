@@ -21,7 +21,6 @@ class BatchDeletePageBlockController extends Controller
     public function __invoke(Page $page, BatchDeletePageBlockRequest $request)
     {
         $this->pageService->setUser($request->user());
-        $this->pageService->setPage($page);
         if (!$this->pageService->deletePageBlocksByType($page, $request->get('type'))) {
             return response()->json([
                 'status' => 'error',

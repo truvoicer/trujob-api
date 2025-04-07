@@ -36,7 +36,10 @@ use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Page\BatchDeletePageBlockController;
 use App\Http\Controllers\Api\Page\PageBlockController;
 use App\Http\Controllers\Api\Page\PageController;
+use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
+use App\Http\Controllers\Api\Pagination\PaginationTypeController;
+use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SettingController;
@@ -320,8 +323,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
     });
 
+    Route::prefix('pagination')->name('pagination.')->group(function () {
+        Route::get('/type', PaginationTypeController::class)->name('type');
+        Route::get('/scroll/type', PaginationScrollTypeController::class)->name('scroll.type');
+    });
     Route::prefix('page')->name('page.')->group(function () {
         Route::get('/', [PageController::class, 'index'])->name('index');
+        Route::get('/view', [PageViewController::class, 'index'])->name('view.index');
         Route::post('/create', [PageController::class, 'create'])->name('create');
         Route::prefix('{page}')->group(function () {
             Route::get('/', [PageController::class, 'view'])->name('view');

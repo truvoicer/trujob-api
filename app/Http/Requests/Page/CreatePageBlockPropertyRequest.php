@@ -35,6 +35,7 @@ class CreatePageBlockPropertyRequest extends FormRequest
             'properties' => [
                 'sometimes',
                 'array',
+                'nullable',
             ],
             ...ValidationHelpers::buildRequestPropertyRules($type),
             'title' => [
@@ -58,6 +59,7 @@ class CreatePageBlockPropertyRequest extends FormRequest
             'pagination_scroll_type' => [
                 'sometimes',
                 Rule::enum(PaginationScrollType::class),
+                'nullable',
             ],
             'has_sidebar' => [
                 'sometimes',

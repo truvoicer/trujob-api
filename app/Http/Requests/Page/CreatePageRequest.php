@@ -33,11 +33,6 @@ class CreatePageRequest extends FormRequest
         $blocksRules = ValidationHelpers::nestedValidationRules((new CreatePageBlockRequest())->rules(), 'blocks.*');
         unset($blocksRules['blocks.*.page_id']);
         return [
-            'site_id' => [
-                'required',
-                'integer',
-                Rule::exists('sites', 'id')
-            ],
             'view' => [
                 'required',
                 Rule::enum(ViewType::class)
@@ -65,6 +60,7 @@ class CreatePageRequest extends FormRequest
             'content' => [
                 'sometimes',
                 'string',
+                'nullable',
             ],
             'is_active' => [
                 'sometimes',

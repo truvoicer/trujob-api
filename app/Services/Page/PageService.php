@@ -52,7 +52,7 @@ class PageService extends BaseService
         return Page::where('name', $name)->first();
     }
 
-    public function createPage(array $data)
+    public function createPage(Site $site, array $data)
     {
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
@@ -65,18 +65,16 @@ class PageService extends BaseService
             $blocks = $data['blocks'];
             unset($data['blocks']);
         }
-
-        $this->page = new Page($data);
-        if (!$this->page->save()) {
-            $this->resultsService->addError('Error creating page', $data);
-            return false;
+        $page = $site->pages()->create($data);
+        if (!$page->exists()) {
+            throw new \Exception('Error creating page');
         }
 
         if (is_array($roles)) {
-            $this->syncRoles($this->page->roles(), $roles);
+            $this->syncRoles($page->roles(), $roles);
         }
 
-        return $this->createBlockBatch($this->page, $blocks);
+        return $this->createBlockBatch($page, $blocks);
     }
 
     public function updatePage(Page $page, array $data)
@@ -93,29 +91,27 @@ class PageService extends BaseService
             unset($data['blocks']);
         }
 
-        $this->page = $page;
-        if (!$this->page->update($data)) {
+        if (!$page->update($data)) {
             $this->resultsService->addError('Error updating page', $data);
             return false;
         }
 
         if (is_array($roles)) {
-            $this->syncRoles($this->page->roles(), $roles);
+            $this->syncRoles($page->roles(), $roles);
         }
 
         if (empty($data['blocks'])) {
             return true;
         }
 
-        $this->detachPageBlocks($this->page);
+        $this->detachPageBlocks($page);
 
-        return $this->createBlockBatch($this->page, $blocks);
+        return $this->createBlockBatch($page, $blocks);
     }
 
     public function deletePage(Page $page)
     {
-        $this->page = $page;
-        if (!$this->page->delete()) {
+        if (!$page->delete()) {
             $this->resultsService->addError('Error deleting page');
             return false;
         }

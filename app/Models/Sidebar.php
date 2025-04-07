@@ -37,6 +37,6 @@ class Sidebar extends Model
     }
     public function pageBlocks()
     {
-        return $this->belongsToMany(PageBlock::class);
+        return $this->belongsToMany(PageBlock::class, 'page_block_sidebars');
     }
 }

@@ -41,7 +41,6 @@ class PageBlockController extends Controller
     public function create(Page $page, CreatePageBlockRequest $request)
     {
         $this->pageService->setUser($request->user());
-        $this->pageService->setPage($page);
         if (!$this->pageService->createPageBlock($page, $request->validated())) {
             return response()->json([
                 'status' => 'error',
@@ -57,7 +56,6 @@ class PageBlockController extends Controller
     public function update(Page $page, PageBlock $pageBlock, EditPageBlockRequest $request)
     {
         $this->pageService->setUser($request->user());
-        $this->pageService->setPage($page);
         if (!$this->pageService->updatePageBlock($pageBlock, $request->validated())) {
             return response()->json([
                 'status' => 'error',
@@ -73,7 +71,6 @@ class PageBlockController extends Controller
     public function destroy(Page $page, PageBlock $pageBlock, Request $request)
     {
         $this->pageService->setUser($request->user());
-        $this->pageService->setPage($page);
         
         if (!$this->pageService->deletePageBlock($pageBlock)) {
             return response()->json([
