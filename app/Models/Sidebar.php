@@ -16,13 +16,20 @@ class Sidebar extends Model
         'properties' => 'array',
     ];
 
-    public function sidebarWidgets() {
+    public function sidebarWidgets()
+    {
         return $this->hasMany(SidebarWidget::class);
     }
-    
+
     public function widgets()
     {
-        return $this->belongsToMany(Widget::class);
+        return $this->belongsToMany(Widget::class, 'sidebar_widgets')->withPivot(
+            'title',
+            'icon',
+            'order',
+            'has_container',
+            'properties'
+        );
     }
     public function roles()
     {

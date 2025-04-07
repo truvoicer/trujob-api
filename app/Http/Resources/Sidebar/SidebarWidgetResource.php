@@ -19,10 +19,11 @@ class SidebarWidgetResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'title' => $this->title,
-            'icon' => $this->icon,
-            'has_container' => $this->has_container,
-            'properties' => $this->properties,
+            'title' => $this->pivot->title,
+            'icon' => $this->pivot->icon,
+            'has_container' => $this->pivot->has_container,
+            'order' => $this->pivot->order,
+            'properties' => json_decode($this->pivot->properties),
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
         ];
     }

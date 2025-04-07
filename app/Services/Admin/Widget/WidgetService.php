@@ -17,17 +17,19 @@ class WidgetService extends BaseService
     private Widget $widget;
 
     public function __construct(
-        private ResultsService $resultsService, 
+        private ResultsService $resultsService,
         private WidgetRepository $widgetRepository
-    ){
+    ) {
         parent::__construct();
     }
 
-    public function widgetFetch(Site $site,string $widgetName) {
+    public function widgetFetch(Site $site, string $widgetName): ?Widget
+    {
         return $site->widgets()->where('name', $widgetName)->first();
     }
 
-    public function createWidget(Site $site, array $data) {
+    public function createWidget(Site $site, array $data)
+    {
         if (empty($data['name'])) {
             $data['name'] = Str::slug($data['title']);
         }
@@ -36,13 +38,9 @@ class WidgetService extends BaseService
             $roles = $data['roles'];
             unset($data['roles']);
         }
-        $widget = new Widget([
-            'site_id' => $site->id,
-            ...$data
-        ]);
-        if (!$widget->save()) {
-            $this->resultsService->addError('Error adding app widget', $data);
-            return false;
+        $widget = $site->widgets()->create($data);
+        if (!$widget->exists()) {
+            throw new \Exception('Error adding app widget');
         }
         if (is_array($roles)) {
             $this->syncRoles($widget->roles(), $roles);
@@ -53,13 +51,14 @@ class WidgetService extends BaseService
         return true;
     }
 
-    public function updateWidget(Widget $widget, array $data) {
+    public function updateWidget(Widget $widget, array $data)
+    {
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
-        
+
         if (!$widget->update($data)) {
             throw new \Exception('Error updating app widget');
         }
@@ -70,7 +69,8 @@ class WidgetService extends BaseService
         return true;
     }
 
-    public function deleteWidget(Widget $widget) {
+    public function deleteWidget(Widget $widget)
+    {
         if (!$widget->delete()) {
             throw new \Exception('Error deleting app widget');
         }

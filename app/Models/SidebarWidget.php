@@ -13,6 +13,8 @@ class SidebarWidget extends Model
         'order',
         'has_container',
         'properties',
+        'sidebar_id',
+        'widget_id',
     ];
     protected $casts = [
         'properties' => 'array',

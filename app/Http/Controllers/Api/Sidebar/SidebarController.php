@@ -53,7 +53,7 @@ class SidebarController extends Controller
     public function update(Sidebar $sidebar, EditSidebarRequest $request) {
         $this->sidebarService->setUser($request->user()->user);
         $this->sidebarService->setSidebar($sidebar);
-        $update = $this->sidebarService->updateSidebar($request->all());
+        $update = $this->sidebarService->updateSidebar($request->user()->site, $sidebar, $request->all());
         if (!$update) {
             return response()->json([
                 'message' => 'Error updating app sidebar',
@@ -66,7 +66,7 @@ class SidebarController extends Controller
     }
     public function destroy(Sidebar $sidebar) {
         $this->sidebarService->setSidebar($sidebar);
-        $delete = $this->sidebarService->deleteSidebar();
+        $delete = $this->sidebarService->deleteSidebar($sidebar);
         if (!$delete) {
             return response()->json([
                 'message' => 'Error deleting app sidebar',

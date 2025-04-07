@@ -29,11 +29,7 @@ class WidgetController extends Controller
             )
         );
     }
-    public function view(string $widget) {
-        $widget = $this->widgetService->widgetFetch($widget);
-        if (!$widget) {
-            throw new WidgetNotFoundException();
-        }
+    public function view(Widget $widget, Request $request) {
         return new WidgetResource($widget);
     }
 
@@ -72,8 +68,7 @@ class WidgetController extends Controller
         ]);
     }
     public function destroy(Widget $widget) {
-        $this->widgetService->setWidget($widget);
-        $delete = $this->widgetService->deleteWidget();
+        $delete = $this->widgetService->deleteWidget($widget);
         if (!$delete) {
             return response()->json([
                 'message' => 'Error deleting app widget',

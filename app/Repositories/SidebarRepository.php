@@ -33,4 +33,10 @@ class SidebarRepository extends BaseRepository
         return $this->findMany();
     }
 
+    public function findSidebarWidgets(Sidebar $sidebar)
+    {
+        $this->setQuery($sidebar->widgets());
+        return $this->findMany();
+    }
+
 }

@@ -28,7 +28,13 @@ class Widget extends Model
     }
 
     public function sidebars() {
-        return $this->belongsToMany(Sidebar::class);
+        return $this->belongsToMany(Sidebar::class, 'sidebar_widgets')->withPivot(
+            'title',
+            'icon',
+            'order',
+            'has_container',
+            'properties'
+        );
     }
 
     public function roles() {

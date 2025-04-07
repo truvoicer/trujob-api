@@ -23,7 +23,7 @@ class SidebarResource extends JsonResource
             'icon' => $this->icon,
             'properties' => $this->properties,
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
-            'widgets' => $this->whenLoaded('menuItems', WidgetResource::collection($this->widgets)),
+            'widgets' => $this->whenLoaded('widgets', WidgetResource::collection($this->widgets)),
         ];
     }
 }

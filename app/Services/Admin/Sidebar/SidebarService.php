@@ -7,6 +7,7 @@ use App\Models\SidebarWidget;
 use App\Models\Site;
 use App\Models\Widget;
 use App\Repositories\SidebarRepository;
+use App\Services\Admin\Widget\WidgetService;
 use App\Services\BaseService;
 use App\Services\ResultsService;
 use App\Traits\RoleTrait;
@@ -21,7 +22,8 @@ class SidebarService extends BaseService
 
     public function __construct(
         private ResultsService $resultsService, 
-        private SidebarRepository $sidebarRepository
+        private SidebarRepository $sidebarRepository,
+        private WidgetService $widgetService
     ){
         parent::__construct();
     }
@@ -56,7 +58,11 @@ class SidebarService extends BaseService
             return true;
         }
         foreach ($sidebarWidgets as $sidebarWidget) {
-            $this->createSidebarWidget($sidebar, $sidebarWidget);
+            $findWidget = $this->widgetService->widgetFetch($site, $sidebarWidget['name']);
+            if (!$findWidget) {
+                throw new \Exception('Widget not found: ' . $sidebarWidget['name']);
+            }
+            $this->createSidebarWidget($sidebar, $findWidget, $sidebarWidget);
         }
         if ($this->resultsService->hasErrors()) {
             return false;
@@ -64,7 +70,7 @@ class SidebarService extends BaseService
         return true;
     }
 
-    public function updateSidebar(array $data) {
+    public function updateSidebar(Site $site, Sidebar $sidebar, array $data) {
         $roles = null;
         $sidebarWidgets = [];
 
@@ -77,26 +83,30 @@ class SidebarService extends BaseService
             unset($data['roles']);
         }
         
-        if (!$this->sidebar->update($data)) {
+        if (!$sidebar->update($data)) {
             $this->resultsService->addError('Error updating app sidebar', $data);
             return false;
         }
         if (is_array($roles)) {
-            $this->syncRoles($this->sidebar->roles(), $roles);
+            $this->syncRoles($sidebar->roles(), $roles);
         }
 
         if (!count($sidebarWidgets)) {
             return true;
         }
-        $this->sidebar->widgets()->delete();
+        $sidebar->widgets()->delete();
         foreach ($sidebarWidgets as $sidebarWidget) {
-            $this->createSidebarWidget($this->sidebar, $sidebarWidget);
+            $findWidget = $this->widgetService->widgetFetch($site, $sidebarWidget['name']);
+            if (!$findWidget) {
+                throw new \Exception('Widget not found: ' . $sidebarWidget['name']);
+            }
+            $this->createSidebarWidget($sidebar, $findWidget, $sidebarWidget);
         }
         return true;
     }
 
-    public function deleteSidebar() {
-        if (!$this->sidebar->delete()) {
+    public function deleteSidebar(Sidebar $sidebar) {
+        if (!$sidebar->delete()) {
             $this->resultsService->addError('Error deleting app sidebar');
             return false;
         }
@@ -112,14 +122,13 @@ class SidebarService extends BaseService
         if (!array_key_exists('order', $data)) {
             $data['order'] = $this->sidebarRepository->getHighestOrder($sidebar->widgets());
         }
-        $sidebar->widgets()->attach(
-            $widget,
-            $data
-        );
-        $sidebarWidget = $sidebar->widgets()->where('widget_id', $widget->id)->first();
-        if (!$sidebarWidget) {
-            throw new \Exception('Error creating app sidebar item');
-        }
+
+        $sidebarWidget = SidebarWidget::create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id,
+            ...$data
+        ]);
+
         if (is_array($roles)) {
             $this->syncRoles($sidebarWidget->roles(), $roles);
         }
@@ -127,8 +136,6 @@ class SidebarService extends BaseService
     }
 
     public function updateSidebarWidget(SidebarWidget $sidebarWidget, array $data) {
-        $this->sidebarWidget = $sidebarWidget;
-        
         $roles = null;
         
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
@@ -136,26 +143,26 @@ class SidebarService extends BaseService
             unset($data['roles']);
         }
         
-        if (!$this->sidebarWidget->update($data)) {
+        if (!$sidebarWidget->update($data)) {
             $this->resultsService->addError('Error updating app sidebar item', $data);
             return false;
         }
 
         if (is_array($roles)) {
-            $this->syncRoles($this->sidebarWidget->roles(), $roles);
+            $this->syncRoles($sidebarWidget->roles(), $roles);
         }
         return true;
     }
 
-    public function removeSidebarWidget() {
-        if (!$this->sidebar->sidebarWidgets()->delete($this->sidebarWidget)) {
+    public function removeSidebarWidget(Sidebar $sidebar, SidebarWidget $sidebarWidget) {
+        if (!$sidebar->sidebarWidgets()->delete($sidebarWidget)) {
             $this->resultsService->addError('Error deleting app sidebar item');
             return false;
         }
         return true;
     }
-    public function deleteSidebarWidget() {
-        if (!$this->sidebarWidget->delete()) {
+    public function deleteSidebarWidget(SidebarWidget $sidebarWidget) {
+        if (!$sidebarWidget->delete()) {
             $this->resultsService->addError('Error deleting app sidebar item');
             return false;
         }

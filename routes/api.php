@@ -314,7 +314,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{block}')->group(function () {
             Route::get('/', [BlockController::class, 'view'])->name('view');
             Route::get('/sidebar', [BlockSidebarController::class, 'index'])->name('sidebar');
-            
+
             // Route::patch('/update', [PageBlockController::class, 'update'])->name('update');
             // Route::delete('/delete', [PageBlockController::class, 'destroy'])->name('delete');
         });
@@ -384,21 +384,29 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
     });
     Route::prefix('sidebar')->name('sidebar.')->group(function () {
+        Route::get('/', [SidebarController::class, 'index'])->name('index');
         Route::post('/create', [SidebarController::class, 'create'])->name('create');
         Route::prefix('{sidebar}')->group(function () {
+            Route::get('/', [SidebarController::class, 'view'])->name('view');
             Route::patch('/update', [SidebarController::class, 'update'])->name('update');
             Route::delete('/delete', [SidebarController::class, 'destroy'])->name('delete');
             Route::prefix('widget')->name('widget.')->group(function () {
-                Route::post('/create', [SidebarWidgetController::class, 'create'])->name('create');
-                Route::prefix('{sidebarWidget}')->group(function () {
-                    Route::get('/', [SidebarWidgetController::class, 'view'])->name('view');
-                    Route::patch('/update', [SidebarWidgetController::class, 'update'])->name('update');
-                    Route::delete('/delete', [SidebarWidgetController::class, 'destroy'])->name('delete');
+                Route::get('/', [SidebarWidgetController::class, 'index'])->name('index');
+                Route::prefix('{widget}')->group(function () {
+                    Route::post('/create', [SidebarWidgetController::class, 'create'])->name('create');
+                    Route::prefix('rel')->name('rel')->group(function () {
+                        Route::prefix('{sidebarWidget}')->group(function () {
+                            Route::get('/', [SidebarWidgetController::class, 'view'])->name('view');
+                            Route::patch('/update', [SidebarWidgetController::class, 'update'])->name('update');
+                            Route::delete('/delete', [SidebarWidgetController::class, 'destroy'])->name('delete');
+                        });
+                    });
                 });
             });
         });
     });
     Route::prefix('widget')->name('widget.')->group(function () {
+        Route::get('/', [WidgetController::class, 'index'])->name('index');
         Route::post('/create', [WidgetController::class, 'create'])->name('create');
         Route::prefix('{widget}')->group(function () {
             Route::get('/', [WidgetController::class, 'view'])->name('view');
