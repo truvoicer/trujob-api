@@ -61,7 +61,7 @@ class PageController extends Controller
 
     public function create(CreatePageRequest $request)
     {
-        $this->pageService->setUser($request->user());
+        $this->pageService->setUser($request->user()->user);
         $create = $this->pageService->createPage(
             $request->user()->site,
             $request->validated()
