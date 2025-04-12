@@ -53,6 +53,8 @@ class Page extends Model
             'sidebar_widgets',
             'properties',
             'order',
+            'default',
+            'nav_title',
             'title',
             'subtitle',
             'background_image',
@@ -72,5 +74,10 @@ class Page extends Model
     public function site()
     {
         return $this->belongsTo(Site::class);
+    }
+
+    public function sidebars()
+    {
+        return $this->belongsToMany(Sidebar::class, 'page_sidebars');
     }
 }

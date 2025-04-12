@@ -12,6 +12,8 @@ class PageBlock extends Model
         'has_sidebar',
         'sidebar_widgets',
         'order',
+        'default',
+        'nav_title',
         'title',
         'subtitle',
         'background_image',
@@ -27,6 +29,7 @@ class PageBlock extends Model
         'properties' => 'array',
         'sidebar_widgets' => 'array',
         'has_sidebar' => 'boolean',
+        'default' => 'boolean',
     ];
 
     public function page()

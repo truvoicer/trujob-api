@@ -11,10 +11,11 @@ use App\Services\BaseService;
 use App\Services\Block\BlockService;
 use App\Services\ResultsService;
 use App\Traits\RoleTrait;
+use App\Traits\SidebarTrait;
 
 class PageService extends BaseService
 {
-    use RoleTrait;
+    use RoleTrait, SidebarTrait;
 
     private Page $page;
 
@@ -32,19 +33,19 @@ class PageService extends BaseService
     public function getPageById(Site $site, int $id)
     {
         return $site->pages()->where('id', $id)
-        ->first();
+            ->first();
     }
-    
+
     public function getPageByPermalink(Site $site, string $permalink): ?Page
     {
         return $site->pages()->where('permalink', $permalink)
-        ->first();
+            ->first();
     }
 
     public function getPageByName(Site $site, string $name)
     {
         return $site->pages()->where('name', $name)
-        ->first();
+            ->first();
     }
 
     public function menuFetch(string $name)
@@ -58,6 +59,12 @@ class PageService extends BaseService
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
+        }
+
+        $sidebars = null;
+        if (array_key_exists('sidebars', $data) && is_array($data['sidebars'])) {
+            $sidebars = $data['sidebars'];
+            unset($data['sidebars']);
         }
 
         $blocks = [];
@@ -74,6 +81,10 @@ class PageService extends BaseService
             $this->syncRoles($page->roles(), $roles);
         }
 
+        if (is_array($sidebars)) {
+            $this->syncSidebars($page->sidebars(), $sidebars);
+        }
+        
         return $this->createBlockBatch($page, $blocks);
     }
 
@@ -85,6 +96,12 @@ class PageService extends BaseService
             unset($data['roles']);
         }
 
+        $sidebars = null;
+        if (array_key_exists('sidebars', $data) && is_array($data['sidebars'])) {
+            $sidebars = $data['sidebars'];
+            unset($data['sidebars']);
+        }
+        
         $blocks = [];
         if (array_key_exists('blocks', $data) && is_array($data['blocks'])) {
             $blocks = $data['blocks'];
@@ -100,13 +117,16 @@ class PageService extends BaseService
             $this->syncRoles($page->roles(), $roles);
         }
 
-        if (empty($data['blocks'])) {
-            return true;
+        if (is_array($blocks) && count($blocks) > 0) {
+            $this->detachPageBlocks($page);
+            $this->createBlockBatch($page, $blocks);
         }
 
-        $this->detachPageBlocks($page);
+        if (is_array($sidebars)) {
+            $this->syncSidebars($page->sidebars(), $sidebars);
+        }
 
-        return $this->createBlockBatch($page, $blocks);
+        return true;
     }
 
     public function deletePage(Page $page)
@@ -147,6 +167,11 @@ class PageService extends BaseService
             $roles = $data['roles'];
             unset($data['roles']);
         }
+        $sidebars = null;
+        if (array_key_exists('sidebars', $data) && is_array($data['sidebars'])) {
+            $sidebars = $data['sidebars'];
+            unset($data['sidebars']);
+        }
 
         if (array_key_exists('type', $data)) {
             unset($data['type']);
@@ -155,14 +180,20 @@ class PageService extends BaseService
         if (!empty($data['properties']) && is_array($data['properties'])) {
             $atts['properties'] = json_encode($data['properties']);
         }
-        if (!empty($data['sidebar_widgets']) && is_array($data['sidebar_widgets'])) {
-            $atts['sidebar_widgets'] = json_encode($data['sidebar_widgets']);
+
+        $pageBlock = new PageBlock();
+        $pageBlock->fill($atts);
+        $pageBlock->block_id = $block->id;
+        $pageBlock->page_id = $page->id;
+        $pageBlock->order = $this->pageRepository->getHighestOrder($page->blocks());
+        if (!$pageBlock->save()) {
+            throw new \Exception('Error creating page block');
         }
-
-        $page->blocks()->attach($block->id, $atts);
-
         if (is_array($roles)) {
-            $this->syncRoles($page->blocks()->where('block_id', $block->id)->first()->roles(), $roles);
+            $this->syncRoles($pageBlock->roles(), $roles);
+        }
+        if (is_array($sidebars)) {
+            $this->syncSidebars($pageBlock->sidebars(), $sidebars);
         }
         return true;
     }
@@ -175,6 +206,12 @@ class PageService extends BaseService
             unset($data['roles']);
         }
 
+        $sidebars = null;
+        if (array_key_exists('sidebars', $data) && is_array($data['sidebars'])) {
+            $sidebars = $data['sidebars'];
+            unset($data['sidebars']);
+        }
+
         $properties = $pageBlock->properties ?? [];
         if (!empty($data['properties']) && is_array($data['properties'])) {
             $data['properties'] = [
@@ -183,7 +220,7 @@ class PageService extends BaseService
             ];
         }
         $data = BlockService::buildBlockUpdateData($pageBlock, $data);
-        
+
         if (!$pageBlock->update($data)) {
             $this->resultsService->addError('Error updating page block', $data);
             return false;
@@ -191,6 +228,9 @@ class PageService extends BaseService
 
         if (is_array($roles)) {
             $this->syncRoles($pageBlock->roles(), $roles);
+        }
+        if (is_array($sidebars)) {
+            $this->syncSidebars($pageBlock->sidebars(), $sidebars);
         }
 
         return true;
@@ -213,6 +253,11 @@ class PageService extends BaseService
     public function detachPageBlocks(Page $page)
     {
         return $page->blocks()->detach();
+    }
+
+    public function detachPageSidebars(Page $page)
+    {
+        return $page->sidebars()->detach();
     }
 
     /**

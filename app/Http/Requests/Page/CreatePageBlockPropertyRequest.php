@@ -32,12 +32,21 @@ class CreatePageBlockPropertyRequest extends FormRequest
     public function rules(?string $type = null): array
     {
         return [
+            'type' => [
+                'required',
+                Rule::enum(BlockType::class),
+            ],
             'properties' => [
                 'sometimes',
                 'array',
                 'nullable',
             ],
             ...ValidationHelpers::buildRequestPropertyRules($type),
+            'nav_title' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
             'title' => [
                 'sometimes',
                 'string',

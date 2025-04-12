@@ -18,6 +18,8 @@ class PageBlockResource extends JsonResource
     {
         return [
             'type' => $this->block->type,
+            'default' => $this->default,
+            'nav_title' => $this->nav_title,
             'title' => $this->title,
             'subtitle' => $this->subtitle,
             'background_image' => $this->background_image,

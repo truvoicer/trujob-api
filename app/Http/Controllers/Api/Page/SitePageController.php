@@ -33,7 +33,7 @@ class SitePageController extends Controller
             return response()->json(['error' => 'Page not found'], 404);
         }
 
-        $page->load(['roles', 'pageBlocks']);
+        $page->load(['roles', 'pageBlocks', 'sidebars']);
 
         return new PageResource($page);
     }

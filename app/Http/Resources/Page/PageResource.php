@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Page;
 
 use App\Http\Resources\RoleResource;
+use App\Http\Resources\Sidebar\SidebarResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,7 +26,7 @@ class PageResource extends JsonResource
             'content' => $this->content,
             'blocks' => $this->whenLoaded('pageBlocks', PageBlockResource::collection($this->pageBlocks)),
             'has_sidebar' => $this->has_sidebar,
-            'sidebar_widgets' => $this->sidebar_widgets,
+            'sidebars' => $this->whenLoaded('sidebars', SidebarResource::collection($this->sidebars)),
             'is_active' => $this->is_active,
             'is_home' => $this->is_home,
             'is_featured' => $this->is_featured,

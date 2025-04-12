@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('page_id')->constrained()->onDelete('cascade');
             $table->foreignId('block_id')->constrained()->onDelete('cascade');
+            $table->boolean('default')->nullable()->default(false);
+            $table->string('nav_title')->nullable();
             $table->string('title')->nullable();
             $table->string('subtitle')->nullable();
             $table->string('background_image')->nullable();
