@@ -13,12 +13,18 @@ enum BlockType: string
     case REGISTER = 'register-block';
     case MANAGE_PAGES = 'manage-pages-block';
     case MANAGE_LISTINGS = 'manage-listings-block';
+    case MANAGE_SIDEBARS = 'manage-sidebars-block';
+    case MANAGE_WIDGETS = 'manage-widgets-block';
+    case MANAGE_MENUS = 'manage-menus-block';
 
     public function isAdminBlock(): bool
     {
         return match ($this) {
             BlockType::MANAGE_PAGES,
-            BlockType::MANAGE_LISTINGS => true,
+            BlockType::MANAGE_LISTINGS,
+            BlockType::MANAGE_SIDEBARS,
+            BlockType::MANAGE_WIDGETS,
+            BlockType::MANAGE_MENUS => true,
             default => false,
         };
     }

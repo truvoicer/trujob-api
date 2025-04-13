@@ -180,7 +180,7 @@ class PageService extends BaseService
         if (!empty($data['properties']) && is_array($data['properties'])) {
             $atts['properties'] = json_encode($data['properties']);
         }
-
+        
         $pageBlock = new PageBlock();
         $pageBlock->fill($atts);
         $pageBlock->block_id = $block->id;

@@ -42,6 +42,11 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'nullable',
             ],
             ...ValidationHelpers::buildRequestPropertyRules($type),
+            'default' => [
+                'sometimes',
+                'boolean',
+                'nullable',
+            ],
             'nav_title' => [
                 'sometimes',
                 'string',
@@ -60,13 +65,15 @@ class CreatePageBlockPropertyRequest extends FormRequest
             'pagination' => [
                 'sometimes',
                 'boolean',
+                'nullable',
             ],
             'pagination_type' => [
-                'sometimes',
+                'required_if_accepted:pagination',
+                'nullable',
                 Rule::enum(PaginationType::class),
             ],
             'pagination_scroll_type' => [
-                'sometimes',
+                'required_if_accepted:pagination',
                 Rule::enum(PaginationScrollType::class),
                 'nullable',
             ],

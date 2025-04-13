@@ -378,6 +378,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
     });
     Route::prefix('menu')->name('menu.')->group(function () {
+        Route::get('/', [MenuController::class, 'index'])->name('index');
         Route::post('/create', [MenuController::class, 'create'])->name('create');
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'update'])->name('update');

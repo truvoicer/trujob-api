@@ -18,10 +18,11 @@ class MenuResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'has_parent' => $this->hasParent(),
             'ul_class' => $this->ul_class,
             'active' => $this->active,
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
-            'menuItems' => $this->whenLoaded('menuItems', MenuItemResource::collection($this->menuItems))
+            'menu_items' => $this->whenLoaded('menuItems', MenuItemResource::collection($this->menuItems))
         ];
     }
 }
