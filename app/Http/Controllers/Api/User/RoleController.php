@@ -5,75 +5,82 @@ namespace App\Http\Controllers\Api\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreRoleRequest;
 use App\Http\Requests\User\UpdateRoleRequest;
+use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use App\Models\User;
+use App\Repositories\RoleRepository;
 use App\Services\User\RoleService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class RoleController extends Controller
 {
-    protected RoleService $roleService;
+    
+    public function __construct(
+        private RoleService $roleService,
+        private RoleRepository $roleRepository
+    ){}
 
-    public function __construct(RoleService $roleService, Request $request)
+    public function index(Request $request)
     {
-        $this->roleService = $roleService;
+        $this->roleService->setUser($request->user()->user);
+        $this->roleRepository->setQuery(Role::query());
+        $this->roleRepository->setPagination(true);
+        $this->roleRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->roleRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->roleRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->roleRepository->setPage(
+            $request->get('page', 1)
+        );
+
+        return RoleResource::collection(
+            $this->roleRepository->findMany()
+        );
     }
 
-    public function updateUserRole(User $user, Role $role, Request $request) {
-        $this->roleService->setUser($user);
-        $this->roleService->setRole($role);
-        $create = $this->roleService->updateRole($request->all());
+    public function create(StoreRoleRequest $request) {
+        $this->roleService->setUser($request->user()->user);
+        $create = $this->roleService->createrole($request->validated());
         if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating role',
-                [],
-                $this->roleService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error creating role',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('role created', [], $this->roleService->getResultsService()->getErrors());
-    }
-    public function createRole(Request $request) {
-        $this->roleService->setUser($request->user());
-        $create = $this->roleService->createrole($request->all());
-        if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating role',
-                [],
-                $this->roleService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('role created', [], $this->roleService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'Role created',
+        ], Response::HTTP_OK);
     }
 
-    public function updateRole(role $role, Request $request) {
-        $this->roleService->setUser($request->user());
-        $this->roleService->setrole($role);
-        $update = $this->roleService->updaterole($request->all());
-        if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating role',
-                [],
-                $this->roleService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function update(Role $role, UpdateRoleRequest $request) {
+        $this->roleService->setUser($request->user()->user);
+        $create = $this->roleService->updateRole($role, $request->validated());
+        if (!$create) {
+            return response()->json([
+                'message' => 'Error creating role',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('role updated', [], $this->roleService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'Role updated',
+        ], Response::HTTP_OK);
     }
-    public function deleteRole(role $role) {
-        $this->roleService->setrole($role);
-        $delete = $this->roleService->deleterole();
+    
+    
+    public function delete(Role $role) {
+        $delete = $this->roleService->deleterole($role);
         if (!$delete) {
-            return $this->sendErrorResponse(
-                'Error deleting role',
-                [],
-                $this->roleService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error deleting role',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('role deleted', [], $this->roleService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'Role deleted',
+        ], Response::HTTP_OK);
     }
 
 }

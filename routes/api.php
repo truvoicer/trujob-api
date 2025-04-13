@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\Menu\AppMenuController;
 use App\Http\Controllers\Api\Menu\AppMenuItemController;
 use App\Http\Controllers\Api\Menu\MenuController;
 use App\Http\Controllers\Api\Menu\MenuItemController;
+use App\Http\Controllers\Api\Menu\MenuItemTypeController;
 use App\Http\Controllers\Api\Sidebar\SidebarWidgetController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupMessageController;
@@ -239,41 +240,41 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin'])->group(function () {
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::prefix('/user')->name('user.')->group(function () {
-            Route::get('/list', [AdminController::class, 'getUsersList'])->name('list');
-            Route::prefix('batch')->name('batch.')->group(function () {
-                Route::delete('/delete', [AdminController::class, 'deleteBatchUser'])->name('delete');
-            });
-            Route::prefix('{user}')->name('single.')->group(function () {
-                Route::get('/', [AdminController::class, 'getSingleUser'])->name('detail');
-                Route::patch('/update', [AdminController::class, 'updateUser'])->name('update');
-                Route::delete('/delete', [AdminController::class, 'deleteUser'])->name('delete');
-                Route::prefix('api-token')->name('api-token.')->group(function () {
-                    Route::get('/list', [AdminController::class, 'getUserApiTokens'])->name('list');
-                    Route::post('/generate', [AdminController::class, 'generateNewApiToken'])->name('generate');
-                    Route::delete('/delete', [AdminController::class, 'deleteSessionUserApiToken'])->name('session.delete');
-                    Route::get('/{personalAccessToken}', [AdminController::class, 'getApiToken'])->name('detail');
-                    Route::patch('/{personalAccessToken}/update', [AdminController::class, 'updateApiTokenExpiry'])->name('update');
-                    Route::delete('/{personalAccessToken}/delete', [AdminController::class, 'deleteApiToken'])->name('delete');
-                });
-                Route::prefix('seller')->name('seller.')->group(function () {
-                    Route::post('/add', [UserSellerController::class, 'addUserSeller'])->name('create');
-                    Route::delete('/remove', [UserSellerController::class, 'removeUserSeller'])->name('delete');
-                });
-                Route::prefix('role')->name('role.')->group(function () {
-                    Route::patch('/{role}/update', [RoleController::class, 'updateUserRole'])->name('update');
-                });
-            });
-            Route::post('/create', [AdminController::class, 'createUser'])->name('create');
+    Route::prefix('/user')->name('user.')->group(function () {
+        Route::get('/list', [AdminController::class, 'getUsersList'])->name('list');
+        Route::prefix('batch')->name('batch.')->group(function () {
+            Route::delete('/delete', [AdminController::class, 'deleteBatchUser'])->name('delete');
         });
-        Route::prefix('role')->name('role.')->group(function () {
-            Route::post('/create', [RoleController::class, 'createRole'])->name('create');
-            Route::patch('/{role}/update', [RoleController::class, 'updateRole'])->name('update');
-            Route::delete('/{role}/delete', [RoleController::class, 'deleteRole'])->name('delete');
+        Route::prefix('{user}')->name('single.')->group(function () {
+            Route::get('/', [AdminController::class, 'getSingleUser'])->name('detail');
+            Route::patch('/update', [AdminController::class, 'updateUser'])->name('update');
+            Route::delete('/delete', [AdminController::class, 'deleteUser'])->name('delete');
+            Route::prefix('api-token')->name('api-token.')->group(function () {
+                Route::get('/list', [AdminController::class, 'getUserApiTokens'])->name('list');
+                Route::post('/generate', [AdminController::class, 'generateNewApiToken'])->name('generate');
+                Route::delete('/delete', [AdminController::class, 'deleteSessionUserApiToken'])->name('session.delete');
+                Route::get('/{personalAccessToken}', [AdminController::class, 'getApiToken'])->name('detail');
+                Route::patch('/{personalAccessToken}/update', [AdminController::class, 'updateApiTokenExpiry'])->name('update');
+                Route::delete('/{personalAccessToken}/delete', [AdminController::class, 'deleteApiToken'])->name('delete');
+            });
+            Route::prefix('seller')->name('seller.')->group(function () {
+                Route::post('/add', [UserSellerController::class, 'addUserSeller'])->name('create');
+                Route::delete('/remove', [UserSellerController::class, 'removeUserSeller'])->name('delete');
+            });
+            Route::prefix('role')->name('role.')->group(function () {
+                Route::patch('/{role}/update', [RoleController::class, 'update'])->name('update');
+            });
         });
+        Route::post('/create', [AdminController::class, 'createUser'])->name('create');
     });
 
+    Route::prefix('role')->name('role.')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('detail');
+        Route::post('/create', [RoleController::class, 'create'])->name('create');
+        Route::patch('/{role}/update', [RoleController::class, 'update'])->name('update');
+        Route::delete('/{role}/delete', [RoleController::class, 'delete'])->name('delete');
+    });
+    
     Route::prefix('firebase')->name('firebase.')->group(function () {
         Route::prefix('device')->name('device.')->group(function () {
             Route::prefix('messaging')->name('messaging.')->group(function () {
@@ -380,6 +381,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('menu')->name('menu.')->group(function () {
         Route::get('/', [MenuController::class, 'index'])->name('index');
         Route::post('/create', [MenuController::class, 'create'])->name('create');
+        Route::get('/item/type', [MenuItemTypeController::class, 'index'])->name('item.type');
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'update'])->name('update');
             Route::delete('/delete', [MenuController::class, 'destroy'])->name('delete');
