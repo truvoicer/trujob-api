@@ -51,6 +51,26 @@ class CreateMenuRequest extends FormRequest
                 'sometimes',
                 'array',
             ],
+            'menu_items.*.menus' => [
+                'sometimes',
+                'array',
+            ],
+            'menu_items.*.menus.*' => [
+                'required',
+                'integer',
+                Rule::exists('menus', 'id')->where(function ($query) {
+                    return $query->where('site_id', $this->user()?->site?->id);
+                }),
+            ],
+            'menu_items.*.roles' => [
+                'sometimes',
+                'array',
+            ],
+            'menu_items.*.roles.*' => [
+                'required',
+                'integer',
+                Rule::exists('roles', 'id'),
+            ],
             'roles' => [
                 'sometimes',
                 'array',

@@ -21,6 +21,7 @@ use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\Role;
 use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\UserFollow;
@@ -89,17 +90,17 @@ class DatabaseSeeder extends Seeder
             ->has(ListingColor::factory()->count(1))
             ->has(
                 Media::factory()
-                ->count(1)
-                ->state(function (array $attributes, Listing $listing) {
-                    $randomNumberBetween = random_int(1, 100);
-                    return[
-                        'type' => MediaType::IMAGE,
-                        'filesystem' => FileSystemType::EXTERNAL,
-                        'category' => ImageCategory::THUMBNAIL,
-                        'alt' => fake()->text(20),
-                        'url' => "https://picsum.photos/id/{$randomNumberBetween}/700/700",
-                    ];
-                })
+                    ->count(1)
+                    ->state(function (array $attributes, Listing $listing) {
+                        $randomNumberBetween = random_int(1, 100);
+                        return [
+                            'type' => MediaType::IMAGE,
+                            'filesystem' => FileSystemType::EXTERNAL,
+                            'category' => ImageCategory::THUMBNAIL,
+                            'alt' => fake()->text(20),
+                            'url' => "https://picsum.photos/id/{$randomNumberBetween}/700/700",
+                        ];
+                    })
             )
             ->has(Media::factory()->count(5))
             ->has(ListingCategory::factory()->count(5))
@@ -144,7 +145,7 @@ class DatabaseSeeder extends Seeder
                     ->count(5)
             )
             ->create();
-            
+
 
         $testUserData = DefaultData::TEST_USER_DATA;
         $user = $userAdminService->getUserRepository()->findOneBy(
@@ -153,17 +154,20 @@ class DatabaseSeeder extends Seeder
         if (!$user instanceof User) {
             throw new \Exception("Error finding user");
         }
-        $token = $userAdminService->createUserToken($user);
-        $tokenData = [
-            'user_token' => $token->plainTextToken,
-        ];
+        $tokenData = [];
         foreach (Site::all() as $site) {
             $siteToken = $siteService->createToken($site);
             if (!$siteToken) {
                 throw new \Exception('Error creating site token');
             }
+
+            $siteUserToken = $userAdminService->createSiteUserToken(
+                $userAdminService->registerSiteUser($site, $user)
+            );
             $tokenData['sites'] = [];
-            $tokenData['sites'][$site->name] = $siteToken->plainTextToken;
+            $tokenData['sites'][$site->name] = [];
+            $tokenData['sites'][$site->name]['user_token'] = $siteUserToken->plainTextToken;
+            $tokenData['sites'][$site->name]['site_token'] = $siteToken->plainTextToken;
         }
         $this->command->info('Tokens generated:');
         var_dump($tokenData);

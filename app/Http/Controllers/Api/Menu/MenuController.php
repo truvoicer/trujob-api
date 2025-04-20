@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api\Menu;
 
 use App\Exceptions\MenuNotFoundException;
+use App\Helpers\SiteHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Menu\CreateMenuRequest;
 use App\Http\Requests\Menu\EditMenuRequest;
 use App\Http\Resources\Menu\MenuResource;
 use App\Models\Menu;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Repositories\MenuRepository;
 use App\Services\Admin\Menu\MenuService;
 use Illuminate\Http\Request;
@@ -47,18 +50,27 @@ class MenuController extends Controller
     }
 
 
-    public function view(string $menu)
+    public function view(string $menu, Request $request)
     {
+        [$site, $user] = SiteHelper::getCurrentSite();
+
+        if ($user) {
+        $this->menuService->setUser($user);
+        }
+        if ($site) {
+            $this->menuService->setSite($site);
+        }
         $menu = $this->menuService->menuFetch($menu);
         if (!$menu) {
-            throw new MenuNotFoundException();
+            throw new MenuNotFoundException('Menu not found');
         }
         return new MenuResource($menu);
     }
 
     public function create(CreateMenuRequest $request)
     {
-        $this->menuService->setUser($request->user());
+        $this->menuService->setUser($request->user()->user);
+        $this->menuService->setSite($request->user()->site);
         $create = $this->menuService->createMenu($request->validated());
         if (!$create) {
             return $this->sendErrorResponse(
@@ -73,9 +85,9 @@ class MenuController extends Controller
 
     public function update(Menu $menu, EditMenuRequest $request)
     {
-        $this->menuService->setUser($request->user());
-        $this->menuService->setMenu($menu);
-        $update = $this->menuService->updateMenu($request->all());
+        $this->menuService->setUser($request->user()->user);
+        $this->menuService->setSite($request->user()->site);
+        $update = $this->menuService->updateMenu($menu, $request->validated());
         if (!$update) {
             return $this->sendErrorResponse(
                 'Error updating menu',
@@ -88,8 +100,9 @@ class MenuController extends Controller
     }
     public function destroy(Menu $menu)
     {
-        $this->menuService->setMenu($menu);
-        $delete = $this->menuService->deleteMenu();
+        $this->menuService->setUser($request->user()->user);
+        $this->menuService->setSite($request->user()->site);
+        $delete = $this->menuService->deleteMenu($menu);
         if (!$delete) {
             return $this->sendErrorResponse(
                 'Error deleting menu',

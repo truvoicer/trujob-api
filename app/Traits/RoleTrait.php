@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Role;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait RoleTrait
@@ -29,4 +30,5 @@ trait RoleTrait
 
         throw new \Exception("Error syncing roles");
     }
+
 }

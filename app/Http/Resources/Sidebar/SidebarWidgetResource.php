@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Sidebar;
 
+use App\Helpers\SiteHelper;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\Widget\WidgetResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,6 +17,7 @@ class SidebarWidgetResource extends JsonResource
      */
     public function toArray($request)
     {
+        [$site, $user] = SiteHelper::getCurrentSite();
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -25,6 +27,9 @@ class SidebarWidgetResource extends JsonResource
             'order' => $this->pivot->order,
             'properties' => json_decode($this->pivot->properties),
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
+            'has_permission' => $this->whenLoaded('roles', function () use($site, $user) {
+                return $this->hasPermission($site, $this->roles, $user);
+            }),
         ];
     }
 }

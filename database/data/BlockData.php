@@ -27,4 +27,13 @@ return [
     [
         'type' => BlockType::MANAGE_LISTINGS,
     ],
+    [
+        'type' => BlockType::MANAGE_MENUS,
+    ],
+    [
+        'type' => BlockType::MANAGE_SIDEBARS,
+    ],
+    [
+        'type' => BlockType::MANAGE_WIDGETS,
+    ],
 ];

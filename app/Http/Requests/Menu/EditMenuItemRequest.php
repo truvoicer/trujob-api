@@ -85,6 +85,13 @@ class EditMenuItemRequest extends FormRequest
                 'sometimes',
                 'array',
             ],
+            'menus.*' => [
+                'required',
+                'integer',
+                Rule::exists('menus', 'id')->where(function ($query) {
+                    return $query->where('site_id', $this->user()?->site?->id);
+                }),
+            ],
             'roles' => [
                 'sometimes',
                 'array',

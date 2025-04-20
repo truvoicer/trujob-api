@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::create('app_menu_item_app_menus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('site_id')->constrained('sites')->onDelete('cascade');
-            $table->string('name')->unique();
-            $table->string('ul_class')->nullable();
+            $table->foreignId('app_menu_item_id')->constrained('app_menu_items')->onDelete('cascade');
+            $table->foreignId('app_menu_id')->constrained('app_menus')->onDelete('cascade');
+            $table->integer('order')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamps();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('app_menu_item_app_menus');
     }
 };

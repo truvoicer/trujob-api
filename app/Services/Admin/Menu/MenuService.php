@@ -18,17 +18,23 @@ class MenuService extends BaseService
     private MenuItem $menuItem;
 
     public function __construct(
-        private ResultsService $resultsService, 
+        private ResultsService $resultsService,
         private MenuRepository $menuRepository
-    ){
+    ) {
         parent::__construct();
     }
 
-    public function menuFetch(string $menuName) {
-        return Menu::where('name', $menuName)->first();
+    public function menuFetch(string $menuName)
+    {
+        $query = Menu::where('name', $menuName);
+        if (!isset($this->user)) {
+            $query->whereDoesntHave('roles');
+        }
+        return $query->first();
     }
 
-    public function createMenu(array $data) {
+    public function createMenu(array $data)
+    {
         $menuItems = [];
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
@@ -59,7 +65,8 @@ class MenuService extends BaseService
         return true;
     }
 
-    public function updateMenu(array $data) {
+    public function updateMenu(Menu $menu, array $data)
+    {
         $roles = null;
         $menuItems = [];
 
@@ -71,34 +78,50 @@ class MenuService extends BaseService
             $roles = $data['roles'];
             unset($data['roles']);
         }
-        
-        if (!$this->menu->update($data)) {
+
+        if (!$menu->update($data)) {
             $this->resultsService->addError('Error updating app menu', $data);
             return false;
         }
         if (is_array($roles)) {
-            $this->syncRoles($this->menu->roles(), $roles);
+            $this->syncRoles($menu->roles(), $roles);
         }
 
         if (!count($menuItems)) {
             return true;
         }
-        $this->menu->menuItems()->delete();
-        foreach ($menuItems as $menuItem) {
-            $this->createMenuItem($this->menu, $menuItem);
+
+        $filterCreateMenuItems = array_filter($menuItems, function ($item) {
+            return !array_key_exists('id', $item) || empty($item['id']);
+        });
+        $filterUpdateMenuItems = array_filter($menuItems, function ($item) {
+            return !empty($item['id']);
+        });
+        dd($menuItems);
+        foreach ($filterCreateMenuItems as $data) {
+            $this->createMenuItem($menu, $data);
+        }
+        foreach ($filterUpdateMenuItems as $data) {
+            $menuItem = $menu->menuItems()->find($data['id']);
+            if (!$menuItem) {
+                throw new \Exception('Menu item not found: ' . $data['id']);
+            }
+            $this->updateMenuItem($menuItem, $data);
         }
         return true;
     }
 
-    public function deleteMenu() {
-        if (!$this->menu->delete()) {
+    public function deleteMenu(Menu $menu)
+    {
+        if (!$menu->delete()) {
             $this->resultsService->addError('Error deleting app menu');
             return false;
         }
         return true;
     }
-    public function createMenuItem(Menu $menu, array $data) {
-        $menus = [];
+    public function createMenuItem(Menu $menu, array $data)
+    {
+        $menus = null;
         $roles = null;
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
@@ -118,70 +141,90 @@ class MenuService extends BaseService
             $data['page_id'] = $page->id;
         }
         if (!array_key_exists('order', $data)) {
-            $data['order'] = $this->menuRepository->getHighestOrder($menu->menuItems());
+            $data['order'] = $this->menuRepository->getHighestOrder($menu->menuItems(), 'menu_items.order');
         }
         $menuItem = $menu->menuItems()->create($data);
-        if (!$menu->menuItems()->save($menuItem)) {
-            $this->resultsService->addError('Error adding menu item', $data);
-            return false;
+        if (!$menuItem->exists()) {
+            throw new \Exception('Error creating menu item');
         }
         if (is_array($roles)) {
             $this->syncRoles($menuItem->roles(), $roles);
         }
-        foreach ($menus as $subMenu) {
-            $subMenu['menu_item_id'] = $menuItem->id;
-            $subMenu['site_id'] = $menu->site->id;
-            $this->createMenu($subMenu);
+        if (is_array($menus)) {
+            $this->addMenuToMenuItem($menuItem, $menus);
         }
-        return true;
     }
 
-    public function addMenuToMenuItem(MenuItem $menuItem, array $data) {
-        $this->menuItem = $menuItem;
-        $this->menu = $this->menuItem->menus()->create($data);
-
-        if (empty($data['menu_items'])) {
-            return true;
-        }
-
-        foreach ($data['menu_items'] as $menuItem) {
-            $this->createMenuItem($this->menu, $menuItem);
-        }
-        if ($this->resultsService->hasErrors()) {
-            return false;
-        }
-        return true;
-    }
-    public function updateMenuItem(MenuItem $menuItem, array $data) {
-        $this->menuItem = $menuItem;
-        
+    public function updateMenuItem(MenuItem $menuItem, array $data)
+    {
         $roles = null;
-        
+        $menus = null;
+
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
-        
-        if (!$this->menuItem->update($data)) {
-            $this->resultsService->addError('Error updating app menu item', $data);
-            return false;
+        if (!empty($data['menus']) && is_array($data['menus'])) {
+            $menus = $data['menus'];
+            unset($data['menus']);
+        }
+
+        if (array_key_exists('roles', $data) && is_array($data['roles'])) {
+            $roles = $data['roles'];
+            unset($data['roles']);
+        }
+
+        if (!empty($data['page'])) {
+            $page = Page::where('name', $data['page'])->first();
+            if (!$page) {
+                throw new \Exception('Page not found: ' . $data['page']);
+            }
+            unset($data['page']);
+            $data['page_id'] = $page->id;
+        }
+
+        if (!$menuItem->update($data)) {
+            throw new \Exception('Error updating menu item');
         }
 
         if (is_array($roles)) {
-            $this->syncRoles($this->menuItem->roles(), $roles);
+            $this->syncRoles($menuItem->roles(), $roles);
+        }
+        if (is_array($menus)) {
+            $this->addMenuToMenuItem($menuItem, $menus);
         }
         return true;
     }
 
-    public function removeMenuItem() {
-        if (!$this->menu->menuItems()->delete($this->menuItem)) {
+    public function addMenuToMenuItem(MenuItem $menuItem, array $menus)
+    {
+        $menus = array_map(function ($menu) {
+            if (is_string($menu)) {
+                $menu = $this->site->menus()->where('name', $menu)->first();
+                if (!$menu) {
+                    throw new \Exception('Menu not found | name: ' . $menu);
+                }
+                return $menu->id;
+            }
+            if (is_int($menu)) {
+                return $menu;
+            }
+            throw new \Exception('Invalid menu ID/Name: ' . $menu);
+        }, $menus);
+        $menuItem->menus()->sync($menus);
+    }
+
+    public function removeMenuItem(Menu $menu, MenuItem $menuItem)
+    {
+        if (!$menu->menuItems()->delete($menuItem)) {
             $this->resultsService->addError('Error deleting app menu item');
             return false;
         }
         return true;
     }
-    public function deleteMenuItem() {
-        if (!$this->menuItem->delete()) {
+    public function deleteMenuItem(MenuItem $menuItem)
+    {
+        if (!$menuItem->delete()) {
             $this->resultsService->addError('Error deleting app menu item');
             return false;
         }
@@ -195,22 +238,4 @@ class MenuService extends BaseService
     {
         return $this->resultsService;
     }
-
-    /**
-     * @param Menu $menu
-     */
-    public function setMenu(Menu $menu): void
-    {
-        $this->menu = $menu;
-    }
-
-    /**
-     * @param MenuItem $menuItem
-     */
-    public function setMenuItem(MenuItem $menuItem): void
-    {
-        $this->menuItem = $menuItem;
-    }
-
-
 }

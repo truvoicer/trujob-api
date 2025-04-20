@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\Enums\ViewType;
+use App\Traits\Model\PermissionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Page extends Model
 {
-    use HasFactory;
+    use HasFactory, PermissionTrait;
 
     protected $fillable = [
         'site_id',
@@ -22,14 +23,12 @@ class Page extends Model
         'is_featured',
         'is_protected',
         'has_sidebar',
-        'sidebar_widgets',
         'settings',
     ];
 
     protected $casts = [
         'view' => ViewType::class,
         'settings' => 'array',
-        'sidebar_widgets' => 'array',
         'is_active' => 'boolean',
         'is_home' => 'boolean',
         'is_featured' => 'boolean',
@@ -50,7 +49,6 @@ class Page extends Model
         )->withPivot(
             'order',
             'has_sidebar',
-            'sidebar_widgets',
             'properties',
             'order',
             'default',

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Model\PermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Sidebar extends Model
 {
-    //
+    use PermissionTrait;
+    
     protected $fillable = [
         'name',
         'title',

@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Enums\MenuItemType;
 use App\Helpers\MenuHelpers;
+use App\Traits\Model\PermissionTrait;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class MenuItem extends Model
 {
-    use HasFactory;
+    use HasFactory, PermissionTrait;
     protected $fillable = [
         'site_id',
         'page_id',
@@ -37,15 +38,11 @@ class MenuItem extends Model
         );
     }
     
-    public function menu() {
-        return $this->belongsTo(
-            Menu::class
-        );
-    }
 
     public function menus() {
-        return $this->hasMany(
-            Menu::class
+        return $this->belongsToMany(
+            Menu::class,
+            'menu_item_menus',
         );
     }
 

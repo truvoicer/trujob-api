@@ -6,6 +6,62 @@ use App\Enums\MenuItemType;
 return [
     [
         'site' => 'tru-job',
+        'name' => 'header-about-menu',
+        'menu_items' => [
+            [
+                'page' => 'about',
+                'label' => 'About Us',
+                'url' => '/about',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
+                'page' => 'contact',
+                'label' => 'Contact',
+                'url' => '/contact',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 1,
+            ],
+        ],
+    ],
+    [
+        'site' => 'tru-job',
+        'name' => 'header-account-menu',
+        'menu_items' => [
+            [
+                'page' => 'dashboard',
+                'label' => 'Dashboard',
+                'url' => '/dashboard',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
+                'page' => 'profile',
+                'label' => 'Profile',
+                'url' => '/profile',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 1,
+            ],
+            [
+                'label' => 'Logout',
+                'url' => '/logout',
+                'active' => true,
+                'type' => MenuItemType::LOGOUT->value,
+                'order' => 1,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::USER->value,
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+        ],
+    ],
+    [
+        'site' => 'tru-job',
         'name' => 'header-menu',
         'menu_items' => [
             [
@@ -16,6 +72,7 @@ return [
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,
             ],
+
             [
                 'label' => 'About',
                 'url' => '/about',
@@ -23,27 +80,7 @@ return [
                 'type' => MenuItemType::URL->value,
                 'order' => 1,
                 'menus' => [
-                    [
-                        'name' => 'header-about-menu',
-                        'menu_items' => [
-                            [
-                                'page' => 'about',
-                                'label' => 'About Us',
-                                'url' => '/about',
-                                'active' => true,
-                                'type' => MenuItemType::PAGE->value,
-                                'order' => 0,
-                            ],
-                            [
-                                'page' => 'contact',
-                                'label' => 'Contact',
-                                'url' => '/contact',
-                                'active' => true,
-                                'type' => MenuItemType::PAGE->value,
-                                'order' => 1,
-                            ],
-                        ],
-                    ]
+                    'name' => 'header-about-menu',
                 ]
             ],
             [
@@ -70,39 +107,11 @@ return [
                 'order' => 4,
                 'roles' => [
                     ApiAbility::USER->value,
+                    ApiAbility::SUPERUSER->value,
+                    ApiAbility::ADMIN->value,
                 ],
                 'menus' => [
-                    [
-                        'name' => 'header-account-menu',
-                        'menu_items' => [
-                            [
-                                'page' => 'dashboard',
-                                'label' => 'Dashboard',
-                                'url' => '/dashboard',
-                                'active' => true,
-                                'type' => MenuItemType::PAGE->value,
-                                'order' => 0,
-                            ],
-                            [
-                                'page' => 'profile',
-                                'label' => 'Profile',
-                                'url' => '/profile',
-                                'active' => true,
-                                'type' => MenuItemType::PAGE->value,
-                                'order' => 1,
-                            ],
-                            [
-                                'label' => 'Logout',
-                                'url' => '/logout',
-                                'active' => true,
-                                'type' => MenuItemType::LOGOUT->value,
-                                'order' => 1,
-                            ],
-                        ],
-                        'roles' => [
-                            ApiAbility::USER->value,
-                        ],
-                    ]
+                    'name' => 'header-account-menu',
                 ]
             ],
         ],
@@ -112,37 +121,17 @@ return [
         'name' => 'admin-header-menu',
         'menu_items' => [
             [
-
-                'page' => 'dashboard',
+                'page' => 'admin',
                 'label' => 'Admin',
-                'url' => '/dashboard',
+                'url' => '/admin',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,
-                'roles' => [
-                    ApiAbility::SUPERUSER->value,
-                    ApiAbility::ADMIN->value,
-                ],
-                'menus' => [
-                    [
-                        'name' => 'admin-header-admin-menu',
-                        'menu_items' => [
-                            [
-                                'page' => 'admin_manage_pages',
-                                'label' => 'Manage Pages',
-                                'url' => '/admin/manage-pages',
-                                'active' => true,
-                                'type' => MenuItemType::PAGE->value,
-                                'order' => 0,
-                            ],
-                        ],
-                        'roles' => [
-                            ApiAbility::SUPERUSER->value,
-                            ApiAbility::ADMIN->value,
-                        ],
-                    ]
-                ]
             ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
         ],
     ],
     [

@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\Model\PermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class PageBlock extends Model
 {
-    //
+    use PermissionTrait;
     protected $fillable = [
         'properties',
         'has_sidebar',
-        'sidebar_widgets',
         'order',
         'default',
         'nav_title',
@@ -27,7 +27,6 @@ class PageBlock extends Model
     protected $casts = [
         'pagination' => 'boolean',
         'properties' => 'array',
-        'sidebar_widgets' => 'array',
         'has_sidebar' => 'boolean',
         'default' => 'boolean',
     ];

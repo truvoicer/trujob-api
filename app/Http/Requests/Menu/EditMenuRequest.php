@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Menu;
 
 use App\Enums\MenuItemType;
+use App\Helpers\Tools\ValidationHelpers;
 use App\Models\Role;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
@@ -26,6 +27,31 @@ class EditMenuRequest extends FormRequest
      */
     public function rules(): array
     {
+        $menuItemRules = ValidationHelpers::nestedValidationRules(
+            (new EditMenuItemRequest())->rules(),
+            'menu_items.*'
+        );
+
+        $menuItemRules['menu_items.*.roles'] = [
+            'sometimes',
+            'array',
+        ];
+        $menuItemRules['menu_items.*.roles.*'] = [
+            'required',
+            'integer',
+            Rule::exists('roles', 'id'),
+        ];
+        $menuItemRules['menu_items.*.menus'] = [
+            'sometimes',
+            'array',
+        ];
+        $menuItemRules['menu_items.*.menus.*'] = [
+            'required',
+            'integer',
+            Rule::exists('menus', 'id')->where(function ($query) {
+                return $query->where('site_id', $this->user()?->site?->id);
+            }),
+        ];
         return [
             'site_id' => [
                 'sometimes',
@@ -47,10 +73,6 @@ class EditMenuRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'menu_items' => [
-                'sometimes',
-                'array',
-            ],
             'roles' => [
                 'sometimes',
                 'array',
@@ -60,6 +82,11 @@ class EditMenuRequest extends FormRequest
                 new StringOrIntger,
                 new IdOrNameExists(new Role())
             ],
+            'menu_items' => [
+                'sometimes',
+                'array',
+            ],
+            ...$menuItemRules,
         ];
     }
 }

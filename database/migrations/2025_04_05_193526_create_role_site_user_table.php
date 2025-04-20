@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('page_blocks', function (Blueprint $table) {
-            $table->boolean('default')->nullable()->after('block_id');
+        Schema::create('role_site_user', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('site_user_id')->constrained('site_user')->onDelete('cascade');
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('page_blocks', function (Blueprint $table) {
-            $table->dropColumn('default');
-        });
+        Schema::dropIfExists('role_site_user');
     }
 };

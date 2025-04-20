@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Page;
 
+use App\Helpers\SiteHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Page\SitePageRequest;
 use App\Http\Resources\Page\PageResource;
@@ -27,7 +28,8 @@ class SitePageController extends Controller
 
     public function view(SitePageRequest $request)
     {
-        $page = $this->pageService->getPageByPermalink($request->user(), $request->validated('permalink'));
+        [$site, $user] = SiteHelper::getCurrentSite();
+        $page = $this->pageService->getPageByPermalink($site, $request->validated('permalink'));
 
         if (!$page) {
             return response()->json(['error' => 'Page not found'], 404);

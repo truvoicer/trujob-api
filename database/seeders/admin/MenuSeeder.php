@@ -27,6 +27,7 @@ class MenuSeeder extends Seeder
                 throw new \Exception('Site not found: ' . $menu['site']);
             }
             unset($menu['site']);
+            $menuService->setSite($site);
             $menu['site_id'] = $site->id;
             $getMenu = Menu::where('name', $menu['name'])->where('site_id', $site->id)->first();
             if (!$getMenu) {
@@ -34,8 +35,7 @@ class MenuSeeder extends Seeder
                     throw new \Exception('Error creating menu: ' . $index);
                 }
             } else {
-                $menuService->setMenu($getMenu);
-                if (!$menuService->updateMenu($menu)) {
+                if (!$menuService->updateMenu($getMenu, $menu)) {
                     throw new \Exception('Error updating menu: ' . $index);
                 }
             }

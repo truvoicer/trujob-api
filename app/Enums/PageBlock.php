@@ -17,7 +17,6 @@ enum PageBlock: string
     case PROPERTIES = 'properties';
     case CONTENT = 'content';
     case HAS_SIDEBAR = 'has_sidebar';
-    case SIDEBAR_WIDGETS = 'sidebar_widgets';
     case ORDER = 'order';
     case CREATED_AT = 'created_at';
     case UPDATED_AT = 'updated_at';

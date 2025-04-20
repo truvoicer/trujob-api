@@ -16,7 +16,7 @@ class SiteService extends BaseService
 
     private ResultsService $resultsService;
 
-    private Site $site;
+    public Site $site;
 
     public function __construct(ResultsService $resultsService)
     {
@@ -92,11 +92,4 @@ class SiteService extends BaseService
         return $this->resultsService;
     }
 
-    /**
-     * @param Site $site
-     */
-    public function setSite(Site $site): void
-    {
-        $this->site = $site;
-    }
 }

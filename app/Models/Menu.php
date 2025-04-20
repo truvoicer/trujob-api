@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\Model\PermissionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
-    use HasFactory;
+    use HasFactory, PermissionTrait;
 
     protected $fillable = [
         'site_id',
-        'menu_item_id',
         'name',
         'ul_class',
         'active',
@@ -26,20 +26,15 @@ class Menu extends Model
     }
 
     public function menuItems() {
-        return $this->hasMany(
-            MenuItem::class
+        return $this->belongsToMany(
+            MenuItem::class,
+            'menu_menu_items',
         );
     }
 
     public function site() {
         return $this->belongsTo(
             Site::class
-        );
-    }
-
-    public function menuItem() {
-        return $this->belongsTo(
-            MenuItem::class
         );
     }
 

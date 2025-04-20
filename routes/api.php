@@ -57,6 +57,25 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(AppPublic::class)->group(function () {
 
+});
+
+Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::get('/view', [AuthUserController::class, 'view'])->name('view');
+        Route::post('/login', AuthLoginController::class)->name('login');
+        Route::post('/register', AuthRegisterController::class)->name('register');
+    });
+    Route::prefix('site')->name('site.')->group(function () {
+        Route::get('/page', [SitePageController::class, 'view'])->name('page.view');
+        Route::prefix('{site:name}')->group(function () {
+            Route::get('/', [SiteController::class, 'view'])->name('view');
+        });
+    });
+
+
     Route::prefix('listing')->name('listing.')->group(function () {
         Route::get('/', [ListingPublicController::class, 'index'])->name('fetch');
         Route::get('/category/fetch', [CategoryController::class, 'fetchCategories'])->name('category.fetch');
@@ -76,23 +95,6 @@ Route::middleware(AppPublic::class)->group(function () {
     Route::prefix('menu')->name('menu.')->group(function () {
         Route::prefix('{menu}')->group(function () {
             Route::get('/', [MenuController::class, 'view'])->name('view');
-        });
-    });
-});
-
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
-
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
-
-    Route::prefix('auth')->name('auth.')->group(function () {
-        Route::get('/view', [AuthUserController::class, 'view'])->name('view');
-        Route::post('/login', AuthLoginController::class)->name('login');
-        Route::post('/register', AuthRegisterController::class)->name('register');
-    });
-    Route::prefix('site')->name('site.')->group(function () {
-        Route::get('/page', [SitePageController::class, 'view'])->name('page.view');
-        Route::prefix('{site:name}')->group(function () {
-            Route::get('/', [SiteController::class, 'view'])->name('view');
         });
     });
 });

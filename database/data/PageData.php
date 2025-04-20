@@ -40,23 +40,6 @@ return [
                 'pagination_type' => 'page',
                 'pagination_scroll_type' => 'block',
                 'has_sidebar' => true,
-                'sidebar_widgets' => [
-                    [
-                        'type' => Widget::SEARCH_FILTER->value,
-                        'has_container' => false,
-                        'title' => 'Search',
-                    ],
-                    [
-                        'type' => Widget::PROXIMITY_FILTER->value,
-                        'has_container' => false,
-                        'title' => 'Set Proximity',
-                    ],
-                    [
-                        'type' => Widget::CATEGORY_FILTER->value,
-                        'has_container' => false,
-                        'title' => 'Choose Category/s',
-                    ],
-                ],
                 'properties' => [
                     'init' => [
                         ListingFetchProperty::TYPE->value => [ListingType::EVENT->value],
@@ -101,23 +84,6 @@ return [
                 'pagination_type' => 'page',
                 'pagination_scroll_type' => 'block',
                 'has_sidebar' => true,
-                'sidebar_widgets' => [
-                    [
-                        'type' => Widget::SEARCH_FILTER->value,
-                        'has_container' => false,
-                        'title' => 'Search',
-                    ],
-                    [
-                        'type' => Widget::PROXIMITY_FILTER->value,
-                        'has_container' => false,
-                        'title' => 'Set Proximity',
-                    ],
-                    [
-                        'type' => Widget::CATEGORY_FILTER->value,
-                        'has_container' => false,
-                        'title' => 'Choose Category/s',
-                    ],
-                ],
             ],
         ],
         'roles' => [
@@ -241,17 +207,40 @@ return [
     ],
     [
         'site_id' => 1,
-        'permalink' => '/admin/manage-pages',
-        'name' => 'admin_manage_pages',
-        'title' => 'Manage Pages',
-        'content' => 'Welcome to the admin manage pages page',
-        'view' => ViewType::AdminPage,
+        'permalink' => '/admin',
+        'name' => 'admin',
+        'title' => 'Admin',
+        'content' => 'Welcome to the admin page',
+        'view' => ViewType::AdminTabPage,
         'blocks' => [
             [
                 'type' => BlockType::MANAGE_PAGES,
                 'order' => 0,
                 'title' => 'Manage Pages',
+                'nav_title' => 'Pages',
                 'subtitle' => 'Manage your pages here',
+                'default' => true,
+            ],
+            [
+                'type' => BlockType::MANAGE_MENUS,
+                'order' => 0,
+                'title' => 'Manage Menus',
+                'nav_title' => 'Menus',
+                'subtitle' => 'Manage your menus here',
+            ],
+            [
+                'type' => BlockType::MANAGE_SIDEBARS,
+                'order' => 0,
+                'title' => 'Manage Sidebars',
+                'nav_title' => 'Sidebars',
+                'subtitle' => 'Manage your sidebars here',
+            ],
+            [
+                'type' => BlockType::MANAGE_WIDGETS,
+                'order' => 0,
+                'title' => 'Manage Widgets',
+                'nav_title' => 'Widgets',
+                'subtitle' => 'Manage your widgets here',
             ],
         ],
         'roles' => [

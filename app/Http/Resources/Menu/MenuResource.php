@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Menu;
 
+use App\Helpers\SiteHelper;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +16,7 @@ class MenuResource extends JsonResource
      */
     public function toArray($request)
     {
+        [$site, $user] = SiteHelper::getCurrentSite();
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -22,7 +24,10 @@ class MenuResource extends JsonResource
             'ul_class' => $this->ul_class,
             'active' => $this->active,
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
-            'menu_items' => $this->whenLoaded('menuItems', MenuItemResource::collection($this->menuItems))
+            'menu_items' => $this->whenLoaded('menuItems', MenuItemResource::collection($this->menuItems)),
+            'has_permission' => $this->whenLoaded('roles', function () use($site, $user) {
+                return $this->hasPermission($site, $this->roles, $user);
+            }),
         ];
     }
 }
