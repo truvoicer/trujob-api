@@ -59,7 +59,7 @@ class CreateMenuRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::exists('menus', 'id')->where(function ($query) {
-                    return $query->where('site_id', $this->user()?->site?->id);
+                    return $query->where('site_id', request()->user()?->site?->id);
                 }),
             ],
             'menu_items.*.roles' => [

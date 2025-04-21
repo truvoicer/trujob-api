@@ -2,12 +2,16 @@
 
 namespace App\Http\Requests\Menu;
 
+use App\Enums\LinkTarget;
 use App\Enums\MenuItemType;
+use App\Models\MenuItem;
 use App\Models\Role;
+use App\Rules\ExistsInSite;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
 
 class EditMenuItemRequest extends FormRequest
 {
@@ -36,6 +40,16 @@ class EditMenuItemRequest extends FormRequest
                 'sometimes',
                 'boolean',
             ],
+            'id' => [
+                'sometimes',
+                'integer',
+                new ExistsInSite(
+                    new MenuItem(),
+                    'parentMenus.site',
+                    request()->user()?->site?->id,
+                    'The menu item with id %s does not exist.'
+                ),
+            ],
             'label' => [
                 'sometimes',
                 'string',
@@ -51,14 +65,14 @@ class EditMenuItemRequest extends FormRequest
                 Rule::enum(MenuItemType::class),
             ],
             'url' => [
-                'sometimes',
+                'required_if:type,' . MenuItemType::URL->value,
                 'string',
                 'max:255',
             ],
             'target' => [
                 'sometimes',
                 'string',
-                Rule::in(['_self', '_blank']),
+                Rule::enum(LinkTarget::class),
             ],
             'icon' => [
                 'sometimes',
@@ -89,7 +103,7 @@ class EditMenuItemRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::exists('menus', 'id')->where(function ($query) {
-                    return $query->where('site_id', $this->user()?->site?->id);
+                    return $query->where('site_id', request()->user()?->site?->id);
                 }),
             ],
             'roles' => [

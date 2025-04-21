@@ -32,7 +32,7 @@ class EditWidgetRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('menus', 'name')->where(function ($query) {
-                    return $query->where('site_id', $this->user()?->site?->id);
+                    return $query->where('site_id', request()->user()?->site?->id);
                 })->ignore($this->route('widget')->id)
             ],
             'title' => [

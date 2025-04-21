@@ -29,7 +29,7 @@ class SitePageRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::exists('pages', 'permalink')
-                    ->where('site_id', $this->user()?->id)
+                    ->where('site_id', request()->user()?->id)
             ]
         ];
     }

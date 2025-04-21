@@ -43,7 +43,7 @@ class CreatePageRequest extends FormRequest
                 'max:255',
                 Rule::unique('pages', 'permalink')
                     ->where(function (Builder $query) {
-                        return $query->where('site_id', $this->user()?->id);
+                        return $query->where('site_id', request()->user()?->id);
                     })
             ],
             'name' => [

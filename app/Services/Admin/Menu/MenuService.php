@@ -97,7 +97,6 @@ class MenuService extends BaseService
         $filterUpdateMenuItems = array_filter($menuItems, function ($item) {
             return !empty($item['id']);
         });
-        dd($menuItems);
         foreach ($filterCreateMenuItems as $data) {
             $this->createMenuItem($menu, $data);
         }

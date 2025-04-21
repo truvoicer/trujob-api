@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 class MenuItemTypeController extends Controller
 {
 
-    public function index()
+    public function __invoke()
     {
         return response()->json([
             'message' => 'Menu item types fetched successfully',

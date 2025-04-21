@@ -37,7 +37,7 @@ class EditSidebarRequest extends FormRequest
             'string',
             'max:255',
             Rule::exists('widgets', 'name')->where(function ($query) {
-                return $query->where('site_id', $this->user()?->site?->id);
+                return $query->where('site_id', request()->user()?->site?->id);
             }),
         ];
         return [
@@ -46,7 +46,7 @@ class EditSidebarRequest extends FormRequest
                 'string',
                 'max:255',
                 Rule::unique('sidebars', 'name')->where(function ($query) {
-                    return $query->where('site_id', $this->user()?->site?->id);
+                    return $query->where('site_id', request()->user()?->site?->id);
                 })->ignore($this->route('sidebar')->id)
             ],
             'title' => [

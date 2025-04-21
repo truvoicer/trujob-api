@@ -39,6 +39,13 @@ class MenuItem extends Model
     }
     
 
+    public function parentMenus() {
+        return $this->belongsToMany(
+            Menu::class,
+            'menu_menu_items',
+        );
+    }
+
     public function menus() {
         return $this->belongsToMany(
             Menu::class,

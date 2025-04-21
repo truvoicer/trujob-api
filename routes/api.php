@@ -39,6 +39,7 @@ use App\Http\Controllers\Api\Page\PageBlockController;
 use App\Http\Controllers\Api\Page\PageController;
 use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
+use App\Http\Controllers\Api\Link\LinkTargetController;
 use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\Site\SiteController;
@@ -55,9 +56,7 @@ use App\Http\Middleware\AppPublic;
 use Illuminate\Support\Facades\Route;
 
 
-Route::middleware(AppPublic::class)->group(function () {
-
-});
+Route::middleware(AppPublic::class)->group(function () {});
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
 
@@ -276,7 +275,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::patch('/{role}/update', [RoleController::class, 'update'])->name('update');
         Route::delete('/{role}/delete', [RoleController::class, 'delete'])->name('delete');
     });
-    
+
     Route::prefix('firebase')->name('firebase.')->group(function () {
         Route::prefix('device')->name('device.')->group(function () {
             Route::prefix('messaging')->name('messaging.')->group(function () {
@@ -380,10 +379,20 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             });
         });
     });
+    Route::prefix('enum')->name('enum.')->group(function () {
+        Route::get('/menu/item/type', MenuItemTypeController::class)->name('menu.item.type');
+        Route::prefix('pagination')->name('pagination.')->group(function () {
+            Route::get('/type', PaginationTypeController::class)->name('type');
+            Route::get('/scroll/type', PaginationScrollTypeController::class)->name('scroll.type');
+        });
+        Route::prefix('link')->name('link.')->group(function () {
+            Route::get('/target', LinkTargetController::class)->name('target');
+        });
+    });
     Route::prefix('menu')->name('menu.')->group(function () {
         Route::get('/', [MenuController::class, 'index'])->name('index');
         Route::post('/create', [MenuController::class, 'create'])->name('create');
-        Route::get('/item/type', [MenuItemTypeController::class, 'index'])->name('item.type');
+        Route::get('/item/type', MenuItemTypeController::class)->name('item.type');
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'update'])->name('update');
             Route::delete('/delete', [MenuController::class, 'destroy'])->name('delete');
