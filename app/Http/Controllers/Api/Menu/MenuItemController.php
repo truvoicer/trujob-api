@@ -71,43 +71,12 @@ class MenuItemController extends Controller
             'message' => 'MenuItem updated',
         ]);
     }
-    public function addMenuToMenuItem(Menu $menu, MenuItem $menuItem, CreateMenuRequest $request) {
-        $this->menuService->setUser(request()->user()->user);
-        $this->menuService->setSite(request()->user()->site);
-        $update = $this->menuService->addMenuToMenuItem($menuItem, $request->validated());
-        if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating app menu item',
-                [],
-                $this->menuService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('MenuItem updated', [], $this->menuService->getResultsService()->getErrors());
-    }
-
-    public function removeMenuItemFromMenu(Menu $menu, MenuItem $menuItem) {
-        $this->menuService->setUser(request()->user()->user);
-        $this->menuService->setSite(request()->user()->site);
-        if (!$this->menuService->removeMenuItem($menu, $menuItem)) {
-            return $this->sendErrorResponse(
-                'Error removing app menu item',
-                [],
-                $this->menuService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('MenuItem removed', [], $this->menuService->getResultsService()->getErrors());
-    }
     
-    public function destroy(MenuItem $menuItem) {
+    
+    public function destroy(Menu $menu, MenuItem $menuItem) {
         $this->menuService->setUser(request()->user()->user);
         $this->menuService->setSite(request()->user()->site);
-        if (!$this->menuService->deleteMenuItem($menuItem)) {
-            return response()->json([
-                'message' => 'Error deleting app menu item',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $this->menuService->deleteMenuItem($menuItem);
         return response()->json([
             'message' => 'MenuItem deleted',
         ]);

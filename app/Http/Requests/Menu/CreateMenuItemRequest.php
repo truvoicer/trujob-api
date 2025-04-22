@@ -28,10 +28,12 @@ class CreateMenuItemRequest extends FormRequest
     {
         return [
             'page_id' => [
-                'sometimes',
+                'required_if:type,' . MenuItemType::PAGE->value,
                 'integer',
-                'required_if:type,page',
-                Rule::exists('pages', 'id'),
+                Rule::exists('pages', 'id')
+                    ->where(function ($query) {
+                        return $query->where('site_id', request()->user()?->site?->id);
+                    }),
             ],
             'active' => [
                 'sometimes',

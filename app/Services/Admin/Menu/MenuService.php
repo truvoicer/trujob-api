@@ -33,6 +33,15 @@ class MenuService extends BaseService
         return $query->first();
     }
 
+    public function moveMenuItem(Menu $menu, MenuItem $menuItem, string $direction)
+    {
+        $this->menuRepository->reorderByDirection(
+            $menuItem,
+            $menu->menuItems()->orderBy('order', 'asc'),
+            $direction
+        );
+    }
+
     public function createMenu(array $data)
     {
         $menuItems = [];
@@ -45,11 +54,11 @@ class MenuService extends BaseService
             $menuItems = $data['menu_items'];
             unset($data['menu_items']);
         }
-        $menu = new Menu($data);
-        if (!$menu->save()) {
-            $this->resultsService->addError('Error adding app menu', $data);
-            return false;
+        $menu = $this->site->menus()->create($data);
+        if (!$menu->exists()) {
+            throw new \Exception('Error creating menu');
         }
+
         if (is_array($roles)) {
             $this->syncRoles($menu->roles(), $roles);
         }
@@ -131,8 +140,8 @@ class MenuService extends BaseService
             unset($data['menus']);
         }
 
-        if (!empty($data['page'])) {
-            $page = Page::where('name', $data['page'])->first();
+        if (!empty($data['page_name'])) {
+            $page = $this->site->pages()->where('name', $data['page_name'])->first();
             if (!$page) {
                 throw new \Exception('Page not found: ' . $data['page']);
             }
@@ -173,12 +182,12 @@ class MenuService extends BaseService
             unset($data['roles']);
         }
 
-        if (!empty($data['page'])) {
-            $page = Page::where('name', $data['page'])->first();
+        if (!empty($data['page_name'])) {
+            $page = $this->site->pages()->where('name', $data['page_name'])->first();
             if (!$page) {
                 throw new \Exception('Page not found: ' . $data['page']);
             }
-            unset($data['page']);
+            unset($data['page_name']);
             $data['page_id'] = $page->id;
         }
 
@@ -221,13 +230,11 @@ class MenuService extends BaseService
         }
         return true;
     }
-    public function deleteMenuItem(MenuItem $menuItem)
+    public function deleteMenuItem(MenuItem $menuItem): void
     {
         if (!$menuItem->delete()) {
-            $this->resultsService->addError('Error deleting app menu item');
-            return false;
+            throw new \Exception('Error deleting menu item');
         }
-        return true;
     }
 
     /**

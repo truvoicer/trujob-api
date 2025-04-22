@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Menu;
 
+use App\Helpers\Tools\ValidationHelpers;
 use App\Models\Role;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;
@@ -25,17 +26,33 @@ class CreateMenuRequest extends FormRequest
      */
     public function rules(): array
     {
+
+        $menuItemRules = ValidationHelpers::nestedValidationRules(
+            (new CreateMenuItemRequest())->rules(),
+            'menu_items.*'
+        );
+
+        $menuItemRules['menu_items.*.roles'] = [
+            'sometimes',
+            'array',
+        ];
+        $menuItemRules['menu_items.*.roles.*'] = [
+            'required',
+            'integer',
+            Rule::exists('roles', 'id'),
+        ];
+        $menuItemRules['menu_items.*.menus'] = [
+            'sometimes',
+            'array',
+        ];
+        $menuItemRules['menu_items.*.menus.*'] = [
+            'required',
+            'integer',
+            Rule::exists('menus', 'id')->where(function ($query) {
+                return $query->where('site_id', request()->user()?->site?->id);
+            }),
+        ];
         return [
-            'site_id' => [
-                'required',
-                'integer',
-                Rule::exists('sites', 'id')
-            ],
-            'menu_item_id' => [
-                'sometimes',
-                'integer',
-                Rule::exists('menu_items', 'id'),
-            ],
             'name' => [
                 'required',
                 'string',
@@ -47,30 +64,6 @@ class CreateMenuRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'menu_items' => [
-                'sometimes',
-                'array',
-            ],
-            'menu_items.*.menus' => [
-                'sometimes',
-                'array',
-            ],
-            'menu_items.*.menus.*' => [
-                'required',
-                'integer',
-                Rule::exists('menus', 'id')->where(function ($query) {
-                    return $query->where('site_id', request()->user()?->site?->id);
-                }),
-            ],
-            'menu_items.*.roles' => [
-                'sometimes',
-                'array',
-            ],
-            'menu_items.*.roles.*' => [
-                'required',
-                'integer',
-                Rule::exists('roles', 'id'),
-            ],
             'roles' => [
                 'sometimes',
                 'array',
@@ -80,6 +73,11 @@ class CreateMenuRequest extends FormRequest
                 new StringOrIntger,
                 new IdOrNameExists(new Role())
             ],
+            'menu_items' => [
+                'sometimes',
+                'array',
+            ],
+            ...$menuItemRules
         ];
     }
 }

@@ -43,12 +43,16 @@ class MenuController extends Controller
         $this->menuRepository->setPage(
             $request->get('page', 1)
         );
+        $this->menuRepository->setWith([
+            'menuItems' => function ($query) {
+                $query->orderBy('order', 'asc');
+            },
+        ]);
 
         return MenuResource::collection(
             $this->menuRepository->findMany()
         );
     }
-
 
     public function view(string $menu, Request $request)
     {

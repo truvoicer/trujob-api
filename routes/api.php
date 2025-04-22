@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\Page\PageController;
 use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
+use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\Site\SiteController;
@@ -401,6 +402,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::prefix('{menuItem}')->group(function () {
                     Route::patch('/update', [MenuItemController::class, 'update'])->name('update');
                     Route::delete('/delete', [MenuItemController::class, 'destroy'])->name('delete');
+                    Route::prefix('reorder')->name('reorder.')->group(function () {
+                        Route::post('/', MenuItemReorderController::class)->name('update');
+                    });
                 });
             });
         });

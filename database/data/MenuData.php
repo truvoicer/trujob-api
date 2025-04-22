@@ -9,7 +9,7 @@ return [
         'name' => 'header-about-menu',
         'menu_items' => [
             [
-                'page' => 'about',
+                'page_name' => 'about',
                 'label' => 'About Us',
                 'url' => '/about',
                 'active' => true,
@@ -17,7 +17,7 @@ return [
                 'order' => 0,
             ],
             [
-                'page' => 'contact',
+                'page_name' => 'contact',
                 'label' => 'Contact',
                 'url' => '/contact',
                 'active' => true,
@@ -31,7 +31,7 @@ return [
         'name' => 'header-account-menu',
         'menu_items' => [
             [
-                'page' => 'dashboard',
+                'page_name' => 'dashboard',
                 'label' => 'Dashboard',
                 'url' => '/dashboard',
                 'active' => true,
@@ -39,7 +39,7 @@ return [
                 'order' => 0,
             ],
             [
-                'page' => 'profile',
+                'page_name' => 'profile',
                 'label' => 'Profile',
                 'url' => '/profile',
                 'active' => true,
@@ -65,7 +65,7 @@ return [
         'name' => 'header-menu',
         'menu_items' => [
             [
-                'page' => 'home',
+                'page_name' => 'home',
                 'label' => 'Home',
                 'url' => '/',
                 'active' => true,
@@ -84,7 +84,7 @@ return [
                 ]
             ],
             [
-                'page' => 'login',
+                'page_name' => 'login',
                 'label' => 'Login',
                 'url' => '/login',
                 'active' => true,
@@ -92,7 +92,7 @@ return [
                 'order' => 2,
             ],
             [
-                'page' => 'register',
+                'page_name' => 'register',
                 'label' => 'Register',
                 'url' => '/register',
                 'active' => true,
@@ -121,7 +121,7 @@ return [
         'name' => 'admin-header-menu',
         'menu_items' => [
             [
-                'page' => 'admin',
+                'page_name' => 'admin',
                 'label' => 'Admin',
                 'url' => '/admin',
                 'active' => true,
@@ -140,7 +140,7 @@ return [
         'menu_items' => [
             [
 
-                'page' => 'account_settings',
+                'page_name' => 'account_settings',
                 'label' => 'Account Settings',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,

@@ -57,10 +57,103 @@ class BaseRepository
     {
         return $query->max($field) + 1;
     }
-    public function buildCloneEntityStr($query, string $field, string $str, string $separator = '-cloned-'): string{
+
+    public function findCollectionIndex(
+        Collection $collection,
+        Model $model,
+        array $where = []
+    ): ?int {
+        $collectionIndex = null;
+        $collection->each(function ($item, $index) use (&$collectionIndex, $where) {
+            $matches = 0;
+            foreach ($where as $key => $value) {
+                if ($item->{$key} == $value) {
+                    $matches++;
+                }
+            }
+            if ($matches === count($where)) {
+                $collectionIndex = $index;
+            }
+        });
+        return $collectionIndex;
+    }
+    public function reorderByDirection(
+        Model $model,
+        Relation|EloquentBuilder $query,
+        string $direction,
+        string $field = 'order'
+    ): bool {
+        $results = $query->get();
+        $modelIndex = $this->findCollectionIndex(
+            $results,
+            $model,
+            ['id' => $model->id]
+        );
+        if ($modelIndex === null) {
+            return false;
+        }
+        switch ($direction) {
+            case 'up':
+                $newIndex = $modelIndex - 1;
+                if ($newIndex < 0) {
+                    return false;
+                }
+                break;
+            case 'down':
+                $newIndex = $modelIndex + 1;
+                if ($newIndex > ($query->count() - 1)) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
+        }
+
+        $modelToReplace = $results->slice($newIndex, 1)->first();
+
+        $modelToReplaceOrder = $modelToReplace->{$field};
+        $modelToMoveOrder = $model->{$field};
+        if (!$modelToReplace) {
+            return false;
+        }
+        $model->{$field} = $modelToReplaceOrder;
+        if (!$model->save()) {
+            throw new \Exception(
+                "Error saving model to move | direction: {$direction} | id: {$model->id} | field: {$field} | value: {$modelToMoveOrder}"
+            );
+        }
+
+        $modelToReplace->{$field} = $modelToMoveOrder;
+        if (!$modelToReplace->save()) {
+            throw new \Exception(
+                "Error saving model to replace | direction: {$direction} | id: {$modelToReplace->id} | field: {$field} | value: {$modelToReplaceOrder}"
+            );
+        }
+        return $this->reorderByField($query, $field);
+    }
+
+    public function reorderByField(
+        Relation|EloquentBuilder $query,
+        string $field = 'order'
+    ): bool {
+        $results = $query->get();
+        $results->each(function ($item, $index) use ($field) {
+            $item->{$field} = $index + 1;
+            if (!$item->save()) {
+                throw new \Exception(
+                    "Error saving model to reorder | id: {$item->id} | field: {$field} | value: {$index}"
+                );
+            }
+        });
+        return true;
+    }
+
+
+    public function buildCloneEntityStr($query, string $field, string $str, string $separator = '-cloned-'): string
+    {
 
         $all = $query->pluck($field)->toArray();
-        $mapNumber = array_map(function($item) use ($separator) {
+        $mapNumber = array_map(function ($item) use ($separator) {
             preg_match('/^.+?(\d{1,10})$/', $item, $matches);
             if (empty($matches)) {
                 return false;
@@ -68,7 +161,7 @@ class BaseRepository
             return (int)$matches[1];
         }, $all);
 
-        $mapNumber = array_filter($mapNumber, fn ($item) => $item !== false);
+        $mapNumber = array_filter($mapNumber, fn($item) => $item !== false);
         $max = 1;
         if (!empty($mapNumber)) {
             $max = max($mapNumber);
@@ -143,7 +236,8 @@ class BaseRepository
         );
     }
 
-    public function getModelInstance(?array $data = null): object {
+    public function getModelInstance(?array $data = null): object
+    {
         if (is_array($data)) {
             return new $this->modelClassName($data);
         }
@@ -153,7 +247,8 @@ class BaseRepository
     /**
      * @throws \Exception
      */
-    private function validateModel(string $modelClassName): bool {
+    private function validateModel(string $modelClassName): bool
+    {
         if (!class_exists($modelClassName)) {
             throw new \Exception("Model class not found | {$modelClassName}");
         }
@@ -210,9 +305,10 @@ class BaseRepository
     {
         return $this->modelClassName::query();
     }
-    protected function buildQuery() {
+    protected function buildQuery()
+    {
         if ($this->query) {
-         $query = $this->query;
+            $query = $this->query;
         } else {
             $query = $this->modelClassName::query();
         }
@@ -226,18 +322,13 @@ class BaseRepository
         if (!in_array($this->orderDir, self::AVAILABLE_ORDER_DIRECTIONS)) {
             $this->orderDir = self::DEFAULT_ORDER_DIR;
         }
-        $query->orderBy($this->sortField, $this->orderDir);
-        if ($this->limit > 0) {
-            $query->limit($this->limit);
-        }
-        if ($this->offset > 0) {
-            $query->offset($this->offset);
-        }
+        $query = $this->getResultsQuery($query);
         $this->reset();
         return $query;
     }
 
-    protected function reset() {
+    protected function reset()
+    {
         $this->where = self::DEFAULT_WHERE;
         $this->sortField = self::DEFAULT_SORT_FIELD;
         $this->orderDir = self::DEFAULT_ORDER_DIR;
@@ -278,7 +369,8 @@ class BaseRepository
         return $this->findMany();
     }
 
-    public function findAllWithParams(string $sort = "name", ?string $order = "asc", ?int $count= null) {
+    public function findAllWithParams(string $sort = "name", ?string $order = "asc", ?int $count = null)
+    {
         $this->setOrderDir($order);
         $this->setSortField($sort);
         if ($count !== null) {
@@ -294,12 +386,15 @@ class BaseRepository
             $query = $this->addWithToQuery($query);
         }
 
-//        $query->offset($this->offset);
         if ($this->sortField) {
             $query->orderBy($this->sortField, $this->orderDir);
         }
         if (!$this->paginate && $this->limit > -1) {
             $query->limit($this->limit);
+        }
+
+        if ($this->offset > 0) {
+            $query->offset($this->offset);
         }
         return $query;
     }
@@ -320,7 +415,8 @@ class BaseRepository
         return $this->getResultsQuery($query)->first();
     }
 
-    public function applyConditionsToQuery(array $conditions, $query) {
+    public function applyConditionsToQuery(array $conditions, $query)
+    {
         foreach ($conditions as $condition) {
             if (count($condition) !== 3) {
                 continue;
@@ -331,7 +427,8 @@ class BaseRepository
         return $query;
     }
 
-    public function applyConditions(array $conditions) {
+    public function applyConditions(array $conditions)
+    {
         foreach ($conditions as $condition) {
             if (count($condition) !== 3) {
                 return false;
@@ -345,13 +442,15 @@ class BaseRepository
         }
         return true;
     }
-    public function findOneBy(array $conditions) {
+    public function findOneBy(array $conditions)
+    {
         if (!$this->applyConditions($conditions)) {
             return false;
         }
         return $this->findOne();
     }
-    public function findManyBy(array $conditions) {
+    public function findManyBy(array $conditions)
+    {
         if (!$this->applyConditions($conditions)) {
             return false;
         }
@@ -366,7 +465,8 @@ class BaseRepository
             return $this->update($data);
         }
     }
-    public function insert(array $data) {
+    public function insert(array $data)
+    {
         $this->model = $this->getModelInstance($data);
         $createListing = $this->model->save();
         if (!$createListing) {
@@ -376,7 +476,8 @@ class BaseRepository
         return true;
     }
 
-    public function update(array $data) {
+    public function update(array $data)
+    {
         $this->model->fill($data);
         $saveListing = $this->model->save();
         if (!$saveListing) {
@@ -386,7 +487,8 @@ class BaseRepository
         return true;
     }
 
-    public function deleteBatch(array $ids) {
+    public function deleteBatch(array $ids)
+    {
         $ids = array_map('intval', $ids);
         foreach ($ids as $index => $id) {
             if ($index === 0) {
@@ -398,7 +500,8 @@ class BaseRepository
         $this->setQuery($this->buildQuery());
         return $this->getQuery()->delete();
     }
-    public function delete() {
+    public function delete()
+    {
         if (!$this->model->delete()) {
             $this->addError('repository_delete_error', 'Error deleting listing');
             return false;
