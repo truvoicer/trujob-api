@@ -102,7 +102,7 @@ class MenuController extends Controller
         }
         return $this->sendSuccessResponse('Menu updated', [], $this->menuService->getResultsService()->getErrors());
     }
-    public function destroy(Menu $menu)
+    public function destroy(Menu $menu, Request $request)
     {
         $this->menuService->setUser($request->user()->user);
         $this->menuService->setSite($request->user()->site);
