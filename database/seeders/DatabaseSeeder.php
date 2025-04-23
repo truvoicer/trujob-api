@@ -39,7 +39,9 @@ use Database\Seeders\admin\MenuSeeder;
 use Database\Seeders\admin\PageSeeder;
 use Database\Seeders\admin\PermissionSeeder;
 use Database\Seeders\admin\SettingSeeder;
+use Database\Seeders\admin\SidebarSeeder;
 use Database\Seeders\admin\SiteSeeder;
+use Database\Seeders\admin\WidgetSeeder;
 use Database\Seeders\firebase\FirebaseTopicSeeder;
 use Database\Seeders\listing\BrandSeeder;
 use Database\Seeders\listing\CategorySeeder;
@@ -65,6 +67,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             LocaleSeeder::class,
+            WidgetSeeder::class,
+            SidebarSeeder::class,
             FirebaseTopicSeeder::class,
             ColorSeeder::class,
             BrandSeeder::class,

@@ -85,14 +85,6 @@ class WidgetService extends BaseService
         return $this->resultsService;
     }
 
-    /**
-     * @param Widget $widget
-     */
-    public function setWidget(Widget $widget): void
-    {
-        $this->widget = $widget;
-    }
-
     public function getWidgetRepository(): WidgetRepository
     {
         return $this->widgetRepository;

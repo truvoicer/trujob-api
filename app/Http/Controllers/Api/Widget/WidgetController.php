@@ -52,10 +52,10 @@ class WidgetController extends Controller
 
     public function update(Widget $widget, EditWidgetRequest $request) {
         $this->widgetService->setUser($request->user()->user);
-        $this->widgetService->setWidget($widget);
+        $this->widgetService->setSite($request->user()->site);
         $update = $this->widgetService->updateWidget(
             $widget,
-            $request->all()
+            $request->validated()
         );
         if (!$update) {
             return response()->json([

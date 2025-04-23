@@ -17,9 +17,6 @@ class SidebarService extends BaseService
 {
     use RoleTrait;
 
-    private Sidebar $sidebar;
-    private SidebarWidget $sidebarWidget;
-
     public function __construct(
         private ResultsService $resultsService, 
         private SidebarRepository $sidebarRepository,
@@ -32,7 +29,7 @@ class SidebarService extends BaseService
         return Sidebar::where('name', $sidebarName)->first();
     }
 
-    public function createSidebar(Site $site, array $data) {
+    public function createSidebar(array $data) {
         if (empty($data['name'])) {
             $data['name'] = Str::slug($data['title']);
         }
@@ -46,7 +43,7 @@ class SidebarService extends BaseService
             $sidebarWidgets = $data['widgets'];
             unset($data['widgets']);
         }
-        $sidebar = $site->sidebars()->create($data);
+        $sidebar = $this->site->sidebars()->create($data);
         if (!$sidebar->exists()) {
             $this->resultsService->addError('Error adding app sidebar', $data);
             return false;
@@ -58,7 +55,7 @@ class SidebarService extends BaseService
             return true;
         }
         foreach ($sidebarWidgets as $sidebarWidget) {
-            $findWidget = $this->widgetService->widgetFetch($site, $sidebarWidget['name']);
+            $findWidget = $this->widgetService->widgetFetch($this->site, $sidebarWidget['name']);
             if (!$findWidget) {
                 throw new \Exception('Widget not found: ' . $sidebarWidget['name']);
             }
@@ -70,7 +67,7 @@ class SidebarService extends BaseService
         return true;
     }
 
-    public function updateSidebar(Site $site, Sidebar $sidebar, array $data) {
+    public function updateSidebar(Sidebar $sidebar, array $data) {
         $roles = null;
         $sidebarWidgets = [];
 
@@ -96,7 +93,7 @@ class SidebarService extends BaseService
         }
         $sidebar->widgets()->delete();
         foreach ($sidebarWidgets as $sidebarWidget) {
-            $findWidget = $this->widgetService->widgetFetch($site, $sidebarWidget['name']);
+            $findWidget = $this->widgetService->widgetFetch($this->site, $sidebarWidget['name']);
             if (!$findWidget) {
                 throw new \Exception('Widget not found: ' . $sidebarWidget['name']);
             }
@@ -122,7 +119,9 @@ class SidebarService extends BaseService
         if (!array_key_exists('order', $data)) {
             $data['order'] = $this->sidebarRepository->getHighestOrder($sidebar->widgets());
         }
-
+        if (!empty($data['name'])) {
+            unset($data['name']);
+        }
         $sidebarWidget = SidebarWidget::create([
             'sidebar_id' => $sidebar->id,
             'widget_id' => $widget->id,
@@ -177,21 +176,6 @@ class SidebarService extends BaseService
         return $this->resultsService;
     }
 
-    /**
-     * @param Sidebar $sidebar
-     */
-    public function setSidebar(Sidebar $sidebar): void
-    {
-        $this->sidebar = $sidebar;
-    }
-
-    /**
-     * @param SidebarWidget $sidebarWidget
-     */
-    public function setSidebarWidget(SidebarWidget $sidebarWidget): void
-    {
-        $this->sidebarWidget = $sidebarWidget;
-    }
 
     public function getSidebarRepository(): SidebarRepository
     {
