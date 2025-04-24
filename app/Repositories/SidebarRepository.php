@@ -30,13 +30,19 @@ class SidebarRepository extends BaseRepository
     public function findBySite(Site $site)
     {
         $this->setQuery($site->sidebars());
+        $this->setWith([
+            'sidebarWidgets' => function ($query) {
+                $query->orderBy('order', 'asc');
+            },
+        ]);
         return $this->findMany();
     }
 
     public function findSidebarWidgets(Sidebar $sidebar)
     {
-        $this->setQuery($sidebar->widgets());
+        $this->setQuery($sidebar->sidebarWidgets());
+        $this->setOrderDir('asc');
+        $this->setSortField('order');
         return $this->findMany();
     }
-
 }

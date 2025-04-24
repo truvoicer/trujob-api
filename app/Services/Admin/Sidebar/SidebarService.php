@@ -29,6 +29,15 @@ class SidebarService extends BaseService
         return Sidebar::where('name', $sidebarName)->first();
     }
 
+    public function moveSidebarWidget(Sidebar $sidebar, SidebarWidget $sidebarWidget, string $direction)
+    {
+        $this->sidebarRepository->reorderByDirection(
+            $sidebarWidget,
+            $sidebar->sidebarWidgets()->orderBy('order', 'asc'),
+            $direction
+        );
+    }
+
     public function createSidebar(array $data) {
         if (empty($data['name'])) {
             $data['name'] = Str::slug($data['title']);

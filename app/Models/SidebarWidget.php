@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Model\PermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class SidebarWidget extends Model
 {
-    //
+    use PermissionTrait;
+
     protected $fillable = [
         'title',
         'icon',
@@ -18,6 +20,7 @@ class SidebarWidget extends Model
     ];
     protected $casts = [
         'properties' => 'array',
+        'has_container' => 'boolean',
     ];
     public function sidebar()
     {

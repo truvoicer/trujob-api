@@ -20,12 +20,12 @@ class SidebarWidgetResource extends JsonResource
         [$site, $user] = SiteHelper::getCurrentSite();
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'title' => $this->pivot->title,
-            'icon' => $this->pivot->icon,
-            'has_container' => $this->pivot->has_container,
-            'order' => $this->pivot->order,
-            'properties' => json_decode($this->pivot->properties),
+            'name' => $this->whenLoaded('widget', $this->widget->name),
+            'title' => $this->title,
+            'icon' => $this->icon,
+            'properties' => $this->properties,
+            'order' => $this->order,
+            'has_container' => $this->has_container,
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
             'has_permission' => $this->whenLoaded('roles', function () use($site, $user) {
                 return $this->hasPermission($site, $this->roles, $user);

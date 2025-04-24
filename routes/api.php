@@ -47,6 +47,7 @@ use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Sidebar\SidebarController;
+use App\Http\Controllers\Api\Sidebar\SidebarWidgetReorderController;
 use App\Http\Controllers\Api\Site\SiteTokenController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\User\RoleController;
@@ -418,15 +419,18 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::delete('/delete', [SidebarController::class, 'destroy'])->name('delete');
             Route::prefix('widget')->name('widget.')->group(function () {
                 Route::get('/', [SidebarWidgetController::class, 'index'])->name('index');
-                Route::prefix('{widget}')->group(function () {
-                    Route::post('/create', [SidebarWidgetController::class, 'create'])->name('create');
-                    Route::prefix('rel')->name('rel')->group(function () {
-                        Route::prefix('{sidebarWidget}')->group(function () {
-                            Route::get('/', [SidebarWidgetController::class, 'view'])->name('view');
-                            Route::patch('/update', [SidebarWidgetController::class, 'update'])->name('update');
-                            Route::delete('/delete', [SidebarWidgetController::class, 'destroy'])->name('delete');
+                Route::prefix('rel')->name('rel')->group(function () {
+                    Route::prefix('{sidebarWidget}')->group(function () {
+                        Route::get('/', [SidebarWidgetController::class, 'view'])->name('view');
+                        Route::patch('/update', [SidebarWidgetController::class, 'update'])->name('update');
+                        Route::delete('/delete', [SidebarWidgetController::class, 'destroy'])->name('delete');
+                        Route::prefix('reorder')->name('reorder.')->group(function () {
+                            Route::post('/', SidebarWidgetReorderController::class)->name('reorder');
                         });
                     });
+                });
+                Route::prefix('{widget}')->group(function () {
+                    Route::post('/create', [SidebarWidgetController::class, 'create'])->name('create');
                 });
             });
         });
