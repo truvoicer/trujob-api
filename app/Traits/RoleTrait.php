@@ -3,32 +3,42 @@
 namespace App\Traits;
 
 use App\Models\Role;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait RoleTrait
 {
-
-    public function syncRoles(BelongsToMany $roles, array $roleData): array
+    public function buildRoleIds(array $roleData): array
     {
         if (
             count(array_filter($roleData, fn($roleId) => is_numeric($roleId))) === count($roleData)
         ) {
-            return $roles->sync($roleData);
+            return $roleData;
         }
-
 
         if (
             count(array_filter($roleData, fn($roleId) => is_string($roleId))) === count($roleData)
         ) {
-            $roleIds = array_map(
+            return array_map(
                 fn($role) => Role::where('name', $role)->first()?->id,
                 $roleData
             );
-            return $roles->sync($roleIds);
         }
 
-        throw new \Exception("Error syncing roles");
+        throw new \Exception("Error building role ids");
+    }
+
+    public function syncRoles(BelongsToMany $roles, array $roleData): void
+    {
+        $roles->sync(
+            $this->buildRoleIds($roleData)
+        );
+    }
+
+    public function assignRoles(BelongsToMany $roles, array $roleData): void
+    {
+        $roles->attach(
+            $this->buildRoleIds($roleData)
+        );
     }
 
 }
