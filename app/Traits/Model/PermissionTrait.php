@@ -46,4 +46,5 @@ trait PermissionTrait
         }
         return false;
     }
+    
 }

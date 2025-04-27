@@ -41,6 +41,9 @@ use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
+use App\Http\Controllers\Api\Menu\MenuItemRoleController;
+use App\Http\Controllers\Api\Menu\MenuRoleController;
+use App\Http\Controllers\Api\Sidebar\SidebarRoleController;
 use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\Site\SiteController;
@@ -55,6 +58,7 @@ use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserSellerController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\Widget\WidgetController;
+use App\Http\Controllers\Api\Widget\WidgetRoleController;
 use App\Http\Middleware\AppPublic;
 use Illuminate\Support\Facades\Route;
 
@@ -399,6 +403,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'update'])->name('update');
             Route::delete('/delete', [MenuController::class, 'destroy'])->name('delete');
+            Route::prefix('role')->name('role.')->group(function () {
+                Route::get('/', [MenuRoleController::class, 'index'])->name('index');
+                Route::prefix('{role}')->group(function () {
+                    Route::post('/create', [MenuRoleController::class, 'create'])->name('create');
+                    Route::delete('/delete', [MenuRoleController::class, 'destroy'])->name('delete');
+                });
+            });
             Route::prefix('item')->name('item.')->group(function () {
                 Route::post('/create', [MenuItemController::class, 'create'])->name('create');
                 Route::prefix('{menuItem}')->group(function () {
@@ -406,6 +417,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/delete', [MenuItemController::class, 'destroy'])->name('delete');
                     Route::prefix('reorder')->name('reorder.')->group(function () {
                         Route::post('/', MenuItemReorderController::class)->name('update');
+                    });
+                    Route::prefix('role')->name('role.')->group(function () {
+                        Route::get('/', [MenuItemRoleController::class, 'index'])->name('index');
+                        Route::prefix('{role}')->group(function () {
+                            Route::post('/create', [MenuItemRoleController::class, 'create'])->name('create');
+                            Route::delete('/delete', [MenuItemRoleController::class, 'destroy'])->name('delete');
+                        });
                     });
                 });
             });
@@ -418,6 +436,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [SidebarController::class, 'view'])->name('view');
             Route::patch('/update', [SidebarController::class, 'update'])->name('update');
             Route::delete('/delete', [SidebarController::class, 'destroy'])->name('delete');
+            Route::prefix('role')->name('role.')->group(function () {
+                Route::get('/', [SidebarRoleController::class, 'index'])->name('index');
+                Route::prefix('{role}')->group(function () {
+                    Route::post('/create', [SidebarRoleController::class, 'create'])->name('create');
+                    Route::delete('/delete', [SidebarRoleController::class, 'destroy'])->name('delete');
+                });
+            });
             Route::prefix('widget')->name('widget.')->group(function () {
                 Route::get('/', [SidebarWidgetController::class, 'index'])->name('index');
                 Route::prefix('rel')->name('rel')->group(function () {
@@ -429,8 +454,10 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                             Route::post('/', SidebarWidgetReorderController::class)->name('reorder');
                         });
                         Route::prefix('role')->name('role.')->group(function () {
+                            Route::get('/', [SidebarWidgetRoleController::class, 'index'])->name('index');
                             Route::prefix('{role}')->group(function () {
                                 Route::post('/create', [SidebarWidgetRoleController::class, 'create'])->name('create');
+                                Route::delete('/delete', [SidebarWidgetRoleController::class, 'destroy'])->name('delete');
                             });
                         });
                     });
@@ -448,6 +475,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [WidgetController::class, 'view'])->name('view');
             Route::patch('/update', [WidgetController::class, 'update'])->name('update');
             Route::delete('/delete', [WidgetController::class, 'destroy'])->name('delete');
+            Route::prefix('role')->name('role.')->group(function () {
+                Route::get('/', [WidgetRoleController::class, 'index'])->name('index');
+                Route::prefix('{role}')->group(function () {
+                    Route::post('/create', [WidgetRoleController::class, 'create'])->name('create');
+                    Route::delete('/delete', [WidgetRoleController::class, 'destroy'])->name('delete');
+                });
+            });
         });
     });
 });

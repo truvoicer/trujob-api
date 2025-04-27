@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\RoleResource;
 use App\Models\Role;
 use App\Models\Sidebar;
-use App\Models\SidebarWidget;
 use App\Services\Admin\Sidebar\SidebarService;
 use Illuminate\Http\Request;
 
-class SidebarWidgetRoleController extends Controller
+class SidebarRoleController extends Controller
 {
 
     public function __construct(
@@ -19,7 +18,6 @@ class SidebarWidgetRoleController extends Controller
 
     public function index(
         Sidebar $sidebar,
-        SidebarWidget $sidebarWidget,
         Request $request
     ) {
         $this->sidebarService->setUser($request->user()->user);
@@ -27,13 +25,12 @@ class SidebarWidgetRoleController extends Controller
 
         return RoleResource::collection(
             $this->sidebarService->getSidebarRepository()
-                ->getRoles($sidebarWidget)
+                ->getRoles($sidebar)
 
         );
     }
     public function create(
         Sidebar $sidebar,
-        SidebarWidget $sidebarWidget,
         Role $role,
         Request $request
     ) {
@@ -41,19 +38,18 @@ class SidebarWidgetRoleController extends Controller
         $this->sidebarService->setSite($request->user()->site);
         
         $this->sidebarService->assignRoles(
-            $sidebarWidget->roles(),
+            $sidebar->roles(),
             [
                 $role->id,
             ],
         );
 
         return response()->json([
-            'message' => "Role assigned to sidebar widget.",
+            'message' => "Role assigned to sidebar.",
         ]);
     }
     public function destroy(
         Sidebar $sidebar,
-        SidebarWidget $sidebarWidget,
         Role $role,
         Request $request
     ) {
@@ -61,14 +57,14 @@ class SidebarWidgetRoleController extends Controller
         $this->sidebarService->setSite($request->user()->site);
 
         $this->sidebarService->getSidebarRepository()->detachRoles(
-            $sidebarWidget->roles(),
+            $sidebar->roles(),
             [
                 $role->id,
             ],
         );
 
         return response()->json([
-            'message' => "Role removed from sidebar widget.",
+            'message' => "Role removed from sidebar.",
         ]);
     }
 }

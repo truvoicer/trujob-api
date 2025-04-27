@@ -244,4 +244,9 @@ class MenuService extends BaseService
     {
         return $this->resultsService;
     }
+
+    public function getMenuRepository(): MenuRepository
+    {
+        return $this->menuRepository;
+    }
 }

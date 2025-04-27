@@ -53,6 +53,23 @@ class BaseRepository
         $this->dbHelpers = new DbHelpers();
     }
 
+    public function getRoles(Model $model): Collection
+    {
+        $this->setQuery($model->roles());
+        $this->setOrderDir('asc');
+        $this->setSortField('name');
+        return $this->findMany();
+    }
+
+    public function detachRoles(BelongsToMany $relation, array $ids): bool
+    {
+        if (empty($ids)) {
+            return false;
+        }
+        $relation->detach($ids);
+        return true;
+    }
+
     public function getHighestOrder($query, string $field = 'order'): int
     {
         return $query->max($field) + 1;
