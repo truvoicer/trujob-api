@@ -38,20 +38,24 @@ class CreateWidgetRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:255',
+                'nullable',
             ],
             'icon' => [
                 'sometimes',
                 'string',
                 'max:255',
+                'nullable',
             ],
             'description' => [
                 'sometimes',
                 'string',
                 'max:255',
+                'nullable',
             ],
             'properties' => [
                 'sometimes',
                 'array',
+                'nullable',
             ],
             'roles' => [
                 'sometimes',
