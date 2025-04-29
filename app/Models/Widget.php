@@ -13,8 +13,7 @@ class Widget extends Model
         'name',
         'title',
         'icon',
-        'order',
-        'has_container',
+        'description',
         'properties',
     ];
     protected $casts = [

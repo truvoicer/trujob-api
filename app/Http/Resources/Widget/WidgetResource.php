@@ -19,6 +19,7 @@ class WidgetResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'title' => $this->title,
+            'description' => $this->description,
             'icon' => $this->icon,
             'properties' => $this->properties,
             'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
