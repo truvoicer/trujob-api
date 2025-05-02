@@ -45,7 +45,11 @@ use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
 use App\Http\Controllers\Api\Page\Block\PageBlockReorderController;
 use App\Http\Controllers\Api\Page\Block\PageBlockRoleController;
+use App\Http\Controllers\Api\Page\Block\Sidebar\PageBlockSidebarController;
+use App\Http\Controllers\Api\Page\Block\Sidebar\PageBlockSidebarReorderController;
 use App\Http\Controllers\Api\Page\PageRoleController;
+use App\Http\Controllers\Api\Page\Sidebar\PageSidebarController;
+use App\Http\Controllers\Api\Page\Sidebar\PageSidebarReorderController;
 use App\Http\Controllers\Api\Sidebar\SidebarRoleController;
 use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
@@ -354,6 +358,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/delete', [PageRoleController::class, 'destroy'])->name('delete');
                 });
             });
+            Route::prefix('sidebar')->name('sidebar.')->group(function () {
+                Route::prefix('{page}')->group(function () {
+                    Route::post('/', [PageSidebarController::class, 'create'])->name('create');
+                });
+                Route::prefix('reorder')->name('reorder.')->group(function () {
+                    Route::post('/', PageSidebarReorderController::class)->name('reorder');
+                });
+            });
             Route::prefix('block')->name('block.')->group(function () {
                 Route::get('/', [PageBlockController::class, 'index'])->name('index');
                 Route::post('/batch/delete', BatchDeletePageBlockController::class)->name('batch.delete');
@@ -371,6 +383,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                             Route::prefix('{role}')->group(function () {
                                 Route::post('/create', [PageBlockRoleController::class, 'create'])->name('create');
                                 Route::delete('/delete', [PageBlockRoleController::class, 'destroy'])->name('delete');
+                            });
+                        });
+                        Route::prefix('sidebar')->name('sidebar.')->group(function () {
+                            Route::prefix('{page}')->group(function () {
+                                Route::post('/', [PageBlockSidebarController::class, 'create'])->name('create');
+                            });
+                            Route::prefix('reorder')->name('reorder.')->group(function () {
+                                Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
                             });
                         });
                     });
