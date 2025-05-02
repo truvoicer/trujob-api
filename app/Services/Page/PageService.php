@@ -17,8 +17,6 @@ class PageService extends BaseService
 {
     use RoleTrait, SidebarTrait;
 
-    private Page $page;
-
     public function __construct(private ResultsService $resultsService, private PageRepository $pageRepository)
     {
         parent::__construct();
@@ -141,7 +139,14 @@ class PageService extends BaseService
     public function createBlockBatch(Page $page, array $data)
     {
         foreach ($data as $blockData) {
-            if (!$this->createPageBlock($page, $blockData)) {
+            if (!array_key_exists('type', $blockData)) {
+                throw new \Exception('Block type not found');
+            }
+            $block = Block::where('type', $blockData['type'])->first();
+            if (!$block) {
+                throw new \Exception('Block not found');
+            }
+            if (!$this->createPageBlock($page, $block, $blockData)) {
                 throw new \Exception('Error creating page block');
             }
         }
@@ -151,14 +156,11 @@ class PageService extends BaseService
         return true;
     }
 
-    public function createPageBlock(Page $page, array $data)
-    {
-        $block = Block::where('type', $data['type'])->first();
-        if (!$block) {
-            throw new \Exception('Block not found');
-        }
+
+    public function createPageBlock(Page $page, Block $block, array $data) {
         return $this->attachPageBlock($page, $block, $data);
     }
+
 
     public function attachPageBlock(Page $page, Block $block, array $data)
     {
@@ -268,11 +270,8 @@ class PageService extends BaseService
         return $this->resultsService;
     }
 
-    /**
-     * @param Page $menu
-     */
-    public function setPage(Page $menu): void
+    public function getPageRepository(): PageRepository
     {
-        $this->page = $menu;
+        return $this->pageRepository;
     }
 }

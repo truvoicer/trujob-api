@@ -43,6 +43,9 @@ use App\Http\Controllers\Api\Link\LinkTargetController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
+use App\Http\Controllers\Api\Page\Block\PageBlockReorderController;
+use App\Http\Controllers\Api\Page\Block\PageBlockRoleController;
+use App\Http\Controllers\Api\Page\PageRoleController;
 use App\Http\Controllers\Api\Sidebar\SidebarRoleController;
 use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
@@ -344,14 +347,36 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [PageController::class, 'view'])->name('view');
             Route::patch('/update', [PageController::class, 'update'])->name('update');
             Route::delete('/delete', [PageController::class, 'delete'])->name('delete');
+            Route::prefix('role')->name('role.')->group(function () {
+                Route::get('/', [PageRoleController::class, 'index'])->name('index');
+                Route::prefix('{role}')->group(function () {
+                    Route::post('/create', [PageRoleController::class, 'create'])->name('create');
+                    Route::delete('/delete', [PageRoleController::class, 'destroy'])->name('delete');
+                });
+            });
             Route::prefix('block')->name('block.')->group(function () {
                 Route::get('/', [PageBlockController::class, 'index'])->name('index');
-                Route::post('/create', [PageBlockController::class, 'create'])->name('create');
                 Route::post('/batch/delete', BatchDeletePageBlockController::class)->name('batch.delete');
-                Route::prefix('{pageBlock}')->group(function () {
-                    Route::get('/', [PageBlockController::class, 'view'])->name('view');
-                    Route::patch('/update', [PageBlockController::class, 'update'])->name('update');
-                    Route::delete('/delete', [PageBlockController::class, 'destroy'])->name('delete');
+                
+                Route::prefix('rel')->name('rel.')->group(function () {
+                    Route::prefix('{pageBlock}')->group(function () {
+                        Route::get('/', [PageBlockController::class, 'view'])->name('view');
+                        Route::patch('/update', [PageBlockController::class, 'update'])->name('update');
+                        Route::delete('/delete', [PageBlockController::class, 'destroy'])->name('delete');
+                        Route::prefix('reorder')->name('reorder.')->group(function () {
+                            Route::post('/', PageBlockReorderController::class)->name('reorder');
+                        });
+                        Route::prefix('role')->name('role.')->group(function () {
+                            Route::get('/', [PageBlockRoleController::class, 'index'])->name('index');
+                            Route::prefix('{role}')->group(function () {
+                                Route::post('/create', [PageBlockRoleController::class, 'create'])->name('create');
+                                Route::delete('/delete', [PageBlockRoleController::class, 'destroy'])->name('delete');
+                            });
+                        });
+                    });
+                });
+                Route::prefix('{block}')->group(function () {
+                    Route::post('/create', [PageBlockController::class, 'create'])->name('create');
                 });
             });
         });

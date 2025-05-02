@@ -12,6 +12,7 @@ use App\Http\Resources\Page\PageResource;
 use App\Models\Block;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Repositories\PageBlockRepository;
 use App\Services\Page\PageService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,25 +24,54 @@ use Symfony\Component\HttpFoundation\Response;
 class PageBlockController extends Controller
 {
     public function __construct(
-        private PageService $pageService
+        private PageService $pageService,
+        private PageBlockRepository $pageBlockRepository,
     )
     {
     }
 
-    public function index(Page $page)
+    public function index(Page $page, Request $request) 
     {
-        return PageBlockResource::collection($page->pageBlocks);
+        $this->pageBlockRepository->setQuery(
+            $page->pageBlocks()
+        );
+        $this->pageBlockRepository->setPagination(true);
+        $this->pageBlockRepository->setSortField(
+            $request->get('sort', 'created_at')
+        );
+        $this->pageBlockRepository->setOrderDir(
+            $request->get('order', 'desc')
+        );
+        $this->pageBlockRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->pageBlockRepository->setPage(
+            $request->get('page', 1)
+        );
+        $this->pageBlockRepository->setWith([
+            'sidebars' => function ($query) {
+                $query->orderBy('created_at', 'asc');
+            },
+            'roles' => function ($query) {
+                $query->orderBy('created_at', 'asc');
+            }
+        ]);
+
+        return PageBlockResource::collection(
+            $this->pageBlockRepository->findMany()
+        );
     }
 
-    public function view(Page $page, Block $block)
+    public function view(Page $page, PageBlock $pageBlock)
     {
-        return new PageBlockResource($page->pageBlocks);
+        return new PageBlockResource($pageBlock);
     }
 
-    public function create(Page $page, CreatePageBlockRequest $request)
+    public function create(Page $page, Block $block, CreatePageBlockRequest $request)
     {
-        $this->pageService->setUser($request->user());
-        if (!$this->pageService->createPageBlock($page, $request->validated())) {
+        $this->pageService->setUser($request->user()->user);
+        $this->pageService->setSite($request->user()->site);
+        if (!$this->pageService->createPageBlock($page, $block, $request->validated())) {
             return response()->json([
                 'status' => 'error',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -55,7 +85,8 @@ class PageBlockController extends Controller
 
     public function update(Page $page, PageBlock $pageBlock, EditPageBlockRequest $request)
     {
-        $this->pageService->setUser($request->user());
+        $this->pageService->setUser($request->user()->user);
+        $this->pageService->setSite($request->user()->site);
         if (!$this->pageService->updatePageBlock($pageBlock, $request->validated())) {
             return response()->json([
                 'status' => 'error',
@@ -70,7 +101,8 @@ class PageBlockController extends Controller
 
     public function destroy(Page $page, PageBlock $pageBlock, Request $request)
     {
-        $this->pageService->setUser($request->user());
+        $this->pageService->setUser($request->user()->user);
+        $this->pageService->setSite($request->user()->site);
         
         if (!$this->pageService->deletePageBlock($pageBlock)) {
             return response()->json([

@@ -16,6 +16,7 @@ class BlockResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'type' => $this->type,
             'properties' => $this->properties,
             'updated_at' => $this->updated_at,

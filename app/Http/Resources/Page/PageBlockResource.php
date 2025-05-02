@@ -19,6 +19,7 @@ class PageBlockResource extends JsonResource
     {
         [$site, $user] = SiteHelper::getCurrentSite();
         return [
+            'id' => $this->id,
             'type' => $this->block->type,
             'default' => $this->default,
             'nav_title' => $this->nav_title,
