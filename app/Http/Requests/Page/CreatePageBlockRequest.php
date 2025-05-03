@@ -27,6 +27,10 @@ class CreatePageBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => [
+                'required',
+                Rule::enum(BlockType::class)
+            ],
             'order' => [
                 'sometimes',
                 'integer',

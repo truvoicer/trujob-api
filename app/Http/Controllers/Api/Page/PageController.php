@@ -94,17 +94,17 @@ class PageController extends Controller
 
     public function delete(Page $page, Request $request)
     {
-        $this->pageService->setUser($request->user());
-        $delete = $this->pageService->deletePage($page);
-        if (!$delete) {
-            return $this->sendErrorResponse(
-                'Error deleting page',
-                [],
-                $this->pageService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+        $this->pageService->setUser($request->user()->user);
+        $this->pageService->setSite($request->user()->site);
+        
+        if (!$this->pageService->deletePage($page)) {
+            return response()->json([
+                'message' => 'Error deleting page',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Page deleted', [], $this->pageService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'Page deleted',
+        ]);
     }
 
 }
