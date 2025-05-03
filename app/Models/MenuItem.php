@@ -53,6 +53,13 @@ class MenuItem extends Model
         );
     }
 
+    public function menuItemMenus() {
+        return $this->hasMany(
+            Menu::class,
+            'menu_item_menus',
+        );
+    }
+
     public function page() {
         return $this->belongsTo(
             Page::class

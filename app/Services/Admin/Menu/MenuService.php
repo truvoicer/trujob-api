@@ -4,6 +4,7 @@ namespace App\Services\Admin\Menu;
 
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\MenuItemMenu;
 use App\Models\Page;
 use App\Repositories\MenuRepository;
 use App\Services\BaseService;
@@ -233,6 +234,12 @@ class MenuService extends BaseService
     public function deleteMenuItem(MenuItem $menuItem): void
     {
         if (!$menuItem->delete()) {
+            throw new \Exception('Error deleting menu item');
+        }
+    }
+    public function deleteMenuItemMenu(MenuItemMenu $menuItemMenu): void
+    {
+        if (!$menuItemMenu->delete()) {
             throw new \Exception('Error deleting menu item');
         }
     }

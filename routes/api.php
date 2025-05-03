@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\Page\PageController;
 use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
+use App\Http\Controllers\Api\Menu\MenuItemMenuController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
@@ -472,6 +473,17 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                         Route::prefix('{role}')->group(function () {
                             Route::post('/create', [MenuItemRoleController::class, 'create'])->name('create');
                             Route::delete('/delete', [MenuItemRoleController::class, 'destroy'])->name('delete');
+                        });
+                    });
+                    Route::prefix('menu')->name('menu.')->group(function () {
+                        Route::get('/', [MenuItemMenuController::class, 'index'])->name('index');
+                        Route::prefix('{menu}')->group(function () {
+                            Route::post('/create', [MenuItemMenuController::class, 'create'])->name('create');
+                        });
+                        Route::prefix('rel')->name('rel')->group(function () {
+                            Route::prefix('{menuItemMenu}')->group(function () {
+                                Route::delete('/delete', [MenuItemMenuController::class, 'destroy'])->name('delete');
+                            });
                         });
                     });
                 });
