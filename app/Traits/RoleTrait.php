@@ -27,9 +27,9 @@ trait RoleTrait
         throw new \Exception("Error building role ids");
     }
 
-    public function syncRoles(BelongsToMany $roles, array $roleData): void
+    public function syncRoles(BelongsToMany $roles, array $roleData): array
     {
-        $roles->sync(
+        return $roles->sync(
             $this->buildRoleIds($roleData)
         );
     }

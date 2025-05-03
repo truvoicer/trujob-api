@@ -359,8 +359,10 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
             });
             Route::prefix('sidebar')->name('sidebar.')->group(function () {
-                Route::prefix('{page}')->group(function () {
-                    Route::post('/', [PageSidebarController::class, 'create'])->name('create');
+                Route::get('/', [PageSidebarController::class, 'index'])->name('index');
+                Route::prefix('{sidebar}')->group(function () {
+                    Route::post('/create', [PageSidebarController::class, 'create'])->name('create');
+                    Route::delete('/delete', [PageSidebarController::class, 'destroy'])->name('destroy');
                 });
                 Route::prefix('reorder')->name('reorder.')->group(function () {
                     Route::post('/', PageSidebarReorderController::class)->name('reorder');
@@ -386,8 +388,10 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                             });
                         });
                         Route::prefix('sidebar')->name('sidebar.')->group(function () {
-                            Route::prefix('{page}')->group(function () {
-                                Route::post('/', [PageBlockSidebarController::class, 'create'])->name('create');
+                            Route::get('/', [PageBlockSidebarController::class, 'index'])->name('index');
+                            Route::prefix('{sidebar}')->group(function () {
+                                Route::post('/create', [PageBlockSidebarController::class, 'create'])->name('create');
+                                Route::delete('/delete', [PageBlockSidebarController::class, 'destroy'])->name('destroy');
                             });
                             Route::prefix('reorder')->name('reorder.')->group(function () {
                                 Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
