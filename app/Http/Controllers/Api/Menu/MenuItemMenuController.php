@@ -61,20 +61,10 @@ class MenuItemMenuController extends Controller
         $this->menuService->setUser(request()->user()->user);
         $this->menuService->setSite(request()->user()->site);
         
-        $create = $this->menuService->createMenuItem(
-            $menu,
-            [
-                ...$request->validated(),
-                'menus' => $request->validated('menus'),
-            ]
-        );
-        if (!$create) {
-            return response()->json([
-                'message' => 'Error creating app menu item',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $this->menuService->addMenuToMenuItem($menuItem, [$menuChild->id]);
+        
         return response()->json([
-            'message' => 'MenuItem created',
+            'message' => 'Menu item menu created',
         ]);
     }
 

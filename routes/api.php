@@ -461,8 +461,10 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
             });
             Route::prefix('item')->name('item.')->group(function () {
+                Route::get('/', [MenuItemController::class, 'index'])->name('index');
                 Route::post('/create', [MenuItemController::class, 'create'])->name('create');
                 Route::prefix('{menuItem}')->group(function () {
+                    Route::get('/', [MenuItemController::class, 'view'])->name('view');
                     Route::patch('/update', [MenuItemController::class, 'update'])->name('update');
                     Route::delete('/delete', [MenuItemController::class, 'destroy'])->name('delete');
                     Route::prefix('reorder')->name('reorder.')->group(function () {
@@ -477,7 +479,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     });
                     Route::prefix('menu')->name('menu.')->group(function () {
                         Route::get('/', [MenuItemMenuController::class, 'index'])->name('index');
-                        Route::prefix('{menu}')->group(function () {
+                        Route::prefix('{menuChild}')->group(function () {
                             Route::post('/create', [MenuItemMenuController::class, 'create'])->name('create');
                         });
                         Route::prefix('rel')->name('rel')->group(function () {

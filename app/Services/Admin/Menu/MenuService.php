@@ -205,7 +205,7 @@ class MenuService extends BaseService
         return true;
     }
 
-    public function addMenuToMenuItem(MenuItem $menuItem, array $menus)
+    public function addMenuToMenuItem(MenuItem $menuItem, array $menus): void
     {
         $menus = array_map(function ($menu) {
             if (is_string($menu)) {
@@ -220,7 +220,11 @@ class MenuService extends BaseService
             }
             throw new \Exception('Invalid menu ID/Name: ' . $menu);
         }, $menus);
-        $menuItem->menus()->sync($menus);
+        $findMenuInMenuItem = $menuItem->menus()->whereIn('id', $menus)->get();
+        $menus = array_diff($menus, $findMenuInMenuItem->pluck('id')->toArray());
+        if (count($menus) > 0) {
+            $menuItem->menus()->attach($menus);
+        }
     }
 
     public function removeMenuItem(Menu $menu, MenuItem $menuItem)

@@ -71,20 +71,24 @@ class EditMenuItemRequest extends FormRequest
                 'required_if:type,' . MenuItemType::URL->value,
                 'string',
                 'max:255',
+                'nullable',
             ],
             'target' => [
                 'sometimes',
                 'string',
                 Rule::enum(LinkTarget::class),
+                'nullable',
             ],
             'icon' => [
                 'sometimes',
                 'string',
                 'max:255',
+                'nullable',
             ],
             'order' => [
                 'sometimes',
                 'integer',
+                'nullable',
             ],
             'li_class' => [
                 'sometimes',
