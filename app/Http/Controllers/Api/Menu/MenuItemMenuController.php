@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api\Menu;
 
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Menu\CreateMenuItemMenuRequest;
 use App\Http\Requests\Menu\CreateMenuItemRequest;
 use App\Http\Requests\Menu\CreateMenuRequest;
 use App\Http\Requests\Menu\EditMenuItemRequest;
+use App\Http\Resources\Menu\MenuItemMenuResource;
 use App\Http\Resources\Menu\MenuResource;
 use App\Models\Menu;
 use App\Models\MenuItem;
@@ -29,16 +31,16 @@ class MenuItemMenuController extends Controller
     public function index(Menu $menu, MenuItem $menuItem, Request $request) {
         $this->menuService->setUser(request()->user()->user);
         $this->menuService->setSite(request()->user()->site);
-
+        
         $this->menuRepository->setQuery(
             $menuItem->menuItemMenus()
         );
         $this->menuRepository->setPagination(true);
         $this->menuRepository->setSortField(
-            $request->get('sort', 'created_at')
+            $request->get('sort', 'order')
         );
         $this->menuRepository->setOrderDir(
-            $request->get('order', 'desc')
+            $request->get('order', 'asc')
         );
         $this->menuRepository->setPerPage(
             $request->get('per_page', 10)
@@ -47,17 +49,16 @@ class MenuItemMenuController extends Controller
             $request->get('page', 1)
         );
         $this->menuRepository->setWith([
-            'menus' => function ($query) {
-                $query->orderBy('order', 'asc');
-            },
+            'menu',
+            'menuItem',
         ]);
 
-        return MenuResource::collection(
+        return MenuItemMenuResource::collection(
             $this->menuRepository->findMany()
         );
     }
 
-    public function create(Menu $menu, MenuItem $menuItem, Menu $menuChild, CreateMenuItemRequest $request) {
+    public function create(Menu $menu, MenuItem $menuItem, Menu $menuChild, CreateMenuItemMenuRequest $request) {
         $this->menuService->setUser(request()->user()->user);
         $this->menuService->setSite(request()->user()->site);
         

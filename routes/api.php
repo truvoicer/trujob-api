@@ -41,6 +41,7 @@ use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuController;
+use App\Http\Controllers\Api\Menu\MenuItemMenuReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
@@ -485,6 +486,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                         Route::prefix('rel')->name('rel')->group(function () {
                             Route::prefix('{menuItemMenu}')->group(function () {
                                 Route::delete('/delete', [MenuItemMenuController::class, 'destroy'])->name('delete');
+                                Route::prefix('reorder')->name('reorder.')->group(function () {
+                                    Route::post('/', MenuItemMenuReorderController::class)->name('update');
+                                });
                             });
                         });
                     });

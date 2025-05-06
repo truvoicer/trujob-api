@@ -6,7 +6,7 @@ use App\Helpers\SiteHelper;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MenuResource extends JsonResource
+class MenuItemMenuResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -19,16 +19,13 @@ class MenuResource extends JsonResource
         [$site, $user] = SiteHelper::getCurrentSite();
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'has_parent' => $this->hasParent(),
-            'ul_class' => $this->ul_class,
             'active' => $this->active,
-            'roles' => $this->whenLoaded('roles', RoleResource::collection($this->roles)),
-            'menu_items' => $this->whenLoaded('menuItems', function () {
-                return MenuItemResource::collection($this->menuItems);
+            'order' => $this->order,
+            'menu' => $this->whenLoaded('menu', function () {
+                return new MenuResource($this->menu);
             }),
-            'has_permission' => $this->whenLoaded('roles', function () use($site, $user) {
-                return $this->hasPermission($site, $this->roles, $user);
+            'menu_item' => $this->whenLoaded('menuItem', function () {
+                return new MenuItemResource($this->menuItem);
             }),
         ];
     }

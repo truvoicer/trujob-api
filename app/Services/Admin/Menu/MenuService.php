@@ -43,6 +43,15 @@ class MenuService extends BaseService
         );
     }
 
+    public function moveMenuItemMenu(MenuItem $menuItem, MenuItemMenu $menuItemMenu, string $direction)
+    {
+        $this->menuRepository->reorderByDirection(
+            $menuItemMenu,
+            $menuItem->menuItemMenus()->orderBy('order', 'asc'),
+            $direction
+        );
+    }
+
     public function createMenu(array $data)
     {
         $menuItems = [];
@@ -205,25 +214,54 @@ class MenuService extends BaseService
         return true;
     }
 
+    public function menuExistsInParents(MenuItem $menuItem, Menu $menu): bool
+    {
+        $parentMenus = $menuItem->parentMenus()->where('menus.id', $menu->id)->get();
+        if ($parentMenus->count() > 0) {
+            return true;
+        }
+        foreach ($parentMenus as $parentMenu) {
+            $parentMenuItems = $parentMenu->menuItems()->get();
+            if ($parentMenuItems->count() === 0) {
+                continue;
+            }
+            foreach ($parentMenuItems as $parentMenuItem) {
+                if ($this->menuExistsInParents($parentMenuItem, $menu)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public function addMenuToMenuItem(MenuItem $menuItem, array $menus): void
     {
-        $menus = array_map(function ($menu) {
+        $menuIds = [];
+        foreach ($menus as $menu) {
             if (is_string($menu)) {
                 $menu = $this->site->menus()->where('name', $menu)->first();
                 if (!$menu) {
                     throw new \Exception('Menu not found | name: ' . $menu);
                 }
-                return $menu->id;
+            } else if (is_int($menu)) {
+                $menu = $this->site->menus()->find($menu);
+                if (!$menu) {
+                    throw new \Exception('Menu not found | id: ' . $menu);
+                }
+            } else {
+                throw new \Exception('Invalid menu ID/Name: ' . $menu);
             }
-            if (is_int($menu)) {
-                return $menu;
+
+            if ($this->menuExistsInParents($menuItem, $menu)) {
+                throw new \Exception('Menu already exists in parent menu');
             }
-            throw new \Exception('Invalid menu ID/Name: ' . $menu);
-        }, $menus);
-        $findMenuInMenuItem = $menuItem->menus()->whereIn('id', $menus)->get();
-        $menus = array_diff($menus, $findMenuInMenuItem->pluck('id')->toArray());
-        if (count($menus) > 0) {
-            $menuItem->menus()->attach($menus);
+            $menuIds[] = $menu->id;
+        }
+        
+        $findMenuInMenuItem = $menuItem->menus()->whereIn('menus.id', $menuIds)->get();
+        $menuIds = array_diff($menuIds, $findMenuInMenuItem->pluck('id')->toArray());
+        if (count($menuIds) > 0) {
+            $menuItem->menus()->attach($menuIds);
         }
     }
 
