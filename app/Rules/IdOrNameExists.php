@@ -23,8 +23,13 @@ class IdOrNameExists implements ValidationRule
     {
         if (is_numeric($value)) {
             $this->validateId($attribute, $value, $fail);
-        } else {
+        } else if(is_string($value)) {
             $this->validateSlug($attribute, $value, $fail);
+        } else {
+            $fail(sprintf(
+                "The $attribute must be a string or an integer. | value: %s",
+                json_encode($value)
+            ));
         }
     }
 

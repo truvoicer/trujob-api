@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('page_id')->constrained()->onDelete('cascade');
             $table->foreignId('sidebar_id')->constrained()->onDelete('cascade');
+            $table->integer('order')->default(0);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

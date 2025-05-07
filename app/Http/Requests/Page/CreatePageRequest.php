@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Page;
 
 use Illuminate\Database\Query\Builder;
-use App\Enums\PageSidebarWidget;
 use App\Enums\ViewType;
 use App\Helpers\Tools\ValidationHelpers;
 use App\Models\Role;

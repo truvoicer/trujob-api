@@ -45,6 +45,10 @@ class PageBlock extends Model
     {
         return $this->belongsToMany(Role::class);
     }
+    public function pageBlockSidebars()
+    {
+        return $this->hasMany(PageBlockSidebar::class);
+    }
     public function sidebars()
     {
         return $this->belongsToMany(Sidebar::class, 'page_block_sidebars');

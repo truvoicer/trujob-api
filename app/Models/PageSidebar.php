@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PageBlockSidebar extends Model
+class PageSidebar extends Model
 {
     protected $fillable = [
         'order',

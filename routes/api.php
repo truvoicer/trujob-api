@@ -394,9 +394,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                             Route::prefix('{sidebar}')->group(function () {
                                 Route::post('/create', [PageBlockSidebarController::class, 'create'])->name('create');
                                 Route::delete('/delete', [PageBlockSidebarController::class, 'destroy'])->name('destroy');
-                            });
-                            Route::prefix('reorder')->name('reorder.')->group(function () {
-                                Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
+                                Route::prefix('reorder')->name('reorder.')->group(function () {
+                                    Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
+                                });
                             });
                         });
                     });

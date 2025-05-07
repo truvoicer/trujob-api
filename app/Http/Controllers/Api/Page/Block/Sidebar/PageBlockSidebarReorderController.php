@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Page\Block\PageBlockReorderRequest;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Models\Sidebar;
 use App\Services\Page\PageService;
 
 class PageBlockSidebarReorderController extends Controller
@@ -18,6 +19,7 @@ class PageBlockSidebarReorderController extends Controller
     public function __invoke(
         Page $page,
         PageBlock $pageBlock,
+        Sidebar $sidebar,
         PageBlockReorderRequest $request
     ) {
         $this->pageService->setUser($request->user()->user);
@@ -27,7 +29,7 @@ class PageBlockSidebarReorderController extends Controller
             ->getPageRepository()
             ->reorderByDirection(
                 $pageBlock,
-                $page->pageBlocks()->orderBy('order', 'asc'),
+                $pageBlock->pageBlockSidebars()->orderBy('order', 'asc'),
                 $request->validated('direction')
             );
 
