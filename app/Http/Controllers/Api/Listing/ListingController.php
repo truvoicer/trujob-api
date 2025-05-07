@@ -18,12 +18,25 @@ use Symfony\Component\HttpFoundation\Response;
 class ListingController extends ListingBaseController
 {
 
+    public function index(Request $request)
+    {
+        $this->listingsFetchService->setUser($request->user()->user);
+        $this->listingsFetchService->setLimit($request->get('limit', 10));
+        $this->listingsFetchService->setOffset($request->get('offset', 0));
+        $this->listingsFetchService->setPage($request->get('page', 1));
+        $this->listingsFetchService->setPagination(true);
+        return ListingListResource::collection(
+            $this->listingsFetchService->listingsFetch()
+        );
+    }
+
     public function view(Listing $listing)
     {
         return new ListingListResource($listing);
     }
 
-    public function create(StoreListingRequest $request) {
+    public function create(StoreListingRequest $request)
+    {
         $this->listingsAdminService->setUser($request->user());
         $createListing = $this->listingsAdminService->createListing($request->validated());
         if (!$createListing) {
@@ -37,7 +50,8 @@ class ListingController extends ListingBaseController
         return $this->sendSuccessResponse('Listing created', [], $this->listingsAdminService->getErrors());
     }
 
-    public function update(Listing $listing, Request $request) {
+    public function update(Listing $listing, Request $request)
+    {
         $this->listingsAdminService->setUser($request->user());
         $this->listingsAdminService->setListing($listing);
         $createListing = $this->listingsAdminService->updateListing($request->all());
@@ -52,7 +66,8 @@ class ListingController extends ListingBaseController
         return $this->sendSuccessResponse('Listing updated', [], $this->listingsAdminService->getErrors());
     }
 
-    public function destroy(Listing $listing) {
+    public function destroy(Listing $listing)
+    {
         $this->listingsAdminService->setListing($listing);
         $deleteListing = $this->listingsAdminService->deleteListing();
         if (!$deleteListing) {

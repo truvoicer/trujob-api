@@ -12,13 +12,20 @@ class Listing extends Model
     use HasFactory;
 
     protected $fillable = [
-      'name',
-      'title',
-      'description',
-      'active',
-      'allow_offers',
+        'name',
+        'title',
+        'description',
+        'active',
+        'allow_offers',
+        'quantity',
     ];
 
+    protected $casts = [
+        'active' => 'boolean',
+        'allow_offers' => 'boolean',
+        'quantity' => 'integer',
+    ];
+    
     protected static function newFactory()
     {
         return ListingFactory::new();
@@ -27,13 +34,13 @@ class Listing extends Model
     protected function active(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => (bool)$value,
+            get: fn($value) => (bool)$value,
         );
     }
     protected function allowOffers(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => (bool)$value,
+            get: fn($value) => (bool)$value,
         );
     }
     public function listingFeature()
@@ -45,7 +52,7 @@ class Listing extends Model
     {
         return $this->hasMany(ListingReview::class);
     }
-    
+
     public function listingFollow()
     {
         return $this->hasMany(ListingFollow::class);
@@ -88,5 +95,9 @@ class Listing extends Model
     public function media()
     {
         return $this->belongsToMany(Media::class);
+    }
+    public function price()
+    {
+        return $this->belongsToMany(Price::class, 'listing_prices');
     }
 }

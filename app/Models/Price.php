@@ -9,6 +9,18 @@ class Price extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'created_by_user_id',
+        'country_id',
+        'currency_id',
+        'type',
+        'amount',
+    ];
+    public function createdByUser()
+    {
+        return $this->belongsTo(User::class, 'created_by_user_id');
+    }
+
     public function listing()
     {
         return $this->belongsTo(Listing::class);
@@ -24,8 +36,4 @@ class Price extends Model
         return $this->hasOne(Currency::class);
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

@@ -40,6 +40,7 @@ use App\Http\Controllers\Api\Page\PageController;
 use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
+use App\Http\Controllers\Api\Menu\MenuBulkDeleteController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
@@ -49,6 +50,7 @@ use App\Http\Controllers\Api\Page\Block\PageBlockReorderController;
 use App\Http\Controllers\Api\Page\Block\PageBlockRoleController;
 use App\Http\Controllers\Api\Page\Block\Sidebar\PageBlockSidebarController;
 use App\Http\Controllers\Api\Page\Block\Sidebar\PageBlockSidebarReorderController;
+use App\Http\Controllers\Api\Page\PageBulkDeleteController;
 use App\Http\Controllers\Api\Page\PageRoleController;
 use App\Http\Controllers\Api\Page\Sidebar\PageSidebarController;
 use App\Http\Controllers\Api\Page\Sidebar\PageSidebarReorderController;
@@ -58,6 +60,7 @@ use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\Sidebar\SidebarBulkDeleteController;
 use App\Http\Controllers\Api\Sidebar\SidebarController;
 use App\Http\Controllers\Api\Sidebar\SidebarWidgetReorderController;
 use App\Http\Controllers\Api\Sidebar\SidebarWidgetRoleController;
@@ -66,6 +69,7 @@ use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserSellerController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
 use App\Http\Controllers\Api\Widget\WidgetController;
 use App\Http\Controllers\Api\Widget\WidgetRoleController;
 use App\Http\Middleware\AppPublic;
@@ -257,6 +261,11 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin'])->group(function () {
+
+    Route::prefix('listing')->name('listing.')->group(function () {
+        Route::get('/', [ListingController::class, 'index'])->name('index');
+    });
+
     Route::prefix('/user')->name('user.')->group(function () {
         Route::get('/list', [AdminController::class, 'getUsersList'])->name('list');
         Route::prefix('batch')->name('batch.')->group(function () {
@@ -349,6 +358,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/', [PageController::class, 'index'])->name('index');
         Route::get('/view', [PageViewController::class, 'index'])->name('view.index');
         Route::post('/create', [PageController::class, 'create'])->name('create');
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/delete', PageBulkDeleteController::class)->name('delete');
+        });
         Route::prefix('{page}')->group(function () {
             Route::get('/', [PageController::class, 'view'])->name('view');
             Route::patch('/update', [PageController::class, 'update'])->name('update');
@@ -456,6 +468,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/', [MenuController::class, 'index'])->name('index');
         Route::post('/create', [MenuController::class, 'create'])->name('create');
         Route::get('/item/type', MenuItemTypeController::class)->name('item.type');
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/delete', MenuBulkDeleteController::class)->name('delete');
+        });
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'update'])->name('update');
             Route::delete('/delete', [MenuController::class, 'destroy'])->name('delete');
@@ -504,6 +519,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('sidebar')->name('sidebar.')->group(function () {
         Route::get('/', [SidebarController::class, 'index'])->name('index');
         Route::post('/create', [SidebarController::class, 'create'])->name('create');
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/delete', SidebarBulkDeleteController::class)->name('delete');
+        });
         Route::prefix('{sidebar}')->group(function () {
             Route::get('/', [SidebarController::class, 'view'])->name('view');
             Route::patch('/update', [SidebarController::class, 'update'])->name('update');
@@ -543,6 +561,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('widget')->name('widget.')->group(function () {
         Route::get('/', [WidgetController::class, 'index'])->name('index');
         Route::post('/create', [WidgetController::class, 'create'])->name('create');
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/delete', WidgetBulkDeleteController::class)->name('delete');
+        });
         Route::prefix('{widget}')->group(function () {
             Route::get('/', [WidgetController::class, 'view'])->name('view');
             Route::patch('/update', [WidgetController::class, 'update'])->name('update');

@@ -77,6 +77,20 @@ class WidgetService extends BaseService
         return true;
     }
 
+    public function deleteBulkWidgets(array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+        $widgets = $this->site->widgets()->whereIn('id', $ids)->get();
+        foreach ($widgets as $widget) {
+            if (!$this->deleteWidget($widget)) {
+                throw new \Exception('Error deleting widget');
+            }
+        }
+        return true;
+    }
+
     /**
      * @return ResultsService
      */

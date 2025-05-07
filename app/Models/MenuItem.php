@@ -25,6 +25,9 @@ class MenuItem extends Model
         'li_class',
         'a_class',
     ];
+    protected $with = [
+        'menus',
+    ];
 
     protected $casts = [
         'active' => 'boolean',

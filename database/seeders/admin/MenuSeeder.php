@@ -29,6 +29,19 @@ class MenuSeeder extends Seeder
             unset($menu['site']);
             $menuService->setSite($site);
             $menu['site_id'] = $site->id;
+            if (!empty($menu['menu_items']) && is_array($menu['menu_items'])) {
+                $menu['menu_items'] = array_map(function ($item) use ($site) {
+                    if (!empty($item['page_name'])) {
+                        $page = Page::where('name', $item['page_name'])->where('site_id', $site->id)->first();
+                        if (!$page) {
+                            throw new \Exception('Page not found: ' . $item['page_name']);
+                        }
+                        unset($item['page_name']);
+                        $item['page_id'] = $page->id;
+                    }
+                    return $item;
+                }, $menu['menu_items']);
+            }
             $getMenu = Menu::where('name', $menu['name'])->where('site_id', $site->id)->first();
             if (!$getMenu) {
                 if (!$menuService->createMenu($menu)) {

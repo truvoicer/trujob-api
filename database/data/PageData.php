@@ -248,4 +248,27 @@ return [
             ApiAbility::ADMIN->value,
         ]
     ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/listing',
+        'name' => 'admin_listing',
+        'title' => 'Listing',
+        'content' => 'Welcome to the listing admin page',
+        'view' => ViewType::AdminTabPage,
+        'blocks' => [
+            [
+                'type' => BlockType::MANAGE_LISTINGS,
+                'order' => 0,
+                'title' => 'Manage Listings',
+                'nav_title' => 'Listings',
+                'subtitle' => 'Manage your listings here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+            ApiAbility::USER->value,
+        ]
+    ],
 ];

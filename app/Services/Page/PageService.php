@@ -238,6 +238,20 @@ class PageService extends BaseService
         return true;
     }
 
+    public function deleteBulkPages(array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+        $pages = $this->site->pages()->whereIn('id', $ids)->get();
+        foreach ($pages as $page) {
+            if (!$this->deletePage($page)) {
+                throw new \Exception('Error deleting page');
+            }
+        }
+        return true;
+    }
+
     public function deletePageBlock(PageBlock $pageBlock)
     {
         if (!$pageBlock->exists()) {

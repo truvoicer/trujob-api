@@ -21,6 +21,10 @@ class Menu extends Model
         'active' => 'boolean',
     ];
 
+    protected $with = [
+        'menuItems',
+    ];
+    
     public function hasParent() {
         return $this->menuItem !== null;
     }

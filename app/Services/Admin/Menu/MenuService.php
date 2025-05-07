@@ -171,6 +171,7 @@ class MenuService extends BaseService
         if (is_array($menus)) {
             $this->addMenuToMenuItem($menuItem, $menus);
         }
+        return true;
     }
 
     public function updateMenuItem(MenuItem $menuItem, array $data)
@@ -284,6 +285,20 @@ class MenuService extends BaseService
         if (!$menuItemMenu->delete()) {
             throw new \Exception('Error deleting menu item');
         }
+    }
+
+    public function deleteBulkMenus(array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+        $menus = $this->site->menus()->whereIn('id', $ids)->get();
+        foreach ($menus as $menu) {
+            if (!$this->deleteMenu($menu)) {
+                throw new \Exception('Error deleting menu');
+            }
+        }
+        return true;
     }
 
     /**

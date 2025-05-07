@@ -128,6 +128,13 @@ return [
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,
             ],
+            [
+                'page_name' => 'admin_listing',
+                'label' => 'Listing',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
         ],
         'roles' => [
             ApiAbility::SUPERUSER->value,

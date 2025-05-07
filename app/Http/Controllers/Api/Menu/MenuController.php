@@ -48,7 +48,7 @@ class MenuController extends Controller
                 $query->orderBy('order', 'asc');
             },
         ]);
-
+        
         return MenuResource::collection(
             $this->menuRepository->findMany()
         );
@@ -68,6 +68,11 @@ class MenuController extends Controller
         if (!$menu) {
             throw new MenuNotFoundException('Menu not found');
         }
+        $menu->load([
+            'menuItems' => function ($query) {
+                $query->orderBy('order', 'asc');
+            },
+        ]);
         return new MenuResource($menu);
     }
 

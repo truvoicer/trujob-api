@@ -16,6 +16,9 @@ class MenuResource extends JsonResource
      */
     public function toArray($request)
     {
+        // if ($this->name === 'header-account-menu') {
+        //     dd($this->menuItems);
+        // }
         [$site, $user] = SiteHelper::getCurrentSite();
         return [
             'id' => $this->id,

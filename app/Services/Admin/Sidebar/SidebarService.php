@@ -177,6 +177,20 @@ class SidebarService extends BaseService
         return true;
     }
 
+    public function deleteBulkSidebars(array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+        $sidebars = $this->site->sidebars()->whereIn('id', $ids)->get();
+        foreach ($sidebars as $sidebar) {
+            if (!$this->deleteSidebar($sidebar)) {
+                throw new \Exception('Error deleting sidebar');
+            }
+        }
+        return true;
+    }
+
     /**
      * @return ResultsService
      */
