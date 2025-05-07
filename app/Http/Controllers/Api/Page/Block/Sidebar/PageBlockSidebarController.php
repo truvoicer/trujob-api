@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\Page\Block\Sidebar;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Page\PageBlockSidebarResource;
 use App\Http\Resources\Sidebar\SidebarResource;
 use App\Models\Page;
 use App\Models\PageBlock;
+use App\Models\PageBlockSidebar;
 use App\Models\Sidebar;
 use App\Repositories\PageBlockRepository;
 use App\Services\Page\PageService;
@@ -26,14 +28,14 @@ class PageBlockSidebarController extends Controller
     ) {
         
         $this->pageBlockRepository->setQuery(
-            $pageBlock->sidebars()
+            $pageBlock->pageBlockSidebars()
         );
         $this->pageBlockRepository->setPagination(true);
         $this->pageBlockRepository->setSortField(
-            $request->get('sort', 'created_at')
+            $request->get('sort', 'order')
         );
         $this->pageBlockRepository->setOrderDir(
-            $request->get('order', 'desc')
+            $request->get('order', 'asc')
         );
         $this->pageBlockRepository->setPerPage(
             $request->get('per_page', 10)
@@ -41,8 +43,12 @@ class PageBlockSidebarController extends Controller
         $this->pageBlockRepository->setPage(
             $request->get('page', 1)
         );
+        $this->pageBlockRepository->setWith([
+            'sidebar',
+            'pageBlock'
+        ]);
 
-        return SidebarResource::collection(
+        return PageBlockSidebarResource::collection(
             $this->pageBlockRepository->findMany()
         );
     }
@@ -70,17 +76,13 @@ class PageBlockSidebarController extends Controller
     public function destroy(
         Page $page,
         PageBlock $pageBlock,
-        Sidebar $sidebar,
+        PageBlockSidebar $pageBlockSidebar,
         Request $request
     ) {
         $this->pageService->setUser($request->user()->user);
         $this->pageService->setSite($request->user()->site);
 
-        $this->pageService
-        ->detachSidebars(
-            $pageBlock->sidebars(),
-            [$sidebar->id],
-        );
+       $pageBlockSidebar->delete();
 
         return response()->json([
             'message' => 'Sidebar deleted',

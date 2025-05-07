@@ -373,7 +373,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::prefix('block')->name('block.')->group(function () {
                 Route::get('/', [PageBlockController::class, 'index'])->name('index');
                 Route::post('/batch/delete', BatchDeletePageBlockController::class)->name('batch.delete');
-                
+
                 Route::prefix('rel')->name('rel.')->group(function () {
                     Route::prefix('{pageBlock}')->group(function () {
                         Route::get('/', [PageBlockController::class, 'view'])->name('view');
@@ -393,9 +393,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                             Route::get('/', [PageBlockSidebarController::class, 'index'])->name('index');
                             Route::prefix('{sidebar}')->group(function () {
                                 Route::post('/create', [PageBlockSidebarController::class, 'create'])->name('create');
-                                Route::delete('/delete', [PageBlockSidebarController::class, 'destroy'])->name('destroy');
-                                Route::prefix('reorder')->name('reorder.')->group(function () {
-                                    Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
+                            });
+
+                            Route::prefix('rel')->name('rel.')->group(function () {
+                                Route::prefix('{pageBlockSidebar}')->group(function () {
+                                    Route::delete('/delete', [PageBlockSidebarController::class, 'destroy'])->name('delete');
+                                    Route::prefix('reorder')->name('reorder.')->group(function () {
+                                        Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
+                                    });
                                 });
                             });
                         });

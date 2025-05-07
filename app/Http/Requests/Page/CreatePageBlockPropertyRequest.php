@@ -63,6 +63,18 @@ class CreatePageBlockPropertyRequest extends FormRequest
                 'boolean',
                 'nullable',
             ],
+            'background_color' => [
+                'sometimes',
+                'string',
+                'max:255',
+                'nullable',
+            ],
+            'background_image' => [
+                'sometimes',
+                'string',
+                'max:255',
+                'nullable',
+            ],
             'pagination_type' => [
                 'required_if_accepted:pagination',
                 'nullable',
