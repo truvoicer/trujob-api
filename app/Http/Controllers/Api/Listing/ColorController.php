@@ -3,29 +3,41 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Listing\StoreColorRequest;
-use App\Http\Requests\Listing\UpdateColorRequest;
-use App\Http\Resources\Listing\ColorCollection;
+use App\Http\Resources\Listing\ListingColorResource;
 use App\Models\Color;
+use App\Repositories\ListingColorRepository;
 use App\Services\Listing\ListingColorService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ColorController extends Controller
 {
-    protected ListingColorService $listingColorService;
 
-    public function __construct(ListingColorService $colorService, Request $request)
+    public function __construct(
+        private ListingColorService $listingColorService,
+        private ListingColorRepository $listingColorRepository,
+    )
     {
-        $this->listingColorService = $colorService;
     }
 
-    public function fetchColors(Request $request) {
-        $this->listingColorService->setPagination(true);
-        return $this->sendSuccessResponse(
-            'Colors fetch',
-            ( new ColorCollection($this->listingColorService->colorFetch())),
-            $this->listingColorService->getErrors());
+    public function index(Request $request) {
+        $this->listingColorRepository->setPagination(true);
+        $this->listingColorRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->listingColorRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->listingColorRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->listingColorRepository->setPage(
+            $request->get('page', 1)
+        );
+        
+        return ListingColorResource::collection(
+            $this->listingColorRepository->findMany()
+        );
     }
 
     public function createColor(Request $request) {

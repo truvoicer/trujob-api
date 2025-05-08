@@ -6,21 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\StoreListingFeatureRequest;
 use App\Http\Requests\Listing\StoreListingRequest;
 use App\Http\Requests\Listing\UpdateListingFeatureRequest;
+use App\Http\Resources\Listing\ListingFeatureResource;
 use App\Models\Listing;
 use App\Models\ListingFeature;
+use App\Repositories\ListingFeatureRepository;
 use App\Services\Listing\ListingFeatureService;
-use App\Services\Listing\ListingsAdminService;
-use App\Services\Listing\ListingsFetchService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ListingFeatureController extends Controller
 {
-    protected ListingFeatureService $listingFeatureService;
 
-    public function __construct(ListingFeatureService $listingFeatureService, Request $request)
+    public function __construct(
+        private ListingFeatureService $listingFeatureService,
+        private ListingFeatureRepository $listingFeatureRepository,
+    )
     {
-        $this->listingFeatureService = $listingFeatureService;
     }
 
 
@@ -29,9 +30,24 @@ class ListingFeatureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function fetchListingsFeature(ListingsFetchService $listingsFetchService)
-    {
-        //
+    public function index(Request $request) {
+        $this->listingFeatureRepository->setPagination(true);
+        $this->listingFeatureRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->listingFeatureRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->listingFeatureRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->listingFeatureRepository->setPage(
+            $request->get('page', 1)
+        );
+        
+        return ListingFeatureResource::collection(
+            $this->listingFeatureRepository->findMany()
+        );
     }
 
     public function createListingFeature(Listing $listing, StoreListingRequest $request) {

@@ -3,30 +3,41 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Listing\StoreBrandRequest;
-use App\Http\Requests\Listing\UpdateBrandRequest;
-use App\Http\Resources\Listing\BrandCollection;
-use App\Http\Resources\Listing\CategoryCollection;
+use App\Http\Resources\Listing\ListingBrandResource;
 use App\Models\Brand;
+use App\Repositories\ListingBrandRepository;
 use App\Services\Listing\ListingBrandService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class BrandController extends Controller
 {
-    protected ListingBrandService $listingBrandService;
 
-    public function __construct(ListingBrandService $brandService, Request $request)
+    public function __construct(
+        private ListingBrandService $listingBrandService,
+        private ListingBrandRepository $listingBrandRepository,
+    )
     {
-        $this->listingBrandService = $brandService;
     }
 
-    public function fetchBrands(Request $request) {
-        $this->listingBrandService->setPagination(true);
-        return $this->sendSuccessResponse(
-            'Brand fetch',
-            ( new BrandCollection($this->listingBrandService->brandFetch())),
-            $this->listingBrandService->getErrors());
+    public function index(Request $request) {
+        $this->listingBrandRepository->setPagination(true);
+        $this->listingBrandRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->listingBrandRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->listingBrandRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->listingBrandRepository->setPage(
+            $request->get('page', 1)
+        );
+        
+        return ListingBrandResource::collection(
+            $this->listingBrandRepository->findMany()
+        );
     }
 
     public function createBrand(Request $request) {

@@ -2,7 +2,6 @@
 
 namespace App\Repositories;
 
-use App\Models\Role;
 use App\Models\User;
 
 class UserRepository extends BaseRepository

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Listing\CategoryCollection;
+use App\Http\Resources\Listing\ListingCategoryResource;
 use App\Models\Category;
 use App\Services\Listing\ListingCategoryService;
 use Illuminate\Http\Request;
@@ -11,19 +11,33 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
-    protected ListingCategoryService $listingCategoryService;
 
-    public function __construct(ListingCategoryService $listingCategoryService, Request $request)
+    public function __construct(
+        private ListingCategoryService $listingCategoryService,
+        private ListingCategoryRepository $listingCategoryRepository,
+    )
     {
-        $this->listingCategoryService = $listingCategoryService;
     }
 
-    public function fetchCategories(Request $request) {
-        $this->listingCategoryService->setPagination(true);
-        return $this->sendSuccessResponse(
-            'Category created',
-            ( new CategoryCollection($this->listingCategoryService->categoryFetch())),
-            $this->listingCategoryService->getErrors());
+    public function index(Request $request) {
+
+        $this->listingCategoryRepository->setPagination(true);
+        $this->listingCategoryRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->listingCategoryRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->listingCategoryRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->listingCategoryRepository->setPage(
+            $request->get('page', 1)
+        );
+        
+        return ListingCategoryResource::collection(
+            $this->listingCategoryRepository->findMany()
+        );
     }
 
     public function createCategory(Request $request) {

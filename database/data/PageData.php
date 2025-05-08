@@ -242,6 +242,13 @@ return [
                 'nav_title' => 'Widgets',
                 'subtitle' => 'Manage your widgets here',
             ],
+            [
+                'type' => BlockType::MANAGE_USERS,
+                'order' => 0,
+                'title' => 'Manage Users',
+                'nav_title' => 'Users',
+                'subtitle' => 'Manage your users here',
+            ],
         ],
         'roles' => [
             ApiAbility::SUPERUSER->value,

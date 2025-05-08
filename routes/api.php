@@ -1,12 +1,15 @@
 <?php
 
 use App\Http\Controllers\Api\AdminController;
-use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\ApiTokenController;
+use App\Http\Controllers\Api\Auth\Session\SessionApiTokenController;
 use App\Http\Controllers\Api\Auth\AuthLoginController;
 use App\Http\Controllers\Api\Auth\AuthRegisterController;
 use App\Http\Controllers\Api\Auth\AuthUserController;
+use App\Http\Controllers\Api\Auth\Session\SessionUserController;
 use App\Http\Controllers\Api\Block\BlockController;
 use App\Http\Controllers\Api\Block\BlockSidebarController;
+use App\Http\Controllers\Api\User\BulkUserDeleteController;
 use App\Http\Controllers\Api\Firebase\FirebaseDeviceController;
 use App\Http\Controllers\Api\Firebase\FirebaseMessageController;
 use App\Http\Controllers\Api\Firebase\FirebaseTopicController;
@@ -40,6 +43,8 @@ use App\Http\Controllers\Api\Page\PageController;
 use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
+use App\Http\Controllers\Api\Listing\ListingFeatureController;
+use App\Http\Controllers\Api\Listing\ListingTypeController;
 use App\Http\Controllers\Api\Menu\MenuBulkDeleteController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuReorderController;
@@ -67,8 +72,8 @@ use App\Http\Controllers\Api\Sidebar\SidebarWidgetRoleController;
 use App\Http\Controllers\Api\Site\SiteTokenController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\User\RoleController;
+use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\User\UserSellerController;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
 use App\Http\Controllers\Api\Widget\WidgetController;
 use App\Http\Controllers\Api\Widget\WidgetRoleController;
@@ -96,11 +101,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
 
     Route::prefix('listing')->name('listing.')->group(function () {
-        Route::get('/', [ListingPublicController::class, 'index'])->name('fetch');
-        Route::get('/category/fetch', [CategoryController::class, 'fetchCategories'])->name('category.fetch');
-        Route::get('/brand/fetch', [BrandController::class, 'fetchBrands'])->name('brand.fetch');
-        Route::get('/color/fetch', [ColorController::class, 'fetchColors'])->name('color.fetch');
-        Route::get('/product-type/fetch', [ProductTypeController::class, 'fetchProductType'])->name('product_type.fetch');
+        Route::get('/', [ListingPublicController::class, 'index'])->name('index');
         Route::prefix('{listing}')->name('item.')->group(function () {
             Route::get('/fetch', [ListingController::class, 'view'])->name('fetch');
         });
@@ -118,6 +119,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 });
 
+Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site,api:user,api:app_user'])->group(function () {
+    Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
+    Route::get('/brand', [BrandController::class, 'index'])->name('brand.index');
+    Route::get('/color', [ColorController::class, 'index'])->name('color.index');
+    Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product_type.index');
+    Route::get('/listing-type', [ListingTypeController::class, 'index'])->name('listing-type.index');
+    Route::get('/feature', [ListingFeatureController::class, 'index'])->name('feature.index');
+});
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
     Route::prefix('firebase')->name('firebase.')->group(function () {
         Route::prefix('device')->name('device.')->group(function () {
@@ -218,13 +227,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
     Route::prefix('session')->name('session.')->group(function () {
         Route::prefix('user')->name('user.')->group(function () {
-            Route::get('/detail', [UserController::class, 'getSessionUserDetail'])->name('detail');
-            Route::patch('/update', [UserController::class, 'updateSessionUser'])->name('update');
-            Route::get('/api-token', [UserController::class, 'getSessionUserApiToken'])->name('api-token.detail');
+            Route::get('/view', [SessionUserController::class, 'view'])->name('view');
+            Route::patch('/update', [SessionUserController::class, 'update'])->name('update');
             Route::prefix('api-token')->name('api-token.')->group(function () {
-                Route::get('/list', [UserController::class, 'getSessionUserApiTokenList'])->name('list');
-                Route::get('/generate', [UserController::class, 'generateSessionUserApiToken'])->name('generate');
-                Route::delete('/delete', [UserController::class, 'deleteSessionUserApiToken'])->name('delete');
+                Route::get('/', [SessionApiTokenController::class, 'index'])->name('index');
+                Route::get('/view', [SessionApiTokenController::class, 'view'])->name('view');
+                Route::get('/create', [SessionApiTokenController::class, 'create'])->name('create');
+                Route::delete('/delete', [SessionApiTokenController::class, 'destroy'])->name('delete');
             });
         });
     });
@@ -267,21 +276,23 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 
     Route::prefix('/user')->name('user.')->group(function () {
-        Route::get('/list', [AdminController::class, 'getUsersList'])->name('list');
-        Route::prefix('batch')->name('batch.')->group(function () {
-            Route::delete('/delete', [AdminController::class, 'deleteBatchUser'])->name('delete');
+        Route::get('/', [UserController::class, 'index'])->name('index');
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
         });
-        Route::prefix('{user}')->name('single.')->group(function () {
-            Route::get('/', [AdminController::class, 'getSingleUser'])->name('detail');
-            Route::patch('/update', [AdminController::class, 'updateUser'])->name('update');
-            Route::delete('/delete', [AdminController::class, 'deleteUser'])->name('delete');
+        Route::patch('/create', [UserController::class, 'create'])->name('create');
+        Route::prefix('{user}')->group(function () {
+            Route::get('/', [UserController::class, 'view'])->name('detail');
+            Route::patch('/update', [UserController::class, 'update'])->name('update');
+            Route::delete('/delete', [UserController::class, 'destroy'])->name('delete');
             Route::prefix('api-token')->name('api-token.')->group(function () {
-                Route::get('/list', [AdminController::class, 'getUserApiTokens'])->name('list');
-                Route::post('/generate', [AdminController::class, 'generateNewApiToken'])->name('generate');
-                Route::delete('/delete', [AdminController::class, 'deleteSessionUserApiToken'])->name('session.delete');
-                Route::get('/{personalAccessToken}', [AdminController::class, 'getApiToken'])->name('detail');
-                Route::patch('/{personalAccessToken}/update', [AdminController::class, 'updateApiTokenExpiry'])->name('update');
-                Route::delete('/{personalAccessToken}/delete', [AdminController::class, 'deleteApiToken'])->name('delete');
+                Route::get('/', [ApiTokenController::class, 'index'])->name('index');
+                Route::post('/create', [ApiTokenController::class, 'create'])->name('create');
+                Route::prefix('{personalAccessToken}')->group(function () {
+                    Route::get('/', [ApiTokenController::class, 'view'])->name('view');
+                    Route::patch('/update', [ApiTokenController::class, 'update'])->name('update');
+                    Route::delete('/delete', [ApiTokenController::class, 'destroy'])->name('delete');
+                });
             });
             Route::prefix('seller')->name('seller.')->group(function () {
                 Route::post('/add', [UserSellerController::class, 'addUserSeller'])->name('create');
@@ -291,7 +302,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::patch('/{role}/update', [RoleController::class, 'update'])->name('update');
             });
         });
-        Route::post('/create', [AdminController::class, 'createUser'])->name('create');
     });
 
     Route::prefix('role')->name('role.')->group(function () {

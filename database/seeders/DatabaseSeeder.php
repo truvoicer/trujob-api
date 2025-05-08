@@ -46,6 +46,7 @@ use Database\Seeders\firebase\FirebaseTopicSeeder;
 use Database\Seeders\listing\BrandSeeder;
 use Database\Seeders\listing\CategorySeeder;
 use Database\Seeders\listing\ColorSeeder;
+use Database\Seeders\listing\ListingSeeder;
 use Database\Seeders\listing\ListingTypeSeeder;
 use Database\Seeders\listing\ProductTypeSeeder;
 use Database\Seeders\locale\LocaleSeeder;
@@ -63,12 +64,9 @@ class DatabaseSeeder extends Seeder
     public function run(UserAdminService $userAdminService, SiteService $siteService): void
     {
         $this->call([
-            SiteSeeder::class,
             RoleSeeder::class,
             UserSeeder::class,
             LocaleSeeder::class,
-            WidgetSeeder::class,
-            SidebarSeeder::class,
             FirebaseTopicSeeder::class,
             ColorSeeder::class,
             BrandSeeder::class,
@@ -76,39 +74,14 @@ class DatabaseSeeder extends Seeder
             ProductTypeSeeder::class,
             ListingTypeSeeder::class,
             BlockSeeder::class,
-            PageSeeder::class,
             PermissionSeeder::class,
             SettingSeeder::class,
+            SiteSeeder::class,
+            PageSeeder::class,
             MenuSeeder::class,
+            WidgetSeeder::class,
+            SidebarSeeder::class,
         ]);
-
-
-
-        $listingFactory = Listing::factory()
-            ->count(5)
-            ->has(ListingFeature::factory()->count(1))
-            ->has(ListingFeature::factory()->count(1))
-            ->has(ListingReview::factory()->count(5))
-            ->has(ListingFollow::factory()->count(5))
-            ->has(ListingBrand::factory()->count(1))
-            ->has(ListingColor::factory()->count(1))
-            ->has(
-                Media::factory()
-                    ->count(1)
-                    ->state(function (array $attributes, Listing $listing) {
-                        $randomNumberBetween = random_int(1, 100);
-                        return [
-                            'type' => MediaType::IMAGE,
-                            'filesystem' => FileSystemType::EXTERNAL,
-                            'category' => ImageCategory::THUMBNAIL,
-                            'alt' => fake()->text(20),
-                            'url' => "https://picsum.photos/id/{$randomNumberBetween}/700/700",
-                        ];
-                    })
-            )
-            ->has(Media::factory()->count(5))
-            ->has(ListingCategory::factory()->count(5))
-            ->has(ListingProductType::factory()->count(5));
 
 
         $getSuperUserData = AuthService::getApiAbilityData(ApiAbility::SUPERUSER->value);
@@ -119,36 +92,6 @@ class DatabaseSeeder extends Seeder
         if (!$findSuperUserRole instanceof Role) {
             throw new \Exception('Error finding superuser role during seeding');
         }
-
-        User::factory()
-            ->has($listingFactory)
-            ->has(UserFollow::factory()->count(5))
-            ->has(UserProfile::factory()->count(1))
-            ->has(UserReview::factory()->count(5))
-            ->has(UserReward::factory()->count(5))
-            ->has(UserSetting::factory()->count(1))
-            ->has(UserMedia::factory()->count(1))
-            ->has(
-                MessagingGroup::factory()
-                    ->has(MessagingGroupMessage::factory()->count(5))
-                    ->count(5)
-            )->create();
-
-        User::factory()
-            ->count(10)
-            ->has($listingFactory)
-            ->has(UserFollow::factory()->count(5))
-            ->has(UserProfile::factory()->count(1))
-            ->has(UserReview::factory()->count(5))
-            ->has(UserReward::factory()->count(5))
-            ->has(UserSetting::factory()->count(1))
-            ->has(UserMedia::factory()->count(1))
-            ->has(
-                MessagingGroup::factory()
-                    ->has(MessagingGroupMessage::factory()->count(5))
-                    ->count(5)
-            )
-            ->create();
 
 
         $testUserData = DefaultData::TEST_USER_DATA;

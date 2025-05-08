@@ -16,6 +16,7 @@ enum BlockType: string
     case MANAGE_SIDEBARS = 'manage-sidebars-block';
     case MANAGE_WIDGETS = 'manage-widgets-block';
     case MANAGE_MENUS = 'manage-menus-block';
+    case MANAGE_USERS = 'manage-users-block';
 
     public function isAdminBlock(): bool
     {
@@ -24,6 +25,7 @@ enum BlockType: string
             BlockType::MANAGE_LISTINGS,
             BlockType::MANAGE_SIDEBARS,
             BlockType::MANAGE_WIDGETS,
+            BlockType::MANAGE_USERS,
             BlockType::MANAGE_MENUS => true,
             default => false,
         };

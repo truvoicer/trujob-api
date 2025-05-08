@@ -6,27 +6,42 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\StoreProductTypeRequest;
 use App\Http\Requests\Listing\UpdateProductTypeRequest;
 use App\Http\Resources\Listing\ColorCollection;
+use App\Http\Resources\Listing\ListingProductTypeResource;
 use App\Http\Resources\Listing\ProductTypeCollection;
 use App\Models\ProductType;
+use App\Repositories\ListingProductTypeRepository;
 use App\Services\Listing\ListingProductTypeService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductTypeController extends Controller
 {
-    protected ListingProductTypeService $listingProductTypeService;
 
-    public function __construct(ListingProductTypeService $productTypeService, Request $request)
+    public function __construct(
+        private ListingProductTypeService $productTypeService,
+        private ListingProductTypeRepository $listingProductTypeRepository,
+    )
     {
-        $this->listingProductTypeService = $productTypeService;
     }
 
-    public function fetchProductType(Request $request) {
-        $this->listingProductTypeService->setPagination(true);
-        return $this->sendSuccessResponse(
-            'Product type fetch',
-            ( new ProductTypeCollection($this->listingProductTypeService->productTypeFetch())),
-            $this->listingProductTypeService->getErrors());
+    public function index(Request $request) {
+        $this->listingProductTypeRepository->setPagination(true);
+        $this->listingProductTypeRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->listingProductTypeRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->listingProductTypeRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->listingProductTypeRepository->setPage(
+            $request->get('page', 1)
+        );
+        
+        return ListingProductTypeResource::collection(
+            $this->listingProductTypeRepository->findMany()
+        );
     }
 
     public function createProductType(Request $request) {
