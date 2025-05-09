@@ -28,7 +28,7 @@ class ListingFeatureService
 
     public function createListingFeature(array $data) {
         $this->listingFeature = new ListingFeature($data);
-        $createListing = $this->listing->listingFeature()->save($this->listingFeature);
+        $createListing = $this->listing->features()->attach($this->listingFeature->id);
         if (!$createListing) {
             $this->addError('Error creating listing feature for user', $data);
             return false;

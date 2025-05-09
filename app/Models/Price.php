@@ -21,9 +21,9 @@ class Price extends Model
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
-    public function listing()
-    {
-        return $this->belongsTo(Listing::class);
+
+    public function listings() {
+        return $this->belongsToMany(Listing::class, 'listing_prices');
     }
 
     public function country()

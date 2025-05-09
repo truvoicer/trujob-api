@@ -17,4 +17,8 @@ class Brand extends Model
     protected static function newFactory() {
         return BrandFactory::new();
     }
+
+    public function listings() {
+        return $this->belongsToMany(Listing::class, 'listing_brands');
+    }
 }

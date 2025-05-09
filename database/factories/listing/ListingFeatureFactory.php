@@ -2,6 +2,7 @@
 
 namespace Database\Factories\listing;
 
+use App\Models\Feature;
 use App\Models\ListingFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,15 +19,11 @@ class ListingFeatureFactory extends Factory
      */
     public function definition()
     {
-        $data = [
-            ['value' => 'Used', 'label' => 'Condition'],
-            ['value' => 'New', 'label' => 'Condition'],
-            ['value' => 'Like New', 'label' => 'Condition'],
-        ];
-        $dataKey = fake()->randomKey($data);
+        $ids = array_map(function ($item) {
+            return $item['id'];
+        }, Feature::all()->toArray());
         return [
-            'label' => $data[$dataKey]['label'],
-            'value' => $data[$dataKey]['value'],
+            'feature_id' => fake()->randomElement($ids),
         ];
     }
 }

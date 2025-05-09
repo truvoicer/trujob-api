@@ -86,7 +86,7 @@ class ListingsAdminService
     public function saveListingRelations(array $data) {
         try {
             if (isset($data['features']) && is_array($data['features'])) {
-                $saveFeatures = $this->listing->listingFeature()->saveMany(
+                $saveFeatures = $this->listing->features()->attach(
                     array_map(function ($feature) {
                         return new ListingFeature($feature);
                     }, $data['features'])

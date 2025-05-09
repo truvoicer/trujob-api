@@ -17,6 +17,6 @@ class Media extends Model
 
     public function listings()
     {
-        return $this->belongsToMany(Listing::class);
+        return $this->belongsToMany(Listing::class, 'listing_media');
     }
 }

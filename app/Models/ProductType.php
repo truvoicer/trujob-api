@@ -16,4 +16,9 @@ class ProductType extends Model
     protected static function newFactory() {
         return ProductTypeFactory::new();
     }
+
+
+    public function listings() {
+        return $this->belongsToMany(Listing::class, 'listing_product_types');
+    }
 }

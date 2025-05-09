@@ -168,6 +168,11 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::patch('/update', [ListingController::class, 'update'])->name('update');
             Route::delete('/delete', [ListingController::class, 'destroy'])->name('delete');
 
+            Route::prefix('follow')->name('follow.')->group(function () {
+                Route::post('/', [ListingCategoryController::class, 'index'])->name('index');
+                Route::post('/{follow}/add', [ListingCategoryController::class, 'addCategoryToListing'])->name('add');
+                Route::delete('/{follow}/remove', [ListingCategoryController::class, 'removeCategoryFromListing'])->name('remove');
+            });
             Route::prefix('category')->name('category.')->group(function () {
                 Route::post('/{category}/add', [ListingCategoryController::class, 'addCategoryToListing'])->name('add');
                 Route::delete('/{category}/remove', [ListingCategoryController::class, 'removeCategoryFromListing'])->name('remove');

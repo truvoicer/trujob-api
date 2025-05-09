@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Listing;
+use App\Models\Country;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,10 +14,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('listing_features', function (Blueprint $table) {
+        Schema::create('features', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('listing_id')->constrained('listings')->onDelete('cascade');
-            $table->foreignId('feature_id')->constrained('features')->onDelete('cascade');
+            $table->text('name');
+            $table->text('label');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('listing_features');
+        Schema::dropIfExists('features');
     }
 };

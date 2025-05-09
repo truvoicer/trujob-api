@@ -7,8 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ListingType extends Model
 {
     
-    public function listings()
-    {
-        return $this->hasOne(Listing::class);
+    public function listings() {
+        return $this->belongsToMany(Listing::class, 'listing_listing_types');
     }
 }

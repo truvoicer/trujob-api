@@ -10,10 +10,6 @@ class ListingFeature extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-      'label',
-      'value'
-    ];
     protected static function newFactory()
     {
         return ListingFeatureFactory::new();

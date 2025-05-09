@@ -2,24 +2,24 @@
 
 namespace App\Models;
 
-use Database\Factories\listing\CategoryFactory;
+use Database\Factories\listing\FeatureFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Feature extends Model
 {
-    use HasFactory;
 
+    use HasFactory;
     protected $fillable = [
         'name',
         'label'
     ];
+
     protected static function newFactory() {
-        return CategoryFactory::new();
+        return FeatureFactory::new();
     }
 
-    
     public function listings() {
-        return $this->belongsToMany(Listing::class, 'listing_categories');
+        return $this->belongsToMany(Listing::class, 'listing_features');
     }
 }

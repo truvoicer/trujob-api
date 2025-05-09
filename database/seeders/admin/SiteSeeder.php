@@ -5,6 +5,10 @@ namespace Database\Seeders\admin;
 use App\Enums\Media\FileSystemType;
 use App\Enums\Media\MediaType;
 use App\Enums\Media\Types\Image\ImageCategory;
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Color;
+use App\Models\Feature;
 use App\Models\Media;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
@@ -25,6 +29,7 @@ use App\Models\ListingFeature;
 use App\Models\ListingFollow;
 use App\Models\ListingProductType;
 use App\Models\ListingReview;
+use App\Models\ProductType;
 
 class SiteSeeder extends Seeder
 {
@@ -63,12 +68,11 @@ class SiteSeeder extends Seeder
                         ->has(
                             Listing::factory()
                                 ->count(5)
-                                ->has(ListingFeature::factory()->count(1))
-                                ->has(ListingFeature::factory()->count(1))
-                                ->has(ListingReview::factory()->count(5))
+                                ->has(ListingReview::factory()->count(1))
+                                ->has(Feature::factory()->count(1))
                                 ->has(ListingFollow::factory()->count(5))
-                                ->has(ListingBrand::factory()->count(1))
-                                ->has(ListingColor::factory()->count(1))
+                                ->has(Brand::factory()->count(1))
+                                ->has(Color::factory()->count(1))
                                 ->has(
                                     Media::factory()
                                         ->count(1)
@@ -84,8 +88,8 @@ class SiteSeeder extends Seeder
                                         })
                                 )
                                 ->has(Media::factory()->count(5))
-                                ->has(ListingCategory::factory()->count(5))
-                                ->has(ListingProductType::factory()->count(5))
+                                ->has(Category::factory()->count(5))
+                                ->has(ProductType::factory()->count(5))
                         )
                         ->has(UserFollow::factory()->count(5))
                         ->has(UserProfile::factory()->count(1))

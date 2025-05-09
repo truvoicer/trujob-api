@@ -16,4 +16,8 @@ class Color extends Model
     protected static function newFactory() {
         return ColorFactory::new();
     }
+
+    public function listings() {
+        return $this->belongsToMany(Listing::class, 'listing_colors');
+    }
 }

@@ -43,9 +43,9 @@ class Listing extends Model
             get: fn($value) => (bool)$value,
         );
     }
-    public function listingFeature()
+    public function features()
     {
-        return $this->hasMany(ListingFeature::class);
+        return $this->belongsToMany(Feature::class, 'listing_features');
     }
 
     public function listingReview()
@@ -57,35 +57,36 @@ class Listing extends Model
     {
         return $this->hasMany(ListingFollow::class);
     }
-    public function listingTransaction()
+    public function transactions()
     {
-        return $this->hasMany(ListingPrice::class);
+        return $this->belongsToMany(Transaction::class, 'listing_transactions');
     }
 
-    public function listingMessagingGroup()
+    public function messagingGroup()
     {
         return $this->hasMany(MessagingGroup::class);
     }
 
-    public function listingCategory()
+    public function categories()
     {
-        return $this->hasMany(ListingCategory::class);
+        return $this->belongsToMany(Category::class, 'listing_categories');
     }
-    public function listingBrand()
+    public function brands()
     {
-        return $this->hasMany(ListingBrand::class);
+        return $this->belongsToMany(Brand::class, 'listing_brands');
     }
-    public function listingColor()
+    public function colors()
     {
-        return $this->hasMany(ListingColor::class);
+        return $this->belongsToMany(Color::class, 'listing_colors');
     }
-    public function listingProductType()
+    public function productType()
     {
-        return $this->hasMany(ListingProductType::class);
+        return $this->belongsToMany(ProductType::class, 'listing_product_types');
     }
-    public function listingType()
+
+    public function types()
     {
-        return $this->belongsTo(ListingType::class);
+        return $this->belongsToMany(ListingType::class, 'listing_listing_types');
     }
     public function user()
     {

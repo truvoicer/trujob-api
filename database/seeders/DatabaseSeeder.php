@@ -46,6 +46,7 @@ use Database\Seeders\firebase\FirebaseTopicSeeder;
 use Database\Seeders\listing\BrandSeeder;
 use Database\Seeders\listing\CategorySeeder;
 use Database\Seeders\listing\ColorSeeder;
+use Database\Seeders\listing\FeatureSeeder;
 use Database\Seeders\listing\ListingSeeder;
 use Database\Seeders\listing\ListingTypeSeeder;
 use Database\Seeders\listing\ProductTypeSeeder;
@@ -71,6 +72,7 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,
             BrandSeeder::class,
             CategorySeeder::class,
+            FeatureSeeder::class,
             ProductTypeSeeder::class,
             ListingTypeSeeder::class,
             BlockSeeder::class,
