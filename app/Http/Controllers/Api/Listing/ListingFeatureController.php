@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Listing\StoreListingFeatureRequest;
-use App\Http\Requests\Listing\StoreListingRequest;
-use App\Http\Requests\Listing\UpdateListingFeatureRequest;
-use App\Http\Resources\Listing\ListingFeatureResource;
+use App\Http\Resources\Listing\FeatureResource;
 use App\Models\Feature;
 use App\Models\Listing;
-use App\Models\ListingFeature;
 use App\Repositories\ListingFeatureRepository;
 use App\Services\Listing\ListingFeatureService;
 use Illuminate\Http\Request;
@@ -49,7 +45,7 @@ class ListingFeatureController extends Controller
             $request->get('page', 1)
         );
         
-        return ListingFeatureResource::collection(
+        return FeatureResource::collection(
             $this->listingFeatureRepository->findMany()
         );
     }
@@ -59,7 +55,7 @@ class ListingFeatureController extends Controller
         $this->listingFeatureService->setSite($request->user()->site);
 
         if (
-            !$this->listingFeatureService->attachListingFeature(
+            !$this->listingFeatureService->attachFeatureToListing(
                 $listing,
                 $feature,
             )
@@ -78,7 +74,7 @@ class ListingFeatureController extends Controller
         $this->listingFeatureService->setSite($request->user()->site);
 
         if (
-            !$this->listingFeatureService->detachListingFeature(
+            !$this->listingFeatureService->detachFeatureFromListing(
                 $listing,
                 $feature,
             )
@@ -90,4 +86,5 @@ class ListingFeatureController extends Controller
         return response()->json([
             'message' => 'Listing feature removed',
         ], Response::HTTP_CREATED);
+    }
 }
