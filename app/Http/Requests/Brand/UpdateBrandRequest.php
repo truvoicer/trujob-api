@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Listing\ListingType;
+namespace App\Http\Requests\Brand;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateListingTypeRequest extends FormRequest
+class UpdateBrandRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

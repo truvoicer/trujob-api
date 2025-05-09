@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Brand\StoreBrandRequest;
+use App\Http\Requests\Brand\UpdateBrandRequest;
 use App\Http\Resources\Listing\BrandResource;
 use App\Models\Brand;
 use App\Repositories\BrandRepository;
@@ -40,7 +42,7 @@ class BrandController extends Controller
         );
     }
 
-    public function create(Request $request) {
+    public function create(StoreBrandRequest $request) {
         $this->brandService->setUser($request->user()->user);
         $this->brandService->setSite($request->user()->site);
 
@@ -54,7 +56,7 @@ class BrandController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function update(Brand $brand, Request $request) {
+    public function update(Brand $brand, UpdateBrandRequest $request) {
         $this->brandService->setUser($request->user()->user);
         $this->brandService->setSite($request->user()->site);
 

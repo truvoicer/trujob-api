@@ -7,6 +7,7 @@ use App\Http\Requests\Listing\StoreListingFeatureRequest;
 use App\Http\Requests\Listing\StoreListingRequest;
 use App\Http\Requests\Listing\UpdateListingFeatureRequest;
 use App\Http\Resources\Listing\ListingFeatureResource;
+use App\Models\Feature;
 use App\Models\Listing;
 use App\Models\ListingFeature;
 use App\Repositories\ListingFeatureRepository;
@@ -30,7 +31,10 @@ class ListingFeatureController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {
+    public function index(Listing $listing, Request $request) {
+        $this->listingFeatureRepository->setQuery(
+            $listing->features()
+        );
         $this->listingFeatureRepository->setPagination(true);
         $this->listingFeatureRepository->setSortField(
             $request->get('sort', 'label')
@@ -50,46 +54,40 @@ class ListingFeatureController extends Controller
         );
     }
 
-    public function createListingFeature(Listing $listing, StoreListingRequest $request) {
-        $this->listingFeatureService->setUser($request->user());
-        $this->listingFeatureService->setListing($listing);
-        $createListing = $this->listingFeatureService->createListingFeature($request->all());
-        if (!$createListing) {
-            return $this->sendErrorResponse(
-                'Error creating listing feature',
-                [],
-                $this->listingFeatureService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('Listing created', [], $this->listingFeatureService->getErrors());
-    }
+    public function create(Listing $listing, Feature $feature, Request $request) {
+        $this->listingFeatureService->setUser($request->user()->user);
+        $this->listingFeatureService->setSite($request->user()->site);
 
-    public function updateListingFeature(ListingFeature $listingFeature, Request $request) {
-        $this->listingFeatureService->setUser($request->user());
-        $this->listingFeatureService->setListingFeature($listingFeature);
-        $createListing = $this->listingFeatureService->updateListingFeature($request->all());
-        if (!$createListing) {
-            return $this->sendErrorResponse(
-                'Error updating listing feature',
-                [],
-                $this->listingFeatureService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+        if (
+            !$this->listingFeatureService->attachListingFeature(
+                $listing,
+                $feature,
+            )
+        ) {
+            return response()->json([
+                'message' => 'Error creating listing feature',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Listing feature updated', [], $this->listingFeatureService->getErrors());
+        return response()->json([
+            'message' => 'Listing feature created',
+        ], Response::HTTP_CREATED);
     }
-    public function deleteListingFeature(ListingFeature $listingFeature) {
-        $this->listingFeatureService->setListingFeature($listingFeature);
-        $deleteListing = $this->listingFeatureService->deleteListingFeature();
-        if (!$deleteListing) {
-            return $this->sendErrorResponse(
-                'Error deleting listing feature',
-                [],
-                $this->listingFeatureService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    
+    public function destroy(Listing $listing, Feature $feature, Request $request) {
+        $this->listingFeatureService->setUser($request->user()->user);
+        $this->listingFeatureService->setSite($request->user()->site);
+
+        if (
+            !$this->listingFeatureService->detachListingFeature(
+                $listing,
+                $feature,
+            )
+        ) {
+            return response()->json([
+                'message' => 'Error removing listing feature',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Listing feature deleted', [], $this->listingFeatureService->getErrors());
-    }
+        return response()->json([
+            'message' => 'Listing feature removed',
+        ], Response::HTTP_CREATED);
 }

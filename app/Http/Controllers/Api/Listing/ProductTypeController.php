@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Listing\StoreProductTypeRequest;
-use App\Http\Requests\Listing\UpdateProductTypeRequest;
+use App\Http\Requests\ProductType\StoreProductTypeRequest;
+use App\Http\Requests\ProductType\UpdateProductTypeRequest;
 use App\Http\Resources\Listing\ProductTypeResource;
 use App\Models\ProductType;
 use App\Repositories\ProductTypeRepository;
@@ -42,11 +42,11 @@ class ProductTypeController extends Controller
         );
     }
 
-    public function create(Request $request) {
+    public function create(StoreProductTypeRequest $request) {
         $this->productTypeService->setUser($request->user()->user);
         $this->productTypeService->setSite($request->user()->site);
         
-        if (!$this->productTypeService->createProductType($request->all())) {
+        if (!$this->productTypeService->createProductType($request->validated())) {
             return response()->json([
                 'message' => 'Error creating product type',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -56,11 +56,11 @@ class ProductTypeController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function update(ProductType $productType, Request $request) {
+    public function update(ProductType $productType, UpdateProductTypeRequest $request) {
         $this->productTypeService->setUser($request->user()->user);
         $this->productTypeService->setSite($request->user()->site);
 
-        if (!$this->productTypeService->updateProductType($productType, $request->all())) {
+        if (!$this->productTypeService->updateProductType($productType, $request->validated())) {
             return response()->json([
                 'message' => 'Error updating product type',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);

@@ -3,25 +3,28 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Listing\ListingBrandResource;
-use App\Models\Brand;
+use App\Http\Resources\Listing\ListingTypeResource;
 use App\Models\Listing;
+use App\Models\ListingType;
 use App\Repositories\ListingRepository;
-use App\Services\Listing\ListingBrandService;
+use App\Services\Listing\ListingTypeService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ListingBrandController extends Controller
+class ListingListingTypeController extends Controller
 {
 
     public function __construct(
-        private ListingBrandService $listingBrandService,
+        private ListingTypeService $listingTypeService,
         private ListingRepository $listingRepository,
-    ) {}
+     )
+    {
+    }
 
-    public function index(Listing $listing, Request $request) {
+    public function index(Listing $listing, Request $request)
+    {
         $this->listingRepository->setQuery(
-            $listing->brands()
+            $listing->types()
         );
         $this->listingRepository->setPagination(true);
         $this->listingRepository->setSortField(
@@ -36,49 +39,50 @@ class ListingBrandController extends Controller
         $this->listingRepository->setPage(
             $request->get('page', 1)
         );
-
-        return ListingBrandResource::collection(
+        
+        return ListingTypeResource::collection(
             $this->listingRepository->findMany()
         );
     }
 
-    public function create(Listing $listing, Brand $brand, Request $request)
+    public function create(Listing $listing, ListingType $listingType, Request $request)
     {
-        $this->listingBrandService->setUser($request->user()->user);
-        $this->listingBrandService->setSite($request->user()->site);
+        $this->listingTypeService->setUser($request->user()->user);
+        $this->listingTypeService->setSite($request->user()->site);
 
         if (
-            !$this->listingBrandService->attachBrandToListing(
+            !$this->listingTypeService->attachListingTypeToListing(
                 $listing,
-                $brand,
+                $listingType,
             )
         ) {
             return response()->json([
-                'message' => 'Error adding listing brand',
+                'message' => 'Error attaching listing type to listing',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Added listing brand',
+            'message' => 'Listing type attached to listing',
         ], Response::HTTP_CREATED);
     }
 
-    public function destroy(Listing $listing, Brand $brand, Request $request)
+    public function destroy(Listing $listing, ListingType $listingType, Request $request)
     {
-        $this->listingBrandService->setUser($request->user()->user);
-        $this->listingBrandService->setSite($request->user()->site);
+        $this->listingTypeService->setUser($request->user()->user);
+        $this->listingTypeService->setSite($request->user()->site);
 
         if (
-            !$this->listingBrandService->detachBrandFromListing(
+            !$this->listingTypeService->detachListingTypeFromListing(
                 $listing,
-                $brand,
+                $listingType,
             )
         ) {
             return response()->json([
-                'message' => 'Error removing listing brand',
+                'message' => 'Error detaching listing type from listing',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Removed listing brand',
+            'message' => 'Listing type detached from listing',
         ], Response::HTTP_OK);
     }
+
 }

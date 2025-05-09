@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\Listing\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
@@ -41,11 +43,11 @@ class CategoryController extends Controller
         );
     }
 
-    public function create(Request $request) {
+    public function create(StoreCategoryRequest $request) {
         $this->categoryService->setUser($request->user()->user);
         $this->categoryService->setSite($request->user()->site);
 
-        $create = $this->categoryService->createCategory($request->all());
+        $create = $this->categoryService->createCategory($request->validated());
         if (!$create) {
             return response()->json([
                 'message' => 'Error creating category',
@@ -56,11 +58,11 @@ class CategoryController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function update(Category $category, Request $request) {
+    public function update(Category $category, UpdateCategoryRequest $request) {
         $this->categoryService->setUser($request->user()->user);
         $this->categoryService->setSite($request->user()->site);
         
-        $update = $this->categoryService->updateCategory($category, $request->all());
+        $update = $this->categoryService->updateCategory($category, $request->validated());
         if (!$update) {
             return response()->json([
                 'message' => 'Error updating category',
@@ -70,6 +72,7 @@ class CategoryController extends Controller
             'message' => 'Category updated',
         ], Response::HTTP_OK);
     }
+
     public function destroy(Category $category, Request $request) {
         $this->categoryService->setUser($request->user()->user);
         $this->categoryService->setSite($request->user()->site);

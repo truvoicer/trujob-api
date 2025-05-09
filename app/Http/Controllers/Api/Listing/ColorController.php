@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Listing\ListingColorResource;
+use App\Http\Requests\Color\StoreColorRequest;
+use App\Http\Requests\Color\UpdateColorRequest;
+use App\Http\Resources\Listing\ColorResource;
 use App\Models\Color;
-use App\Repositories\ListingColorRepository;
-use App\Services\Listing\ListingColorService;
+use App\Repositories\ColorRepository;
+use App\Services\Color\ColorService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,71 +16,71 @@ class ColorController extends Controller
 {
 
     public function __construct(
-        private ListingColorService $listingColorService,
-        private ListingColorRepository $listingColorRepository,
+        private ColorService $colorService,
+        private ColorRepository $colorRepository,
     )
     {
     }
 
     public function index(Request $request) {
-        $this->listingColorRepository->setPagination(true);
-        $this->listingColorRepository->setSortField(
+        $this->colorRepository->setPagination(true);
+        $this->colorRepository->setSortField(
             $request->get('sort', 'label')
         );
-        $this->listingColorRepository->setOrderDir(
+        $this->colorRepository->setOrderDir(
             $request->get('order', 'asc')
         );
-        $this->listingColorRepository->setPerPage(
+        $this->colorRepository->setPerPage(
             $request->get('per_page', 10)
         );
-        $this->listingColorRepository->setPage(
+        $this->colorRepository->setPage(
             $request->get('page', 1)
         );
         
-        return ListingColorResource::collection(
-            $this->listingColorRepository->findMany()
+        return ColorResource::collection(
+            $this->colorRepository->findMany()
         );
     }
 
-    public function createColor(Request $request) {
-        $this->listingColorService->setUser($request->user());
-        $create = $this->listingColorService->createColor($request->all());
-        if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating color',
-                [],
-                $this->listingColorService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function create(StoreColorRequest $request) {
+        $this->colorService->setUser($request->user()->user);
+        $this->colorService->setSite($request->user()->site);
+        
+        if (!$this->colorService->createColor($request->validated())) {
+            return response()->json([
+                'message' => 'Error creating color',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Color created', [], $this->listingColorService->getErrors());
+        return response()->json([
+            'message' => 'Color created',
+        ], Response::HTTP_CREATED);
     }
 
-    public function updateColor(Color $color, Request $request) {
-        $this->listingColorService->setUser($request->user());
-        $this->listingColorService->setColor($color);
-        $update = $this->listingColorService->updateColor($request->all());
-        if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating color',
-                [],
-                $this->listingColorService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function update(Color $color, UpdateColorRequest $request) {
+        $this->colorService->setUser($request->user()->user);
+        $this->colorService->setSite($request->user()->site);
+        
+        if (!$this->colorService->updateColor($color, $request->validated())) {
+            return response()->json([
+                'message' => 'Error updating color',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Color updated', [], $this->listingColorService->getErrors());
+        return response()->json([
+            'message' => 'Color updated',
+        ], Response::HTTP_OK);
     }
-    public function deleteColor(Color $color) {
-        $this->listingColorService->setColor($color);
-        $delete = $this->listingColorService->deleteColor();
-        if (!$delete) {
-            return $this->sendErrorResponse(
-                'Error deleting color',
-                [],
-                $this->listingColorService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+
+    public function delete(Color $color, Request $request) {
+        $this->colorService->setUser($request->user()->user);
+        $this->colorService->setSite($request->user()->site);
+
+        if (!$this->colorService->deleteColor($color)) {
+            return response()->json([
+                'message' => 'Error deleting color',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Color deleted', [], $this->listingColorService->getErrors());
+        return response()->json([
+            'message' => 'Color deleted',
+        ], Response::HTTP_OK);
     }
 }

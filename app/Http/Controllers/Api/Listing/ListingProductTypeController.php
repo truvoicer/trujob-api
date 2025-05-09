@@ -3,53 +3,83 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Listing\StoreListingProductTypeRequest;
-use App\Http\Requests\Listing\UpdateListingProductTypeRequest;
+use App\Http\Resources\Listing\ListingProductTypeResource;
 use App\Models\Listing;
-use App\Models\ListingProductType;
 use App\Models\ProductType;
+use App\Repositories\ListingRepository;
 use App\Services\Listing\ListingProductTypeService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ListingProductTypeController extends Controller
 {
-    protected ListingProductTypeService $listingProductTypeService;
-
-    public function __construct(ListingProductTypeService $listingProductTypeService, Request $request)
+    public function __construct(
+        private ListingProductTypeService $listingProductTypeService,
+        private ListingRepository $listingRepository,
+    )
     {
-        $this->listingProductTypeService = $listingProductTypeService;
     }
 
-    public function addProductTypeToListing(Listing $listing, ProductType $productType, Request $request) {
-        $this->listingProductTypeService->setUser($request->user());
-        $this->listingProductTypeService->setListing($listing);
-        $this->listingProductTypeService->setProductType($productType);
-        $addProductType = $this->listingProductTypeService->addProductTypeToListing();
-        if (!$addProductType) {
-            return $this->sendErrorResponse(
-                'Error adding listing product type',
-                [],
-                $this->listingProductTypeService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('Added listing product type', [], $this->listingProductTypeService->getErrors());
+    public function index(Listing $listing, Request $request) {
+        $this->listingRepository->setQuery(
+            $listing->productTypes()
+        );
+        $this->listingRepository->setPagination(true);
+        $this->listingRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->listingRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->listingRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->listingRepository->setPage(
+            $request->get('page', 1)
+        );
+
+        return ListingProductTypeResource::collection(
+            $this->listingRepository->findMany()
+        );
     }
 
-    public function removeProductTypeFromListing(Listing $listing, ListingProductType $listingProductType, Request $request) {
-        $this->listingProductTypeService->setUser($request->user());
-        $this->listingProductTypeService->setListing($listing);
-        $this->listingProductTypeService->setListingProductType($listingProductType);
-        $remove = $this->listingProductTypeService->removeProductTypeFromListing($request->all());
-        if (!$remove) {
-            return $this->sendErrorResponse(
-                'Error removing listing product type',
-                [],
-                $this->listingProductTypeService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function create(Listing $listing, ProductType $productType, Request $request)
+    {
+        $this->listingProductTypeService->setUser($request->user()->user);
+        $this->listingProductTypeService->setSite($request->user()->site);
+
+        if (
+            !$this->listingProductTypeService->attachProductTypeToListing(
+                $listing,
+                $productType,
+            )
+        ) {
+            return response()->json([
+                'message' => 'Error attaching product type to listing',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Removed listing product type', [], $this->listingProductTypeService->getErrors());
+        return response()->json([
+            'message' => 'Added listing product type',
+        ], Response::HTTP_CREATED);
     }
+    
+    public function destroy(Listing $listing, ProductType $productType, Request $request) {
+        $this->listingProductTypeService->setUser($request->user()->user);
+        $this->listingProductTypeService->setSite($request->user()->site);
+
+        if (
+            !$this->listingProductTypeService->detachProductTypeFromListing(
+                $listing,
+                $productType,
+            )
+        ) {
+            return response()->json([
+                'message' => 'Error removing listing product type',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        return response()->json([
+            'message' => 'Removed listing product type',
+        ], Response::HTTP_OK);
+    }
+
 }

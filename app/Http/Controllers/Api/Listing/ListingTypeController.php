@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\ListingType\CreateListingTypeRequest;
 use App\Http\Requests\Listing\ListingType\EditListingTypeRequest;
 use App\Http\Resources\Listing\ListingTypeResource;
-use App\Models\Listing;
 use App\Models\ListingType;
 use App\Repositories\ListingTypeRepository;
 use App\Services\Listing\ListingTypeService;
@@ -50,7 +49,7 @@ class ListingTypeController extends Controller
         );
     }
 
-    public function create(Listing $listing, CreateListingTypeRequest $request) {
+    public function create(CreateListingTypeRequest $request) {
         $this->listingTypeService->setUser($request->user()->user);
         $this->listingTypeService->setSite($request->user()->site);
         
@@ -64,7 +63,7 @@ class ListingTypeController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function update(Listing $listing, ListingType $listingType, EditListingTypeRequest $request) {
+    public function update(ListingType $listingType, EditListingTypeRequest $request) {
         $this->listingTypeService->setUser($request->user()->user);
         $this->listingTypeService->setSite($request->user()->site);
         
@@ -77,7 +76,7 @@ class ListingTypeController extends Controller
             'message' => 'Listing type updated',
         ], Response::HTTP_OK);
     }
-    public function destroy(Listing $listing, ListingType $listingType, Request $request) {
+    public function destroy(ListingType $listingType, Request $request) {
         $this->listingTypeService->setUser($request->user()->user);
         $this->listingTypeService->setSite($request->user()->site);
         

@@ -5,51 +5,83 @@ namespace App\Http\Controllers\Api\Listing;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\StoreListingColorRequest;
 use App\Http\Requests\Listing\UpdateListingColorRequest;
+use App\Http\Resources\Listing\ListingColorResource;
 use App\Models\Color;
 use App\Models\Listing;
 use App\Models\ListingColor;
+use App\Repositories\ListingRepository;
 use App\Services\Listing\ListingColorService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ListingColorController extends Controller
 {
-    protected ListingColorService $listingColorService;
-
-    public function __construct(ListingColorService $listingColorService, Request $request)
+    public function __construct(
+        private ListingColorService $listingColorService,
+        private ListingRepository $listingRepository,
+    )
     {
-        $this->listingColorService = $listingColorService;
     }
 
-    public function addColorToListing(Listing $listing, Color $color, Request $request) {
-        $this->listingColorService->setUser($request->user());
-        $this->listingColorService->setListing($listing);
-        $this->listingColorService->setColor($color);
-        $addColor = $this->listingColorService->addColorToListing();
-        if (!$addColor) {
-            return $this->sendErrorResponse(
-                'Error adding listing color',
-                [],
-                $this->listingColorService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('Added listing color', [], $this->listingColorService->getErrors());
+    public function index(Listing $listing, Request $request) {
+        $this->listingRepository->setQuery(
+            $listing->colors()
+        );
+        $this->listingRepository->setPagination(true);
+        $this->listingRepository->setSortField(
+            $request->get('sort', 'label')
+        );
+        $this->listingRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->listingRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->listingRepository->setPage(
+            $request->get('page', 1)
+        );
+
+        return ListingColorResource::collection(
+            $this->listingRepository->findMany()
+        );
     }
 
-    public function removeColorFromListing(Listing $listing, ListingColor $listingColor, Request $request) {
-        $this->listingColorService->setUser($request->user());
-        $this->listingColorService->setListing($listing);
-        $this->listingColorService->setListingColor($listingColor);
-        $remove = $this->listingColorService->removeColorFromListing($request->all());
-        if (!$remove) {
-            return $this->sendErrorResponse(
-                'Error removing listing color',
-                [],
-                $this->listingColorService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function create(Listing $listing, Color $color, Request $request)
+    {
+        $this->listingColorService->setUser($request->user()->user);
+        $this->listingColorService->setSite($request->user()->site);
+
+        if (
+            !$this->listingColorService->attachColorToListing(
+                $listing,
+                $color,
+            )
+        ) {
+            return response()->json([
+                'message' => 'Error adding listing color',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Removed listing color', [], $this->listingColorService->getErrors());
+        return response()->json([
+            'message' => 'Added listing color',
+        ], Response::HTTP_CREATED);
+    }
+    public function destroy(Listing $listing, Color $color, Request $request)
+    {
+        $this->listingColorService->setUser($request->user()->user);
+        $this->listingColorService->setSite($request->user()->site);
+
+        if (
+            !$this->listingColorService->detachColorFromListing(
+                $listing,
+                $color,
+            )
+        ) {
+            return response()->json([
+                'message' => 'Error removing listing color',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        return response()->json([
+            'message' => 'Removed listing color',
+        ], Response::HTTP_OK);
     }
 }
