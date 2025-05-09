@@ -3,8 +3,8 @@
 namespace App\Http\Resources\Listing;
 
 use App\Http\Resources\MediaResource;
+use App\Http\Resources\PriceResource;
 use App\Http\Resources\User\UserResource;
-use App\Services\Listing\ListingsFetchService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ListingListResource extends JsonResource
@@ -29,14 +29,14 @@ class ListingListResource extends JsonResource
             'type' => $this->whenLoaded('types', ListingTypeResource::collection($this->types)),
             'user' => $this->whenLoaded('user', UserResource::make($this->user)),
             'follow' => $this->whenLoaded('listingFollow', ListingFollowResource::collection($this->listingFollow)),
-            'feature' => $this->whenLoaded('features', ListingFeatureResource::collection($this->features)),
+            'feature' => $this->whenLoaded('features', FeatureResource::collection($this->features)),
             'review' => $this->whenLoaded('listingReview', ListingReviewResource::collection($this->listingReview)),
-            'category' => $this->whenLoaded('categories', ListingCategoryResource::collection($this->categories)),
-            'brand' => $this->whenLoaded('brands', ListingBrandResource::collection($this->brands)),
-            'color' => $this->whenLoaded('colors', ListingColorResource::collection($this->colors)),
-            'product_type' => $this->whenLoaded('productTypes', ListingProductTypeResource::collection($this->productTypes)),
+            'category' => $this->whenLoaded('categories', CategoryResource::collection($this->categories)),
+            'brand' => $this->whenLoaded('brands', BrandResource::collection($this->brands)),
+            'color' => $this->whenLoaded('colors', ColorResource::collection($this->colors)),
+            'product_type' => $this->whenLoaded('productTypes', ProductTypeResource::collection($this->productTypes)),
             'media' => $this->whenLoaded('media', MediaResource::collection($this->media)),
-            'price' => $this->whenLoaded('prices', ListingPriceResource::collection($this->prices)),
+            'prices' => $this->whenLoaded('prices', PriceResource::collection($this->prices)),
         ];
     }
 }

@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Resources\Listing;
+namespace App\Http\Resources;
 
+use App\Http\Resources\Listing\CountryResource;
+use App\Http\Resources\Listing\CurrencyResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
