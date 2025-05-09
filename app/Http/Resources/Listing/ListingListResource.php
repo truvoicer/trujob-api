@@ -36,7 +36,7 @@ class ListingListResource extends JsonResource
             'color' => $this->whenLoaded('colors', ListingColorResource::collection($this->colors)),
             'product_type' => $this->whenLoaded('productTypes', ListingProductTypeResource::collection($this->productTypes)),
             'media' => $this->whenLoaded('media', MediaResource::collection($this->media)),
-            'price' => $this->whenLoaded('price', ListingPriceResource::collection($this->price)),
+            'price' => $this->whenLoaded('prices', ListingPriceResource::collection($this->prices)),
         ];
     }
 }

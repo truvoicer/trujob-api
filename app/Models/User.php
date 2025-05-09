@@ -89,7 +89,7 @@ class User extends Authenticatable
         return $this->hasMany(UserFollow::class);
     }
 
-    public function listing()
+    public function listings()
     {
         return $this->hasMany(Listing::class);
     }

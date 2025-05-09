@@ -68,11 +68,8 @@ class SiteSeeder extends Seeder
                         ->has(
                             Listing::factory()
                                 ->count(5)
-                                ->has(ListingReview::factory()->count(1))
-                                ->has(Feature::factory()->count(1))
+                                ->has(ListingReview::factory()->count(5))
                                 ->has(ListingFollow::factory()->count(5))
-                                ->has(Brand::factory()->count(1))
-                                ->has(Color::factory()->count(1))
                                 ->has(
                                     Media::factory()
                                         ->count(1)
@@ -88,8 +85,6 @@ class SiteSeeder extends Seeder
                                         })
                                 )
                                 ->has(Media::factory()->count(5))
-                                ->has(Category::factory()->count(5))
-                                ->has(ProductType::factory()->count(5))
                         )
                         ->has(UserFollow::factory()->count(5))
                         ->has(UserProfile::factory()->count(1))
@@ -104,6 +99,33 @@ class SiteSeeder extends Seeder
                         )
                 )
                 ->create($item);
+        }
+        foreach (User::all() as $user) {
+            if ($user->listings->count() == 0) {
+                continue;
+            }
+            foreach ($user->listings as $listing) {
+                $listing->categories()->attach(
+                    Category::all()->random(1)
+                        ->pluck('id')
+                );
+                $listing->brands()->attach(
+                    Brand::all()->random(1)
+                        ->pluck('id')
+                );
+                $listing->colors()->attach(
+                    Color::all()->random(1)
+                        ->pluck('id')
+                );
+                $listing->features()->attach(
+                    Feature::all()->random(1)
+                        ->pluck('id')
+                );
+                $listing->productTypes()->attach(
+                    ProductType::all()->random(1)
+                        ->pluck('id')
+                );
+            }
         }
     }
 }

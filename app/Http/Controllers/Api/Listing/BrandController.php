@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Listing\ListingBrandResource;
+use App\Http\Resources\Listing\BrandResource;
 use App\Models\Brand;
-use App\Repositories\ListingBrandRepository;
-use App\Services\Listing\ListingBrandService;
+use App\Repositories\BrandRepository;
+use App\Services\Brand\BrandService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,72 +14,71 @@ class BrandController extends Controller
 {
 
     public function __construct(
-        private ListingBrandService $listingBrandService,
-        private ListingBrandRepository $listingBrandRepository,
+        private BrandService $brandService,
+        private BrandRepository $brandRepository,
     )
     {
     }
 
     public function index(Request $request) {
-        $this->listingBrandRepository->setPagination(true);
-        $this->listingBrandRepository->setSortField(
+        $this->brandRepository->setPagination(true);
+        $this->brandRepository->setSortField(
             $request->get('sort', 'label')
         );
-        $this->listingBrandRepository->setOrderDir(
+        $this->brandRepository->setOrderDir(
             $request->get('order', 'asc')
         );
-        $this->listingBrandRepository->setPerPage(
+        $this->brandRepository->setPerPage(
             $request->get('per_page', 10)
         );
-        $this->listingBrandRepository->setPage(
+        $this->brandRepository->setPage(
             $request->get('page', 1)
         );
         
-        return ListingBrandResource::collection(
-            $this->listingBrandRepository->findMany()
+        return BrandResource::collection(
+            $this->brandRepository->findMany()
         );
     }
 
-    public function createBrand(Request $request) {
-        $this->listingBrandService->setUser($request->user());
-        $create = $this->listingBrandService->createBrand($request->all());
-        if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating brand',
-                [],
-                $this->listingBrandService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function create(Request $request) {
+        $this->brandService->setUser($request->user()->user);
+        $this->brandService->setSite($request->user()->site);
+
+        if (!$this->brandService->createBrand($request->all())) {
+            return response()->json([
+                'message' => 'Error creating brand',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Brand created', [], $this->listingBrandService->getErrors());
+        return response()->json([
+            'message' => 'Brand created',
+        ], Response::HTTP_CREATED);
     }
 
-    public function updateBrand(Brand $brand, Request $request) {
-        $this->listingBrandService->setUser($request->user());
-        $this->listingBrandService->setBrand($brand);
-        $update = $this->listingBrandService->updateBrand($request->all());
-        if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating brand',
-                [],
-                $this->listingBrandService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function update(Brand $brand, Request $request) {
+        $this->brandService->setUser($request->user()->user);
+        $this->brandService->setSite($request->user()->site);
+
+        if (!$this->brandService->updateBrand($brand, $request->all())) {
+            return response()->json([
+                'message' => 'Error updating brand',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Brand updated', [], $this->listingBrandService->getErrors());
+        return response()->json([
+            'message' => 'Brand updated',
+        ], Response::HTTP_OK);
     }
-    public function deleteBrand(Brand $brand) {
-        $this->listingBrandService->setBrand($brand);
-        $delete = $this->listingBrandService->deleteBrand();
-        if (!$delete) {
-            return $this->sendErrorResponse(
-                'Error deleting brand',
-                [],
-                $this->listingBrandService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function destroy(Brand $brand, Request $request) {
+        $this->brandService->setUser($request->user()->user);
+        $this->brandService->setSite($request->user()->site);
+
+        if (!$this->brandService->deleteBrand($brand)) {
+            return response()->json([
+                'message' => 'Error deleting brand',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Brand deleted', [], $this->listingBrandService->getErrors());
+        return response()->json([
+            'message' => 'Brand deleted',
+        ], Response::HTTP_OK);
     }
 
 }

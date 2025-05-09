@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api\Listing;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Listing\ListingCategoryResource;
+use App\Http\Resources\Listing\CategoryResource;
 use App\Models\Category;
-use App\Services\Listing\ListingCategoryService;
+use App\Repositories\CategoryRepository;
+use App\Services\Category\CategoryService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,72 +14,74 @@ class CategoryController extends Controller
 {
 
     public function __construct(
-        private ListingCategoryService $listingCategoryService,
-        private ListingCategoryRepository $listingCategoryRepository,
+        private CategoryService $categoryService,
+        private CategoryRepository $categoryRepository,
     )
     {
     }
 
     public function index(Request $request) {
 
-        $this->listingCategoryRepository->setPagination(true);
-        $this->listingCategoryRepository->setSortField(
+        $this->categoryRepository->setPagination(true);
+        $this->categoryRepository->setSortField(
             $request->get('sort', 'label')
         );
-        $this->listingCategoryRepository->setOrderDir(
+        $this->categoryRepository->setOrderDir(
             $request->get('order', 'asc')
         );
-        $this->listingCategoryRepository->setPerPage(
+        $this->categoryRepository->setPerPage(
             $request->get('per_page', 10)
         );
-        $this->listingCategoryRepository->setPage(
+        $this->categoryRepository->setPage(
             $request->get('page', 1)
         );
         
-        return ListingCategoryResource::collection(
-            $this->listingCategoryRepository->findMany()
+        return CategoryResource::collection(
+            $this->categoryRepository->findMany()
         );
     }
 
-    public function createCategory(Request $request) {
-        $this->listingCategoryService->setUser($request->user());
-        $create = $this->listingCategoryService->createCategory($request->all());
+    public function create(Request $request) {
+        $this->categoryService->setUser($request->user()->user);
+        $this->categoryService->setSite($request->user()->site);
+
+        $create = $this->categoryService->createCategory($request->all());
         if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating category',
-                [],
-                $this->listingCategoryService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error creating category',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Category created', [], $this->listingCategoryService->getErrors());
+        return response()->json([
+            'message' => 'Category created',
+        ], Response::HTTP_CREATED);
     }
 
-    public function updateCategory(Category $category, Request $request) {
-        $this->listingCategoryService->setUser($request->user());
-        $this->listingCategoryService->setCategory($category);
-        $update = $this->listingCategoryService->updateCategory($request->all());
+    public function update(Category $category, Request $request) {
+        $this->categoryService->setUser($request->user()->user);
+        $this->categoryService->setSite($request->user()->site);
+        
+        $update = $this->categoryService->updateCategory($category, $request->all());
         if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating category',
-                [],
-                $this->listingCategoryService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error updating category',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Category updated', [], $this->listingCategoryService->getErrors());
+        return response()->json([
+            'message' => 'Category updated',
+        ], Response::HTTP_OK);
     }
-    public function deleteCategory(Category $category) {
-        $this->listingCategoryService->setCategory($category);
-        $delete = $this->listingCategoryService->deleteCategory();
+    public function destroy(Category $category, Request $request) {
+        $this->categoryService->setUser($request->user()->user);
+        $this->categoryService->setSite($request->user()->site);
+
+        $delete = $this->categoryService->deleteCategory($category);
         if (!$delete) {
-            return $this->sendErrorResponse(
-                'Error deleting category',
-                [],
-                $this->listingCategoryService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error deleting category',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Category deleted', [], $this->listingCategoryService->getErrors());
+        return response()->json([
+            'message' => 'Category deleted',
+        ], Response::HTTP_OK);
     }
 }

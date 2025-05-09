@@ -43,6 +43,7 @@ use App\Http\Controllers\Api\Page\PageController;
 use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
+use App\Http\Controllers\Api\Listing\FeatureController;
 use App\Http\Controllers\Api\Listing\ListingFeatureController;
 use App\Http\Controllers\Api\Listing\ListingTypeController;
 use App\Http\Controllers\Api\Menu\MenuBulkDeleteController;
@@ -125,7 +126,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/color', [ColorController::class, 'index'])->name('color.index');
     Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product_type.index');
     Route::get('/listing-type', [ListingTypeController::class, 'index'])->name('listing-type.index');
-    Route::get('/feature', [ListingFeatureController::class, 'index'])->name('feature.index');
+    Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
 });
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
     Route::prefix('firebase')->name('firebase.')->group(function () {
@@ -169,23 +170,27 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::delete('/delete', [ListingController::class, 'destroy'])->name('delete');
 
             Route::prefix('follow')->name('follow.')->group(function () {
-                Route::post('/', [ListingCategoryController::class, 'index'])->name('index');
+                Route::get('/', [ListingCategoryController::class, 'index'])->name('index');
                 Route::post('/{follow}/add', [ListingCategoryController::class, 'addCategoryToListing'])->name('add');
                 Route::delete('/{follow}/remove', [ListingCategoryController::class, 'removeCategoryFromListing'])->name('remove');
             });
             Route::prefix('category')->name('category.')->group(function () {
+                Route::get('/', [ListingCategoryController::class, 'index'])->name('index');
                 Route::post('/{category}/add', [ListingCategoryController::class, 'addCategoryToListing'])->name('add');
                 Route::delete('/{category}/remove', [ListingCategoryController::class, 'removeCategoryFromListing'])->name('remove');
             });
             Route::prefix('brand')->name('brand.')->group(function () {
+                Route::get('/', [ListingBrandController::class, 'index'])->name('index');
                 Route::post('/{brand}/add', [ListingBrandController::class, 'addBrandToListing'])->name('add');
                 Route::delete('/{brand}/remove', [ListingBrandController::class, 'removeBrandFromListing'])->name('remove');
             });
             Route::prefix('color')->name('color.')->group(function () {
+                Route::get('/', [ListingColorController::class, 'index'])->name('index');
                 Route::post('/{color}/add', [ListingColorController::class, 'addColorToListing'])->name('add');
                 Route::delete('/{color}/remove', [ListingColorController::class, 'removeColorFromListing'])->name('remove');
             });
             Route::prefix('product-type')->name('product_type.')->group(function () {
+                Route::get('/', [ListingProductTypeController::class, 'index'])->name('index');
                 Route::post('/{productType}/add', [ListingProductTypeController::class, 'addProductTypeToListing'])->name('add');
                 Route::delete('/{productType}/remove', [ListingProductTypeController::class, 'removeProductTypeFromListing'])->name('remove');
             });

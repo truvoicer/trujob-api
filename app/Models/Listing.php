@@ -57,12 +57,13 @@ class Listing extends Model
     {
         return $this->hasMany(ListingFollow::class);
     }
+
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class, 'listing_transactions');
     }
 
-    public function messagingGroup()
+    public function messagingGroups()
     {
         return $this->hasMany(MessagingGroup::class);
     }
@@ -79,7 +80,8 @@ class Listing extends Model
     {
         return $this->belongsToMany(Color::class, 'listing_colors');
     }
-    public function productType()
+
+    public function productTypes()
     {
         return $this->belongsToMany(ProductType::class, 'listing_product_types');
     }
@@ -97,7 +99,7 @@ class Listing extends Model
     {
         return $this->belongsToMany(Media::class);
     }
-    public function price()
+    public function prices()
     {
         return $this->belongsToMany(Price::class, 'listing_prices');
     }

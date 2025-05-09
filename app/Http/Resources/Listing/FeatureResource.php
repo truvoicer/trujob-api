@@ -4,7 +4,7 @@ namespace App\Http\Resources\Listing;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ListingFeatureResource extends JsonResource
+class FeatureResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +14,12 @@ class ListingFeatureResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'label' => $this->label,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
     }
 }
