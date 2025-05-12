@@ -58,6 +58,11 @@ class Listing extends Model
         return $this->hasMany(ListingFollow::class);
     }
 
+    public function follows()
+    {
+        return $this->belongsToMany(User::class, 'listing_follows');
+    }
+
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class, 'listing_transactions');

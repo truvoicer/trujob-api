@@ -10,6 +10,11 @@ class ListingFollow extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'listing_id',
+        'user_id',
+    ];
+
     protected static function newFactory()
     {
         return ListingFollowFactory::new();

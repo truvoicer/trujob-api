@@ -159,7 +159,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             });
             Route::prefix('follow')->name('follow.')->group(function () {
                 Route::get('/', [ListingFollowController::class, 'index'])->name('index');
-                Route::post('/{listingFollow}/create', [ListingFollowController::class, 'create'])->name('create');
+                Route::post('/create', [ListingFollowController::class, 'create'])->name('create');
                 Route::delete('/{listingFollow}/delete', [ListingFollowController::class, 'destroy'])->name('delete');
             });
             Route::prefix('review')->name('review.')->group(function () {

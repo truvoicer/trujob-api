@@ -8,6 +8,7 @@ use App\Http\Requests\Listing\UpdateListingFollowRequest;
 use App\Http\Resources\Listing\ListingFollowResource;
 use App\Models\Listing;
 use App\Models\ListingFollow;
+use App\Models\User;
 use App\Repositories\ListingRepository;
 use App\Services\Listing\ListingFollowService;
 use Illuminate\Http\Request;
@@ -19,9 +20,7 @@ class ListingFollowController extends Controller
     public function __construct(
         private ListingFollowService $listingFollowService,
         private ListingRepository $listingRepository,
-    )
-    {
-    }
+    ) {}
 
 
     /**
@@ -29,9 +28,10 @@ class ListingFollowController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Listing $listing, Request $request) {
+    public function index(Listing $listing, Request $request)
+    {
         $this->listingRepository->setQuery(
-            $listing->listingFollow()
+            $listing->follows()
         );
         $this->listingRepository->setPagination(true);
         $this->listingRepository->setSortField(
@@ -51,11 +51,17 @@ class ListingFollowController extends Controller
             $this->listingRepository->findMany()
         );
     }
-    public function create(Listing $listing, StoreListingFollowRequest $request) {
+    public function create(Listing $listing, StoreListingFollowRequest $request)
+    {
         $this->listingFollowService->setUser($request->user()->user);
         $this->listingFollowService->setSite($request->user()->site);
 
-        if (!$this->listingFollowService->createListingFollow($listing, $request->validated())) {
+        if (
+            !$this->listingFollowService->createListingFollow(
+                $listing,
+                $request->validated('user_ids', [])
+            )
+        ) {
             return response()->json([
                 'message' => 'Error creating listing follow',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -64,7 +70,9 @@ class ListingFollowController extends Controller
             'message' => 'Listing follow created',
         ], Response::HTTP_CREATED);
     }
-    public function update(Listing $listing, ListingFollow $listingFollow, UpdateListingFollowRequest $request) {
+
+    public function update(Listing $listing, ListingFollow $listingFollow, UpdateListingFollowRequest $request)
+    {
         $this->listingFollowService->setUser($request->user()->user);
         $this->listingFollowService->setSite($request->user()->site);
 
@@ -77,7 +85,8 @@ class ListingFollowController extends Controller
             'message' => 'Listing follow updated',
         ], Response::HTTP_OK);
     }
-    public function destroy(Listing $listing, ListingFollow $listingFollow, Request $request) {
+    public function destroy(Listing $listing, ListingFollow $listingFollow, Request $request)
+    {
         $this->listingFollowService->setUser($request->user()->user);
         $this->listingFollowService->setSite($request->user()->site);
 

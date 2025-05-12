@@ -13,6 +13,7 @@ class ExistsInSite implements ValidationRule
         protected string $relation,
         protected int $siteId,
         protected string $message = 'The :attribute does not exist in the site.',
+        private string $column = 'id',
     ) {
     }
     /**
@@ -23,7 +24,7 @@ class ExistsInSite implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $menuItemExists = $this->model::where('id', $value)
-        ->whereRelation($this->relation, 'id', $this->siteId)
+        ->whereRelation($this->relation, $this->column, $this->siteId)
         ->exists();
     if (! $menuItemExists) {
          $fail(sprintf($this->message, $value));

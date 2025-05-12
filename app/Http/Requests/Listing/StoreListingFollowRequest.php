@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Listing;
 
+use App\Models\User;
+use App\Rules\ExistsInSite;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreListingFollowRequest extends FormRequest
@@ -13,7 +15,7 @@ class StoreListingFollowRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,21 @@ class StoreListingFollowRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'user_ids' => [
+                'required',
+                'array'
+            ],
+            'user_ids.*' => [
+                'required',
+                'integer',
+                new ExistsInSite(
+                    new User(),
+                    'sites',
+                    request()->user()?->site?->id,
+                    'The user with id %s does not exist.',
+                    'sites.id'
+                ),
+            ],
         ];
     }
 }
