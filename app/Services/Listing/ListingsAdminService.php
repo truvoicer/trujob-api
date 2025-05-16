@@ -2,25 +2,25 @@
 
 namespace App\Services\Listing;
 
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Color;
+use App\Models\Feature;
 use App\Models\Listing;
 use App\Models\ListingFeature;
 use App\Models\ListingMedia;
+use App\Models\ProductType;
 use App\Models\User;
 use App\Repositories\ListingRepository;
+use App\Services\BaseService;
 use App\Services\Media\ImageUploadService;
+use Faker\Provider\Base;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class ListingsAdminService
+class ListingsAdminService extends BaseService
 {
-
-    private User $user;
-
-    private Listing $listing;
-    private ListingMedia $listingMedia;
-    private array $errors = [];
-
 
     public function __construct(
         private ListingsMediaService $listingsMediaService,
@@ -30,74 +30,102 @@ class ListingsAdminService
     }
 
     public function initializeListing() {
-        $this->listing = new Listing(['active' => false]);
-        $createListing = $this->user->listing()->save($this->listing);
+        $listing = new Listing(['active' => false]);
+        $createListing = $this->user->listing()->save($listing);
         if (!$createListing) {
-            $this->addError('Error initialising listing for user');
-            return false;
+            throw new \Exception('Error creating listing');
         }
-        return $this->saveListingRelations([]);
+        return $this->saveListingRelations($listing, []);
     }
-    public function saveListing(?array $data = []) {
-        if (!$this->listing->exists) {
+    public function saveListing(Listing $listing, ?array $data = []) {
+        if (!$listing->exists) {
             return $this->createListing($data);
         } else {
-            return  $this->updateListing($data);
+            return  $this->updateListing($listing, $data);
         }
     }
     public function createListing(array $data) {
+
         if (empty($data['name'])) {
             $data['name'] = Str::slug($data['title']);
         }
         $data['name'] = $this->listingRepository->buildCloneEntityStr(
-            $this->user->listing()->where('name', $name),
+            $this->user->listing()->where('name', $data['name']),
             'name',
-            $name,
+            $data['name'],
             '-'
         );
 
-        $this->listing = new Listing($data);
-        $createListing = $this->user->listing()->save($this->listing);
+        $listing = new Listing($data);
+        $createListing = $this->user->listing()->save($listing);
         if (!$createListing) {
-            $this->addError('Error creating listing for user', $data);
-            return false;
+            throw new \Exception('Error creating listing');
         }
-        return $this->saveListingRelations($data);
+        return $this->saveListingRelations($listing, $data);
     }
 
-    public function updateListing(array $data) {
-        $this->listing->fill($data);
-        $saveListing = $this->listing->save();
-        if (!$saveListing) {
-            $this->addError('Error saving listing', $data);
-            return false;
+    public function updateListing(Listing $listing, array $data) {
+        if (!$listing->update($data)) {
+            throw new \Exception('Error updating listing');
         }
-        return $this->saveListingRelations($data);
+        return $this->saveListingRelations($listing, $data);
     }
 
-    public function deleteListing() {
-        if (!$this->listing->delete()) {
-            $this->addError('Error deleting listing');
-            return false;
+    public function deleteListing(Listing $listing) {
+        if (!$listing->delete()) {
+            throw new \Exception('Error deleting listing');
         }
         return true;
     }
 
-    public function saveListingRelations(array $data) {
+    public function saveListingRelations(Listing $listing, array $data) {
         try {
             if (isset($data['features']) && is_array($data['features'])) {
-                $saveFeatures = $this->listing->features()->attach(
-                    array_map(function ($feature) {
-                        return new ListingFeature($feature);
-                    }, $data['features'])
-                );
-                if (!$saveFeatures) {
-                    $this->addError('Error saving features', $data);
-                    return false;
-                }
+                $featureIds = array_map(function ($feature) {
+                    return Feature::where('id', $feature)->first()?->id;
+                }, $data['features']);
+                $saveFeatures = $listing->features()->sync(array_filter($featureIds));
+            }
+            
+            if (isset($data['follows']) && is_array($data['follows'])) {
+                $followIds = array_map(function ($follow) {
+                    return User::where('id', $follow)->first()?->id;
+                }, $data['follow']);
+                $saveFollows = $listing->follows()->sync(array_filter($followIds));
+            }
+            //brands, colors, product types, categories, reviews
+            if (isset($data['brands']) && is_array($data['brands'])) {
+                $brandIds = array_map(function ($brand) {
+                    return Brand::where('id', $brand)->first()?->id;
+                }, $data['brands']);
+                $saveBrands = $listing->brands()->sync(array_filter($brandIds));
+            }
+            if (isset($data['colors']) && is_array($data['colors'])) {
+                $colorIds = array_map(function ($color) {
+                    return Color::where('id', $color)->first()?->id;
+                }, $data['colors']);
+                $saveColors = $listing->colors()->sync(array_filter($colorIds));
+            }
+            if (isset($data['product_types']) && is_array($data['product_types'])) {
+                $productTypeIds = array_map(function ($productType) {
+                    return ProductType::where('id', $productType)->first()?->id;
+                }, $data['product_types']);
+                $saveProductTypes = $listing->productTypes()->sync(array_filter($productTypeIds));
+            }
+            if (isset($data['categories']) && is_array($data['categories'])) {
+                $categoryIds = array_map(function ($category) {
+                    return Category::where('id', $category)->first()?->id;
+                }, $data['categories']);
+                $saveCategories = $listing->categories()->sync(array_filter($categoryIds));
+            }
+            if (isset($data['reviews']) && is_array($data['reviews'])) {
+                $reviewIds = array_map(function ($review) {
+                    return Feature::where('id', $review)->first()?->id;
+                }, $data['reviews']);
+                $saveReviews = $listing->reviews()->sync(array_filter($reviewIds));
             }
 
-            if (isset($data['hasImages']) && (bool)$data['hasImages']) {
+            if (isset($data['media']) && (bool)$data['media']) {
                 $imageData = $this->buildImageRequestData($data);
                 foreach ($imageData as $image) {
                     $this->createListingMedia($image);
@@ -105,8 +133,7 @@ class ListingsAdminService
             }
             return true;
         } catch (\Exception $exception) {
-            $this->addError($exception->getMessage());
-            return false;
+            throw new \Exception($exception->getMessage());
         }
     }
 
@@ -132,88 +159,35 @@ class ListingsAdminService
         }
         return $buildImageData;
     }
-    public function createListingMedia(array $data = []) {
-        if (!$this->listing->exists) {
+    public function createListingMedia(Listing $listing, array $data = []) {
+        if (!$listing->exists) {
             $listing = $this->createListing([]);
             if (!$listing) {
                 return false;
             }
         }
-        $this->listingMedia = new ListingMedia($data);
-        return $this->saveListingMedia($data);
+        $listingMedia = new ListingMedia($data);
+        return $this->saveListingMedia($listing, $data);
     }
 
-    public function saveListingMedia(array $data = []) {
-        try {
-            $saveListingMedia = $this->listing->listingMedia()->save($this->listingMedia);
-            if (!$saveListingMedia) {
-                $this->addError('Error saving listing media', $data);
-                return false;
-            }
-            $this->listingsMediaService->setListingMedia($this->listingMedia);
-            $storeListingMedia = $this->listingsMediaService->saveListingMedia($data, $this->listing);
-            if (!$storeListingMedia) {
-                $this->setErrors(array_merge($this->errors, $this->listingsMediaService->getErrors()));
-            }
-            return $storeListingMedia;
-        } catch (\Exception $exception) {
-            $this->addError($exception->getMessage());
-            return false;
-        }
+    public function saveListingMedia(Listing $listing, array $data = []) {
+        return true;
+        // try {
+        //     $saveListingMedia = $listing->listingMedia()->save($listingMedia);
+        //     if (!$saveListingMedia) {
+        //         $this->addError('Error saving listing media', $data);
+        //         return false;
+        //     }
+        //     $listingsMediaService->setListingMedia($listingMedia);
+        //     $storeListingMedia = $listingsMediaService->saveListingMedia($data, $listing);
+        //     if (!$storeListingMedia) {
+        //         $this->setErrors(array_merge($this->errors, $listingsMediaService->getErrors()));
+        //     }
+        //     return $storeListingMedia;
+        // } catch (\Exception $exception) {
+        //     throw new \Exception($exception->getMessage());
+        // }
     }
 
-    /**
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @param array $error
-     */
-    public function addError(string $message, ?array $data = []): void
-    {
-        $error = [
-            'message' => $message
-        ];
-        if (count($data)) {
-            $error['data'] = $data;
-        }
-        $this->errors[] = $error;
-    }
-
-    /**
-     * @param array $errors
-     */
-    public function setErrors(array $errors): void
-    {
-        $this->errors = $errors;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function setUser(User $user): void
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * @return Listing
-     */
-    public function getListing(): Listing
-    {
-        return $this->listing;
-    }
-
-    /**
-     * @param Listing $listing
-     */
-    public function setListing(Listing $listing): void
-    {
-        $this->listing = $listing;
-    }
 
 }
