@@ -48,6 +48,7 @@ use App\Http\Controllers\Api\Listing\ListingFeatureController;
 use App\Http\Controllers\Api\Listing\ListingFollowController;
 use App\Http\Controllers\Api\Listing\ListingReviewController;
 use App\Http\Controllers\Api\Listing\ListingTypeController;
+use App\Http\Controllers\Api\Listing\ReviewController;
 use App\Http\Controllers\Api\Menu\MenuBulkDeleteController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuReorderController;
@@ -107,7 +108,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('listing')->name('listing.')->group(function () {
         Route::get('/', [ListingPublicController::class, 'index'])->name('index');
         Route::prefix('{listing}')->name('item.')->group(function () {
-            Route::get('/fetch', [ListingController::class, 'view'])->name('fetch');
+            Route::get('/', [ListingController::class, 'view'])->name('fetch');
         });
     });
 
@@ -130,6 +131,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product_type.index');
     Route::get('/listing-type', [ListingTypeController::class, 'index'])->name('listing-type.index');
     Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
+    Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
 });
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
     Route::prefix('firebase')->name('firebase.')->group(function () {

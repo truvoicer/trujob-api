@@ -4,6 +4,7 @@ namespace Database\Seeders\admin;
 
 use App\Enums\Block\BlockType;
 use App\Models\Block;
+use App\Services\Block\BlockService;
 use Illuminate\Database\Seeder;
 
 class BlockSeeder extends Seeder
@@ -12,16 +13,8 @@ class BlockSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run(BlockService $blockService): void
     {
-        foreach (BlockType::cases() as $blockType) {
-            $atts = [
-                'type' => $blockType->value,
-            ];
-            $create = Block::query()->updateOrCreate(
-                ['type' => $blockType],
-                $atts
-            );
-        }
+        $blockService->defaultBlockTypes();
     }
 }

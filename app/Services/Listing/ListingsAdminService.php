@@ -9,14 +9,12 @@ use App\Models\Feature;
 use App\Models\Listing;
 use App\Models\ListingFeature;
 use App\Models\ListingMedia;
+use App\Models\ListingReview;
+use App\Models\ListingType;
 use App\Models\ProductType;
 use App\Models\User;
 use App\Repositories\ListingRepository;
 use App\Services\BaseService;
-use App\Services\Media\ImageUploadService;
-use Faker\Provider\Base;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ListingsAdminService extends BaseService
@@ -25,72 +23,83 @@ class ListingsAdminService extends BaseService
     public function __construct(
         private ListingsMediaService $listingsMediaService,
         private ListingRepository $listingRepository
-    )
-    {
-    }
+    ) {}
 
-    public function initializeListing() {
+    public function initializeListing()
+    {
         $listing = new Listing(['active' => false]);
-        $createListing = $this->user->listing()->save($listing);
+        $createListing = $this->user->listings()->save($listing);
         if (!$createListing) {
             throw new \Exception('Error creating listing');
         }
         return $this->saveListingRelations($listing, []);
     }
-    public function saveListing(Listing $listing, ?array $data = []) {
+    public function saveListing(Listing $listing, ?array $data = [])
+    {
         if (!$listing->exists) {
             return $this->createListing($data);
         } else {
             return  $this->updateListing($listing, $data);
         }
     }
-    public function createListing(array $data) {
+    public function createListing(array $data)
+    {
 
         if (empty($data['name'])) {
             $data['name'] = Str::slug($data['title']);
         }
         $data['name'] = $this->listingRepository->buildCloneEntityStr(
-            $this->user->listing()->where('name', $data['name']),
+            $this->user->listings()->where('name', $data['name']),
             'name',
             $data['name'],
             '-'
         );
 
         $listing = new Listing($data);
-        $createListing = $this->user->listing()->save($listing);
+        $createListing = $this->user->listings()->save($listing);
         if (!$createListing) {
             throw new \Exception('Error creating listing');
         }
         return $this->saveListingRelations($listing, $data);
     }
 
-    public function updateListing(Listing $listing, array $data) {
+    public function updateListing(Listing $listing, array $data)
+    {
         if (!$listing->update($data)) {
             throw new \Exception('Error updating listing');
         }
         return $this->saveListingRelations($listing, $data);
     }
 
-    public function deleteListing(Listing $listing) {
+    public function deleteListing(Listing $listing)
+    {
         if (!$listing->delete()) {
             throw new \Exception('Error deleting listing');
         }
         return true;
     }
 
-    public function saveListingRelations(Listing $listing, array $data) {
+    public function saveListingRelations(Listing $listing, array $data)
+    {
         try {
+            if (!empty($data['type']) && is_int($data['type'])) {
+                $type = ListingType::where('id', $data['type'])->first();
+                if (!$type) {
+                    throw new \Exception('Error saving listing type');
+                }
+                $listing->types()->attach($type);
+            }
             if (isset($data['features']) && is_array($data['features'])) {
                 $featureIds = array_map(function ($feature) {
                     return Feature::where('id', $feature)->first()?->id;
                 }, $data['features']);
                 $saveFeatures = $listing->features()->sync(array_filter($featureIds));
             }
-            
+
             if (isset($data['follows']) && is_array($data['follows'])) {
                 $followIds = array_map(function ($follow) {
                     return User::where('id', $follow)->first()?->id;
-                }, $data['follow']);
+                }, $data['follows']);
                 $saveFollows = $listing->follows()->sync(array_filter($followIds));
             }
             //brands, colors, product types, categories, reviews
@@ -119,13 +128,17 @@ class ListingsAdminService extends BaseService
                 $saveCategories = $listing->categories()->sync(array_filter($categoryIds));
             }
             if (isset($data['reviews']) && is_array($data['reviews'])) {
-                $reviewIds = array_map(function ($review) {
-                    return Feature::where('id', $review)->first()?->id;
-                }, $data['reviews']);
-                $saveReviews = $listing->reviews()->sync(array_filter($reviewIds));
+                foreach ($data['reviews'] as $review) {
+                    $listingReview = new ListingReview($review);
+                    $listingReview->user_id = $this->user->id;
+                    $listingReview->listing_id = $listing->id;
+                    if (!$listingReview->save()) {
+                        throw new \Exception('Error saving listing review');
+                    }
+                }
             }
 
-            if (isset($data['media']) && (bool)$data['media']) {
+            if (!empty($data['media']) && is_array($data['media'])) {
                 $imageData = $this->buildImageRequestData($data);
                 foreach ($imageData as $image) {
                     $this->createListingMedia($image);
@@ -137,7 +150,8 @@ class ListingsAdminService extends BaseService
         }
     }
 
-    public function buildImageRequestData(array $data) {
+    public function buildImageRequestData(array $data)
+    {
         $buildImageData = [];
         $images = [];
         foreach ($data as $key => $item) {
@@ -159,7 +173,8 @@ class ListingsAdminService extends BaseService
         }
         return $buildImageData;
     }
-    public function createListingMedia(Listing $listing, array $data = []) {
+    public function createListingMedia(Listing $listing, array $data = [])
+    {
         if (!$listing->exists) {
             $listing = $this->createListing([]);
             if (!$listing) {
@@ -170,7 +185,8 @@ class ListingsAdminService extends BaseService
         return $this->saveListingMedia($listing, $data);
     }
 
-    public function saveListingMedia(Listing $listing, array $data = []) {
+    public function saveListingMedia(Listing $listing, array $data = [])
+    {
         return true;
         // try {
         //     $saveListingMedia = $listing->listingMedia()->save($listingMedia);
@@ -188,6 +204,4 @@ class ListingsAdminService extends BaseService
         //     throw new \Exception($exception->getMessage());
         // }
     }
-
-
 }

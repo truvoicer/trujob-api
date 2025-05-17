@@ -276,6 +276,27 @@ class PageService extends BaseService
         return $page->sidebars()->detach();
     }
 
+    public function defaultPages() {
+        $data = include_once(database_path('data/PageData.php'));
+        if (!$data) {
+            throw new \Exception('Error reading PageData.php file ' . database_path('data/PageData.php'));
+        }
+        foreach ($data as $item) {
+            $site = Site::find($item['site_id'])->first();
+            if (!$site) {
+                throw new \Exception('Site not found: ' . $item['site_id']);
+            }
+            $findPage = $site->pages()->where('name', $item['name'])->first();
+            if ($findPage) {
+                if (!$this->updatePage($findPage, $item)) {
+                    throw new \Exception('Error updating page: ' . $item['name']);
+                }
+                continue;
+            }
+            $this->createPage($site, $item);
+        }
+    }
+
     /**
      * @return ResultsService
      */

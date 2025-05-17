@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 class ListingReview extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'listing_id',
+        'rating',
+        'review',
+    ];
     protected static function newFactory()
     {
         return ListingReviewFactory::new();

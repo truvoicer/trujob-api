@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\MenuItemMenu;
 use App\Models\Page;
+use App\Models\Site;
 use App\Repositories\MenuRepository;
 use App\Services\BaseService;
 use App\Services\ResultsService;
@@ -89,7 +90,7 @@ class MenuService extends BaseService
         $roles = null;
         $menuItems = [];
 
-        if (!empty($data['menu_items']) && is_array($data['menu_items'])) {
+        if (array_key_exists('menu_items', $data) && is_array($data['menu_items'])) {
             $menuItems = $data['menu_items'];
             unset($data['menu_items']);
         }
@@ -258,7 +259,7 @@ class MenuService extends BaseService
             }
             $menuIds[] = $menu->id;
         }
-        
+
         $findMenuInMenuItem = $menuItem->menus()->whereIn('menus.id', $menuIds)->get();
         $menuIds = array_diff($menuIds, $findMenuInMenuItem->pluck('id')->toArray());
         if (count($menuIds) > 0) {
@@ -301,6 +302,67 @@ class MenuService extends BaseService
         return true;
     }
 
+    public function defaultMenus()
+    {
+        $data = include_once(database_path('data/MenuData.php'));
+        if (!$data) {
+            throw new \Exception('Error reading MenuData.php file ' . database_path('data/MenuData.php'));
+        }
+        foreach ($data as $index => $menu) {
+            $site = Site::where('name', $menu['site'])->first();
+            if (!$site) {
+                throw new \Exception('Site not found: ' . $menu['site']);
+            }
+            unset($menu['site']);
+            $this->setSite($site);
+            $menu['site_id'] = $site->id;
+            if (!empty($menu['menu_items']) && is_array($menu['menu_items'])) {
+                $menu['menu_items'] = array_map(function ($item) use ($site) {
+                    if (!empty($item['page_name'])) {
+                        $page = Page::where('name', $item['page_name'])->where('site_id', $site->id)->first();
+                        if (!$page) {
+                            throw new \Exception('Page not found: ' . $item['page_name']);
+                        }
+                        unset($item['page_name']);
+                        $item['page_id'] = $page->id;
+                    }
+                    return $item;
+                }, $menu['menu_items']);
+            }
+            $getMenu = Menu::where('name', $menu['name'])->where('site_id', $site->id)->first();
+            if (!$getMenu) {
+                if (!$this->createMenu($menu)) {
+                    throw new \Exception('Error creating menu: ' . $index);
+                }
+                continue;
+            }
+            if (!empty($menu['menu_items']) && is_array($menu['menu_items'])) {
+                $menu['menu_items'] = array_filter(
+                    $menu['menu_items'],
+                    function ($item) use ($getMenu) {
+                        $query = $getMenu->menuItems();
+                        if (array_key_exists('url', $item)) {
+                            $query->where('url', $item['url']);
+                        }
+                        if (array_key_exists('label', $item)) {
+                            $query->where('label', $item['label']);
+                        }
+                        if (array_key_exists('page_id', $item)) {
+                            $query->where('page_id', $item['page_id']);
+                        }
+                        if ($query->exists()) {
+                            return false;
+                        }
+                        return true;
+                    },
+                    ARRAY_FILTER_USE_BOTH
+                );
+            }
+            if (!$this->updateMenu($getMenu, $menu)) {
+                throw new \Exception('Error updating menu: ' . $index);
+            }
+        }
+    }
     /**
      * @return ResultsService
      */

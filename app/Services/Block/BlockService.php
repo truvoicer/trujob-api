@@ -2,6 +2,7 @@
 
 namespace App\Services\Block;
 
+use App\Enums\Block\BlockType;
 use App\Enums\Block\BlockTypeClass;
 use App\Models\Block;
 use App\Models\PageBlock;
@@ -9,6 +10,17 @@ use App\Services\BaseService;
 
 class BlockService extends BaseService
 {
+    public function defaultBlockTypes() {
+        foreach (BlockType::cases() as $blockType) {
+            $atts = [
+                'type' => $blockType->value,
+            ];
+            Block::query()->updateOrCreate(
+                ['type' => $blockType],
+                $atts
+            );
+        }
+    }
     public static function getBlockTypeInstance(PageBlock $pageBlock) {
         if (! $pageBlock->block) {
             throw new \Exception('PageBlock relation "block" not found');
