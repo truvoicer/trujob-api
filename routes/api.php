@@ -158,36 +158,64 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::get('/', [ListingFeatureController::class, 'index'])->name('index');
                 Route::post('/{feature}/create', [ListingFeatureController::class, 'create'])->name('create');
                 Route::delete('/{feature}/delete', [ListingFeatureController::class, 'destroy'])->name('delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+                    Route::delete('/create', BulkUserDeleteController::class)->name('create');
+                });
             });
             Route::prefix('follow')->name('follow.')->group(function () {
                 Route::get('/', [ListingFollowController::class, 'index'])->name('index');
                 Route::post('/create', [ListingFollowController::class, 'create'])->name('create');
                 Route::delete('/{listingFollow}/delete', [ListingFollowController::class, 'destroy'])->name('delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+                    Route::delete('/create', BulkUserDeleteController::class)->name('create');
+                });
             });
             Route::prefix('review')->name('review.')->group(function () {
                 Route::get('/', [ListingReviewController::class, 'index'])->name('index');
                 Route::post('/{listingReview}/create', [ListingReviewController::class, 'create'])->name('create');
                 Route::delete('/{listingReview}/delete', [ListingReviewController::class, 'destroy'])->name('delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+                    Route::delete('/create', BulkUserDeleteController::class)->name('create');
+                });
             });
             Route::prefix('category')->name('category.')->group(function () {
                 Route::get('/', [ListingCategoryController::class, 'index'])->name('index');
                 Route::post('/{category}/create', [ListingCategoryController::class, 'create'])->name('create');
                 Route::delete('/{category}/delete', [ListingCategoryController::class, 'destroy'])->name('delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+                    Route::delete('/create', BulkUserDeleteController::class)->name('create');
+                });
             });
             Route::prefix('brand')->name('brand.')->group(function () {
                 Route::get('/', [ListingBrandController::class, 'index'])->name('index');
                 Route::post('/{brand}/create', [ListingBrandController::class, 'create'])->name('create');
                 Route::delete('/{brand}/delete', [ListingBrandController::class, 'destroy'])->name('delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+                    Route::delete('/create', BulkUserDeleteController::class)->name('create');
+                });
             });
             Route::prefix('color')->name('color.')->group(function () {
                 Route::get('/', [ListingColorController::class, 'index'])->name('index');
                 Route::post('/{color}/create', [ListingColorController::class, 'create'])->name('create');
                 Route::delete('/{color}/delete', [ListingColorController::class, 'destroy'])->name('delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+                    Route::delete('/create', BulkUserDeleteController::class)->name('create');
+                });
             });
             Route::prefix('product-type')->name('product_type.')->group(function () {
                 Route::get('/', [ListingProductTypeController::class, 'index'])->name('index');
                 Route::post('/{productType}/create', [ListingProductTypeController::class, 'create'])->name('create');
                 Route::delete('/{productType}/delete', [ListingProductTypeController::class, 'destroy'])->name('delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+                    Route::delete('/create', BulkUserDeleteController::class)->name('create');
+                });
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/create', [MessagingGroupController::class, 'createMessageGroup'])->name('create');
