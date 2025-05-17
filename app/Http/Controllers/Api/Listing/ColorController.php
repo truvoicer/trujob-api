@@ -70,7 +70,7 @@ class ColorController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function delete(Color $color, Request $request) {
+    public function destroy(Color $color, Request $request) {
         $this->colorService->setUser($request->user()->user);
         $this->colorService->setSite($request->user()->site);
 
