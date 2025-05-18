@@ -3,74 +3,89 @@
 namespace App\Http\Controllers\Api\Locale;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Locale\StoreCountryRequest;
-use App\Http\Requests\Locale\UpdateCountryRequest;
+use App\Http\Requests\Country\StoreCountryRequest;
+use App\Http\Requests\Country\UpdateCountryRequest;
+use App\Http\Resources\Listing\CountryResource;
 use App\Models\Country;
+use App\Repositories\CountryRepository;
 use App\Services\Locale\CountryService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CountryController extends Controller
 {
-    protected CountryService $countryService;
 
-    public function __construct(CountryService $countryService, Request $request)
+    public function __construct(
+        private CountryService $countryService,
+        private CountryRepository $countryRepository
+    )
     {
-        $this->countryService = $countryService;
+    }
+    public function index(Request $request) {
+        $this->countryService->setUser($request->user()->user);
+        $this->countryService->setSite($request->user()->site);
+        $this->countryRepository->setPagination(true);
+        $this->countryRepository->setSortField(
+            $request->get('sort', 'name')
+        );
+        $this->countryRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->countryRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->countryRepository->setPage(
+            $request->get('page', 1)
+        );
+
+        return CountryResource::collection(
+            $this->countryRepository->findMany()
+        );
     }
 
-    public function createCountryBatch(Request $request) {
-        $this->countryService->setUser($request->user());
-        $create = $this->countryService->createCountryBatch($request->all());
-        if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating country batch',
-                [],
-                $this->countryService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('Country batch created', [], $this->countryService->getErrors());
-    }
-    public function createCountry(Request $request) {
-        $this->countryService->setUser($request->user());
-        $create = $this->countryService->createCountry($request->all());
-        if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating country',
-                [],
-                $this->countryService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('Country created', [], $this->countryService->getErrors());
+    public function view(Country $country, Request $request) {
+        $this->countryService->setUser($request->user()->user);
+        $this->countryService->setSite($request->user()->site);
+        return new CountryResource($country);
     }
 
-    public function updateCountry(Country $country, Request $request) {
-        $this->countryService->setUser($request->user());
-        $this->countryService->setCountry($country);
-        $update = $this->countryService->updateCountry($request->all());
+    public function create(StoreCountryRequest $request) {
+        $this->countryService->setUser($request->user()->user);
+        $this->countryService->setSite($request->user()->site);
+        $create = $this->countryService->createCountry($request->validated());
+        if (!$create) {
+            return response()->json([
+                'message' => 'Error creating country',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        return response()->json([
+            'message' => 'Country created',
+        ], Response::HTTP_OK);
+    }
+
+    public function update(Country $country, UpdateCountryRequest $request) {
+        $this->countryService->setUser($request->user()->user);
+        $this->countryService->setSite($request->user()->site);
+        $update = $this->countryService->updateCountry($country, $request->validated());
         if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating country',
-                [],
-                $this->countryService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error updating country',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Country updated', [], $this->countryService->getErrors());
+        return response()->json([
+            'message' => 'Country updated',
+        ], Response::HTTP_OK);
     }
-    public function deleteCountry(Country $country, Request $request) {
-        $this->countryService->setUser($request->user());
-        $this->countryService->setCountry($country);
-        if (!$this->countryService->deleteCountry()) {
-            return $this->sendErrorResponse(
-                'Error deleting country',
-                [],
-                $this->countryService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+    public function destroy(Country $country, Request $request) {
+        $this->countryService->setUser($request->user()->user);
+        $this->countryService->setSite($request->user()->site);
+        if (!$this->countryService->deleteCountry($country)) {
+            return response()->json([
+                'message' => 'Error deleting country',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Country deleted', [], $this->countryService->getErrors());
+        return response()->json([
+            'message' => 'Country deleted',
+        ], Response::HTTP_OK);
     }
 }

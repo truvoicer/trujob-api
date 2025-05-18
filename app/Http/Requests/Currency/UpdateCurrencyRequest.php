@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Locale;
+namespace App\Http\Requests\Currency;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +13,7 @@ class UpdateCurrencyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,12 @@ class UpdateCurrencyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => ['sometimes', 'string', 'max:255'],
+            'name_plural' => ['sometimes', 'string', 'max:255'],
+            'code' => ['sometimes', 'string', 'max:3'],
+            'symbol' => ['sometimes', 'string', 'max:3'],
+            'country_id' => ['sometimes', 'integer', 'exists:countries,id'],
         ];
     }
+    
 }

@@ -48,6 +48,8 @@ use App\Http\Controllers\Api\Listing\Feature\ListingFeatureController;
 use App\Http\Controllers\Api\Listing\Follow\ListingFollowController;
 use App\Http\Controllers\Api\Listing\Review\ListingReviewController;
 use App\Http\Controllers\Api\Listing\Type\ListingTypeController;
+use App\Http\Controllers\Api\Locale\BulkCountryController;
+use App\Http\Controllers\Api\Locale\BulkCurrencyController;
 use App\Http\Controllers\Api\Review\ReviewController;
 use App\Http\Controllers\Api\Menu\MenuBulkDeleteController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuController;
@@ -68,6 +70,8 @@ use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\Price\PriceController;
+use App\Http\Controllers\Api\PriceType\PriceTypeController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Sidebar\SidebarBulkDeleteController;
 use App\Http\Controllers\Api\Sidebar\SidebarController;
@@ -132,6 +136,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/listing-type', [ListingTypeController::class, 'index'])->name('listing-type.index');
     Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
+    Route::get('/locale/currency', [CurrencyController::class, 'index'])->name('currency.index');
+    Route::get('/locale/country', [CountryController::class, 'index'])->name('country.index');
+    Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
 });
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
     Route::prefix('firebase')->name('firebase.')->group(function () {
@@ -304,6 +311,19 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin'])->group(function () {
 
+    Route::prefix('price')->name('price.')->group(function () {
+        Route::post('/create', [PriceController::class, 'create'])->name('create');
+        Route::get('/{price}', [PriceController::class, 'view'])->name('view');
+        Route::patch('/{price}/update', [PriceController::class, 'update'])->name('update');
+        Route::delete('/{price}/delete', [PriceController::class, 'destroy'])->name('delete');
+    });
+    Route::prefix('price-type')->name('price-type.')->group(function () {
+        Route::post('/create', [PriceTypeController::class, 'create'])->name('create');
+        Route::get('/{priceType}', [PriceTypeController::class, 'view'])->name('view');
+        Route::patch('/{priceType}/update', [PriceTypeController::class, 'update'])->name('update');
+        Route::delete('/{priceType}/delete', [PriceTypeController::class, 'destroy'])->name('delete');
+    });
+
     Route::prefix('category')->name('category.')->group(function () {
         Route::post('/create', [CategoryController::class, 'create'])->name('create');
         Route::patch('/{category}/update', [CategoryController::class, 'update'])->name('update');
@@ -394,16 +414,16 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
     Route::prefix('locale')->name('locale.')->group(function () {
         Route::prefix('country')->name('country.')->group(function () {
-            Route::post('/create', [CountryController::class, 'createCountry'])->name('create');
-            Route::post('/create/batch', [CountryController::class, 'createCountryBatch'])->name('create_batch');
-            Route::patch('/{country}/update', [CountryController::class, 'updateCountry'])->name('update');
-            Route::delete('/{country}/delete', [CountryController::class, 'deleteCountry'])->name('delete');
+            Route::post('/create', [CountryController::class, 'create'])->name('create');
+            Route::post('/create/batch', [BulkCountryController::class, 'create'])->name('create_batch');
+            Route::patch('/{country}/update', [CountryController::class, 'update'])->name('update');
+            Route::delete('/{country}/delete', [CountryController::class, 'destroy'])->name('delete');
         });
         Route::prefix('currency')->name('currency.')->group(function () {
-            Route::post('/create', [CurrencyController::class, 'createCurrency'])->name('create');
-            Route::post('/create/batch', [CurrencyController::class, 'createCurrencyBatch'])->name('create_batch');
-            Route::patch('/{currency}/update', [CurrencyController::class, 'updateCurrency'])->name('update');
-            Route::delete('/{currency}/delete', [CurrencyController::class, 'deleteCurrency'])->name('delete');
+            Route::post('/create', [CurrencyController::class, 'create'])->name('create');
+            Route::post('/create/batch', [BulkCurrencyController::class, 'create'])->name('create_batch');
+            Route::patch('/{currency}/update', [CurrencyController::class, 'update'])->name('update');
+            Route::delete('/{currency}/delete', [CurrencyController::class, 'destroy'])->name('delete');
         });
     });
     Route::prefix('block')->name('block.')->group(function () {

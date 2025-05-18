@@ -3,108 +3,39 @@
 namespace App\Services\Locale;
 
 use App\Models\Country;
-use App\Models\User;
+use App\Services\BaseService;
 
-class CountryService
+class CountryService extends BaseService
 {
-    private Country $country;
-
-    public static function fetchCountry(string|int $countryValue) {
-        return Country::where('id', $countryValue)
-            ->orWhere('iso2', $countryValue)
-            ->orWhere('iso2', $countryValue)
-            ->orWhere('iso3', $countryValue)
-            ->first();
-    }
 
     public function createCountryBatch(array $data) {
         $createCountryBatch = Country::create($data['countries']);
         if (!$createCountryBatch) {
-            $this->addError('Error creating country batch', $data);
-            return false;
+            throw new \Exception('Error creating country batch');
         }
         return true;
     }
     public function createCountry(array $data) {
-        $this->country = new Country($data);
-        $createCountry = $this->country->save();
-        if (!$createCountry) {
-            $this->addError('Error creating country', $data);
-            return false;
+        $country = new Country($data);
+        if (!$country->save()) {
+            throw new \Exception('Error creating country');
         }
         return true;
     }
 
-    public function updateCountry(array $data) {
-        $this->country->fill($data);
-        $save = $this->country->save();
-        if (!$save) {
-            $this->addError('Error updating country', $data);
-            return false;
+    public function updateCountry(Country $country, array $data) {
+        if (!$country->update($data)) {
+            throw new \Exception('Error updating country');
         }
         return true;
     }
 
-    public function deleteCountry() {
-        if (!$this->country->delete()) {
-            $this->addError('Error deleting country');
-            return false;
+    public function deleteCountry(Country $country) {
+        if (!$country->delete()) {
+            throw new \Exception('Error deleting country');
         }
         return true;
     }
 
-    /**
-     * @return array
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
-    /**
-     * @param array $error
-     */
-    public function addError(string $message, ?array $data = []): void
-    {
-        $error = [
-            'message' => $message
-        ];
-        if (count($data)) {
-            $error['data'] = $data;
-        }
-        $this->errors[] = $error;
-    }
-
-    /**
-     * @param array $errors
-     */
-    public function setErrors(array $errors): void
-    {
-        $this->errors = $errors;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function setUser(User $user): void
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * @return Country
-     */
-    public function getCountry(): Country
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param Country $country
-     */
-    public function setCountry(Country $country): void
-    {
-        $this->country = $country;
-    }
 
 }

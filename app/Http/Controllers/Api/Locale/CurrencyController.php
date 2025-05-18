@@ -3,77 +3,97 @@
 namespace App\Http\Controllers\Api\Locale;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Locale\StoreCurrencyRequest;
-use App\Http\Requests\Locale\UpdateCurrencyRequest;
+use App\Http\Requests\Currency\StoreCurrencyRequest as CurrencyStoreCurrencyRequest;
+use App\Http\Requests\Currency\UpdateCurrencyRequest as CurrencyUpdateCurrencyRequest;
+use App\Http\Resources\Listing\CurrencyResource;
 use App\Models\Country;
 use App\Models\Currency;
+use App\Repositories\CurrencyRepository;
 use App\Services\Locale\CurrencyService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CurrencyController extends Controller
 {
-    protected CurrencyService $currencyService;
 
-    public function __construct(CurrencyService $currencyService, Request $request)
+    public function __construct(
+        private CurrencyService $currencyService,
+        private CurrencyRepository $currencyRepository
+    )
     {
-        $this->currencyService = $currencyService;
     }
 
-    public function createCurrencyBatch(Request $request) {
-        $this->currencyService->setUser($request->user());
-        $create = $this->currencyService->createCurrencyBatch($request->all());
+    public function index(Request $request) {
+        $this->currencyService->setUser($request->user()->user);
+        $this->currencyService->setSite($request->user()->site);
+
+        $this->currencyRepository->setPagination(true);
+        $this->currencyRepository->setSortField(
+            $request->get('sort', 'name')
+        );
+        $this->currencyRepository->setOrderDir(
+            $request->get('order', 'asc')
+        );
+        $this->currencyRepository->setPerPage(
+            $request->get('per_page', 10)
+        );
+        $this->currencyRepository->setPage(
+            $request->get('page', 1)
+        );
+        
+        return CurrencyResource::collection(
+            $this->currencyRepository->findMany()
+        );
+    }
+
+    public function view(Currency $currency, Request $request) {
+        $this->currencyService->setUser($request->user()->user);
+        $this->currencyService->setSite($request->user()->site);
+
+        return new CurrencyResource($currency);
+    }
+
+    public function create(CurrencyStoreCurrencyRequest $request) {
+        $this->currencyService->setUser($request->user()->user);
+        $this->currencyService->setSite($request->user()->site);
+
+        $create = $this->currencyService->createCurrency($country, $request->validated());
         if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating currency batch',
-                [],
-                $this->currencyService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error creating currency',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Currency batch created', [], $this->currencyService->getErrors());
+        return response()->json([
+            'message' => 'Currency created',
+        ], Response::HTTP_OK);
     }
 
-    public function createCurrency(Country $country, Request $request) {
-        $this->currencyService->setUser($request->user());
-        $this->currencyService->setCountry($country);
-        $create = $this->currencyService->createCurrency($request->all());
-        if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating currency',
-                [],
-                $this->currencyService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('Currency created', [], $this->currencyService->getErrors());
-    }
-
-    public function updateCurrency(Currency $currency, Request $request) {
-        $this->currencyService->setUser($request->user());
-        $this->currencyService->setCurrency($currency);
-        $update = $this->currencyService->updateCurrency($request->all());
+    public function update(Currency $currency, CurrencyUpdateCurrencyRequest $request) {
+        $this->currencyService->setUser($request->user()->user);
+        $this->currencyService->setSite($request->user()->site);
+        
+        $update = $this->currencyService->updateCurrency($currency, $request->validated());
         if (!$update) {
-            return $this->sendErrorResponse(
-                'Error updating currency',
-                [],
-                $this->currencyService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error updating currency',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Currency updated', [], $this->currencyService->getErrors());
+        return response()->json([
+            'message' => 'Currency updated',
+        ], Response::HTTP_OK);
     }
-    public function deleteCurrency(Currency $currency, Request $request) {
-        $this->currencyService->setUser($request->user());
-        $this->currencyService->setCurrency($currency);
-        if (!$this->currencyService->deleteCurrency()) {
-            return $this->sendErrorResponse(
-                'Error deleting currency',
-                [],
-                $this->currencyService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+
+    public function destroy(Currency $currency, Request $request) {
+        $this->currencyService->setUser($request->user()->user);
+        $this->currencyService->setSite($request->user()->site);
+
+        if (!$this->currencyService->deleteCurrency($currency)) {
+            return response()->json([
+                'message' => 'Error deleting currency',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Currency deleted', [], $this->currencyService->getErrors());
+        return response()->json([
+            'message' => 'Currency deleted',
+        ], Response::HTTP_OK);
     }
 }

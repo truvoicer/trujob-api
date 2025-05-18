@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Locale;
+namespace App\Http\Requests\Price;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCountryRequest extends FormRequest
+class UpdatePriceTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class UpdateCountryRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class UpdateCountryRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'sometimes|string|max:255',
+            'label' => 'sometimes|string|max:255',
         ];
     }
 }
