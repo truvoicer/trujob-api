@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Listing;
+namespace App\Http\Controllers\Api\Follow;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\StoreListingFollowRequest;
@@ -14,7 +14,7 @@ use App\Services\Listing\ListingFollowService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ListingFollowController extends Controller
+class FollowController extends Controller
 {
 
     public function __construct(

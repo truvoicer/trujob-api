@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Listing;
+namespace App\Http\Controllers\Api\Media;
 
 use App\Http\Requests\Listing\StoreListingMediaRequest;
 use App\Http\Resources\Listing\ListingMediaResource;
@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ListingMediaController extends ListingController
+class MediaController extends ListingController
 {
     /**
      * Display a listing of the resource.

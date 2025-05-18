@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Listing;
+namespace App\Http\Controllers\Api\Listing\Media;
 
 use App\Http\Requests\Listing\StoreListingMediaRequest;
 use App\Http\Resources\Listing\ListingMediaResource;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Listing;
+namespace App\Http\Controllers\Api\Listing\Brand;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Listing\ListingBrandResource;
