@@ -10,19 +10,33 @@ class Price extends Model
     use HasFactory;
 
     protected $fillable = [
-        'created_by_user_id',
+        'user_id',
         'country_id',
         'currency_id',
-        'type',
         'amount',
+        'valid_from',
+        'valid_to',
+        'is_default',
+        'is_active',
     ];
-    public function createdByUser()
+    protected $casts = [
+        'valid_from' => 'datetime',
+        'valid_to' => 'datetime',
+        'is_default' => 'boolean',
+        'is_active' => 'boolean',
+    ];
+    public function user()
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
+    public function type()
+    {
+        return $this->belongsTo(PriceType::class);
+    }
 
-    public function listings() {
+    public function listings()
+    {
         return $this->belongsToMany(Listing::class, 'listing_prices');
     }
 
@@ -35,5 +49,4 @@ class Price extends Model
     {
         return $this->hasOne(Currency::class);
     }
-
 }
