@@ -51,6 +51,7 @@ use Database\Seeders\listing\ListingSeeder;
 use Database\Seeders\listing\ListingTypeSeeder;
 use Database\Seeders\listing\ProductTypeSeeder;
 use Database\Seeders\locale\LocaleSeeder;
+use Database\Seeders\price\PriceTypeSeeder;
 use Database\Seeders\user\RoleSeeder;
 use Database\Seeders\user\UserSeeder;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -75,6 +76,7 @@ class DatabaseSeeder extends Seeder
             FeatureSeeder::class,
             ProductTypeSeeder::class,
             ListingTypeSeeder::class,
+            PriceTypeSeeder::class,
             BlockSeeder::class,
             PermissionSeeder::class,
             SettingSeeder::class,

@@ -1,7 +1,9 @@
 <?php
-namespace Database\Seeders;
+namespace Database\Seeders\price;
 
-class PriceSeeder
+use Illuminate\Database\Seeder;
+
+class PriceSeeder extends Seeder
 {
     /**
      * Run the database seeds.

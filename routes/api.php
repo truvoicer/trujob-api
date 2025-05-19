@@ -71,7 +71,7 @@ use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\Price\PriceController;
-use App\Http\Controllers\Api\PriceType\PriceTypeController;
+use App\Http\Controllers\Api\Price\PriceTypeController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Sidebar\SidebarBulkDeleteController;
 use App\Http\Controllers\Api\Sidebar\SidebarController;

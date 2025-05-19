@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\PriceType;
 
+use App\Enums\Price\PriceType as PricePriceType;
 use App\Models\PriceType;
 use App\Services\BaseService;
 
@@ -35,6 +36,29 @@ class PriceTypeService extends BaseService
             throw new \Exception('Error deleting priceType');
         }
         return true;
+    }
+
+    public function defaultPriceTypes() {
+        $data = include_once(database_path('data/PriceTypeData.php'));
+        if (!$data) {
+            throw new \Exception('Error reading PriceTypeData.php file ' . database_path('data/PriceTypeData.php'));
+        }
+        foreach (PricePriceType::cases() as $priceType) {
+            $atts = [
+                'name' => $priceType->value,
+            ];
+            $findInData = array_search($priceType->value, array_column($data, 'name'));
+            if ($findInData !== false) {
+                $atts = [
+                    ...$atts,
+                    ...$data[$findInData],
+                ];
+            }
+            PriceType::query()->updateOrCreate(
+                ['name' => $priceType],
+                $atts
+            );
+        }
     }
 
 }

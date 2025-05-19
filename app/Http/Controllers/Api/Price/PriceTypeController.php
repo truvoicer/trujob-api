@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers\Api\PriceType;
+namespace App\Http\Controllers\Api\Price;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PriceTypeResource;
