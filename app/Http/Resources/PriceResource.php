@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Listing\CountryResource;
+use App\Http\Resources\Listing\CurrencyResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Currency;
 use Illuminate\Http\Resources\Json\JsonResource;

@@ -15,6 +15,7 @@ class PriceTypeResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'label' => $this->label,
             'created_at' => $this->created_at,

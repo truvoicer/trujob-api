@@ -42,11 +42,11 @@ class Price extends Model
 
     public function country()
     {
-        return $this->hasOne(Country::class);
+        return $this->belongsTo(Country::class);
     }
 
     public function currency()
     {
-        return $this->hasOne(Currency::class);
+        return $this->belongsTo(Currency::class);
     }
 }

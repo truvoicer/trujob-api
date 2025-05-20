@@ -46,6 +46,7 @@ use App\Http\Controllers\Api\Link\LinkTargetController;
 use App\Http\Controllers\Api\Feature\FeatureController;
 use App\Http\Controllers\Api\Listing\Feature\ListingFeatureController;
 use App\Http\Controllers\Api\Listing\Follow\ListingFollowController;
+use App\Http\Controllers\Api\Listing\Price\ListingPriceController;
 use App\Http\Controllers\Api\Listing\Review\ListingReviewController;
 use App\Http\Controllers\Api\Listing\Type\ListingTypeController;
 use App\Http\Controllers\Api\Locale\BulkCountryController;
@@ -86,7 +87,6 @@ use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
 use App\Http\Controllers\Api\Widget\WidgetController;
 use App\Http\Controllers\Api\Widget\WidgetRoleController;
 use App\Http\Middleware\AppPublic;
-use App\Models\ListingFeature;
 use Illuminate\Support\Facades\Route;
 
 
@@ -160,6 +160,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{listing?}')->group(function () {
             Route::patch('/update', [ListingController::class, 'update'])->name('update');
             Route::delete('/delete', [ListingController::class, 'destroy'])->name('delete');
+
+            Route::prefix('price')->name('price.')->group(function () {
+                Route::get('/', [ListingPriceController::class, 'index'])->name('index');
+                Route::post('/create', [ListingPriceController::class, 'create'])->name('create');
+                Route::get('/{price}', [ListingPriceController::class, 'view'])->name('view');
+                Route::patch('/{price}/update', [ListingPriceController::class, 'update'])->name('update');
+                Route::delete('/{price}/delete', [ListingPriceController::class, 'destroy'])->name('delete');
+            });
 
             Route::prefix('feature')->name('feature.')->group(function () {
                 Route::get('/', [ListingFeatureController::class, 'index'])->name('index');

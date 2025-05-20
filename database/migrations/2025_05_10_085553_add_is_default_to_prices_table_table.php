@@ -8,13 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('prices', function (Blueprint $table) {
-            $table->id();
+        Schema::table('prices', function (Blueprint $table) {
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('currency_id')->nullable()->constrained('currencies')->nullOnDelete('cascade');
             $table->foreignId('country_id')->nullable()->constrained('countries')->nullOnDelete('cascade');
@@ -23,18 +20,28 @@ return new class extends Migration
             $table->dateTime('valid_to')->nullable();
             $table->boolean('is_default')->default(false);
             $table->boolean('is_active')->default(false);
-            $table->decimal('amount', 19, 4);
-            $table->timestamps();
+            $table->decimal('amount', 19, 4)->change();
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('prices');
+        Schema::table('prices', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropForeign(['currency_id']);
+            $table->dropForeign(['country_id']);
+            $table->dropForeign(['price_type_id']);
+            $table->dropColumn('user_id');
+            $table->dropColumn('currency_id');
+            $table->dropColumn('country_id');
+            $table->dropColumn('price_type_id');
+            $table->dropColumn('valid_from');
+            $table->dropColumn('valid_to');
+            $table->dropColumn('is_default');
+            $table->dropColumn('is_active');
+        });
     }
 };
