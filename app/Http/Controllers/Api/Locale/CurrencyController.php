@@ -40,6 +40,14 @@ class CurrencyController extends Controller
         $this->currencyRepository->setPage(
             $request->get('page', 1)
         );
+        $search = $request->get('query', null);
+        if ($search) {
+            $this->currencyRepository->addWhere(
+                'name',
+                "%$search%",
+                'like',
+            );
+        }
         
         return CurrencyResource::collection(
             $this->currencyRepository->findMany()

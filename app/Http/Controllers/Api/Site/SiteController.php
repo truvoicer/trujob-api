@@ -3,15 +3,10 @@
 namespace App\Http\Controllers\Api\Site;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Page\CreatePageRequest;
-use App\Http\Requests\Page\EditPageRequest;
 use App\Http\Requests\Site\CreateSiteRequest;
 use App\Http\Requests\Site\EditSiteRequest;
-use App\Http\Resources\Page\PageResource;
-use App\Http\Resources\SiteResource;
-use App\Models\Page;
+use App\Http\Resources\Site\SiteResource;
 use App\Models\Site;
-use App\Services\Page\PageService;
 use App\Services\Site\SiteService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -72,5 +72,9 @@ class Site extends Model
     {
         return $this->hasMany(Widget::class);
     }
-
+    
+    public function settings()
+    {
+        return $this->hasMany(SiteSetting::class);
+    }
 }

@@ -79,6 +79,7 @@ use App\Http\Controllers\Api\Sidebar\SidebarController;
 use App\Http\Controllers\Api\Sidebar\SidebarWidgetReorderController;
 use App\Http\Controllers\Api\Sidebar\SidebarWidgetRoleController;
 use App\Http\Controllers\Api\Site\SiteTokenController;
+use App\Http\Controllers\Api\Site\Setting\SiteSettingController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserController;
@@ -105,6 +106,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/page', [SitePageController::class, 'view'])->name('page.view');
         Route::prefix('{site:name}')->group(function () {
             Route::get('/', [SiteController::class, 'view'])->name('view');
+            Route::prefix('settings')->name('settings.')->group(function () {
+                Route::get('/', [SiteSettingController::class, 'view'])->name('view');
+            });
         });
     });
 
@@ -318,7 +322,6 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin'])->group(function () {
-
     Route::prefix('price')->name('price.')->group(function () {
         Route::post('/create', [PriceController::class, 'create'])->name('create');
         Route::get('/{price}', [PriceController::class, 'view'])->name('view');
@@ -533,6 +536,10 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::prefix('{personalAccessToken}')->group(function () {
                     Route::delete('/delete', [SiteTokenController::class, 'destroy'])->name('destroy');
                 });
+            });
+
+            Route::prefix('settings')->name('settings.')->group(function () {
+                Route::patch('/update', [SiteSettingController::class, 'update'])->name('update');
             });
         });
     });

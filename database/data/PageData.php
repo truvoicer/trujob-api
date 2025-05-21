@@ -334,4 +334,26 @@ return [
             ApiAbility::USER->value,
         ]
     ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/settings',
+        'name' => 'admin_settings',
+        'title' => 'Settings',
+        'content' => 'Welcome to the settings admin page',
+        'view' => ViewType::AdminPage,
+        'blocks' => [
+            [
+                'type' => BlockType::MANAGE_SITE_SETTINGS,
+                'order' => 0,
+                'title' => 'Manage Listings',
+                'nav_title' => 'Listings',
+                'subtitle' => 'Manage your listings here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+        ]
+    ],
 ];

@@ -24,6 +24,7 @@ enum BlockType: string
     case MANAGE_FEATURES = 'manage-features-block';
     case MANAGE_LISTING_TYPES = 'manage-listing-types-block';
     case MANAGE_REVIEWS = 'manage-reviews-block';
+    case MANAGE_SITE_SETTINGS = 'manage-site-settings-block';
 
     public function isAdminBlock(): bool
     {
@@ -40,6 +41,7 @@ enum BlockType: string
             BlockType::MANAGE_FEATURES,
             BlockType::MANAGE_LISTING_TYPES,
             BlockType::MANAGE_REVIEWS,
+            BlockType::MANAGE_SITE_SETTINGS,
             BlockType::MANAGE_MENUS => true,
             default => false,
         };

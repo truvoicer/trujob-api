@@ -135,6 +135,13 @@ return [
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,
             ],
+            [
+                'page_name' => 'admin_settings',
+                'label' => 'Settings',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
         ],
         'roles' => [
             ApiAbility::SUPERUSER->value,

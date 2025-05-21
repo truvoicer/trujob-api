@@ -37,6 +37,14 @@ class CountryController extends Controller
         $this->countryRepository->setPage(
             $request->get('page', 1)
         );
+        $search = $request->get('query', null);
+        if ($search) {
+            $this->countryRepository->addWhere(
+                'name',
+                "%$search%",
+                'like',
+            );
+        }
 
         return CountryResource::collection(
             $this->countryRepository->findMany()

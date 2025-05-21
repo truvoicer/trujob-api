@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Site;
 
+use App\Http\Resources\MediaResource;
+use App\Http\Resources\Site\Setting\SiteSettingResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,6 +18,7 @@ class SiteResource extends JsonResource
     {
 
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'title' => $this->title,
             'description' => $this->description,
@@ -41,6 +44,7 @@ class SiteResource extends JsonResource
             'x_follow_url' => $this->x_follow_url,
             'timezone' => $this->timezone,
             'media' => $this->whenLoaded('media', MediaResource::collection($this->media)),
+            'settings' => $this->whenLoaded('settings', SiteSettingResource::make($this->settings->first())),
         ];
     }
 }
