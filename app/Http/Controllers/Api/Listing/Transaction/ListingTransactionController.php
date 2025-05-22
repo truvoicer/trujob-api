@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\Listing\Review;
+namespace App\Http\Controllers\Api\Listing\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\StoreListingTransactionRequest;
 use App\Http\Requests\Listing\UpdateListingTransactionRequest;
-use App\Http\Resources\Listing\ListingTransactionResource;
+use App\Http\Resources\TransactionResource;
 use App\Models\Listing;
-use App\Models\ListingTransaction;
+use App\Models\Transaction;
 use App\Repositories\ListingRepository;
 use App\Services\Listing\ListingTransactionService;
 use Illuminate\Http\Request;
@@ -17,11 +17,10 @@ class ListingTransactionController extends Controller
 {
 
     public function __construct(
-        private ListingTransactionService $listingTransactionService,
+        private ListingTransactionService $transactionService,
         private ListingRepository $listingRepository,
     )
-    {
-    }
+    {}
 
 
     /**
@@ -31,7 +30,7 @@ class ListingTransactionController extends Controller
      */
     public function index(Listing $listing, Request $request) {
         $this->listingRepository->setQuery(
-            $listing->listingTransaction()
+            $listing->transactions()
         );
         $this->listingRepository->setPagination(true);
         $this->listingRepository->setSortField(
@@ -47,49 +46,63 @@ class ListingTransactionController extends Controller
             $request->get('page', 1)
         );
 
-        return ListingTransactionResource::collection(
+        return TransactionResource::collection(
             $this->listingRepository->findMany()
         );
     }
 
-    public function create(Listing $listing, StoreListingTransactionRequest $request) {
-        $this->listingTransactionService->setUser($request->user()->user);
-        $this->listingTransactionService->setSite($request->user()->site);
-
-        if (!$this->listingTransactionService->createListingTransaction($listing, $request->validated())) {
+    public function view(Listing $listing, Transaction $transaction, Request $request) {
+        $this->transactionService->setUser($request->user()->user);
+        $this->transactionService->setSite($request->user()->site);
+        $check = $listing->transactions()->where('transactions.id', $transaction->id)->first();
+        if (!$check) {
             return response()->json([
-                'message' => 'Error creating listing review',
+                'message' => 'Transaction not found in listing',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        return new TransactionResource($transaction);
+    }
+
+    public function create(Listing $listing, StoreListingTransactionRequest $request) {
+        $this->transactionService->setUser($request->user()->user);
+        $this->transactionService->setSite($request->user()->site);
+
+        if (!$this->transactionService->createListingTransaction($listing, $request->validated())) {
+            return response()->json([
+                'message' => 'Error creating listing transaction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing review created',
+            'message' => 'Listing transaction created',
         ], Response::HTTP_CREATED);
     }
-    
-    public function update(Listing $listing, ListingTransaction $listingTransaction, UpdateListingTransactionRequest $request) {
-        $this->listingTransactionService->setUser($request->user()->user);
-        $this->listingTransactionService->setSite($request->user()->site);
 
-        if (!$this->listingTransactionService->updateListingTransaction($listingTransaction, $request->validated())) {
+    
+    public function update(Listing $listing, Transaction $transaction, UpdateListingTransactionRequest $request) {
+        $this->transactionService->setUser($request->user()->user);
+        $this->transactionService->setSite($request->user()->site);
+
+        if (!$this->transactionService->updateListingTransaction($listing, $transaction, $request->validated())) {
             return response()->json([
-                'message' => 'Error updating listing review',
+                'message' => 'Error updating listing transaction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing review updated',
+            'message' => 'Listing transaction updated',
         ], Response::HTTP_OK);
     }
-    public function destroy(Listing $listing, ListingTransaction $listingTransaction, Request $request) {
-        $this->listingTransactionService->setUser($request->user()->user);
-        $this->listingTransactionService->setSite($request->user()->site);
-
-        if (!$this->listingTransactionService->deleteListingTransaction($listingTransaction)) {
+    
+    public function destroy(Listing $listing, Transaction $transaction, Request $request) {
+        $this->transactionService->setUser($request->user()->user);
+        $this->transactionService->setSite($request->user()->site);
+        
+        if (!$this->transactionService->deleteListingTransaction($listing, $transaction)) {
             return response()->json([
-                'message' => 'Error deleting listing review',
+                'message' => 'Error deleting listing transaction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing review deleted',
+            'message' => 'Listing transaction deleted',
         ], Response::HTTP_OK);
     }
 }

@@ -365,12 +365,12 @@ return [
         'view' => ViewType::AdminTabPage,
         'blocks' => [
             [
-                'type' => BlockType::MANAGE_PAYMENT_METHODS,
+                'type' => BlockType::MANAGE_PAYMENT_GATEWAYS,
                 'order' => 0,
-                'title' => 'Manage Payment Methods',
-                'nav_title' => 'Payment Methods',
-                'subtitle' => 'Manage your payment methods here',
-                'default' => true,
+                'title' => 'Manage Payment Gateways',
+                'nav_title' => 'Payment Gateways',
+                'subtitle' => 'Manage your payment gateways here',
+                'default' => false,
             ],
         ],
         'roles' => [

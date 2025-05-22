@@ -277,15 +277,24 @@ class PageService extends BaseService
     }
 
     public function defaultPages() {
-        $data = include_once(database_path('data/PageData.php'));
+        $data = include(database_path('data/PageData.php'));
         if (!$data) {
             throw new \Exception('Error reading PageData.php file ' . database_path('data/PageData.php'));
         }
+        $sitePageNameData = [];
         foreach ($data as $item) {
             $site = Site::find($item['site_id'])->first();
             if (!$site) {
                 throw new \Exception('Site not found: ' . $item['site_id']);
             }
+            $siteIndex = array_search($site->id, array_column($sitePageNameData, 'site_id'));
+            if ($siteIndex === false) {
+                $sitePageNameData[] = [
+                    'site_id' => $site->id,
+                    'page_names' => [],
+                ];
+            }
+            $sitePageNameData[$siteIndex]['page_names'][] = $item['name'];
             $findPage = $site->pages()->where('name', $item['name'])->first();
             if ($findPage) {
                 if (!$this->updatePage($findPage, $item)) {
@@ -294,6 +303,18 @@ class PageService extends BaseService
                 continue;
             }
             $this->createPage($site, $item);
+        }
+        foreach ($sitePageNameData as $sitePageName) {
+            $site = Site::find($sitePageName['site_id']);
+            if (!$site) {
+                throw new \Exception('Site not found: ' . $sitePageName['site_id']);
+            }
+            $pages = $site->pages()->whereNotIn('name', $sitePageName['page_names'])->get();
+            foreach ($pages as $page) {
+                if (!$this->deletePage($page)) {
+                    throw new \Exception('Error deleting page: ' . $page->name);
+                }
+            }
         }
     }
 

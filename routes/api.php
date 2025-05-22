@@ -48,6 +48,7 @@ use App\Http\Controllers\Api\Listing\Feature\ListingFeatureController;
 use App\Http\Controllers\Api\Listing\Follow\ListingFollowController;
 use App\Http\Controllers\Api\Listing\Price\ListingPriceController;
 use App\Http\Controllers\Api\Listing\Review\ListingReviewController;
+use App\Http\Controllers\Api\Listing\Transaction\ListingTransactionController;
 use App\Http\Controllers\Api\Listing\Type\ListingTypeController;
 use App\Http\Controllers\Api\Locale\BulkCountryController;
 use App\Http\Controllers\Api\Locale\BulkCurrencyController;
@@ -69,6 +70,7 @@ use App\Http\Controllers\Api\Page\Sidebar\PageSidebarReorderController;
 use App\Http\Controllers\Api\Sidebar\SidebarRoleController;
 use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
+use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayController;
 use App\Http\Controllers\Api\PaymentMethod\PaymentMethodController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
@@ -238,7 +240,11 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
             });
             Route::prefix('transaction')->name('transaction.')->group(function () {
-                Route::get('/', [ListingProductTypeController::class, 'index'])->name('index');
+                Route::get('/', [ListingTransactionController::class, 'index'])->name('index');
+                Route::post('/create', [ListingTransactionController::class, 'create'])->name('create');
+                Route::get('/{transaction}', [ListingTransactionController::class, 'view'])->name('view');
+                Route::patch('/{transaction}/update', [ListingTransactionController::class, 'update'])->name('update');
+                Route::delete('/{transaction}/delete', [ListingTransactionController::class, 'destroy'])->name('delete');
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/create', [MessagingGroupController::class, 'createMessageGroup'])->name('create');
@@ -332,6 +338,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/{paymentMethod}', [PaymentMethodController::class, 'view'])->name('view');
         Route::patch('/{paymentMethod}/update', [PaymentMethodController::class, 'update'])->name('update');
         Route::delete('/{paymentMethod}/delete', [PaymentMethodController::class, 'destroy'])->name('delete');
+    });
+    Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
+        Route::get('/', [PaymentGatewayController::class, 'index'])->name('index');
+        Route::post('/create', [PaymentGatewayController::class, 'create'])->name('create');
+        Route::get('/{paymentGateway}', [PaymentGatewayController::class, 'view'])->name('view');
+        Route::patch('/{paymentGateway}/update', [PaymentGatewayController::class, 'update'])->name('update');
+        Route::delete('/{paymentGateway}/delete', [PaymentGatewayController::class, 'destroy'])->name('delete');
     });
     Route::prefix('price')->name('price.')->group(function () {
         Route::post('/create', [PriceController::class, 'create'])->name('create');

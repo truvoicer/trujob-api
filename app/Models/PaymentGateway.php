@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PaymentMethod extends Model
+class PaymentGateway extends Model
 {
     protected $fillable = [
         'name',
@@ -21,8 +21,13 @@ class PaymentMethod extends Model
         'settings' => 'array',
     ];
 
-    public function paymentGateways()
+    public function transactions()
     {
-        return $this->belongsToMany(PaymentGateway::class, 'payment_gateway_payment_methods');
+        return $this->hasMany(Transaction::class);
+    }
+    
+    public function paymentMethods()
+    {
+        return $this->belongsToMany(PaymentMethod::class, 'payment_gateway_payment_methods');
     }
 }

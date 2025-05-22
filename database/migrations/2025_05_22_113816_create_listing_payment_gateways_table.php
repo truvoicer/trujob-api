@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('listing_payment_gateways', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-            $table->foreignId('price_id')
-                ->constrained('prices')
+            $table->foreignId('listing_id')
+                ->constrained('listings')
                 ->cascadeOnDelete();
             $table->foreignId('payment_gateway_id')
                 ->constrained('payment_gateways')
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('listing_payment_gateways');
     }
 };

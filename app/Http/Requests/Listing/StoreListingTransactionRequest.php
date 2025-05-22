@@ -13,7 +13,7 @@ class StoreListingTransactionRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class StoreListingTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'price_id' => ['required', 'integer', 'exists:prices,id'],
+            'payment_gateway_id' => ['required', 'integer', 'exists:payment_gateways,id'],
         ];
     }
 }

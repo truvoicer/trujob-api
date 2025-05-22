@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
+        Schema::create('payment_gateway_payment_methods', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-            $table->foreignId('price_id')
-                ->constrained('prices')
-                ->cascadeOnDelete();
             $table->foreignId('payment_gateway_id')
                 ->constrained('payment_gateways')
                 ->cascadeOnDelete();
+            $table->foreignId('payment_method_id')
+                ->constrained('payment_methods')
+                ->cascadeOnDelete();
+            $table->string('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::dropIfExists('payment_gateway_payment_methods');
     }
 };

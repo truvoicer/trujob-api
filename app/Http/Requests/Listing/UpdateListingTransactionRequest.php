@@ -13,7 +13,7 @@ class UpdateListingTransactionRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class UpdateListingTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'price_id' => ['sometimes', 'integer', 'exists:prices,id'],
+            'payment_gateway_id' => ['sometimes', 'integer', 'exists:payment_gateways,id'],
         ];
     }
 }

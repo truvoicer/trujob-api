@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
+    protected $fillable = [
+        'price_id',
+        'payment_gateway_id',
+        'user_id',
+    ];
     
     public function listings() {
         return $this->belongsToMany(Listing::class, 'listing_transactions');
@@ -26,7 +31,9 @@ class Transaction extends Model
     public function currency() {
         return $this->belongsTo(Currency::class);
     }
-    public function paymentMethod() {
-        return $this->belongsTo(PaymentMethod::class);
+
+    public function paymentGateway() {
+        return $this->belongsTo(PaymentGateway::class);
     }
+    
 }

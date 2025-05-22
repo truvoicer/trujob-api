@@ -26,6 +26,7 @@ enum BlockType: string
     case MANAGE_REVIEWS = 'manage-reviews-block';
     case MANAGE_SITE_SETTINGS = 'manage-site-settings-block';
     case MANAGE_PAYMENT_METHODS = 'manage-payment-methods-block';
+    case MANAGE_PAYMENT_GATEWAYS = 'manage-payment-gateways-block';
 
     public function isAdminBlock(): bool
     {
@@ -44,6 +45,7 @@ enum BlockType: string
             BlockType::MANAGE_REVIEWS,
             BlockType::MANAGE_SITE_SETTINGS,
             BlockType::MANAGE_PAYMENT_METHODS,
+            BlockType::MANAGE_PAYMENT_GATEWAYS,
             BlockType::MANAGE_MENUS => true,
             default => false,
         };
