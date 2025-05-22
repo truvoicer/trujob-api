@@ -25,7 +25,7 @@ class EditListingPriceRequest extends FormRequest
     {
         return [
             'user_id' => ['sometimes', 'integer', 'exists:users,id'],
-            'type_id' => ['sometimes', 'integer', 'exists:listing_types,id'],
+            'price_type_id' => ['sometimes', 'integer', 'exists:listing_types,id'],
             'amount' => ['sometimes', 'numeric'],
             'currency_id' => ['sometimes', 'integer', 'exists:currencies,id'],
             'country_id' => ['sometimes', 'integer', 'exists:countries,id'],

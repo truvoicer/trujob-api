@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Listing;
 
-use App\Http\Resources\User\UserResource;
+use App\Http\Resources\PriceResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ListingPriceResource extends JsonResource

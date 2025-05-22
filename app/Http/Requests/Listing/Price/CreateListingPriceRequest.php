@@ -24,7 +24,7 @@ class CreateListingPriceRequest extends FormRequest
     public function rules()
     {
         return [
-            'type_id' => ['required', 'integer', 'exists:listing_types,id'],
+            'price_type_id' => ['required', 'integer', 'exists:price_types,id'],
             'amount' => ['required', 'numeric'],
             'currency_id' => ['required', 'integer', 'exists:currencies,id'],
             'country_id' => ['required', 'integer', 'exists:countries,id'],

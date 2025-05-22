@@ -26,4 +26,7 @@ class Transaction extends Model
     public function currency() {
         return $this->belongsTo(Currency::class);
     }
+    public function paymentMethod() {
+        return $this->belongsTo(PaymentMethod::class);
+    }
 }

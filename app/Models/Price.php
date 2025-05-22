@@ -11,6 +11,7 @@ class Price extends Model
 
     protected $fillable = [
         'user_id',
+        'price_type_id',
         'country_id',
         'currency_id',
         'amount',
@@ -27,10 +28,10 @@ class Price extends Model
     ];
     public function user()
     {
-        return $this->belongsTo(User::class, 'created_by_user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function type()
+    public function priceType()
     {
         return $this->belongsTo(PriceType::class);
     }

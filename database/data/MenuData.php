@@ -129,6 +129,13 @@ return [
                 'order' => 0,
             ],
             [
+                'page_name' => 'admin_finance',
+                'label' => 'Finance',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
                 'page_name' => 'admin_listing',
                 'label' => 'Listing',
                 'active' => true,

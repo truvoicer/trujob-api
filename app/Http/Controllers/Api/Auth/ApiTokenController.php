@@ -20,8 +20,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 class ApiTokenController extends Controller
 {
     public function __construct(
-        private UserAdminService $userAdminService,
-        private UserRepository $userRepository,
+        protected UserAdminService $userAdminService,
+        protected UserRepository $userRepository,
     ) {
     }
     

@@ -22,6 +22,10 @@ return new class extends Migration
             $table->foreignId('currency_id')
                 ->constrained('currencies')
                 ->cascadeOnDelete();
+            $table->foreignId('payment_method_id')
+                ->nullable()
+                ->constrained('payment_methods')
+                ->nullOnDelete();
             $table->timestamps();
         });
     }

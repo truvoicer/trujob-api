@@ -48,8 +48,7 @@ class ListingPriceController extends Controller
     public function view(Listing $listing, Price $price, Request $request) {
         $this->listingPriceService->setUser($request->user()->user);
         $this->listingPriceService->setSite($request->user()->site);
-
-        return new ListingPriceResource($price);
+        return new PriceResource($price);
     }
 
     public function create(Listing $listing, CreateListingPriceRequest $request)

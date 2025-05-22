@@ -69,6 +69,7 @@ use App\Http\Controllers\Api\Page\Sidebar\PageSidebarReorderController;
 use App\Http\Controllers\Api\Sidebar\SidebarRoleController;
 use App\Http\Controllers\Api\Pagination\PaginationTypeController;
 use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
+use App\Http\Controllers\Api\PaymentMethod\PaymentMethodController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\Price\PriceController;
@@ -236,6 +237,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/create', BulkUserDeleteController::class)->name('create');
                 });
             });
+            Route::prefix('transaction')->name('transaction.')->group(function () {
+                Route::get('/', [ListingProductTypeController::class, 'index'])->name('index');
+            });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/create', [MessagingGroupController::class, 'createMessageGroup'])->name('create');
                 Route::prefix('{messagingGroup}')->name('message_group.')->group(function () {
@@ -322,6 +326,13 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin'])->group(function () {
+    Route::prefix('payment-method')->name('payment-method.')->group(function () {
+        Route::get('/', [PaymentMethodController::class, 'index'])->name('index');
+        Route::post('/create', [PaymentMethodController::class, 'create'])->name('create');
+        Route::get('/{paymentMethod}', [PaymentMethodController::class, 'view'])->name('view');
+        Route::patch('/{paymentMethod}/update', [PaymentMethodController::class, 'update'])->name('update');
+        Route::delete('/{paymentMethod}/delete', [PaymentMethodController::class, 'destroy'])->name('delete');
+    });
     Route::prefix('price')->name('price.')->group(function () {
         Route::post('/create', [PriceController::class, 'create'])->name('create');
         Route::get('/{price}', [PriceController::class, 'view'])->name('view');

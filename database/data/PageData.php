@@ -356,4 +356,26 @@ return [
             ApiAbility::ADMIN->value,
         ]
     ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/finance',
+        'name' => 'admin_finance',
+        'title' => 'Finance',
+        'content' => 'Welcome to the finance admin page',
+        'view' => ViewType::AdminTabPage,
+        'blocks' => [
+            [
+                'type' => BlockType::MANAGE_PAYMENT_METHODS,
+                'order' => 0,
+                'title' => 'Manage Payment Methods',
+                'nav_title' => 'Payment Methods',
+                'subtitle' => 'Manage your payment methods here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+        ]
+    ],
 ];
