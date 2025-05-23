@@ -242,17 +242,24 @@ return [
                 'nav_title' => 'Widgets',
                 'subtitle' => 'Manage your widgets here',
             ],
-            [
-                'type' => BlockType::MANAGE_USERS,
-                'order' => 0,
-                'title' => 'Manage Users',
-                'nav_title' => 'Users',
-                'subtitle' => 'Manage your users here',
-            ],
         ],
         'roles' => [
             ApiAbility::SUPERUSER->value,
             ApiAbility::ADMIN->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/dashboard',
+        'name' => 'dashboard',
+        'title' => 'Dashboard',
+        'content' => 'Welcome to your dashboard page',
+        'view' => ViewType::AdminPage,
+        'blocks' => [],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+            ApiAbility::USER->value,
         ]
     ],
     [
@@ -336,6 +343,29 @@ return [
     ],
     [
         'site_id' => 1,
+        'permalink' => '/admin/user',
+        'name' => 'admin_users',
+        'title' => 'User',
+        'content' => 'Welcome to the user admin page',
+        'view' => ViewType::AdminTabPage,
+        'blocks' => [
+            [
+                'type' => BlockType::MANAGE_USERS,
+                'order' => 0,
+                'title' => 'Manage Users',
+                'nav_title' => 'Users',
+                'subtitle' => 'Manage your users here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+            ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
         'permalink' => '/admin/settings',
         'name' => 'admin_settings',
         'title' => 'Settings',
@@ -376,6 +406,29 @@ return [
         'roles' => [
             ApiAbility::SUPERUSER->value,
             ApiAbility::ADMIN->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/profile/manage_address',
+        'name' => 'manage_address',
+        'title' => 'Manage Address',
+        'content' => 'Welcome to the manage address admin page',
+        'view' => ViewType::AdminPage,
+        'blocks' => [
+            [
+                'type' => BlockType::MANAGE_ADDRESSES,
+                'order' => 0,
+                'title' => 'Manage Addresses',
+                'nav_title' => 'Addresses',
+                'subtitle' => 'Manage your addresses here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+            ApiAbility::USER->value,
         ]
     ],
 ];

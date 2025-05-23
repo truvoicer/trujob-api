@@ -30,4 +30,9 @@ class Country extends Model
     {
         return $this->belongsTo(ListingPrice::class);
     }
+    
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
+    }
 }

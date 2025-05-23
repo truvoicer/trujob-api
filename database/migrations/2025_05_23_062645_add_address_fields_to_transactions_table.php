@@ -11,22 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-            $table->foreignId('price_id')
-                ->constrained('prices')
-                ->cascadeOnDelete();
-            $table->foreignId('payment_gateway_id')
-                ->constrained('payment_gateways')
-                ->cascadeOnDelete();
+        Schema::table('transactions', function (Blueprint $table) {
             $table->foreignId('billing_address_id')
                 ->constrained('addresses');
             $table->foreignId('shipping_address_id')
                 ->constrained('addresses');
-            $table->timestamps();
         });
     }
 
@@ -35,6 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->dropForeign(['billing_address_id']);
+            $table->dropColumn('billing_address_id');
+            $table->dropForeign(['shipping_address_id']);
+            $table->dropColumn('shipping_address_id');
+        });
     }
 };

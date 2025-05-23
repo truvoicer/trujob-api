@@ -15,7 +15,7 @@ class SidebarSeeder extends Seeder
      */
     public function run(SidebarService $sidebarService): void
     {
-        $data = include_once(database_path('data/SidebarData.php'));
+        $data = include(database_path('data/SidebarData.php'));
         if (!$data) {
             throw new \Exception('Error reading SidebarData.php file ' . database_path('data/SidebarData.php'));
         }

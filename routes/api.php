@@ -48,8 +48,8 @@ use App\Http\Controllers\Api\Listing\Feature\ListingFeatureController;
 use App\Http\Controllers\Api\Listing\Follow\ListingFollowController;
 use App\Http\Controllers\Api\Listing\Price\ListingPriceController;
 use App\Http\Controllers\Api\Listing\Review\ListingReviewController;
-use App\Http\Controllers\Api\Listing\Transaction\ListingTransactionController;
 use App\Http\Controllers\Api\Listing\Type\ListingTypeController;
+use App\Http\Controllers\Api\Locale\AddressController;
 use App\Http\Controllers\Api\Locale\BulkCountryController;
 use App\Http\Controllers\Api\Locale\BulkCurrencyController;
 use App\Http\Controllers\Api\Review\ReviewController;
@@ -59,6 +59,7 @@ use App\Http\Controllers\Api\Menu\MenuItemMenuReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
+use App\Http\Controllers\Api\Order\OrderController;
 use App\Http\Controllers\Api\Page\Block\PageBlockReorderController;
 use App\Http\Controllers\Api\Page\Block\PageBlockRoleController;
 use App\Http\Controllers\Api\Page\Block\Sidebar\PageBlockSidebarController;
@@ -84,6 +85,7 @@ use App\Http\Controllers\Api\Sidebar\SidebarWidgetRoleController;
 use App\Http\Controllers\Api\Site\SiteTokenController;
 use App\Http\Controllers\Api\Site\Setting\SiteSettingController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
+use App\Http\Controllers\Api\Transaction\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\User\UserSellerController;
@@ -143,8 +145,17 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/listing-type', [ListingTypeController::class, 'index'])->name('listing-type.index');
     Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
-    Route::get('/locale/currency', [CurrencyController::class, 'index'])->name('currency.index');
-    Route::get('/locale/country', [CountryController::class, 'index'])->name('country.index');
+    Route::prefix('locale')->name('locale.')->group(function () {
+        Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
+        Route::get('/country', [CountryController::class, 'index'])->name('country.index');
+        Route::prefix('address')->name('address.')->group(function () {
+            Route::get('/', [AddressController::class, 'index'])->name('index');
+            Route::post('/create', [AddressController::class, 'create'])->name('create');
+            Route::get('/{address}', [AddressController::class, 'view'])->name('view');
+            Route::patch('/{address}/update', [AddressController::class, 'update'])->name('update');
+            Route::delete('/{address}/delete', [AddressController::class, 'destroy'])->name('delete');
+        });
+    });
     Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
 });
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
@@ -159,6 +170,21 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [UserListingController::class, 'index'])->name('index');
             Route::get('/{listing?}', [UserListingController::class, 'view'])->name('edit');
         });
+    });
+
+    Route::prefix('order')->name('order.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::post('/create', [OrderController::class, 'create'])->name('create');
+        Route::get('/{order}', [OrderController::class, 'view'])->name('view');
+        Route::patch('/{order}/update', [OrderController::class, 'update'])->name('update');
+        Route::delete('/{order}/delete', [OrderController::class, 'destroy'])->name('delete');
+    });
+    Route::prefix('transaction')->name('transaction.')->group(function () {
+        Route::get('/', [TransactionController::class, 'index'])->name('index');
+        Route::post('/create', [TransactionController::class, 'create'])->name('create');
+        Route::get('/{transaction}', [TransactionController::class, 'view'])->name('view');
+        Route::patch('/{transaction}/update', [TransactionController::class, 'update'])->name('update');
+        Route::delete('/{transaction}/delete', [TransactionController::class, 'destroy'])->name('delete');
     });
     Route::prefix('listing')->name('listing.')->group(function () {
         Route::post('/create', [ListingController::class, 'create'])->name('create');
@@ -238,13 +264,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/create', BulkUserDeleteController::class)->name('create');
                 });
-            });
-            Route::prefix('transaction')->name('transaction.')->group(function () {
-                Route::get('/', [ListingTransactionController::class, 'index'])->name('index');
-                Route::post('/create', [ListingTransactionController::class, 'create'])->name('create');
-                Route::get('/{transaction}', [ListingTransactionController::class, 'view'])->name('view');
-                Route::patch('/{transaction}/update', [ListingTransactionController::class, 'update'])->name('update');
-                Route::delete('/{transaction}/delete', [ListingTransactionController::class, 'destroy'])->name('delete');
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/create', [MessagingGroupController::class, 'createMessageGroup'])->name('create');

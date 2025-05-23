@@ -6,6 +6,7 @@ use Database\Factories\listing\ListingFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Listing extends Model
 {
@@ -108,4 +109,11 @@ class Listing extends Model
     {
         return $this->belongsToMany(Price::class, 'listing_prices');
     }
+
+    public function orderItems(): MorphMany
+    {
+        return $this->morphMany(OrderItem::class, 'orderItemable');
+    }
+
+    
 }

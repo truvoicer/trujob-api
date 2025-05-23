@@ -27,6 +27,7 @@ enum BlockType: string
     case MANAGE_SITE_SETTINGS = 'manage-site-settings-block';
     case MANAGE_PAYMENT_METHODS = 'manage-payment-methods-block';
     case MANAGE_PAYMENT_GATEWAYS = 'manage-payment-gateways-block';
+    case MANAGE_ADDRESSES = 'manage-addresses-block';
 
     public function isAdminBlock(): bool
     {

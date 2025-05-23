@@ -15,7 +15,7 @@ class WidgetSeeder extends Seeder
      */
     public function run(WidgetService $widgetService): void
     {
-        $data = include_once(database_path('data/WidgetData.php'));
+        $data = include(database_path('data/WidgetData.php'));
         if (!$data) {
             throw new \Exception('Error reading WidgetData.php file ' . database_path('data/WidgetData.php'));
         }

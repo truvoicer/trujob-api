@@ -14,7 +14,7 @@ class ListingTypeSeeder extends Seeder
      */
     public function run()
     {
-        $data = include_once(database_path('data/ListingTypeData.php'));
+        $data = include(database_path('data/ListingTypeData.php'));
         if (!$data) {
             throw new \Exception('Error reading ListingTypeData.php file ' . database_path('data/ListingTypeData.php'));
         }

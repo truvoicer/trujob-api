@@ -35,5 +35,12 @@ class Transaction extends Model
     public function paymentGateway() {
         return $this->belongsTo(PaymentGateway::class);
     }
+
+    public function orderTransactions() {
+        return $this->hasMany(OrderTransaction::class);
+    }
+    public function orders() {
+        return $this->belongsToMany(Order::class, 'order_transactions');
+    }
     
 }

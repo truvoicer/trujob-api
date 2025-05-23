@@ -118,6 +118,25 @@ return [
     ],
     [
         'site' => 'tru-job',
+        'name' => 'admin-profile-menu',
+        'menu_items' => [
+            [
+                'page_name' => 'manage_address',
+                'label' => 'Manage Address',
+                'url' => '/admin/profile/manage-address',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::USER->value,
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+        ],
+    ],
+    [
+        'site' => 'tru-job',
         'name' => 'admin-header-menu',
         'menu_items' => [
             [
@@ -143,8 +162,30 @@ return [
                 'order' => 0,
             ],
             [
+                'label' => 'Profile',
+                'url' => '/admin/profile',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+                'roles' => [
+                    ApiAbility::USER->value,
+                    ApiAbility::SUPERUSER->value,
+                    ApiAbility::ADMIN->value,
+                ],
+                'menus' => [
+                    'name' => 'admin-profile-menu',
+                ]
+            ],
+            [
                 'page_name' => 'admin_settings',
                 'label' => 'Settings',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
+                'page_name' => 'admin_users',
+                'label' => 'Users',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,

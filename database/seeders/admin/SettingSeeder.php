@@ -13,7 +13,7 @@ class SettingSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = include_once(database_path('data/SettingData.php'));
+        $data = include(database_path('data/SettingData.php'));
         if (!$data) {
             throw new \Exception('Error reading SettingData.php file ' . database_path('data/SettingData.php'));
         }
