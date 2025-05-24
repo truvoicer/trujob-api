@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Enums\Order\OrderItemType;
+use App\Rules\OrderItem;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreOrderRequest extends FormRequest
 {
@@ -24,8 +27,8 @@ class StoreOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'price_id' => ['required', 'integer', 'exists:prices,id'],
-            'payment_gateway_id' => ['required', 'integer', 'exists:payment_gateways,id'],
+            'items' => ['required', 'array'],
+            'items.*' => [new OrderItem],
         ];
     }
 }

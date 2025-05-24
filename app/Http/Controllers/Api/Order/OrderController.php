@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api\Order;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
-use App\Http\Resources\OrderResource;
+use App\Http\Resources\Order\OrderResource;
+use App\Models\Listing;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Services\Order\OrderService;
@@ -18,8 +19,7 @@ class OrderController extends Controller
     public function __construct(
         private OrderService $orderService,
         private OrderRepository $orderRepository,
-    )
-    {}
+    ) {}
 
 
     /**
@@ -27,7 +27,8 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $this->orderRepository->setPagination(true);
         $this->orderRepository->setSortField(
             $request->get('sort', 'created_at')
@@ -47,28 +48,38 @@ class OrderController extends Controller
         );
     }
 
-    public function view(Order $order, Request $request) {
+    public function view(Order $order, Request $request)
+    {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
-        return new OrderResource($order);
+
+        return new OrderResource(
+            $order->load([
+                'items',
+            ])
+        );
     }
 
-    public function create(Order $order, StoreOrderRequest $request) {
+    public function create(Order $order, StoreOrderRequest $request)
+    {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
-
-        if (!$this->orderService->createOrder($request->validated())) {
+        $order = $this->orderService->createOrder($request->validated());
+        if (!$order || !$order->exists()) {
             return response()->json([
                 'message' => 'Error creating order order',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return response()->json([
-            'message' => 'Order order created',
-        ], Response::HTTP_CREATED);
+        return OrderResource::make(
+            $order->load([
+                'items',
+            ])
+        );
     }
 
-    
-    public function update(Order $order, UpdateOrderRequest $request) {
+
+    public function update(Order $order, UpdateOrderRequest $request)
+    {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
 
@@ -81,11 +92,12 @@ class OrderController extends Controller
             'message' => 'Order order updated',
         ], Response::HTTP_OK);
     }
-    
-    public function destroy(Order $order, Request $request) {
+
+    public function destroy(Order $order, Request $request)
+    {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
-        
+
         if (!$this->orderService->deleteOrder($order)) {
             return response()->json([
                 'message' => 'Error deleting order order',

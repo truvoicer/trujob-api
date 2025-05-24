@@ -18,6 +18,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->unsignedBigInteger('order_itemable_id');
             $table->string('order_itemable_type');
+            $table->integer('quantity');
             $table->timestamps();
         });
     }

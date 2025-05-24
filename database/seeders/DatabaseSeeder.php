@@ -51,6 +51,7 @@ use Database\Seeders\listing\ListingSeeder;
 use Database\Seeders\listing\ListingTypeSeeder;
 use Database\Seeders\listing\ProductTypeSeeder;
 use Database\Seeders\locale\LocaleSeeder;
+use Database\Seeders\payment\PaymentGatewaySeeder;
 use Database\Seeders\price\PriceTypeSeeder;
 use Database\Seeders\user\RoleSeeder;
 use Database\Seeders\user\UserSeeder;
@@ -77,6 +78,7 @@ class DatabaseSeeder extends Seeder
             ProductTypeSeeder::class,
             ListingTypeSeeder::class,
             PriceTypeSeeder::class,
+            PaymentGatewaySeeder::class,
             BlockSeeder::class,
             PermissionSeeder::class,
             SettingSeeder::class,

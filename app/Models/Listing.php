@@ -112,7 +112,7 @@ class Listing extends Model
 
     public function orderItems(): MorphMany
     {
-        return $this->morphMany(OrderItem::class, 'orderItemable');
+        return $this->morphMany(OrderItem::class, 'order_itemable');
     }
 
     

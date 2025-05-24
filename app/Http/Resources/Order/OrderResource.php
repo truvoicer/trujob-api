@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Order;
 
 use App\Http\Resources\PaymentGateway\PaymentGatewayResource;
+use App\Http\Resources\PriceResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,10 +19,9 @@ class OrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'amount' => $this->amount,
-            'price' => $this->whenLoaded('price', PriceResource::make($this->price)),
             'user' => $this->whenLoaded('user', UserResource::make($this->user)),
-            'payment_gateway' => $this->whenLoaded('paymentGateway', PaymentGatewayResource::make($this->paymentGateway)),
+            'status' => $this->status,
+            'items' => $this->whenLoaded('items', OrderItemResource::collection($this->items)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

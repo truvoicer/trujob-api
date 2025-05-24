@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class OrderItem extends Model
 {
+    protected $fillable = [
+        'order_id',
+        'itemable_id',
+        'itemable_type',
+        'quantity',
+    ];
     
     public function orderItemable(): MorphTo
     {
