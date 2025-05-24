@@ -24,7 +24,7 @@ class PriceResource extends JsonResource
             'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
             'country' => $this->whenLoaded('country', CountryResource::make($this->country)),
             'user' => $this->whenLoaded('user', UserResource::make($this->user)),
-            'priceType' => $this->whenLoaded('priceType', PriceTypeResource::make($this->priceType)),
+            'price_type' => $this->whenLoaded('priceType', PriceTypeResource::make($this->priceType)),
             'valid_from' => $this->valid_from,
             'valid_to' => $this->valid_to,
             'valid_from_timestamp' => $this->valid_from->timestamp,
