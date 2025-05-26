@@ -18,8 +18,13 @@ class Category extends Model
         return CategoryFactory::new();
     }
 
-    
     public function listings() {
         return $this->belongsToMany(Listing::class, 'listing_categories');
     }
+
+    public function discounts()
+{
+    return $this->belongsToMany(Discount::class)
+        ->withTimestamps();
+}
 }

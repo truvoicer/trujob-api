@@ -114,6 +114,14 @@ class Listing extends Model
     {
         return $this->morphMany(OrderItem::class, 'order_itemable');
     }
-
     
+    public function taxRates(): MorphMany
+    {
+        return $this->morphMany(PriceTaxRate::class, 'product_tax_rateable');
+    }
+    
+    public function discounts(): MorphMany
+    {
+        return $this->morphMany(DiscountProduct::class, 'discount_productable');
+    }
 }

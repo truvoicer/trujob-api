@@ -50,4 +50,52 @@ class Price extends Model
     {
         return $this->belongsTo(Currency::class);
     }
+
+    public function discounts()
+    {
+        return $this->belongsToMany(Discount::class)
+            ->withTimestamps();
+    }
+
+    public function taxRates()
+    {
+        return $this->belongsToMany(TaxRate::class, 'price_tax_rates')
+            ->using(PriceTaxRate::class)
+            ->withPivot('is_primary')
+            ->withTimestamps();
+    }
+
+    public function defaultTaxRate()
+    {
+        return $this->taxRates()
+            ->wherePivot('is_primary', true)
+            ->first();
+    }
+
+    public function calculateTax(float $price, Country $country, ?string $region = null)
+    {
+        $taxRate = $this->resolveApplicableTaxRate($country, $region);
+
+        return $price * ($taxRate->rate / 100);
+    }
+
+    protected function resolveApplicableTaxRate(Country $country, ?string $region = null)
+    {
+        // First try price-specific rates
+        if ($this->taxRates()->exists()) {
+            $rate = $this->taxRates()
+            ->whereHas('country', fn($q) => $q->where('code', $country->code))
+                // ->orderBy('region', 'desc') // Prefer region-specific
+                ->first();
+
+            if ($rate) return $rate;
+        }
+
+        // Fall back to default rates for country/region
+        return TaxRate::query()
+            ->active()
+            ->forRegion($countryCode ?? config('app.default_country'), $region)
+            ->defaultRate()
+            ->firstOrFail();
+    }
 }

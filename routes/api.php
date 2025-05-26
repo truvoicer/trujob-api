@@ -60,6 +60,7 @@ use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
 use App\Http\Controllers\Api\Order\OrderController;
+use App\Http\Controllers\Api\Order\Item\OrderItemController;
 use App\Http\Controllers\Api\Page\Block\PageBlockReorderController;
 use App\Http\Controllers\Api\Page\Block\PageBlockRoleController;
 use App\Http\Controllers\Api\Page\Block\Sidebar\PageBlockSidebarController;
@@ -176,8 +177,19 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::post('/create', [OrderController::class, 'create'])->name('create');
         Route::get('/{order}', [OrderController::class, 'view'])->name('view');
-        Route::patch('/{order}/update', [OrderController::class, 'update'])->name('update');
-        Route::delete('/{order}/delete', [OrderController::class, 'destroy'])->name('delete');
+        Route::prefix('{order}')->group(function () {
+            Route::patch('/update', [OrderController::class, 'update'])->name('update');
+            Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
+            Route::prefix('item')->name('item.')->group(function () {
+                Route::get('/', [OrderItemController::class, 'index'])->name('index');
+                Route::post('/create', [OrderItemController::class, 'create'])->name('create');
+                Route::prefix('{orderItem}')->group(function () {
+                    Route::get('/', [OrderItemController::class, 'view'])->name('view');
+                    Route::patch('/update', [OrderItemController::class, 'update'])->name('update');
+                    Route::delete('/delete', [OrderItemController::class, 'destroy'])->name('delete');
+                });
+            });
+        });
     });
     Route::prefix('transaction')->name('transaction.')->group(function () {
         Route::get('/', [TransactionController::class, 'index'])->name('index');

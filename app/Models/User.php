@@ -59,7 +59,7 @@ class User extends Authenticatable
     {
         return $this->first_name . ' ' . $this->last_name;
     }
-    
+
     public function roles()
     {
         return $this->belongsToMany(
@@ -134,5 +134,24 @@ class User extends Authenticatable
     public function addresses()
     {
         return $this->hasMany(Address::class);
+    }
+
+    public function discountUsages()
+    {
+        return $this->hasMany(UserDiscountUsage::class);
+    }
+
+    public function hasReachedDiscountLimit(Discount $discount): bool
+    {
+        if ($discount->per_user_limit === null) {
+            return false;
+        }
+
+        $usage = $this->discountUsages()->firstOrCreate(
+            ['discount_id' => $discount->id],
+            ['usage_count' => 0]
+        );
+
+        return $usage->usage_count >= $discount->per_user_limit;
     }
 }
