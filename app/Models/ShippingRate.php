@@ -37,9 +37,9 @@ class ShippingRate extends Model
         return $this->belongsTo(ShippingZone::class, 'shipping_zone_id');
     }
 
-    public function calculateRate(float $orderValue = null, float $weight = null): float
+    public function calculateRate(float $orderValue = 0, float $weight = 0): float
     {
-        return match($this->rate_type) {
+        return match ($this->rate_type) {
             'free' => 0.00,
             'flat' => $this->rate_amount,
             'price_based' => ($orderValue >= ($this->min_value ?? 0)) ? 0.00 : $this->rate_amount,
@@ -51,12 +51,37 @@ class ShippingRate extends Model
     protected function calculateWeightBasedRate(?float $weight): float
     {
         if ($weight === null) return $this->rate_amount;
-        
+
         if (($this->min_value !== null && $weight < $this->min_value) ||
-            ($this->max_value !== null && $weight > $this->max_value)) {
+            ($this->max_value !== null && $weight > $this->max_value)
+        ) {
             return 0.00; // Doesn't apply, should be handled by rate selection logic
         }
-        
+
         return $this->rate_amount;
+    }
+
+    public function calculateShippingRateData(
+        Country $country,
+        ShippingMethod $shippingMethod,
+        ?float $orderAmount = null,
+        ?float $weight = null
+    ) {
+        $zone = ShippingZone::whereHas('countries', function ($query) use ($country) {
+            $query->where('countries.id', $country->id);
+        })->firstOrFail();
+
+        $rate = ShippingRate::where('shipping_method_id', $shippingMethod->id)
+            ->where('shipping_zone_id', $zone->id)
+            ->firstOrFail();
+
+        $cost = $rate->calculateRate($orderAmount ?? 0, $weight ?? 0);
+
+
+        return [
+            'shipping_cost' => $cost,
+            'currency' => $rate->currency_code,
+            'estimated_delivery_days' => $rate->method->processing_time_days,
+        ];
     }
 }

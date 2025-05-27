@@ -58,4 +58,20 @@ class ShippingMethod extends Model
     {
         return $query->orderBy('display_order');
     }
+
+    protected function isMethodAvailableForOrder(ShippingMethod $method, array $orderData): bool
+    {
+        // Check restrictions
+        if ($method->restrictions->isNotEmpty()) {
+            foreach ($method->restrictions as $restriction) {
+                if ($restriction->type === 'product' && 
+                    in_array($restriction->restriction_id, $orderData['product_ids'] ?? []) &&
+                    $restriction->action === 'deny') {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }

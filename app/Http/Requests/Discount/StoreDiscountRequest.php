@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Discount;
 
+use App\Enums\Order\Discount\DiscountScope;
 use App\Enums\Order\Discount\DiscountType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -79,9 +80,9 @@ class StoreDiscountRequest extends FormRequest
                 'integer',
                 'min:1'
             ],
-            'apply_to' => [
+            'scope' => [
                 'required',
-                Rule::in(['entire_order', 'specific_products', 'product_category', 'shipping_only'])
+                Rule::enum(DiscountScope::class)
             ],
             'code' => [
                 'nullable',
@@ -90,11 +91,16 @@ class StoreDiscountRequest extends FormRequest
                 'unique:discounts,code'
             ],
             'is_code_required' => ['boolean'],
-            'product_ids' => [
+            'products' => [
                 'nullable',
                 'array'
             ],
-            'product_ids.*' => ['exists:products,id'],
+            'products.*.productable_id' => [
+                'integer',
+            ],
+            'products.*.productable_type' => [
+                'string',
+            ],
             'category_ids' => [
                 'nullable',
                 'array'
