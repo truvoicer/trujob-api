@@ -3,7 +3,9 @@ namespace App\Enums\Order\Shipping;
 
 enum ShippingRestrictionType: string
 {
-    case Product = 'product';
-    case Category = 'category';
-    case Location = 'location';
+    case LISTING = 'listing';
+    case CATEGORY = 'category';
+    case COUNTRY = 'country';
+    case CURRENCY = 'currency';
+    case REGION = 'region';
 }

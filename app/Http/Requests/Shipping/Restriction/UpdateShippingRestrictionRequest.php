@@ -27,15 +27,6 @@ class UpdateShippingRestrictionRequest extends FormRequest
     public function rules()
     {
         return [
-            'type' => [
-                'sometimes',
-                'in:product,category,location',
-                Rule::enum(ShippingRestrictionType::class)
-            ],
-            'restriction_id' => [
-                'sometimes',
-                'integer'
-            ],
             'action' => [
                 'sometimes',
                 Rule::enum(ShippingRestrictionAction::class)

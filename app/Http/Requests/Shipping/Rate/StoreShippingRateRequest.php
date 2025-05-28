@@ -34,7 +34,7 @@ class StoreShippingRateRequest extends FormRequest
                 'required',
                 'exists:shipping_zones,id'
             ],
-            'type' => [
+            'rate_type' => [
                 'required',
                 Rule::enum(ShippingRateType::class)
             ],

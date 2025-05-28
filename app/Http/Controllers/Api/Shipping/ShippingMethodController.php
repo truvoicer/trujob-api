@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\ShippingMethod;
+namespace App\Http\Controllers\Api\Shipping;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\Method\StoreShippingMethodRequest;
@@ -25,7 +25,7 @@ class ShippingMethodController extends Controller
     public function index(Request $request) {
         $this->shippingMethodRepository->setPagination(true);
         $this->shippingMethodRepository->setSortField(
-            $request->get('sort', 'label')
+            $request->get('sort', 'name')
         );
         $this->shippingMethodRepository->setOrderDir(
             $request->get('order', 'asc')
@@ -39,6 +39,15 @@ class ShippingMethodController extends Controller
         
         return ShippingMethodResource::collection(
             $this->shippingMethodRepository->findMany()
+        );
+    }
+
+    public function show(ShippingMethod $shippingMethod, Request $request) {
+        $this->shippingMethodService->setUser($request->user()->user);
+        $this->shippingMethodService->setSite($request->user()->site);
+        
+        return new ShippingMethodResource(
+            $shippingMethod
         );
     }
 

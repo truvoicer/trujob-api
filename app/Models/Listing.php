@@ -120,8 +120,8 @@ class Listing extends Model
         return $this->morphMany(PriceTaxRate::class, 'product_tax_rateable');
     }
     
-    public function discounts(): MorphMany
+    public function shippingRestrictions(): MorphMany
     {
-        return $this->morphMany(DiscountProduct::class, 'discount_productable');
+        return $this->morphMany(ShippingRestriction::class, 'restrictable');
     }
 }

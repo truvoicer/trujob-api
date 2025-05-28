@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Order\Shipping\ShippingRateType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,20 +22,21 @@ class ShippingRate extends Model
     ];
 
     protected $casts = [
+        'rate_type' => ShippingRateType::class,
         'rate_amount' => 'decimal:2',
         'min_value' => 'decimal:2',
         'max_value' => 'decimal:2',
         'is_free_shipping_possible' => 'boolean',
     ];
 
-    public function method()
+    public function shippingMethod()
     {
-        return $this->belongsTo(ShippingMethod::class, 'shipping_method_id');
+        return $this->belongsTo(ShippingMethod::class);
     }
 
-    public function zone()
+    public function shippingZone()
     {
-        return $this->belongsTo(ShippingZone::class, 'shipping_zone_id');
+        return $this->belongsTo(ShippingZone::class);
     }
 
     public function calculateRate(float $orderValue = 0, float $weight = 0): float

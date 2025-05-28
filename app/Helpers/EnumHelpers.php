@@ -30,4 +30,26 @@ class EnumHelpers {
         }
         return null;
     }
+
+    public static function validateMorphEnumByArray(string $enum, string $key, array $data): BackedEnum|UnitEnum
+    {
+        $entityType = (!empty($data[$key])) ? $data[$key] : null;
+        if (empty($entityType)) {
+            throw new \Exception("$key is required to create an order item");
+        }
+
+        $productType = EnumHelpers::getEnumCaseById($enum, $entityType);
+        if (!$productType) {
+            throw new \Exception("Invalid $key provided");
+        }
+        return $productType;
+    }
+    public static function validateMorphEnumByType(string $enum, string $type): BackedEnum|UnitEnum
+    {
+        $productType = EnumHelpers::getEnumCaseById($enum, $type);
+        if (!$productType) {
+            throw new \Exception("Invalid $type provided");
+        }
+        return $productType;
+    }
 }

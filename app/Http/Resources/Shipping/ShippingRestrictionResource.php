@@ -16,6 +16,7 @@ class ShippingRestrictionResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'shipping_method' => $this->whenLoaded('shippingMethod', ShippingMethodResource::make($this->shippingMethod)),
             'type' => $this->type, // Assuming type is an enum or string
             'restriction_id' => $this->restriction_id, // Assuming restriction_id is an integer
             'action' => $this->action, // Assuming type is an enum or string

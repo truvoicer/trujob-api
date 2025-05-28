@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\ShippingRate;
+namespace App\Http\Controllers\Api\Shipping;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\Rate\StoreShippingRateRequest;
@@ -25,10 +25,10 @@ class ShippingRateController extends Controller
     public function index(Request $request) {
         $this->shippingRateRepository->setPagination(true);
         $this->shippingRateRepository->setSortField(
-            $request->get('sort', 'label')
+            $request->get('sort', 'created_at')
         );
         $this->shippingRateRepository->setOrderDir(
-            $request->get('order', 'asc')
+            $request->get('order', 'desc')
         );
         $this->shippingRateRepository->setPerPage(
             $request->get('per_page', 10)
@@ -39,6 +39,15 @@ class ShippingRateController extends Controller
         
         return ShippingRateResource::collection(
             $this->shippingRateRepository->findMany()
+        );
+    }
+
+    public function show(ShippingRate $shippingRate, Request $request) {
+        $this->shippingRateService->setUser($request->user()->user);
+        $this->shippingRateService->setSite($request->user()->site);
+        
+        return new ShippingRateResource(
+            $shippingRate
         );
     }
 

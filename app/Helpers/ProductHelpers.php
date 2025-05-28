@@ -18,5 +18,4 @@ class ProductHelpers
         }
         return $productType;
     }
-
 }

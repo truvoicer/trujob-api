@@ -34,7 +34,7 @@ class UpdateShippingRateRequest extends FormRequest
                 'sometimes',
                 'exists:shipping_zones,id'
             ],
-            'type' => [
+            'rate_type' => [
                 'sometimes',
                 Rule::enum(ShippingRateType::class)
             ],

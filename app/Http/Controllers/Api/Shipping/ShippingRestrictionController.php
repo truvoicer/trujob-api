@@ -1,7 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api\ShippingRestriction;
+namespace App\Http\Controllers\Api\Shipping;
 
+use App\Enums\Order\Shipping\ShippingRestrictionType;
+use App\Factories\Shipping\ShippingRestrictionFactory;
+use App\Helpers\EnumHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\Restriction\StoreShippingRestrictionRequest;
 use App\Http\Requests\Shipping\Restriction\UpdateShippingRestrictionRequest;
@@ -25,10 +28,10 @@ class ShippingRestrictionController extends Controller
     public function index(Request $request) {
         $this->shippingRestrictionRepository->setPagination(true);
         $this->shippingRestrictionRepository->setSortField(
-            $request->get('sort', 'label')
+            $request->get('sort', 'created_at')
         );
         $this->shippingRestrictionRepository->setOrderDir(
-            $request->get('order', 'asc')
+            $request->get('order', 'desc')
         );
         $this->shippingRestrictionRepository->setPerPage(
             $request->get('per_page', 10)
@@ -42,23 +45,29 @@ class ShippingRestrictionController extends Controller
         );
     }
 
+    public function show(ShippingRestriction $shippingRestriction, Request $request) {
+        $this->shippingRestrictionService->setUser($request->user()->user);
+        $this->shippingRestrictionService->setSite($request->user()->site);
+        
+        return new ShippingRestrictionResource(
+            $shippingRestriction
+        );
+    }
+
     public function store(StoreShippingRestrictionRequest $request) {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
-        $validated = request()->validate([
-            'type' => 'required|in:product,category,location',
-            'restriction_id' => 'required|integer',
-            'action' => 'required|in:allow,deny',
-        ]);
-        $type = $request->validated('type');
-        // Validate restriction_id based on type
-        if ($type === 'product') {
-            request()->validate(['restriction_id' => 'exists:products,id']);
-        } elseif ($type === 'category') {
-            request()->validate(['restriction_id' => 'exists:categories,id']);
+        $data = $request->validated();
+        $validate = ShippingRestrictionFactory::create(
+            EnumHelpers::validateMorphEnumByArray(ShippingRestrictionType::class, 'type', $data)
+        )
+            ->validateRequest();
+        if (!$validate) {
+            return response()->json([
+                'message' => 'Invalid restriction type or ID',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        if (!$this->shippingRestrictionService->createShippingRestriction($request->validated())) {
+        if (!$this->shippingRestrictionService->createShippingRestriction($data)) {
             return response()->json([
                 'message' => 'Error creating shipping restriction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -72,12 +81,15 @@ class ShippingRestrictionController extends Controller
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
 
-        $type = $request->validated('type');
-        // Validate restriction_id based on type
-        if ($type === 'product') {
-            request()->validate(['restriction_id' => 'exists:products,id']);
-        } elseif ($type === 'category') {
-            request()->validate(['restriction_id' => 'exists:categories,id']);
+        $data = $request->validated();
+        $validate = ShippingRestrictionFactory::create(
+            EnumHelpers::validateMorphEnumByArray(ShippingRestrictionType::class, 'type', $data)
+        )
+            ->validateRequest();
+        if (!$validate) {
+            return response()->json([
+                'message' => 'Invalid restriction type or ID',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         if (!$this->shippingRestrictionService->updateShippingRestriction($shippingRestriction, $request->validated())) {
             return response()->json([

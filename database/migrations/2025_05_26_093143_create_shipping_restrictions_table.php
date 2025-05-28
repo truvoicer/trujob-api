@@ -20,7 +20,8 @@ return new class extends Migration
                     ShippingRestrictionType::cases()
                 )
             );
-            $table->unsignedBigInteger('restriction_id');
+            $table->unsignedBigInteger('restrictable_id');
+            $table->string('restrictable_type');
             $table->enum(
                 'action', 
                 array_map(

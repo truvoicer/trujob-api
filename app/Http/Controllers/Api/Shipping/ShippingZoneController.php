@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\ShippingZone;
+namespace App\Http\Controllers\Api\Shipping;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\Zone\StoreShippingZoneRequest;
@@ -25,7 +25,7 @@ class ShippingZoneController extends Controller
     public function index(Request $request) {
         $this->shippingZoneRepository->setPagination(true);
         $this->shippingZoneRepository->setSortField(
-            $request->get('sort', 'label')
+            $request->get('sort', 'name')
         );
         $this->shippingZoneRepository->setOrderDir(
             $request->get('order', 'asc')
@@ -39,6 +39,15 @@ class ShippingZoneController extends Controller
         
         return ShippingZoneResource::collection(
             $this->shippingZoneRepository->findMany()
+        );
+    }
+
+    public function show(ShippingZone $shippingZone, Request $request) {
+        $this->shippingZoneService->setUser($request->user()->user);
+        $this->shippingZoneService->setSite($request->user()->site);
+        
+        return new ShippingZoneResource(
+            $shippingZone->load('countries')
         );
     }
 

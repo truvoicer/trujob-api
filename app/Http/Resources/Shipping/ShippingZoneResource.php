@@ -18,7 +18,7 @@ class ShippingZoneResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'country' => $this->whenLoaded('country', CountryResource::make($this->country)),
+            'countries' => $this->whenLoaded('countries', CountryResource::collection($this->countries)),
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

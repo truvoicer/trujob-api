@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ShippingRestriction extends Model
 {
@@ -16,22 +17,13 @@ class ShippingRestriction extends Model
         'action'
     ];
 
-    public function method()
+    public function shippingMethod()
     {
         return $this->belongsTo(ShippingMethod::class);
     }
 
-    public function product()
+    public function restrictable(): MorphTo
     {
-        return $this->type === 'product' 
-            ? $this->belongsTo(Product::class, 'restriction_id')
-            : null;
-    }
-
-    public function category()
-    {
-        return $this->type === 'category' 
-            ? $this->belongsTo(Category::class, 'restriction_id')
-            : null;
+        return $this->morphTo();
     }
 }

@@ -21,10 +21,10 @@ class ShippingRateResource extends JsonResource
             'shipping_method' => $this->whenLoaded('shippingMethod', ShippingMethodResource::make(
                 $this->shippingMethod
             )),
-            'shipping_zone' => $this->whenLoaded('shippingZone', ShippingZoneResource::make(
+            'shippingZone' => $this->whenLoaded('shippingZone', ShippingZoneResource::make(
                 $this->shippingZone
             )),
-            'type' => $this->type,
+            'rate_type' => $this->rate_type,
             'min_value' => $this->min_value,
             'max_value' => $this->max_value,
             'rate_amount' => $this->rate_amount,
