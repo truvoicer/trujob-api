@@ -18,7 +18,12 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->enum('type', array_map(fn(DiscountType $type) => $type->value, DiscountType::cases()));
-            $table->decimal('amount', 10, 2);
+            
+            $table->decimal('amount', 19, 4)->nullable();
+
+            $table->decimal('rate', 5, 2)
+                ->nullable();
+
             $table->foreignId('currency_id')
                 ->constrained('currencies')
                 ->cascadeOnDelete();

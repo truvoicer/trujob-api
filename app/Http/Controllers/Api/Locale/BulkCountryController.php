@@ -16,7 +16,7 @@ class BulkCountryController extends Controller
     {
     }
 
-    public function create(StoreBulkCountryRequest $request) {
+    public function store(StoreBulkCountryRequest $request) {
         $this->countryService->setUser($request->user()->user);
         $this->countryService->setSite($request->user()->site);
         $create = $this->countryService->createCountryBatch($request->validated());

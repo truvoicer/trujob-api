@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
  */
 class SessionUserController extends Controller
 {
-    public function view(Request $request)
+    public function show(Request $request)
     {
         return new UserResource(
             $request->user()->user

@@ -63,13 +63,13 @@ class AddressController extends Controller
         );
     }
 
-    public function view(Address $address, Request $request) {
+    public function show(Address $address, Request $request) {
         $this->addressService->setUser($request->user()->user);
         $this->addressService->setSite($request->user()->site);
         return new AddressResource($address);
     }
 
-    public function create(StoreAddressRequest $request) {
+    public function store(StoreAddressRequest $request) {
         $this->addressService->setUser($request->user()->user);
         $this->addressService->setSite($request->user()->site);
         $create = $this->addressService->createAddress($request->validated());

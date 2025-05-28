@@ -63,16 +63,16 @@ class LocaleImportService
                 'phone_code' => $phoneCode
             ]);
             $country->save();
-            if (array_key_exists($currencyCode, $decodeCurrencyInfoCodes)) {
-                $currencyInfoCode = $decodeCurrencyInfoCodes[$currencyCode];
-                $currency = new Currency([
-                    'name' => $currencyInfoCode['name'],
-                    'name_plural' => $currencyInfoCode['name_plural'],
-                    'code' => $currencyInfoCode['code'],
-                    'symbol' => $currencyInfoCode['symbol']
-                ]);
-                $country->currency()->save($currency);
-            }
+            // if (array_key_exists($currencyCode, $decodeCurrencyInfoCodes)) {
+            //     $currencyInfoCode = $decodeCurrencyInfoCodes[$currencyCode];
+            //     $currency = new Currency([
+            //         'name' => $currencyInfoCode['name'],
+            //         'name_plural' => $currencyInfoCode['name_plural'],
+            //         'code' => $currencyInfoCode['code'],
+            //         'symbol' => $currencyInfoCode['symbol']
+            //     ]);
+            //     $country->currency()->save($currency);
+            // }
         }
     }
 }

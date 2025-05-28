@@ -43,7 +43,7 @@ class CategoryController extends Controller
         );
     }
 
-    public function create(StoreCategoryRequest $request) {
+    public function store(StoreCategoryRequest $request) {
         $this->categoryService->setUser($request->user()->user);
         $this->categoryService->setSite($request->user()->site);
 

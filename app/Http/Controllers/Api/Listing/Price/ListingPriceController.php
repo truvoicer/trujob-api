@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Api\Listing\Price;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Listing\Price\CreateListingPriceRequest;
 use App\Http\Requests\Listing\Price\EditListingPriceRequest;
-use App\Http\Resources\Listing\ListingPriceResource;
-use App\Http\Resources\PriceResource;
+use App\Http\Resources\Price\PriceResource;
 use App\Models\Price;
 use App\Models\Listing;
 use App\Repositories\ListingPriceRepository;
@@ -45,13 +44,13 @@ class ListingPriceController extends Controller
         );
     }
 
-    public function view(Listing $listing, Price $price, Request $request) {
+    public function show(Listing $listing, Price $price, Request $request) {
         $this->listingPriceService->setUser($request->user()->user);
         $this->listingPriceService->setSite($request->user()->site);
         return new PriceResource($price);
     }
 
-    public function create(Listing $listing, CreateListingPriceRequest $request)
+    public function store(Listing $listing, CreateListingPriceRequest $request)
     {
         $this->listingPriceService->setUser($request->user()->user);
         $this->listingPriceService->setSite($request->user()->site);

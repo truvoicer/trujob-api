@@ -50,7 +50,7 @@ class ReviewController extends Controller
         );
     }
 
-    public function create(Listing $listing, StoreListingReviewRequest $request) {
+    public function store(Listing $listing, StoreListingReviewRequest $request) {
         $this->reviewService->setUser($request->user()->user);
         $this->reviewService->setSite($request->user()->site);
 

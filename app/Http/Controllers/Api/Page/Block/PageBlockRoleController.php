@@ -31,7 +31,7 @@ class PageBlockRoleController extends Controller
 
         );
     }
-    public function create(
+    public function store(
         Page $page,
         PageBlock $pageBlock,
         Role $role,

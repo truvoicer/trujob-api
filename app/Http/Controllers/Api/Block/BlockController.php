@@ -26,7 +26,7 @@ class BlockController extends Controller
         );
     }
 
-    public function view(Block $block)
+    public function show(Block $block)
     {
         return new BlockResource($block);
     }

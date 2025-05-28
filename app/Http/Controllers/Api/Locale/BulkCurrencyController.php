@@ -23,7 +23,7 @@ class BulkCurrencyController extends Controller
     {
     }
 
-    public function create(StoreBulkCurrencyRequest $request) {
+    public function store(StoreBulkCurrencyRequest $request) {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
         $create = $this->currencyService->createCurrencyBatch($request->all());

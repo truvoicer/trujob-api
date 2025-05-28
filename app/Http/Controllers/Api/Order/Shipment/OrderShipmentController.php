@@ -51,7 +51,7 @@ class OrderShipmentController extends Controller
         );
     }
 
-    public function view(Order $order, OrderShipment $orderShipment, Request $request)
+    public function show(Order $order, OrderShipment $orderShipment, Request $request)
     {
         $this->orderShipmentService->setUser($request->user()->user);
         $this->orderShipmentService->setSite($request->user()->site);
@@ -68,7 +68,7 @@ class OrderShipmentController extends Controller
         );
     }
 
-    public function create(Order $order, StoreOrderShipmentRequest $request)
+    public function store(Order $order, StoreOrderShipmentRequest $request)
     {
         $this->orderShipmentService->setUser($request->user()->user);
         $this->orderShipmentService->setSite($request->user()->site);

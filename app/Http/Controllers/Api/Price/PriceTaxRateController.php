@@ -51,7 +51,7 @@ class PriceTaxRateController extends Controller
         );
     }
 
-    public function view(Price $price, PriceTaxRate $priceTaxRate, StorePriceTaxRateRequest $request)
+    public function show(Price $price, PriceTaxRate $priceTaxRate, StorePriceTaxRateRequest $request)
     {
         $this->priceTaxRateService->setUser($request->user()->user);
         $this->priceTaxRateService->setSite($request->user()->site);
@@ -59,7 +59,7 @@ class PriceTaxRateController extends Controller
         return new PriceTaxRateResource($priceTaxRate);
     }
 
-    public function create(Price $price, TaxRate $taxRate, Request $request)
+    public function store(Price $price, TaxRate $taxRate, Request $request)
     {
         $this->priceTaxRateService->setUser($request->user()->user);
         $this->priceTaxRateService->setSite($request->user()->site);
@@ -80,28 +80,6 @@ class PriceTaxRateController extends Controller
 
         return response()->json([
             'message' => 'PriceTaxRate created',
-        ], Response::HTTP_OK);
-    }
-
-    public function update(Price $price, TaxRate $taxRate, UpdatePriceTaxRateRequest $request)
-    {
-        $this->priceTaxRateService->setUser($request->user()->user);
-        $this->priceTaxRateService->setSite($request->user()->site);
-
-        $check = $price->taxRates()->where('id', $taxRate->id)->exists();
-        if (!$check) {
-            return response()->json([
-                'message' => 'PriceTaxRate does not exist for this price',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        $update = $this->priceTaxRateService->updatePriceTaxRate($price, $taxRate, $request->validated());
-        if (!$update) {
-            return response()->json([
-                'message' => 'Error updating priceTaxRate',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        return response()->json([
-            'message' => 'PriceTaxRate updated',
         ], Response::HTTP_OK);
     }
 

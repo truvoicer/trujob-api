@@ -29,7 +29,7 @@ class SiteSettingController extends Controller
         return SiteSettingResource::collection(SiteSetting::all());
     }
 
-    public function view(Site $site)
+    public function show(Site $site)
     {
         return new SiteSettingResource(
             $site->settings()->first()

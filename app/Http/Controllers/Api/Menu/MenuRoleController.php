@@ -29,7 +29,7 @@ class MenuRoleController extends Controller
 
         );
     }
-    public function create(
+    public function store(
         Menu $menu,
         Role $role,
         Request $request

@@ -25,7 +25,7 @@ class UserListingController extends ListingBaseController
         );
     }
 
-    public function view(Listing $listing)
+    public function show(Listing $listing)
     {
         return new ListingListResource($listing);
     }

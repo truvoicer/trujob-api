@@ -42,13 +42,13 @@ class PaymentGatewayController extends Controller
         );
     }
 
-    public function view(PaymentGateway $paymentGateway, Request $request) {
+    public function show(PaymentGateway $paymentGateway, Request $request) {
         $this->paymentGatewayService->setUser($request->user()->user);
         $this->paymentGatewayService->setSite($request->user()->site);
         return new PaymentGatewayResource($paymentGateway);
     }
 
-    public function create(StorePaymentGatewayRequest $request) {
+    public function store(StorePaymentGatewayRequest $request) {
         $this->paymentGatewayService->setUser($request->user()->user);
         $this->paymentGatewayService->setSite($request->user()->site);
 

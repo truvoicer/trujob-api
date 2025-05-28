@@ -51,7 +51,7 @@ class FollowController extends Controller
             $this->listingRepository->findMany()
         );
     }
-    public function create(Listing $listing, StoreListingFollowRequest $request)
+    public function store(Listing $listing, StoreListingFollowRequest $request)
     {
         $this->listingFollowService->setUser($request->user()->user);
         $this->listingFollowService->setSite($request->user()->site);

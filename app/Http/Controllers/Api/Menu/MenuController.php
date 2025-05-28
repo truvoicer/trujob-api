@@ -54,7 +54,7 @@ class MenuController extends Controller
         );
     }
 
-    public function view(string $menu, Request $request)
+    public function show(string $menu, Request $request)
     {
         [$site, $user] = SiteHelper::getCurrentSite();
 
@@ -76,7 +76,7 @@ class MenuController extends Controller
         return new MenuResource($menu);
     }
 
-    public function create(CreateMenuRequest $request)
+    public function store(CreateMenuRequest $request)
     {
         $this->menuService->setUser($request->user()->user);
         $this->menuService->setSite($request->user()->site);

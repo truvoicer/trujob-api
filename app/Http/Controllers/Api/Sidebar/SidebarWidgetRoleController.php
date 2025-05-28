@@ -31,7 +31,7 @@ class SidebarWidgetRoleController extends Controller
 
         );
     }
-    public function create(
+    public function store(
         Sidebar $sidebar,
         SidebarWidget $sidebarWidget,
         Role $role,

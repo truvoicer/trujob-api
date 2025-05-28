@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Discount\Usage;
+namespace App\Http\Requests\User\Discount\Usage;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserDiscountUsageRequest extends FormRequest
+class UpdateUserDiscountUsageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,12 @@ class StoreUserDiscountUsageRequest extends FormRequest
      */
     public function rules()
     {
-
         return [
+            'usage_count' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
         ];
     }
 }

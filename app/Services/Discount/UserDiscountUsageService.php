@@ -9,12 +9,12 @@ use App\Services\BaseService;
 
 class UserDiscountUsageService extends BaseService
 {
-    public function getUserDiscountUsage(User $user, Discount $discount)
+    public function getUserDiscountUsage(User $user, Discount $discount): ?UserDiscountUsage
     {
         return $user->discountUsages()->where('discount_id', $discount->id)->first();
     }
 
-    public function createUsageTrack(User $user, Discount $discount, array $data)
+    public function createUsageTrack(User $user, Discount $discount)
     {
 
         // Increment global usage count

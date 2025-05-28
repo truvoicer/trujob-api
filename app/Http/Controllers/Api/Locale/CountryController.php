@@ -51,13 +51,13 @@ class CountryController extends Controller
         );
     }
 
-    public function view(Country $country, Request $request) {
+    public function show(Country $country, Request $request) {
         $this->countryService->setUser($request->user()->user);
         $this->countryService->setSite($request->user()->site);
         return new CountryResource($country);
     }
 
-    public function create(StoreCountryRequest $request) {
+    public function store(StoreCountryRequest $request) {
         $this->countryService->setUser($request->user()->user);
         $this->countryService->setSite($request->user()->site);
         $create = $this->countryService->createCountry($request->validated());

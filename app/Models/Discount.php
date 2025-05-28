@@ -13,8 +13,10 @@ class Discount extends Model
     protected $fillable = [
         'name',
         'description',
+        'currency_id',
         'type',
         'amount',
+        'rate',
         'starts_at',
         'ends_at',
         'is_active',
@@ -34,18 +36,19 @@ class Discount extends Model
         'is_active' => 'boolean',
         'is_code_required' => 'boolean',
         'amount' => 'decimal:2',
+        'rate' => 'decimal:2',
         'min_order_amount' => 'decimal:2',
     ];
 
     public function prices()
     {
-        return $this->belongsToMany(Price::class)
+        return $this->belongsToMany(Price::class, 'discount_prices')
             ->withTimestamps();
     }
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class)
+        return $this->belongsToMany(Category::class, 'discount_categories')
             ->withTimestamps();
     }
 

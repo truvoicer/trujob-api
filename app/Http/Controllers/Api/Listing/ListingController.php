@@ -24,12 +24,12 @@ class ListingController extends ListingBaseController
         );
     }
 
-    public function view(Listing $listing)
+    public function show(Listing $listing)
     {
         return new ListingListResource($listing);
     }
 
-    public function create(CreateListingRequest $request)
+    public function store(CreateListingRequest $request)
     {
         $this->listingsAdminService->setUser($request->user()->user);
         $this->listingsAdminService->setSite($request->user()->site);

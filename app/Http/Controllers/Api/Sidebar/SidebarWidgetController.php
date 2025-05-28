@@ -31,14 +31,14 @@ class SidebarWidgetController extends Controller
             )
         );
     }
-    public function view(
+    public function show(
         Sidebar $sidebar,
         SidebarWidget $sidebarWidget
     ) {
         return new SidebarWidgetResource($sidebarWidget);
     }
 
-    public function create(Sidebar $sidebar, Widget $widget, CreateSidebarWidgetRequest $request)
+    public function store(Sidebar $sidebar, Widget $widget, CreateSidebarWidgetRequest $request)
     {
         $this->sidebarService->setUser($request->user()->user);
         $this->sidebarService->setSite($request->user()->site);

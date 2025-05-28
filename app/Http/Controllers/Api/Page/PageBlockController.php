@@ -62,12 +62,12 @@ class PageBlockController extends Controller
         );
     }
 
-    public function view(Page $page, PageBlock $pageBlock)
+    public function show(Page $page, PageBlock $pageBlock)
     {
         return new PageBlockResource($pageBlock);
     }
 
-    public function create(Page $page, Block $block, CreatePageBlockRequest $request)
+    public function store(Page $page, Block $block, CreatePageBlockRequest $request)
     {
         $this->pageService->setUser($request->user()->user);
         $this->pageService->setSite($request->user()->site);

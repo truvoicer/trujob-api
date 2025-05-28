@@ -42,13 +42,13 @@ class PaymentMethodController extends Controller
         );
     }
 
-    public function view(PaymentMethod $paymentMethod, Request $request) {
+    public function show(PaymentMethod $paymentMethod, Request $request) {
         $this->paymentMethodService->setUser($request->user()->user);
         $this->paymentMethodService->setSite($request->user()->site);
         return new PaymentMethodResource($paymentMethod);
     }
 
-    public function create(StorePaymentMethodRequest $request) {
+    public function store(StorePaymentMethodRequest $request) {
         $this->paymentMethodService->setUser($request->user()->user);
         $this->paymentMethodService->setSite($request->user()->site);
 

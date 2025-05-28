@@ -2,7 +2,7 @@
 namespace App\Http\Controllers\Api\Price;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PriceTypeResource;
+use App\Http\Resources\Price\PriceTypeResource;
 use App\Models\PriceType;
 use App\Repositories\PriceTypeRepository;
 use App\Services\PriceType\PriceTypeService;
@@ -48,7 +48,7 @@ class PriceTypeController extends Controller
         );
     }
 
-    public function view(PriceType $priceType, Request $request) 
+    public function show(PriceType $priceType, Request $request) 
     {
         $this->priceTypeService->setUser($request->user()->user);
         $this->priceTypeService->setSite($request->user()->site);
@@ -56,7 +56,7 @@ class PriceTypeController extends Controller
         return new PriceTypeResource($priceType);
     }
 
-    public function create(Request $request) 
+    public function store(Request $request) 
     {
         $this->priceTypeService->setUser($request->user()->user);
         $this->priceTypeService->setSite($request->user()->site);

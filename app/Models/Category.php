@@ -24,7 +24,7 @@ class Category extends Model
 
     public function discounts()
 {
-    return $this->belongsToMany(Discount::class)
+    return $this->belongsToMany(Discount::class, 'discount_categories')
         ->withTimestamps();
 }
 }

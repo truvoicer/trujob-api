@@ -57,14 +57,14 @@ class MenuItemController extends Controller
         );
     }
 
-    public function view(Menu $menu, MenuItem $menuItem) {
+    public function show(Menu $menu, MenuItem $menuItem) {
         $this->menuService->setUser(request()->user()->user);
         $this->menuService->setSite(request()->user()->site);
         
         return new MenuItemResource($menuItem);
     }
 
-    public function create(Menu $menu, CreateMenuItemRequest $request) {
+    public function store(Menu $menu, CreateMenuItemRequest $request) {
         $this->menuService->setUser(request()->user()->user);
         $this->menuService->setSite(request()->user()->site);
         $menuRules = (new CreateMenuRequest())->rules();

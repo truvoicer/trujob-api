@@ -3,33 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\Auth\ApiAbility;
-use App\Enums\Media\FileSystemType;
-use App\Enums\Media\MediaType;
-use App\Enums\Media\Types\Image\ImageCategory;
-use App\Models\Block;
-use App\Models\Listing;
-use App\Models\ListingBrand;
-use App\Models\ListingCategory;
-use App\Models\ListingColor;
-use App\Models\ListingFeature;
-use App\Models\ListingFollow;
-use App\Models\ListingMedia;
-use App\Models\ListingProductType;
-use App\Models\ListingReview;
-use App\Models\Media;
-use App\Models\MessagingGroup;
-use App\Models\MessagingGroupMessage;
 use App\Models\Role;
 use App\Models\Site;
-use App\Models\SiteUser;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\UserFollow;
-use App\Models\UserMedia;
-use App\Models\UserProfile;
-use App\Models\UserReview;
-use App\Models\UserReward;
-use App\Models\UserSetting;
 use App\Services\Admin\AuthService;
 use App\Services\Data\DefaultData;
 use App\Services\Site\SiteService;
@@ -47,17 +23,17 @@ use Database\Seeders\listing\BrandSeeder;
 use Database\Seeders\listing\CategorySeeder;
 use Database\Seeders\listing\ColorSeeder;
 use Database\Seeders\listing\FeatureSeeder;
-use Database\Seeders\listing\ListingSeeder;
 use Database\Seeders\listing\ListingTypeSeeder;
 use Database\Seeders\listing\ProductTypeSeeder;
+use Database\Seeders\locale\CurrencySeeder;
+use Database\Seeders\locale\GeoDataSeeder;
 use Database\Seeders\locale\LocaleSeeder;
+use Database\Seeders\locale\RegionSeeder;
 use Database\Seeders\payment\PaymentGatewaySeeder;
 use Database\Seeders\price\PriceTypeSeeder;
 use Database\Seeders\user\RoleSeeder;
 use Database\Seeders\user\UserSeeder;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -70,6 +46,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             LocaleSeeder::class,
+            CurrencySeeder::class,
+            RegionSeeder::class,
             FirebaseTopicSeeder::class,
             ColorSeeder::class,
             BrandSeeder::class,

@@ -42,7 +42,7 @@ class ShippingRestrictionController extends Controller
         );
     }
 
-    public function create(StoreShippingRestrictionRequest $request) {
+    public function store(StoreShippingRestrictionRequest $request) {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
         $validated = request()->validate([

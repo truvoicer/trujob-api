@@ -15,9 +15,8 @@ class UserDiscountUsageResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'message' => 'Discount usage tracked successfully',
-            'remaining_uses' => $this->discount->usage_limit ? $this->discount->usage_limit - $this->discount->usage_count : null,
-            'user_remaining_uses' => $this->discount->per_user_limit ? $this->discount->per_user_limit - $usage->usage_count : null,
+            'remaining_uses' => $this->remaining_uses,
+            'user_remaining_uses' => $this->user_remaining_uses,
         ];
     }
 }

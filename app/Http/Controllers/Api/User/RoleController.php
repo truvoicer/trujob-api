@@ -44,7 +44,7 @@ class RoleController extends Controller
         );
     }
 
-    public function create(StoreRoleRequest $request) {
+    public function store(StoreRoleRequest $request) {
         $this->roleService->setUser($request->user()->user);
         $create = $this->roleService->createrole($request->validated());
         if (!$create) {
@@ -71,7 +71,7 @@ class RoleController extends Controller
     }
     
     
-    public function delete(Role $role) {
+    public function destroy(Role $role) {
         $delete = $this->roleService->deleterole($role);
         if (!$delete) {
             return response()->json([

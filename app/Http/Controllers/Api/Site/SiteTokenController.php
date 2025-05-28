@@ -18,7 +18,7 @@ class SiteTokenController extends Controller
     {
     }
 
-    public function create(Site $site, NewSiteTokenRequest $request): \Illuminate\Http\JsonResponse|AccessTokenResource
+    public function store(Site $site, NewSiteTokenRequest $request): \Illuminate\Http\JsonResponse|AccessTokenResource
     {
         $token = $this->siteService->createToken($site, $request->validated('expires_at', null));
 

@@ -45,7 +45,7 @@ class PageSidebarController extends Controller
             $this->pageRepository->findMany()
         );
     }
-    public function create(
+    public function store(
         Page $page,
         Sidebar $sidebar,
         Request $request

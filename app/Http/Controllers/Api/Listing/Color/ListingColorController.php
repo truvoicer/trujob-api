@@ -46,7 +46,7 @@ class ListingColorController extends Controller
         );
     }
 
-    public function create(Listing $listing, Color $color, Request $request)
+    public function store(Listing $listing, Color $color, Request $request)
     {
         $this->listingColorService->setUser($request->user()->user);
         $this->listingColorService->setSite($request->user()->site);

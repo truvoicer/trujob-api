@@ -50,7 +50,7 @@ class ListingFeatureController extends Controller
         );
     }
 
-    public function create(Listing $listing, Feature $feature, Request $request) {
+    public function store(Listing $listing, Feature $feature, Request $request) {
         $this->listingFeatureService->setUser($request->user()->user);
         $this->listingFeatureService->setSite($request->user()->site);
 

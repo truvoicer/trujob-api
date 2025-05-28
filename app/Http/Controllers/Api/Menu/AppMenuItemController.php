@@ -18,7 +18,7 @@ class AppMenuItemController extends Controller
         $this->menuService = $menuService;
     }
 
-    public function create(AppMenu $appMenu, Request $request) {
+    public function store(AppMenu $appMenu, Request $request) {
         $this->menuService->setUser($request->user());
         $this->menuService->setAppMenu($appMenu);
         $create = $this->menuService->createAppMenuItem($request->all());

@@ -28,15 +28,12 @@ class TaxRateController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(TaxRate $taxRate, Request $request) {
-        $this->taxRateRepository->setQuery(
-            $taxRate->taxRates()
-        );
         $this->taxRateRepository->setPagination(true);
         $this->taxRateRepository->setSortField(
-            $request->get('sort', 'created_at')
+            $request->get('sort', 'name')
         );
         $this->taxRateRepository->setOrderDir(
-            $request->get('order', 'desc')
+            $request->get('order', 'asc')
         );
         $this->taxRateRepository->setPerPage(
             $request->get('per_page', 10)
@@ -50,14 +47,14 @@ class TaxRateController extends Controller
         );
     }
 
-    public function view(TaxRate $taxRate, Request $request) {
+    public function show(TaxRate $taxRate, Request $request) {
         $this->taxRateService->setUser($request->user()->user);
         $this->taxRateService->setSite($request->user()->site);
         
         return new TaxRateResource($taxRate);
     }
 
-    public function create(StoreTaxRateRequest $request) {
+    public function store(StoreTaxRateRequest $request) {
         $this->taxRateService->setUser($request->user()->user);
         $this->taxRateService->setSite($request->user()->site);
 

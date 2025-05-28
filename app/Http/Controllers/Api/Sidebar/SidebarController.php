@@ -29,11 +29,11 @@ class SidebarController extends Controller
             )
         );
     }
-    public function view(Sidebar $sidebar) {
+    public function show(Sidebar $sidebar) {
         return new SidebarResource($sidebar);
     }
 
-    public function create(CreateSidebarRequest $request) {
+    public function store(CreateSidebarRequest $request) {
         $this->sidebarService->setUser($request->user()->user);
         $this->sidebarService->setSite($request->user()->site);
         $create = $this->sidebarService->createSidebar(

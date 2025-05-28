@@ -42,7 +42,7 @@ class BrandController extends Controller
         );
     }
 
-    public function create(StoreBrandRequest $request) {
+    public function store(StoreBrandRequest $request) {
         $this->brandService->setUser($request->user()->user);
         $this->brandService->setSite($request->user()->site);
 

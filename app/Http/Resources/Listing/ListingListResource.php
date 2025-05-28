@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Listing;
 
 use App\Http\Resources\MediaResource;
-use App\Http\Resources\PriceResource;
+use App\Http\Resources\Price\PriceResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 

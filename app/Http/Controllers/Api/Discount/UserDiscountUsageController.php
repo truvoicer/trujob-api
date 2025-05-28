@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api\Discount;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Discount\Usage\StoreUserDiscountUsageRequest;
-use App\Http\Requests\Discount\Usage\UpdateUserDiscountUsageRequest;
+use App\Http\Requests\User\Discount\Usage\UpdateUserDiscountUsageRequest;
 use App\Http\Resources\Discount\UserDiscountUsageResource;
 use App\Models\Discount;
 use App\Models\User;
@@ -25,57 +24,29 @@ class UserDiscountUsageController extends Controller
 
     ) {}
 
-    public function index(User $user, Discount $discount, Request $request)
-    {
-
-        $this->userDiscountUsageService->setUser($request->user()->user);
-        $this->userDiscountUsageService->setSite($request->user()->site);
-
-        $this->userDiscountUsageRepository->setPagination(true);
-        $this->userDiscountUsageRepository->setSortField(
-            $request->get('sort', 'name')
-        );
-        $this->userDiscountUsageRepository->setOrderDir(
-            $request->get('order', 'asc')
-        );
-        $this->userDiscountUsageRepository->setPerPage(
-            $request->get('per_page', 10)
-        );
-        $this->userDiscountUsageRepository->setPage(
-            $request->get('page', 1)
-        );
-
-        return UserDiscountUsageResource::collection(
-            $this->userDiscountUsageRepository->findMany()
-        );
-    }
-
-    public function view(User $user, Discount $discount, Request $request)
+    public function show(User $user, Discount $discount, Request $request)
     {
         $this->userDiscountUsageService->setUser($request->user()->user);
         $this->userDiscountUsageService->setSite($request->user()->site);
-
-        return new UserDiscountUsageResource(
-            $this->userDiscountUsageService->getUserDiscountUsage($user, $discount)
-        );
-    }
-
-    public function create(User $user, Discount $discount, StoreUserDiscountUsageRequest $request)
-    {
-        $this->userDiscountUsageService->setUser($request->user()->user);
-        $this->userDiscountUsageService->setSite($request->user()->site);
-
-        $check = $user->discountUsages()->where('discount.id', $discount->id)->exists();
-        if ($check) {
+        $userDiscountUsage = $this->userDiscountUsageService->getUserDiscountUsage($user, $discount);
+        if (!$userDiscountUsage) {
             return response()->json([
-                'message' => 'User discount usage already exists for this discount',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                'message' => 'User discount usage not found for this discount',
+            ], Response::HTTP_NOT_FOUND);
         }
+        return new UserDiscountUsageResource(
+            $userDiscountUsage
+        );
+    }
+
+    public function store(User $user, Discount $discount, Request $request)
+    {
+        $this->userDiscountUsageService->setUser($request->user()->user);
+        $this->userDiscountUsageService->setSite($request->user()->site);
 
         $this->userDiscountUsageService->createUsageTrack(
             $user,
-            $discount, 
-            $request->validated()
+            $discount
         );
 
         return response()->json([

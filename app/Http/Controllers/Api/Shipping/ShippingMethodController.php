@@ -42,7 +42,7 @@ class ShippingMethodController extends Controller
         );
     }
 
-    public function create(StoreShippingMethodRequest $request) {
+    public function store(StoreShippingMethodRequest $request) {
         $this->shippingMethodService->setUser($request->user()->user);
         $this->shippingMethodService->setSite($request->user()->site);
         

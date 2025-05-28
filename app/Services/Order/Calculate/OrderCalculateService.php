@@ -20,14 +20,14 @@ class OrderCalculateService
 
     public function calculateOrderItemTotalPrice(OrderItem $orderItem): float
     {
-        // Assuming orderItemable has a price property
-        return $orderItem->quantity * $orderItem->orderItemable->price;
+        // Assuming productable has a price property
+        return $orderItem->quantity * $orderItem->productable->price;
     }
 
 
     public function calculateOrderItemTaxWithoutPrice(OrderItem $orderItem): float
     {
-        $taxRate = $orderItem->orderItemable->tax_rate ?? 0.0; // Assuming tax_rate is a property of the itemable entity
+        $taxRate = $orderItem->productable->tax_rate ?? 0.0; // Assuming tax_rate is a property of the itemable entity
         return ($this->calculateOrderItemTotalPrice($orderItem) * ($taxRate / 100));
     }
 
@@ -45,7 +45,7 @@ class OrderCalculateService
 
     public function calculateOrderItemDiscount(OrderItem $orderItem): float
     {
-        $discountRate = $orderItem->orderItemable->discount_rate ?? 0.0; // Assuming discount_rate is a property of the itemable entity
+        $discountRate = $orderItem->productable->discount_rate ?? 0.0; // Assuming discount_rate is a property of the itemable entity
         
         return ($this->calculateOrderItemTotalPrice($orderItem) * ($discountRate / 100));
     }
@@ -59,7 +59,7 @@ class OrderCalculateService
     public function calculateOrderItemTotalPriceAfterDiscount(OrderItem $orderItem): float
     {
         $totalPrice = $this->calculateOrderItemTotalPrice($orderItem);
-        $discountRate = $orderItem->orderItemable->discount_rate ?? 0.0; // Assuming discount_rate is a property of the itemable entity
+        $discountRate = $orderItem->productable->discount_rate ?? 0.0; // Assuming discount_rate is a property of the itemable entity
         return $totalPrice - ($totalPrice * ($discountRate / 100));
     }
 
@@ -72,8 +72,8 @@ class OrderCalculateService
     public function calculateOrderItemTotalPriceAfterTaxAndDiscount(OrderItem $orderItem): float
     {
         $totalPrice = $this->calculateOrderItemTotalPrice($orderItem);
-        $taxRate = $orderItem->orderItemable->tax_rate ?? 0.0; // Assuming tax_rate is a property of the itemable entity
-        $discountRate = $orderItem->orderItemable->discount_rate ?? 0.0; // Assuming discount_rate is a property of the itemable entity
+        $taxRate = $orderItem->productable->tax_rate ?? 0.0; // Assuming tax_rate is a property of the itemable entity
+        $discountRate = $orderItem->productable->discount_rate ?? 0.0; // Assuming discount_rate is a property of the itemable entity
 
         $priceAfterTax = $totalPrice + ($totalPrice * ($taxRate / 100));
         return $priceAfterTax - ($priceAfterTax * ($discountRate / 100));
@@ -203,7 +203,7 @@ class OrderCalculateService
         $totalShippingCost = 0.0;
 
         foreach ($order->items as $item) {
-            $shippingCost = $item->orderItemable->shipping_cost ?? 0.0; // Assuming shipping_cost is a property of the itemable entity
+            $shippingCost = $item->productable->shipping_cost ?? 0.0; // Assuming shipping_cost is a property of the itemable entity
             $totalShippingCost += ($item->quantity * $shippingCost);
         }
 

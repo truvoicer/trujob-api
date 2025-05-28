@@ -48,7 +48,7 @@ class OrderController extends Controller
         );
     }
 
-    public function view(Order $order, Request $request)
+    public function show(Order $order, Request $request)
     {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
@@ -60,7 +60,7 @@ class OrderController extends Controller
         );
     }
 
-    public function create(Order $order, StoreOrderRequest $request)
+    public function store(Order $order, StoreOrderRequest $request)
     {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);

@@ -42,7 +42,7 @@ class ShippingZoneController extends Controller
         );
     }
 
-    public function create(StoreShippingZoneRequest $request) {
+    public function store(StoreShippingZoneRequest $request) {
         $this->shippingZoneService->setUser($request->user()->user);
         $this->shippingZoneService->setSite($request->user()->site);
         

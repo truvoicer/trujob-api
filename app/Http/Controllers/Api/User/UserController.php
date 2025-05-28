@@ -57,7 +57,7 @@ class UserController extends Controller
      * Gets a single user based on the id in the request url
      *
      */
-    public function view(User $user, Request $request)
+    public function show(User $user, Request $request)
     {
         $this->userAdminService->setUser($request->user()->user);
         $this->userAdminService->setSite($request->user()->site);
@@ -68,7 +68,7 @@ class UserController extends Controller
      * Creates a user based on the request post data
      *
      */
-    public function create(CreateUserRequest $request)
+    public function store(CreateUserRequest $request)
     {
         $this->userAdminService->setUser($request->user()->user);
         $this->userAdminService->setSite($request->user()->site);

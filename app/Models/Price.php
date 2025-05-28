@@ -53,7 +53,7 @@ class Price extends Model
 
     public function discounts()
     {
-        return $this->belongsToMany(Discount::class)
+        return $this->belongsToMany(Discount::class, 'discount_prices')
             ->withTimestamps();
     }
 

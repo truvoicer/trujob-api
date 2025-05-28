@@ -7,6 +7,7 @@ use App\Http\Requests\Discount\StoreDiscountRequest;
 use App\Http\Requests\Discount\UpdateDiscountRequest;
 use App\Http\Resources\Discount\DiscountResource;
 use App\Models\Discount;
+use App\Models\Price;
 use App\Repositories\DiscountRepository;
 use App\Services\Discount\DiscountService;
 use Illuminate\Http\Request;
@@ -18,9 +19,7 @@ class DiscountController extends Controller
     public function __construct(
         private DiscountService $discountService,
         private DiscountRepository $discountRepository,
-    )
-    {
-    }
+    ) {}
 
 
     /**
@@ -28,10 +27,11 @@ class DiscountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $this->discountRepository->setPagination(true);
         $this->discountRepository->setSortField(
-            $request->get('sort', 'label')
+            $request->get('sort', 'name')
         );
         $this->discountRepository->setOrderDir(
             $request->get('order', 'asc')
@@ -42,13 +42,22 @@ class DiscountController extends Controller
         $this->discountRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return DiscountResource::collection(
             $this->discountRepository->findMany()
         );
     }
 
-    public function create(StoreDiscountRequest $request) {
+    public function show(Discount $discount, Request $request)
+    {
+        $this->discountService->setUser($request->user()->user);
+        $this->discountService->setSite($request->user()->site);
+
+        return new DiscountResource($discount);
+    }
+
+    public function store(StoreDiscountRequest $request)
+    {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);
 
@@ -62,10 +71,10 @@ class DiscountController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function update(Discount $discount, UpdateDiscountRequest $request) {
+    public function update(Discount $discount, UpdateDiscountRequest $request)
+    {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);
-
         if (!$this->discountService->updateDiscount($discount, $request->validated())) {
             return response()->json([
                 'message' => 'Error updating discount',
@@ -75,7 +84,8 @@ class DiscountController extends Controller
             'message' => 'Discount updated',
         ], Response::HTTP_OK);
     }
-    public function destroy(Discount $discount, Request $request) {
+    public function destroy(Discount $discount, Request $request)
+    {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);
         

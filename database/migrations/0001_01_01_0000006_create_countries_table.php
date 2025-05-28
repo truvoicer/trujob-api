@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('iso2');
             $table->string('iso3');
-            $table->string('phone_code');
+            $table->string('phone_code')->nullable();
             $table->timestamps();
         });
     }

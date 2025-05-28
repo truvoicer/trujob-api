@@ -42,7 +42,7 @@ class ColorController extends Controller
         );
     }
 
-    public function create(StoreColorRequest $request) {
+    public function store(StoreColorRequest $request) {
         $this->colorService->setUser($request->user()->user);
         $this->colorService->setSite($request->user()->site);
         

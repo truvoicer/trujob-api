@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Price;
 
 use App\Http\Resources\Listing\CountryResource;
 use App\Http\Resources\Listing\CurrencyResource;
 use App\Http\Resources\User\UserResource;
-use App\Models\Currency;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PriceResource extends JsonResource
@@ -27,8 +26,8 @@ class PriceResource extends JsonResource
             'price_type' => $this->whenLoaded('priceType', PriceTypeResource::make($this->priceType)),
             'valid_from' => $this->valid_from,
             'valid_to' => $this->valid_to,
-            'valid_from_timestamp' => $this->valid_from->timestamp,
-            'valid_to_timestamp' => $this->valid_to->timestamp,
+            // 'valid_from_timestamp' => $this->valid_from->timestamp,
+            // 'valid_to_timestamp' => $this->valid_to->timestamp,
             'is_default' => $this->is_default,
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,

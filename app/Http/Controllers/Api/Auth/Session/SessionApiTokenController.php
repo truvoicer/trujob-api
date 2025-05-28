@@ -27,7 +27,7 @@ class SessionApiTokenController extends Controller
         return PersonalAccessTokenResource::collection($getApiTokens);
     }
 
-    public function view(Request $request)
+    public function show(Request $request)
     {
         return $this->sendSuccessResponse(
             "success",
@@ -35,7 +35,7 @@ class SessionApiTokenController extends Controller
         );
     }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
         return $this->sendSuccessResponse(
             "success",

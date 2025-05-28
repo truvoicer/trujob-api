@@ -215,35 +215,4 @@ class ListingsAdminService extends BaseService
         //     throw new \Exception($exception->getMessage());
         // }
     }
-
-    public function createOrderItem(Order $order, Listing $listing, array $data = [])
-    {
-        if (!$listing->exists()) {
-            throw new \Exception('Listing does not exist');
-        }
-        $data['order_id'] = $order->id;
-        return $listing->orderItems()->create($data);
-    }
-    public function updateOrderItem(Order $order, OrderItem $orderItem, Listing $listing, array $data = [])
-    {
-        if (!$listing->exists()) {
-            throw new \Exception('Listing does not exist');
-        }
-        $existsInOrder = $order->items()->where('id', $orderItem->id)->exists();
-        if (!$existsInOrder) {
-            throw new \Exception('Order item does not exist in the order');
-        }
-        if (!empty($data['entity_id'])) {
-            $data['order_itemable_id'] = $data['entity_id'];
-        }
-
-        if (!empty($data['entity_type'])) {
-            $data['order_itemable_type'] = Listing::class;
-        }
-        
-        if (!$orderItem->update($data)) {
-            throw new \Exception('Error updating order item for the listing');
-        }
-        return $orderItem;
-    }
 }

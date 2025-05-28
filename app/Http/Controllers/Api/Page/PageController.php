@@ -54,12 +54,12 @@ class PageController extends Controller
         );
     }
 
-    public function view(Page $page)
+    public function show(Page $page)
     {
         return new PageResource($page);
     }
 
-    public function create(CreatePageRequest $request)
+    public function store(CreatePageRequest $request)
     {
         $this->pageService->setUser($request->user()->user);
         $create = $this->pageService->createPage(
@@ -92,7 +92,7 @@ class PageController extends Controller
         return $this->sendSuccessResponse('Page updated', [], $this->pageService->getResultsService()->getErrors());
     }
 
-    public function delete(Page $page, Request $request)
+    public function destroy(Page $page, Request $request)
     {
         $this->pageService->setUser($request->user()->user);
         $this->pageService->setSite($request->user()->site);

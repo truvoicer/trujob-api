@@ -9,12 +9,12 @@ class OrderItem extends Model
 {
     protected $fillable = [
         'order_id',
-        'order_itemable_id',
-        'order_itemable_type',
+        'productable_id',
+        'productable_type',
         'quantity',
     ];
     
-    public function orderItemable(): MorphTo
+    public function productable(): MorphTo
     {
         return $this->morphTo();
     }

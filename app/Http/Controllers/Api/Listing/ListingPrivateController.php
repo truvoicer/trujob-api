@@ -8,7 +8,7 @@ use App\Models\Listing;
 class ListingPrivateController extends ListingBaseController
 {
 
-    public function view(Listing $listing)
+    public function show(Listing $listing)
     {
         return new ListingSingleResource($listing);
     }

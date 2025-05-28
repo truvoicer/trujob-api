@@ -31,18 +31,17 @@ class StoreTaxRateRequest extends FormRequest
             'type' => ['required', Rule::enum((TaxRateType::class))],
             'amount' => [
                 'required_if:fixed_rate,true',
-                'nullable', 
-                'numeric', 
+                'nullable',
+                'numeric',
                 'min:0'
             ],
             'rate' => [
                 'required_if:fixed_rate,false',
-                'numeric', 
+                'numeric',
                 'between:0,100'
             ],
-            'country_ids' => ['required', 'array'],
-            'country_ids.*' => ['required', 'exists:countries,id'],
-            'region' => ['required', 'string', 'max:50'],
+            'country_id' => ['required', 'integer', 'exists:countries,id'],
+            'region_id' => ['required', 'integer', 'exists:regions,id'],
             'is_default' => ['required', 'boolean'],
             'scope' => ['required', Rule::enum(TaxScope::class)],
             'is_active' => ['required', 'boolean'],

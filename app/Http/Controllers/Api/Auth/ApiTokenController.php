@@ -52,14 +52,14 @@ class ApiTokenController extends Controller
         );
     }
 
-    public function view(PersonalAccessToken $personalAccessToken, Request $request)
+    public function show(PersonalAccessToken $personalAccessToken, Request $request)
     {
         return new PersonalAccessTokenResource(
             $personalAccessToken
         );
     }
 
-    public function create(Request $request)
+    public function store(Request $request)
     {
         return new PersonalAccessTokenResource(
             $this->userAdminService->createUserToken(

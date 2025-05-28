@@ -45,7 +45,7 @@ class ListingListingTypeController extends Controller
         );
     }
 
-    public function create(Listing $listing, ListingType $listingType, Request $request)
+    public function store(Listing $listing, ListingType $listingType, Request $request)
     {
         $this->listingTypeService->setUser($request->user()->user);
         $this->listingTypeService->setSite($request->user()->site);

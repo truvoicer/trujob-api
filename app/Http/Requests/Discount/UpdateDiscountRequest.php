@@ -41,23 +41,28 @@ class UpdateDiscountRequest extends FormRequest
                 Rule::enum(DiscountType::class)
             ],
             'amount' => [
-                'required',
+                'required_if:type,fixed',
                 'numeric',
                 'min:0'
+            ],
+            'rate' => [
+                'required_if:type,percentage',
+                'numeric',
+                'between:0,100'
             ],
             'currency_code' => [
                 'nullable',
                 'string',
                 'size:3'
             ],
-            'start_date' => [
-                'required',
+            'starts_at' => [
+                'sometimes',
                 'date'
             ],
-            'end_date' => [
-                'required',
+            'ends_at' => [
+                'sometimes',
                 'date',
-                'after:start_date'
+                'after:starts_at'
             ],
             'is_active' => ['boolean'],
             'usage_limit' => [
@@ -95,11 +100,18 @@ class UpdateDiscountRequest extends FormRequest
                 'nullable',
                 'array'
             ],
-            'products.*.productable_id' => [
+            'products.*.product_id' => [
+                'required',
                 'integer',
             ],
-            'products.*.productable_type' => [
+            'products.*.product_type' => [
+                'required',
                 'string',
+            ],
+            'products.*.price_id' => [
+                'required',
+                'integer',
+                'exists:prices,id'
             ],
             'category_ids' => [
                 'nullable',

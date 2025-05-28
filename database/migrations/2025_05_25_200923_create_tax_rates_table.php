@@ -34,6 +34,12 @@ return new class extends Migration
             $table->foreignId('country_id')
                 ->constrained('countries')
                 ->comment('Country');
+                
+            $table->foreignId('region_id')
+                ->nullable()
+                ->constrained('regions')
+                ->nullOnDelete()
+                ->comment('Region within the country, nullable if not applicable');
 
             $table->boolean('is_active')
                 ->default(true)

@@ -42,7 +42,7 @@ class ProductTypeController extends Controller
         );
     }
 
-    public function create(StoreProductTypeRequest $request) {
+    public function store(StoreProductTypeRequest $request) {
         $this->productTypeService->setUser($request->user()->user);
         $this->productTypeService->setSite($request->user()->site);
         

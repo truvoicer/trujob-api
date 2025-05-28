@@ -50,7 +50,7 @@ class UserOrderController extends Controller
         );
     }
 
-    public function view(Order $listing, Order $order, Request $request) {
+    public function show(Order $listing, Order $order, Request $request) {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
         $check = $listing->orders()->where('orders.id', $order->id)->first();
@@ -62,7 +62,7 @@ class UserOrderController extends Controller
         return new OrderResource($order);
     }
 
-    public function create(Order $listing, StoreOrderRequest $request) {
+    public function store(Order $listing, StoreOrderRequest $request) {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
 

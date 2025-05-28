@@ -48,7 +48,7 @@ class FeatureController extends Controller
         );
     }
 
-    public function create(StoreFeatureRequest $request) {
+    public function store(StoreFeatureRequest $request) {
         $this->featureService->setUser($request->user()->user);
         $this->featureService->setSite($request->user()->site);
 

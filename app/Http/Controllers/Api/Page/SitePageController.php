@@ -26,7 +26,7 @@ class SitePageController extends Controller
         return [];
     }
 
-    public function view(SitePageRequest $request)
+    public function show(SitePageRequest $request)
     {
         [$site, $user] = SiteHelper::getCurrentSite();
         $page = $this->pageService->getPageByPermalink($site, $request->validated('permalink'));

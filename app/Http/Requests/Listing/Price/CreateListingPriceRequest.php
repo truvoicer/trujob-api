@@ -30,8 +30,8 @@ class CreateListingPriceRequest extends FormRequest
             'country_id' => ['required', 'integer', 'exists:countries,id'],
             'is_default' => ['required', 'boolean'],
             'is_active' => ['required', 'boolean'],
-            'valid_from' => ['required', 'date'],
-            'valid_to' => ['required', 'date', 'after:valid_from'],
+            'valid_from' => ['sometimes', 'date', 'nullable'],
+            'valid_to' => ['sometimes', 'date', 'nullable', 'after:valid_from'],
         ];
     }
 }

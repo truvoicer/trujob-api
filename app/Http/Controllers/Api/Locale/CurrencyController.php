@@ -54,14 +54,14 @@ class CurrencyController extends Controller
         );
     }
 
-    public function view(Currency $currency, Request $request) {
+    public function show(Currency $currency, Request $request) {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
 
         return new CurrencyResource($currency);
     }
 
-    public function create(CurrencyStoreCurrencyRequest $request) {
+    public function store(CurrencyStoreCurrencyRequest $request) {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
 

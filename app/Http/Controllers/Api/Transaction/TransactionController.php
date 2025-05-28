@@ -50,14 +50,14 @@ class TransactionController extends Controller
         );
     }
 
-    public function view(Transaction $transaction, Request $request) {
+    public function show(Transaction $transaction, Request $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
         
         return new TransactionResource($transaction);
     }
 
-    public function create(StoreTransactionRequest $request) {
+    public function store(StoreTransactionRequest $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
 

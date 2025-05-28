@@ -29,11 +29,11 @@ class WidgetController extends Controller
             )
         );
     }
-    public function view(Widget $widget, Request $request) {
+    public function show(Widget $widget, Request $request) {
         return new WidgetResource($widget);
     }
 
-    public function create(CreateWidgetRequest $request) {
+    public function store(CreateWidgetRequest $request) {
         $this->widgetService->setUser($request->user()->user);
         $create = $this->widgetService->createWidget(
             $request->user()->site,

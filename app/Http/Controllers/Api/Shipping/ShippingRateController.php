@@ -42,7 +42,7 @@ class ShippingRateController extends Controller
         );
     }
 
-    public function create(StoreShippingRateRequest $request) {
+    public function store(StoreShippingRateRequest $request) {
         $this->shippingRateService->setUser($request->user()->user);
         $this->shippingRateService->setSite($request->user()->site);
         

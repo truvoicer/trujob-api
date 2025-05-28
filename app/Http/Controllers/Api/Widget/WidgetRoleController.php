@@ -29,7 +29,7 @@ class WidgetRoleController extends Controller
 
         );
     }
-    public function create(
+    public function store(
         Widget $widget,
         Role $role,
         Request $request

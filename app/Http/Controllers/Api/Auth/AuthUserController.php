@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AuthUserController extends Controller
 {
 
-    public function view(Request $request): \Illuminate\Http\JsonResponse
+    public function show(Request $request): \Illuminate\Http\JsonResponse
     {
         $token = $this->userAdminService->getlatestToken($request->user());
         return response()->json([

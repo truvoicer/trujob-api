@@ -28,12 +28,12 @@ class SiteController extends Controller
         return SiteResource::collection(Site::all());
     }
 
-    public function view(Site $site)
+    public function show(Site $site)
     {
         return new SiteResource($site);
     }
 
-    public function create(CreateSiteRequest $request)
+    public function store(CreateSiteRequest $request)
     {
         $this->siteService->setUser($request->user());
         $create = $this->siteService->createSite($request->validated());
@@ -61,7 +61,7 @@ class SiteController extends Controller
         ]);
     }
 
-    public function delete(Site $site, Request $request)
+    public function destroy(Site $site, Request $request)
     {
         $this->siteService->setUser($request->user());
         if (!$this->siteService->deleteSite($site)) {

@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Api\Price;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Price\StorePriceRequest;
+use App\Http\Requests\Price\UpdatePriceRequest;
 use App\Http\Resources\PriceResource;
 use App\Models\Price;
 use App\Repositories\PriceRepository;
@@ -48,7 +50,7 @@ class PriceController extends Controller
         );
     }
 
-    public function view(Price $price, Request $request) 
+    public function show(Price $price, Request $request) 
     {
         $this->priceService->setUser($request->user()->user);
         $this->priceService->setSite($request->user()->site);
@@ -56,7 +58,7 @@ class PriceController extends Controller
         return new PriceResource($price);
     }
 
-    public function create(Request $request) 
+    public function store(StorePriceRequest $request) 
     {
         $this->priceService->setUser($request->user()->user);
         $this->priceService->setSite($request->user()->site);
@@ -72,7 +74,7 @@ class PriceController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function update(Price $price, Request $request) 
+    public function update(Price $price, UpdatePriceRequest $request) 
     {
         $this->priceService->setUser($request->user()->user);
         $this->priceService->setSite($request->user()->site);

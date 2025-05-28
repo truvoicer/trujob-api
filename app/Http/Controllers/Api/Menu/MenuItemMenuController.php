@@ -58,7 +58,7 @@ class MenuItemMenuController extends Controller
         );
     }
 
-    public function create(Menu $menu, MenuItem $menuItem, Menu $menuChild, CreateMenuItemMenuRequest $request) {
+    public function store(Menu $menu, MenuItem $menuItem, Menu $menuChild, CreateMenuItemMenuRequest $request) {
         $this->menuService->setUser(request()->user()->user);
         $this->menuService->setSite(request()->user()->site);
         

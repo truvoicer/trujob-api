@@ -22,9 +22,9 @@ class OrderItemResource extends JsonResource
         return [
             'id' => $this->id,
             'quantity' => $this->quantity,
-            'order_itemable_id' => $this->order_itemable_id,
-            'order_itemable_type' => $this->order_itemable_type,
-            'entity' => ListingListResource::make($this->orderItemable)
+            'productable_id' => $this->productable_id,
+            'productable_type' => $this->productable_type,
+            'entity' => ListingListResource::make($this->productable)
         ];
     }
 }

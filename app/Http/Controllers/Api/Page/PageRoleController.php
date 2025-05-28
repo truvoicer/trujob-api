@@ -29,7 +29,7 @@ class PageRoleController extends Controller
 
         );
     }
-    public function create(
+    public function store(
         Page $page,
         Role $role,
         Request $request

@@ -52,7 +52,7 @@ class ListingReviewController extends Controller
         );
     }
 
-    public function create(Listing $listing, StoreListingReviewRequest $request) {
+    public function store(Listing $listing, StoreListingReviewRequest $request) {
         $this->listingReviewService->setUser($request->user()->user);
         $this->listingReviewService->setSite($request->user()->site);
 

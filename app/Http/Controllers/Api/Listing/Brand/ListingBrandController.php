@@ -42,7 +42,7 @@ class ListingBrandController extends Controller
         );
     }
 
-    public function create(Listing $listing, Brand $brand, Request $request)
+    public function store(Listing $listing, Brand $brand, Request $request)
     {
         $this->listingBrandService->setUser($request->user()->user);
         $this->listingBrandService->setSite($request->user()->site);

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('order_id')
                 ->constrained('orders')
                 ->cascadeOnDelete();
-            $table->unsignedBigInteger('order_itemable_id');
-            $table->string('order_itemable_type');
+            $table->unsignedBigInteger('productable_id');
+            $table->string('productable_type');
             $table->integer('quantity');
             $table->timestamps();
         });

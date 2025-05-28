@@ -36,5 +36,16 @@ class UserDiscountUsage extends Model
             'usage_count' => $this->usage_count + 1,
             'last_used_at' => now(),
         ]);
+        
     }
+    
+    public function getRemainingUsesAttribute()
+    {
+        return $this->discount?->usage_limit ? $this->discount->usage_limit - $this->discount->usage_count : null;
+    }
+    public function getUserRemainingUsesAttribute()
+    {
+        return $this->discount?->per_user_limit ? $this->discount->per_user_limit - $this->usage_count : null;
+    }
+        
 }

@@ -18,13 +18,13 @@ class AppMenuController extends Controller
         $this->menuService = $menuService;
     }
 
-    public function view(string $menu) {
+    public function show(string $menu) {
         return new AppMenuResource(
             $this->menuService->appMenuFetch($menu)
         );
     }
 
-    public function create(Request $request) {
+    public function store(Request $request) {
         $this->menuService->setUser($request->user());
         $create = $this->menuService->createAppMenu($request->all());
         if (!$create) {

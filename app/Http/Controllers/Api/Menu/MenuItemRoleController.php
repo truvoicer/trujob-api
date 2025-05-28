@@ -31,7 +31,7 @@ class MenuItemRoleController extends Controller
 
         );
     }
-    public function create(
+    public function store(
         Menu $menu,
         MenuItem $menuItem,
         Role $role,

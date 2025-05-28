@@ -29,7 +29,7 @@ class SidebarRoleController extends Controller
 
         );
     }
-    public function create(
+    public function store(
         Sidebar $sidebar,
         Role $role,
         Request $request
