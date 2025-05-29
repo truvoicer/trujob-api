@@ -184,6 +184,13 @@ return [
                 'order' => 0,
             ],
             [
+                'page_name' => 'admin_shipping',
+                'label' => 'Shipping',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
                 'page_name' => 'admin_users',
                 'label' => 'Users',
                 'active' => true,

@@ -23,7 +23,7 @@ class PageResource extends JsonResource
         return [
             'id' => $this->id,
             'view' => $this->view,
-            'permalink' => $this->permalink,
+            'permalink' => (!str_starts_with($this->permalink, '/')) ? '/' . $this->permalink : $this->permalink,
             'name' => $this->name,
             'title' => $this->title,
             'content' => $this->content,

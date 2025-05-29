@@ -388,18 +388,34 @@ return [
     ],
     [
         'site_id' => 1,
-        'permalink' => '/admin/finance',
+        'permalink' => '/admin/finance/manage',
         'name' => 'admin_finance',
         'title' => 'Finance',
         'content' => 'Welcome to the finance admin page',
         'view' => ViewType::AdminTabPage,
         'blocks' => [
             [
+                'type' => BlockType::MANAGE_DISCOUNTS,
+                'order' => 0,
+                'title' => 'Manage Discounts',
+                'nav_title' => 'Discounts',
+                'subtitle' => 'Manage your discounts here',
+                'default' => true,
+            ],
+            [
                 'type' => BlockType::MANAGE_PAYMENT_GATEWAYS,
                 'order' => 0,
                 'title' => 'Manage Payment Gateways',
                 'nav_title' => 'Payment Gateways',
                 'subtitle' => 'Manage your payment gateways here',
+                'default' => false,
+            ],
+            [
+                'type' => BlockType::MANAGE_TAX_RATES,
+                'order' => 0,
+                'title' => 'Manage Tax Rates',
+                'nav_title' => 'Tax Rates',
+                'subtitle' => 'Manage your tax rates here',
                 'default' => false,
             ],
         ],
@@ -423,6 +439,37 @@ return [
                 'nav_title' => 'Addresses',
                 'subtitle' => 'Manage your addresses here',
                 'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+            ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/shipping',
+        'name' => 'admin_shipping',
+        'title' => 'Shipping',
+        'content' => 'Welcome to the shipping admin page',
+        'view' => ViewType::AdminTabPage,
+        'blocks' => [
+            [
+                'type' => BlockType::MANAGE_SHIPPING_METHODS,
+                'order' => 0,
+                'title' => 'Manage Shipping Methods',
+                'nav_title' => 'Shipping Methods',
+                'subtitle' => 'Manage your shipping methods here',
+                'default' => true,
+            ],
+            [
+                'type' => BlockType::MANAGE_SHIPPING_ZONES,
+                'order' => 0,
+                'title' => 'Manage Shipping Zones',
+                'nav_title' => 'Shipping Zones',
+                'subtitle' => 'Manage your shipping zones here',
+                'default' => false,
             ],
         ],
         'roles' => [

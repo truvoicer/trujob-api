@@ -4,10 +4,12 @@ namespace App\Services\Shipping;
 
 use App\Models\ShippingMethod;
 use App\Services\BaseService;
+use Illuminate\Support\Str;
 
 class ShippingMethodService extends BaseService
 {
     public function createShippingMethod(array $data) {
+        $data['name'] = Str::slug($data['carrier']);
         $shippingMethod = new ShippingMethod($data);
         if (!$shippingMethod->save()) {
             throw new \Exception('Error creating shipping method');
@@ -15,6 +17,9 @@ class ShippingMethodService extends BaseService
         return true;
     }
     public function updateShippingMethod(ShippingMethod $shippingMethod, array $data) {
+        if (!empty($data['carrier'])) {
+            $data['name'] = Str::slug($data['carrier']);
+        }
         if (!$shippingMethod->update($data)) {
             throw new \Exception('Error updating shipping method');
         }

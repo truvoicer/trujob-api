@@ -24,11 +24,6 @@ class UpdateShippingMethodRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
-                'sometimes',
-                'string',
-                'max:100'
-            ],
             'carrier' => [
                 'nullable',
                 'string',

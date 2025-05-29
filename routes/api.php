@@ -92,7 +92,7 @@ use App\Http\Controllers\Api\Shipping\Zone\Country\BulkShippingZoneCountryContro
 use App\Http\Controllers\Api\Shipping\Method\ShippingMethodController;
 use App\Http\Controllers\Api\Shipping\ShippingRateController;
 use App\Http\Controllers\Api\Shipping\ShippingRestrictionController;
-use App\Http\Controllers\Api\Shipping\ShippingZoneController;
+use App\Http\Controllers\Api\Shipping\Zone\ShippingZoneController;
 use App\Http\Controllers\Api\Shipping\Zone\Country\ShippingZoneCountryController;
 use App\Http\Controllers\Api\Shipping\Zone\Discount\BulkShippingZoneDiscountController;
 use App\Http\Controllers\Api\Shipping\Zone\Discount\ShippingZoneDiscountController;

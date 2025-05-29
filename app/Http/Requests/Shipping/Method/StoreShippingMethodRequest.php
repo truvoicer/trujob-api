@@ -24,11 +24,6 @@ class StoreShippingMethodRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
-                'required',
-                'string',
-                'max:100'
-            ],
             'carrier' => [
                 'nullable',
                 'string',

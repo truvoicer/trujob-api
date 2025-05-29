@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Shipping;
+namespace App\Http\Controllers\Api\Shipping\Zone;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\Zone\StoreShippingZoneRequest;
