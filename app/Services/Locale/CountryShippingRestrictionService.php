@@ -3,9 +3,11 @@
 namespace App\Services\Locale;
 
 use App\Contracts\Shipping\ShippingRestriction;
+use App\Http\Resources\Listing\CountryResource;
 use App\Models\Country;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;
 use App\Repositories\CountryRepository;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class CountryShippingRestrictionService implements ShippingRestriction
 {
@@ -20,8 +22,8 @@ class CountryShippingRestrictionService implements ShippingRestriction
     }
     public function storeShippingRestriction(array $data): ModelsShippingRestriction
     {
-        $data['restrictable_type'] = Country::class;
-        $data['restrictable_id'] = $data['restriction_id'];
+        $data['restrictionable_type'] = Country::class;
+        $data['restrictionable_id'] = $data['restriction_id'];
         $shippingRestriction = new ModelsShippingRestriction($data);
         if (!$shippingRestriction->save()) {
             throw new \Exception('Error creating shipping restriction');
@@ -43,5 +45,14 @@ class CountryShippingRestrictionService implements ShippingRestriction
             throw new \Exception('Error deleting shipping restriction');
         }
         return true;
+    }
+
+    public function getRestrictionableEntityResourceData(JsonResource $resource): array
+    {
+        return [
+            'country' => new CountryResource(
+                $resource->restrictionable
+            )
+        ];
     }
 }

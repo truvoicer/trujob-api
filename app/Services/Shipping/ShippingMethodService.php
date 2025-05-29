@@ -28,4 +28,10 @@ class ShippingMethodService extends BaseService
         return true;
     }
 
+    public function syncDiscounts(ShippingMethod $shippingMethod, array $discountIds)
+    {
+        $shippingMethod->discounts()->sync($discountIds);
+        return true;
+    }
+
 }

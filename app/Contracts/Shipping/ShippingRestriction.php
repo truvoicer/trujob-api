@@ -3,6 +3,7 @@
 namespace App\Contracts\Shipping;
 
 use App\Models\ShippingRestriction as ShippingRestrictionModel;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 interface ShippingRestriction
 {
@@ -10,5 +11,6 @@ interface ShippingRestriction
     public function storeShippingRestriction(array $data): ShippingRestrictionModel;
     public function updateShippingRestriction(ShippingRestrictionModel $shippingRestriction, array $data): ShippingRestrictionModel;
     public function deleteShippingRestriction(ShippingRestrictionModel $shippingRestriction): bool;
+    public function getRestrictionableEntityResourceData(JsonResource $resource): array;
 
 }

@@ -29,4 +29,10 @@ class Order extends Model
     {
         return $this->hasMany(OrderShipment::class);
     }
+
+    public function discounts()
+    {
+        return $this->belongsToMany(Discount::class, 'discount_orders')
+            ->withTimestamps();
+    }
 }

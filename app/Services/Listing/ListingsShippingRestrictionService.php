@@ -3,9 +3,11 @@
 namespace App\Services\Listing;
 
 use App\Contracts\Shipping\ShippingRestriction;
+use App\Http\Resources\Listing\ListingListResource;
 use App\Models\Listing;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;
 use App\Repositories\ListingRepository;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ListingsShippingRestrictionService implements ShippingRestriction
 {
@@ -19,8 +21,8 @@ class ListingsShippingRestrictionService implements ShippingRestriction
     }
     public function storeShippingRestriction(array $data): ModelsShippingRestriction
     {
-        $data['restrictable_type'] = Listing::class;
-        $data['restrictable_id'] = $data['restriction_id'];
+        $data['restrictionable_type'] = Listing::class;
+        $data['restrictionable_id'] = $data['restriction_id'];
         $shippingRestriction = new ModelsShippingRestriction($data);
         if (!$shippingRestriction->save()) {
             throw new \Exception('Error creating shipping restriction');
@@ -42,5 +44,14 @@ class ListingsShippingRestrictionService implements ShippingRestriction
             throw new \Exception('Error deleting shipping restriction');
         }
         return true;
+    }
+
+    public function getRestrictionableEntityResourceData(JsonResource $resource): array
+    {
+        return [
+            'listing' => new ListingListResource(
+                $resource->restrictionable
+            )
+        ];
     }
 }

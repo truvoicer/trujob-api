@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Shipping;
 
+use App\Enums\Order\Shipping\ShippingRestrictionType;
+use App\Factories\Shipping\ShippingRestrictionFactory;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ShippingRestrictionResource extends JsonResource
@@ -17,11 +19,16 @@ class ShippingRestrictionResource extends JsonResource
         return [
             'id' => $this->id,
             'shipping_method' => $this->whenLoaded('shippingMethod', ShippingMethodResource::make($this->shippingMethod)),
-            'type' => $this->type, // Assuming type is an enum or string
-            'restriction_id' => $this->restriction_id, // Assuming restriction_id is an integer
+            'restrictionable_id' => $this->restrictionable_id,
+            'restrictionable_type' => $this->restrictionable_type,
             'action' => $this->action, // Assuming type is an enum or string
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            ...ShippingRestrictionFactory::create(
+                ShippingRestrictionType::fromClassName($this->restrictionable_type)
+            )
+                ->getRestrictionableEntityResourceData($this)
+
         ];
     }
 }

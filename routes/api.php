@@ -61,6 +61,8 @@ use App\Http\Controllers\Api\Menu\MenuItemMenuReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
+use App\Http\Controllers\Api\Order\Discount\BulkOrderDiscountController;
+use App\Http\Controllers\Api\Order\Discount\OrderDiscountController;
 use App\Http\Controllers\Api\Order\OrderController;
 use App\Http\Controllers\Api\Order\Item\OrderItemController;
 use App\Http\Controllers\Api\Page\Block\PageBlockReorderController;
@@ -84,10 +86,16 @@ use App\Http\Controllers\Api\Price\PriceTaxRateController;
 use App\Http\Controllers\Api\Price\PriceTypeController;
 use App\Http\Controllers\Api\Region\RegionController;
 use App\Http\Controllers\Api\SettingController;
-use App\Http\Controllers\Api\Shipping\ShippingMethodController;
+use App\Http\Controllers\Api\Shipping\Method\Discount\BulkShippingMethodDiscountController;
+use App\Http\Controllers\Api\Shipping\Method\Discount\ShippingMethodDiscountController;
+use App\Http\Controllers\Api\Shipping\Zone\Country\BulkShippingZoneCountryController;
+use App\Http\Controllers\Api\Shipping\Method\ShippingMethodController;
 use App\Http\Controllers\Api\Shipping\ShippingRateController;
 use App\Http\Controllers\Api\Shipping\ShippingRestrictionController;
 use App\Http\Controllers\Api\Shipping\ShippingZoneController;
+use App\Http\Controllers\Api\Shipping\Zone\Country\ShippingZoneCountryController;
+use App\Http\Controllers\Api\Shipping\Zone\Discount\BulkShippingZoneDiscountController;
+use App\Http\Controllers\Api\Shipping\Zone\Discount\ShippingZoneDiscountController;
 use App\Http\Controllers\Api\Sidebar\SidebarBulkDeleteController;
 use App\Http\Controllers\Api\Sidebar\SidebarController;
 use App\Http\Controllers\Api\Sidebar\SidebarWidgetReorderController;
@@ -239,6 +247,16 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/delete', [OrderItemController::class, 'destroy'])->name('delete');
                 });
             });
+            Route::prefix('discount')->name('discount.')->group(function () {
+                    Route::get('/', [OrderDiscountController::class, 'index'])->name('index');
+                    Route::prefix('bulk')->name('bulk.')->group(function () {
+                        Route::post('/store', BulkOrderDiscountController::class)->name('store');
+                    });
+                    Route::prefix('{discount}')->group(function () {
+                        Route::post('/store', [OrderDiscountController::class, 'store'])->name('store');
+                        Route::delete('/destroy', [OrderDiscountController::class, 'destroy'])->name('destroy');
+                    });
+                });
         });
     });
     Route::prefix('transaction')->name('transaction.')->group(function () {
@@ -411,6 +429,16 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::get('/', [ShippingMethodController::class, 'show'])->name('show');
                 Route::patch('/update', [ShippingMethodController::class, 'update'])->name('update');
                 Route::delete('/destroy', [ShippingMethodController::class, 'destroy'])->name('destroy');
+                Route::prefix('discount')->name('discount.')->group(function () {
+                    Route::get('/', [ShippingMethodDiscountController::class, 'index'])->name('index');
+                    Route::prefix('bulk')->name('bulk.')->group(function () {
+                        Route::post('/store', BulkShippingMethodDiscountController::class)->name('store');
+                    });
+                    Route::prefix('{discount}')->group(function () {
+                        Route::post('/store', [ShippingMethodDiscountController::class, 'store'])->name('store');
+                        Route::delete('/destroy', [ShippingMethodDiscountController::class, 'destroy'])->name('destroy');
+                    });
+                });
             });
         });
         Route::prefix('zone')->name('zone.')->group(function () {
@@ -420,6 +448,26 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::get('/', [ShippingZoneController::class, 'show'])->name('show');
                 Route::patch('/update', [ShippingZoneController::class, 'update'])->name('update');
                 Route::delete('/destroy', [ShippingZoneController::class, 'destroy'])->name('destroy');
+                Route::prefix('country')->name('country.')->group(function () {
+                    Route::get('/', [ShippingZoneCountryController::class, 'index'])->name('index');
+                    Route::prefix('bulk')->name('bulk.')->group(function () {
+                        Route::post('/store', BulkShippingZoneCountryController::class)->name('store');
+                    });
+                    Route::prefix('{country}')->group(function () {
+                        Route::post('/store', [ShippingZoneCountryController::class, 'store'])->name('store');
+                        Route::delete('/destroy', [ShippingZoneCountryController::class, 'destroy'])->name('destroy');
+                    });
+                });
+                Route::prefix('discount')->name('discount.')->group(function () {
+                    Route::get('/', [ShippingZoneDiscountController::class, 'index'])->name('index');
+                    Route::prefix('bulk')->name('bulk.')->group(function () {
+                        Route::post('/store', BulkShippingZoneDiscountController::class)->name('store');
+                    });
+                    Route::prefix('{discount}')->group(function () {
+                        Route::post('/store', [ShippingZoneDiscountController::class, 'store'])->name('store');
+                        Route::delete('/destroy', [ShippingZoneDiscountController::class, 'destroy'])->name('destroy');
+                    });
+                });
             });
         });
         Route::prefix('rate')->name('rate.')->group(function () {
@@ -434,7 +482,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('restriction')->name('restriction.')->group(function () {
             Route::get('/', [ShippingRestrictionController::class, 'index'])->name('index');
             Route::post('/store', [ShippingRestrictionController::class, 'store'])->name('store');
-            Route::prefix('{restriction}')->group(function () {
+            Route::prefix('{shippingRestriction}')->group(function () {
                 Route::get('/', [ShippingRestrictionController::class, 'show'])->name('show');
                 Route::patch('/update', [ShippingRestrictionController::class, 'update'])->name('update');
                 Route::delete('/destroy', [ShippingRestrictionController::class, 'destroy'])->name('destroy');

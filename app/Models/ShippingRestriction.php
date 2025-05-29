@@ -12,8 +12,8 @@ class ShippingRestriction extends Model
 
     protected $fillable = [
         'shipping_method_id',
-        'type',
-        'restriction_id',
+        'restrictionable_id',
+        'restrictionable_type',
         'action'
     ];
 
@@ -22,7 +22,7 @@ class ShippingRestriction extends Model
         return $this->belongsTo(ShippingMethod::class);
     }
 
-    public function restrictable(): MorphTo
+    public function restrictionable(): MorphTo
     {
         return $this->morphTo();
     }

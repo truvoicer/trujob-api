@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('discount_id')
                 ->constrained('discounts')
                 ->cascadeOnDelete();
-            $table->foreignId('shipping_zone_id')
-                ->constrained('shipping_zones')
+            $table->foreignId('shipping_method_id')
+                ->constrained('shipping_methods')
                 ->cascadeOnDelete();
             $table->timestamps();
         });

@@ -13,15 +13,8 @@ return new class extends Migration
         Schema::create('shipping_restrictions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('shipping_method_id')->constrained()->cascadeOnDelete();
-            $table->enum(
-                'type',
-                array_map(
-                    fn(ShippingRestrictionType $type) => $type->value,
-                    ShippingRestrictionType::cases()
-                )
-            );
-            $table->unsignedBigInteger('restrictable_id');
-            $table->string('restrictable_type');
+            $table->unsignedBigInteger('restrictionable_id');
+            $table->string('restrictionable_type');
             $table->enum(
                 'action', 
                 array_map(
@@ -31,7 +24,7 @@ return new class extends Migration
             );
             $table->timestamps();
 
-            $table->index(['type', 'restriction_id']);
+            $table->index(['restrictionable_id', 'restrictionable_type'], 'shipping_restrictionable_type_id_index');
         });
     }
 

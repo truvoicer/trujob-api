@@ -21,7 +21,6 @@ class ShippingZone extends Model
     public function discounts()
     {
         return $this->belongsToMany(Discount::class, 'discount_shipping_zones')
-            ->withPivot('amount', 'type')
             ->withTimestamps();
     }
 

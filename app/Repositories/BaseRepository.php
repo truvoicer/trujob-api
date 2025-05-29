@@ -38,6 +38,7 @@ class BaseRepository
     private array $whereDoesntHave = [];
     private array $whereHas = [];
     private array $with = [];
+    private array $load = [];
 
     protected Relation|Builder|EloquentBuilder|null $query = null;
 
@@ -229,6 +230,17 @@ class BaseRepository
         return $this;
     }
 
+    public function getLoad(): array
+    {
+        return $this->load;
+    }
+
+    public function setLoad(array $load): self
+    {
+        $this->load = $load;
+        return $this;
+    }
+
     protected function addWhereDoesntHaveToQuery(EloquentBuilder|Relation $query): EloquentBuilder|Relation
     {
         $whereDoesntHave = $this->getWhereDoesntHave();
@@ -246,6 +258,17 @@ class BaseRepository
         $query->with($this->getWith());
         return $query;
     }
+    
+    protected function addLoadToQuery(EloquentBuilder|Relation $query): EloquentBuilder|Relation
+    {
+        $load = $this->getLoad();
+        if (empty($load)) {
+            return $query;
+        }
+        $query->load($this->getLoad());
+        return $query;
+    }
+
     public function findModelsByUser(Model $model, User $user, ?bool $checkPermissions = true)
     {
         return $this->getResults(
@@ -401,6 +424,7 @@ class BaseRepository
         if ($query instanceof Relation || $query instanceof EloquentBuilder) {
             $query = $this->addWhereDoesntHaveToQuery($query);
             $query = $this->addWithToQuery($query);
+            $query = $this->addLoadToQuery($query);
         }
 
         if ($this->sortField) {

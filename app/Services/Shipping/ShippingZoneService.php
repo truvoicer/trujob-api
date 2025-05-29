@@ -48,4 +48,16 @@ class ShippingZoneService extends BaseService
         }
         return true;
     }
+
+    public function syncCountries(ShippingZone $shippingZone, array $countryIds)
+    {
+        $shippingZone->countries()->sync($countryIds);
+        return true;
+    }
+
+    public function syncDiscounts(ShippingZone $shippingZone, array $discountIds)
+    {
+        $shippingZone->discounts()->sync($discountIds);
+        return true;
+    }
 }

@@ -33,6 +33,6 @@ class Category extends Model
 
     public function shippingRestrictions(): MorphMany
     {
-        return $this->morphMany(ShippingRestriction::class, 'restrictable');
+        return $this->morphMany(ShippingRestriction::class, 'restrictionable');
     }
 }

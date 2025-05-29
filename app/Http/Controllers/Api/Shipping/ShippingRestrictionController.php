@@ -21,11 +21,10 @@ class ShippingRestrictionController extends Controller
     public function __construct(
         private ShippingRestrictionService $shippingRestrictionService,
         private ShippingRestrictionRepository $shippingRestrictionRepository,
-    )
-    {
-    }
+    ) {}
 
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $this->shippingRestrictionRepository->setPagination(true);
         $this->shippingRestrictionRepository->setSortField(
             $request->get('sort', 'created_at')
@@ -39,27 +38,34 @@ class ShippingRestrictionController extends Controller
         $this->shippingRestrictionRepository->setPage(
             $request->get('page', 1)
         );
-        
+        $this->shippingRestrictionRepository->setWith([
+            'shippingMethod',
+            'restrictionable',
+        ]);
+
         return ShippingRestrictionResource::collection(
             $this->shippingRestrictionRepository->findMany()
         );
     }
 
-    public function show(ShippingRestriction $shippingRestriction, Request $request) {
+    public function show(ShippingRestriction $shippingRestriction, Request $request)
+    {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
-        
+
         return new ShippingRestrictionResource(
             $shippingRestriction
         );
     }
 
-    public function store(StoreShippingRestrictionRequest $request) {
+    public function store(StoreShippingRestrictionRequest $request)
+    {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
         $data = $request->validated();
+
         $validate = ShippingRestrictionFactory::create(
-            EnumHelpers::validateMorphEnumByArray(ShippingRestrictionType::class, 'type', $data)
+            ShippingRestrictionType::from($data['type'])
         )
             ->validateRequest();
         if (!$validate) {
@@ -77,19 +83,23 @@ class ShippingRestrictionController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function update(ShippingRestriction $shippingRestriction, UpdateShippingRestrictionRequest $request) {
+    public function update(ShippingRestriction $shippingRestriction, UpdateShippingRestrictionRequest $request)
+    {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
 
         $data = $request->validated();
-        $validate = ShippingRestrictionFactory::create(
-            EnumHelpers::validateMorphEnumByArray(ShippingRestrictionType::class, 'type', $data)
-        )
-            ->validateRequest();
-        if (!$validate) {
-            return response()->json([
-                'message' => 'Invalid restriction type or ID',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        if ($request->validated('restrictionable_type') && $request->validated('restrictionable_id')) {
+            $validate = ShippingRestrictionFactory::create(
+                EnumHelpers::validateMorphEnumByArray(ShippingRestrictionType::class, 'type', $data)
+            )
+                ->validateRequest();
+            if (!$validate) {
+                return response()->json([
+                    'message' => 'Invalid restriction type or ID',
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
         }
         if (!$this->shippingRestrictionService->updateShippingRestriction($shippingRestriction, $request->validated())) {
             return response()->json([
@@ -100,10 +110,11 @@ class ShippingRestrictionController extends Controller
             'message' => 'Shipping restriction updated',
         ], Response::HTTP_OK);
     }
-    public function destroy(ShippingRestriction $shippingRestriction, Request $request) {
+    public function destroy(ShippingRestriction $shippingRestriction, Request $request)
+    {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
-        
+
         if (!$this->shippingRestrictionService->deleteShippingRestriction($shippingRestriction)) {
             return response()->json([
                 'message' => 'Error deleting shipping restriction',

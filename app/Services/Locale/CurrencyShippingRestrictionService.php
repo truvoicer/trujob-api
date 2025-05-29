@@ -3,9 +3,11 @@
 namespace App\Services\Locale;
 
 use App\Contracts\Shipping\ShippingRestriction;
+use App\Http\Resources\Listing\CurrencyResource;
 use App\Models\Currency;
 use App\Repositories\CurrencyRepository;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class CurrencyShippingRestrictionService implements ShippingRestriction
 {
@@ -20,8 +22,8 @@ class CurrencyShippingRestrictionService implements ShippingRestriction
     }
     public function storeShippingRestriction(array $data): ModelsShippingRestriction
     {
-        $data['restrictable_type'] = Currency::class;
-        $data['restrictable_id'] = $data['restriction_id'];
+        $data['restrictionable_type'] = Currency::class;
+        $data['restrictionable_id'] = $data['restriction_id'];
         $shippingRestriction = new ModelsShippingRestriction($data);
         if (!$shippingRestriction->save()) {
             throw new \Exception('Error creating shipping restriction');
@@ -43,5 +45,14 @@ class CurrencyShippingRestrictionService implements ShippingRestriction
             throw new \Exception('Error deleting shipping restriction');
         }
         return true;
+    }
+
+    public function getRestrictionableEntityResourceData(JsonResource $resource): array
+    {
+        return [
+            'currency' => new CurrencyResource(
+                $resource->restrictionable
+            )
+        ];
     }
 }

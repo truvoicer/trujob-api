@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Shipping;
+namespace App\Http\Controllers\Api\Shipping\Method;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\Method\StoreShippingMethodRequest;
