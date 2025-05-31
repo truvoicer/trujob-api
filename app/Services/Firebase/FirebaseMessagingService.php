@@ -178,7 +178,7 @@ class FirebaseMessagingService extends BaseService
             $name = 'fb_image_' . Carbon::now()->timestamp;
             $storeImage = $this->imageUploadService->requestImageUpload($this->imageKey, self::IMAGE_STORE_PATH, $name);
             if (!$storeImage) {
-                $this->resultsService->addError('Error uploading listing media');
+                $this->resultsService->addError('Error uploading product media');
                 return false;
             }
 

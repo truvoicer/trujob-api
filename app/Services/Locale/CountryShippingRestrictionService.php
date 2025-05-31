@@ -3,7 +3,7 @@
 namespace App\Services\Locale;
 
 use App\Contracts\Shipping\ShippingRestriction;
-use App\Http\Resources\Listing\CountryResource;
+use App\Http\Resources\Product\CountryResource;
 use App\Models\Country;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;
 use App\Repositories\CountryRepository;

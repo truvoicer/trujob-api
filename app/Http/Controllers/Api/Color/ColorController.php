@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Color;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Color\StoreColorRequest;
 use App\Http\Requests\Color\UpdateColorRequest;
-use App\Http\Resources\Listing\ColorResource;
+use App\Http\Resources\Product\ColorResource;
 use App\Models\Color;
 use App\Repositories\ColorRepository;
 use App\Services\Color\ColorService;

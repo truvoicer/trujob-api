@@ -12,7 +12,7 @@ use App\Models\Media;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductMedia>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MediaProduct>
  */
 class MediaFactory extends Factory
 {
@@ -47,7 +47,7 @@ class MediaFactory extends Factory
         switch ($filesystem) {
             case FileSystemType::EXTERNAL->value:
                 switch ($category) {
-                    case ImageCategory::LISTING_IMAGE->value:
+                    case ImageCategory::PRODUCT_IMAGE->value:
                         $url = "{$this->loremPicsumUrl}/{$randomNumberBetween}/700/700";
                         break;
                     default:

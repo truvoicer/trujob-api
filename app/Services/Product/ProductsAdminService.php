@@ -8,7 +8,7 @@ use App\Models\Color;
 use App\Models\Feature;
 use App\Models\Product;
 use App\Models\ProductFeature;
-use App\Models\ProductMedia;
+use App\Models\MediaProduct;
 use App\Models\ProductReview;
 use App\Models\ProductType;
 use App\Models\Order;
@@ -152,7 +152,7 @@ class ProductsAdminService extends BaseService
             if (!empty($data['media']) && is_array($data['media'])) {
                 $imageData = $this->buildImageRequestData($data);
                 foreach ($imageData as $image) {
-                    $this->createProductMedia($image);
+                    $this->createMediaProduct($image);
                 }
             }
             return true;
@@ -184,7 +184,7 @@ class ProductsAdminService extends BaseService
         }
         return $buildImageData;
     }
-    public function createProductMedia(Product $product, array $data = [])
+    public function createMediaProduct(Product $product, array $data = [])
     {
         if (!$product->exists) {
             $product = $this->createProduct([]);
@@ -192,25 +192,25 @@ class ProductsAdminService extends BaseService
                 return false;
             }
         }
-        $productMedia = new ProductMedia($data);
-        return $this->saveProductMedia($product, $data);
+        $productMedia = new MediaProduct($data);
+        return $this->saveMediaProduct($product, $data);
     }
 
-    public function saveProductMedia(Product $product, array $data = [])
+    public function saveMediaProduct(Product $product, array $data = [])
     {
         return true;
         // try {
-        //     $saveProductMedia = $product->productMedia()->save($productMedia);
-        //     if (!$saveProductMedia) {
+        //     $saveMediaProduct = $product->productMedia()->save($productMedia);
+        //     if (!$saveMediaProduct) {
         //         $this->addError('Error saving product media', $data);
         //         return false;
         //     }
-        //     $productsMediaService->setProductMedia($productMedia);
-        //     $storeProductMedia = $productsMediaService->saveProductMedia($data, $product);
-        //     if (!$storeProductMedia) {
+        //     $productsMediaService->setMediaProduct($productMedia);
+        //     $storeMediaProduct = $productsMediaService->saveMediaProduct($data, $product);
+        //     if (!$storeMediaProduct) {
         //         $this->setErrors(array_merge($this->errors, $productsMediaService->getErrors()));
         //     }
-        //     return $storeProductMedia;
+        //     return $storeMediaProduct;
         // } catch (\Exception $exception) {
         //     throw new \Exception($exception->getMessage());
         // }

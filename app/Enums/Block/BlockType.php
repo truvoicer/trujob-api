@@ -8,11 +8,11 @@ enum BlockType: string
     case HERO = 'hero-block';
     case FEATURED = 'featured-block';
     case ICON_GRID = 'icon-grid-block';
-    case LISTINGS_GRID = 'listings-grid-block';
+    case PRODUCTS_GRID = 'products-grid-block';
     case LOGIN = 'login-block';
     case REGISTER = 'register-block';
     case MANAGE_PAGES = 'manage-pages-block';
-    case MANAGE_LISTINGS = 'manage-listings-block';
+    case MANAGE_PRODUCTS = 'manage-products-block';
     case MANAGE_SIDEBARS = 'manage-sidebars-block';
     case MANAGE_WIDGETS = 'manage-widgets-block';
     case MANAGE_MENUS = 'manage-menus-block';
@@ -22,7 +22,6 @@ enum BlockType: string
     case MANAGE_CATEGORIES = 'manage-categories-block';
     case MANAGE_PRODUCT_TYPES = 'manage-product-types-block';
     case MANAGE_FEATURES = 'manage-features-block';
-    case MANAGE_LISTING_TYPES = 'manage-listing-types-block';
     case MANAGE_REVIEWS = 'manage-reviews-block';
     case MANAGE_SITE_SETTINGS = 'manage-site-settings-block';
     case MANAGE_PAYMENT_METHODS = 'manage-payment-methods-block';
@@ -38,7 +37,7 @@ enum BlockType: string
     {
         return match ($this) {
             BlockType::MANAGE_PAGES,
-            BlockType::MANAGE_LISTINGS,
+            BlockType::MANAGE_PRODUCTS,
             BlockType::MANAGE_SIDEBARS,
             BlockType::MANAGE_WIDGETS,
             BlockType::MANAGE_USERS,
@@ -47,7 +46,7 @@ enum BlockType: string
             BlockType::MANAGE_CATEGORIES,
             BlockType::MANAGE_PRODUCT_TYPES,
             BlockType::MANAGE_FEATURES,
-            BlockType::MANAGE_LISTING_TYPES,
+            BlockType::MANAGE_PRODUCT_TYPES,
             BlockType::MANAGE_REVIEWS,
             BlockType::MANAGE_SITE_SETTINGS,
             BlockType::MANAGE_PAYMENT_METHODS,
@@ -60,7 +59,7 @@ enum BlockType: string
     public function getSidebarWidgets(): array
     {
         return match ($this) {
-            BlockType::LISTINGS_GRID => Widget::cases(),
+            BlockType::PRODUCTS_GRID => Widget::cases(),
             default => [],
         };
     }

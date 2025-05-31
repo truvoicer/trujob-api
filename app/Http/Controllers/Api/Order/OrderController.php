@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Http\Resources\Order\OrderResource;
-use App\Models\Listing;
+use App\Models\Product;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Services\Order\OrderService;

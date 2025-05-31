@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Locale;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Currency\StoreCurrencyRequest as CurrencyStoreCurrencyRequest;
 use App\Http\Requests\Currency\UpdateCurrencyRequest as CurrencyUpdateCurrencyRequest;
-use App\Http\Resources\Listing\CurrencyResource;
+use App\Http\Resources\Product\CurrencyResource;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Repositories\CurrencyRepository;

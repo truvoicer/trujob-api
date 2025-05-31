@@ -6,7 +6,7 @@ use App\Factories\Product\ProductFactory;
 use App\Helpers\ProductHelpers;
 use App\Models\Order;
 use App\Services\BaseService;
-use App\Services\Listing\ListingsAdminService;
+use App\Services\Product\ProductsAdminService;
 
 class OrderService extends BaseService
 {
@@ -20,7 +20,7 @@ class OrderService extends BaseService
         $order = $this->user->orders()->create($data);
 
         if (!$order->exists()) {
-            throw new \Exception('Error creating listing order');
+            throw new \Exception('Error creating product order');
         }
         $createdItems = [];
         if (count($orderItems)) {
@@ -34,7 +34,7 @@ class OrderService extends BaseService
     public function updateOrder(Order $transaction, array $data)
     {
         if (!$transaction->update($data)) {
-            throw new \Exception('Error updating listing transaction');
+            throw new \Exception('Error updating product transaction');
         }
         return $transaction;
     }
@@ -42,7 +42,7 @@ class OrderService extends BaseService
     public function deleteOrder(Order $transaction)
     {
         if (!$transaction->delete()) {
-            throw new \Exception('Error deleting listing transaction');
+            throw new \Exception('Error deleting product transaction');
         }
         return true;
     }

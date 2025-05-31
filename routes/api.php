@@ -28,7 +28,6 @@ use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Product\Media\ProductMediaController;
 use App\Http\Controllers\Api\Product\ProductType\ProductProductTypeController;
 use App\Http\Controllers\Api\Product\ProductPublicController;
-use App\Http\Controllers\Api\ProductType\ProductTypeController;
 use App\Http\Controllers\Api\Product\UserProductController;
 use App\Http\Controllers\Api\Locale\CountryController;
 use App\Http\Controllers\Api\Locale\CurrencyController;

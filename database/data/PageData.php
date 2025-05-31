@@ -31,7 +31,7 @@ return [
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
-                'type' => BlockType::LISTINGS_GRID,
+                'type' => BlockType::PRODUCTS_GRID,
                 'order' => 2,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
@@ -75,7 +75,7 @@ return [
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
             [
-                'type' => BlockType::LISTINGS_GRID,
+                'type' => BlockType::PRODUCTS_GRID,
                 'order' => 2,
                 'title' => 'Welcome to our website',
                 'subtitle' => 'We are a team of professionals',
@@ -271,7 +271,7 @@ return [
         'view' => ViewType::AdminTabPage,
         'blocks' => [
             [
-                'type' => BlockType::MANAGE_LISTINGS,
+                'type' => BlockType::MANAGE_PRODUCTS,
                 'order' => 0,
                 'title' => 'Manage Products',
                 'nav_title' => 'Products',
@@ -311,7 +311,7 @@ return [
                 'default' => false,
             ],
             [
-                'type' => BlockType::MANAGE_LISTING_TYPES,
+                'type' => BlockType::MANAGE_PRODUCT_TYPES,
                 'order' => 0,
                 'title' => 'Manage Product Types',
                 'nav_title' => 'Product Types',

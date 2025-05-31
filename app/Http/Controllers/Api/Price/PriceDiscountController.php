@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api\Price;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Listing\Price\Discount\StorePriceDiscountRequest;
-use App\Http\Requests\Listing\Price\Discount\UpdatePriceDiscountRequest;
+use App\Http\Requests\Product\Price\Discount\StorePriceDiscountRequest;
+use App\Http\Requests\Product\Price\Discount\UpdatePriceDiscountRequest;
 use App\Http\Resources\Discount\DiscountResource;
 use App\Models\Discount;
-use App\Models\Listing;
+use App\Models\Product;
 use App\Models\Price;
 use App\Repositories\DiscountRepository;
 use App\Services\Discount\DiscountService;
@@ -28,7 +28,7 @@ class PriceDiscountController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Listing $listing, Price $price, Request $request)
+    public function index(Product $product, Price $price, Request $request)
     {
         $this->discountRepository->setQuery(
             $price->discounts()
@@ -52,7 +52,7 @@ class PriceDiscountController extends Controller
         );
     }
 
-    public function show(Listing $listing, Price $price, Discount $discount, Request $request)
+    public function show(Product $product, Price $price, Discount $discount, Request $request)
     {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);
@@ -66,7 +66,7 @@ class PriceDiscountController extends Controller
         return new DiscountResource($discount);
     }
 
-    public function store(Listing $listing, Price $price, StorePriceDiscountRequest $request)
+    public function store(Product $product, Price $price, StorePriceDiscountRequest $request)
     {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);
@@ -83,7 +83,7 @@ class PriceDiscountController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function update(Listing $listing, Price $price, Discount $discount, UpdatePriceDiscountRequest $request)
+    public function update(Product $product, Price $price, Discount $discount, UpdatePriceDiscountRequest $request)
     {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);
@@ -105,7 +105,7 @@ class PriceDiscountController extends Controller
         ], Response::HTTP_OK);
     }
     
-    public function destroy(Listing $listing, Price $price, Discount $discount, Request $request)
+    public function destroy(Product $product, Price $price, Discount $discount, Request $request)
     {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);

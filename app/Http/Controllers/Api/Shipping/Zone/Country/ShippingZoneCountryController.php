@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Shipping\Zone\Country;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Listing\CountryResource;
+use App\Http\Resources\Product\CountryResource;
 use App\Http\Resources\Shipping\ShippingZoneResource;
 use App\Models\Country;
 use App\Models\ShippingZone;

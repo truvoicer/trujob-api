@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers\Api\Product\Media;
 
-use App\Http\Requests\Product\StoreProductMediaRequest;
-use App\Http\Resources\Product\ProductMediaResource;
+use App\Http\Requests\Product\StoreMediaProductRequest;
+use App\Http\Resources\Product\MediaProductResource;
 use App\Http\Resources\Product\ProductListResource;
 use App\Models\Product;
-use App\Models\ProductMedia;
+use App\Models\MediaProduct;
 use App\Services\Product\ProductsMediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductMediaController extends ProductController
+class MediaProductController extends ProductController
 {
     /**
      * Display a product of the resource.
@@ -29,12 +29,12 @@ class ProductMediaController extends ProductController
      *
      * @return JsonResponse
      */
-    public function createProductMedia(Product $product, Request $request)
+    public function createMediaProduct(Product $product, Request $request)
     {
         $this->productsAdminService->setUser($request->user());
         $this->productsAdminService->setProduct($product);
-        $createProductMedia = $this->productsAdminService->createProductMedia($request->all());
-        if (!$createProductMedia) {
+        $createMediaProduct = $this->productsAdminService->createMediaProduct($request->all());
+        if (!$createMediaProduct) {
             return $this->sendErrorResponse(
                 'Error creating product media',
                 [],
@@ -52,15 +52,15 @@ class ProductMediaController extends ProductController
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreProductMediaRequest $request
+     * @param StoreMediaProductRequest $request
      * @return JsonResponse
      */
-    public function updateProductMedia(ProductMedia $productMedia, Request $request, ProductsMediaService $productsMediaService)
+    public function updateMediaProduct(MediaProduct $productMedia, Request $request, ProductsMediaService $productsMediaService)
     {
         $productsMediaService->setUser($request->user());
-        $productsMediaService->setProductMedia($productMedia);
-        $createProductMedia = $productsMediaService->updateProductMedia($request->all());
-        if (!$createProductMedia) {
+        $productsMediaService->setMediaProduct($productMedia);
+        $createMediaProduct = $productsMediaService->updateMediaProduct($request->all());
+        if (!$createMediaProduct) {
             return $this->sendErrorResponse(
                 'Error updating product media',
                 [],
@@ -70,7 +70,7 @@ class ProductMediaController extends ProductController
         }
         return $this->sendSuccessResponse(
             'Product media updated',
-            new ProductMediaResource($productsMediaService->getProductMedia()),
+            new MediaProductResource($productsMediaService->getMediaProduct()),
             $this->productsAdminService->getErrors()
         );
     }
@@ -78,14 +78,14 @@ class ProductMediaController extends ProductController
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreProductMediaRequest $request
+     * @param StoreMediaProductRequest $request
      * @return JsonResponse
      */
-    public function deleteProductMedia(ProductMedia $productMedia, ProductsMediaService $productsMediaService)
+    public function deleteMediaProduct(MediaProduct $productMedia, ProductsMediaService $productsMediaService)
     {
-        $productsMediaService->setProductMedia($productMedia);
-        $deleteProductMedia = $productsMediaService->deleteProductMedia();
-        if (!$deleteProductMedia) {
+        $productsMediaService->setMediaProduct($productMedia);
+        $deleteMediaProduct = $productsMediaService->deleteMediaProduct();
+        if (!$deleteMediaProduct) {
             return $this->sendErrorResponse(
                 'Error deleting product media',
             [],

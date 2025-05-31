@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Api\Media;
 
-use App\Http\Requests\Listing\StoreListingMediaRequest;
-use App\Http\Resources\Listing\ListingMediaResource;
-use App\Http\Resources\Listing\ListingListResource;
-use App\Models\Listing;
-use App\Models\ListingMedia;
-use App\Services\Listing\ListingsMediaService;
+use App\Http\Requests\Product\StoreMediaProductRequest;
+use App\Http\Resources\Product\MediaProductResource;
+use App\Http\Resources\Product\ProductListResource;
+use App\Models\Product;
+use App\Models\MediaProduct;
+use App\Services\Product\ProductsMediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class MediaController extends ListingController
+class MediaController extends ProductController
 {
     /**
-     * Display a listing of the resource.
+     * Display a product of the resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -29,74 +29,74 @@ class MediaController extends ListingController
      *
      * @return JsonResponse
      */
-    public function createListingMedia(Listing $listing, Request $request)
+    public function createMediaProduct(Product $product, Request $request)
     {
-        $this->listingsAdminService->setUser($request->user());
-        $this->listingsAdminService->setListing($listing);
-        $createListingMedia = $this->listingsAdminService->createListingMedia($request->all());
-        if (!$createListingMedia) {
+        $this->productsAdminService->setUser($request->user());
+        $this->productsAdminService->setProduct($product);
+        $createMediaProduct = $this->productsAdminService->createMediaProduct($request->all());
+        if (!$createMediaProduct) {
             return $this->sendErrorResponse(
-                'Error creating listing media',
+                'Error creating product media',
                 [],
-                $this->listingsAdminService->getErrors(),
+                $this->productsAdminService->getErrors(),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
         return $this->sendSuccessResponse(
-            'Listing media created',
-            new ListingListResource($this->listingsAdminService->getListing()),
-            $this->listingsAdminService->getErrors()
+            'Product media created',
+            new ProductListResource($this->productsAdminService->getProduct()),
+            $this->productsAdminService->getErrors()
         );
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreListingMediaRequest $request
+     * @param StoreMediaProductRequest $request
      * @return JsonResponse
      */
-    public function updateListingMedia(ListingMedia $listingMedia, Request $request, ListingsMediaService $listingsMediaService)
+    public function updateMediaProduct(MediaProduct $productMedia, Request $request, ProductsMediaService $productsMediaService)
     {
-        $listingsMediaService->setUser($request->user());
-        $listingsMediaService->setListingMedia($listingMedia);
-        $createListingMedia = $listingsMediaService->updateListingMedia($request->all());
-        if (!$createListingMedia) {
+        $productsMediaService->setUser($request->user());
+        $productsMediaService->setMediaProduct($productMedia);
+        $createMediaProduct = $productsMediaService->updateMediaProduct($request->all());
+        if (!$createMediaProduct) {
             return $this->sendErrorResponse(
-                'Error updating listing media',
+                'Error updating product media',
                 [],
-                $this->listingsAdminService->getErrors(),
+                $this->productsAdminService->getErrors(),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
         return $this->sendSuccessResponse(
-            'Listing media updated',
-            new ListingMediaResource($listingsMediaService->getListingMedia()),
-            $this->listingsAdminService->getErrors()
+            'Product media updated',
+            new MediaProductResource($productsMediaService->getMediaProduct()),
+            $this->productsAdminService->getErrors()
         );
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreListingMediaRequest $request
+     * @param StoreMediaProductRequest $request
      * @return JsonResponse
      */
-    public function deleteListingMedia(ListingMedia $listingMedia, ListingsMediaService $listingsMediaService)
+    public function deleteMediaProduct(MediaProduct $productMedia, ProductsMediaService $productsMediaService)
     {
-        $listingsMediaService->setListingMedia($listingMedia);
-        $deleteListingMedia = $listingsMediaService->deleteListingMedia();
-        if (!$deleteListingMedia) {
+        $productsMediaService->setMediaProduct($productMedia);
+        $deleteMediaProduct = $productsMediaService->deleteMediaProduct();
+        if (!$deleteMediaProduct) {
             return $this->sendErrorResponse(
-                'Error deleting listing media',
+                'Error deleting product media',
             [],
-                $this->listingsAdminService->getErrors(),
+                $this->productsAdminService->getErrors(),
                 Response::HTTP_UNPROCESSABLE_ENTITY
             );
         }
         return $this->sendSuccessResponse(
-            'Listing media deleted',
+            'Product media deleted',
             [],
-            $this->listingsAdminService->getErrors()
+            $this->productsAdminService->getErrors()
         );
     }
 

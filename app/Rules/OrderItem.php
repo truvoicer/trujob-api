@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use App\Enums\Order\OrderItemType;
-use App\Models\Listing;
+use App\Models\Product;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -32,7 +32,7 @@ class OrderItem implements ValidationRule
             $fail("The $attribute.quantity must be an integer and at least 1.");
             return;
         }
-        if (!isset($value['entity_type']) || !in_array($value['entity_type'], ['listing'])) {
+        if (!isset($value['entity_type']) || !in_array($value['entity_type'], ['product'])) {
             $fail("The $attribute.entity_type must be a valid entity type.");
             return;
         }
@@ -41,8 +41,8 @@ class OrderItem implements ValidationRule
             return; 
         }
         switch ($value['entity_type']) {
-            case OrderItemType::LISTING->value:
-                if (!Listing::where('id', $value['entity_id'])->exists()) {
+            case OrderItemType::PRODUCT->value:
+                if (!Product::where('id', $value['entity_id'])->exists()) {
                     $fail("The $attribute.entity_id does not exist for the specified entity type.");
                 }
                 break;

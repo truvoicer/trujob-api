@@ -24,7 +24,6 @@ use Database\Seeders\product\CategorySeeder;
 use Database\Seeders\product\ColorSeeder;
 use Database\Seeders\product\FeatureSeeder;
 use Database\Seeders\product\ProductTypeSeeder;
-use Database\Seeders\product\ProductTypeSeeder;
 use Database\Seeders\locale\CurrencySeeder;
 use Database\Seeders\locale\GeoDataSeeder;
 use Database\Seeders\locale\LocaleSeeder;

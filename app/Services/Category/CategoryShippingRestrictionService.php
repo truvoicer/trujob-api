@@ -3,7 +3,7 @@
 namespace App\Services\Category;
 
 use App\Contracts\Shipping\ShippingRestriction;
-use App\Http\Resources\Listing\CategoryResource;
+use App\Http\Resources\Product\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;

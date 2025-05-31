@@ -3,7 +3,7 @@
 namespace App\Rules;
 
 use App\Enums\Order\OrderItemType;
-use App\Models\Listing;
+use App\Models\Product;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
@@ -22,8 +22,8 @@ class OrderItemEntityType implements ValidationRule
             return; 
         }
         switch ($value) {
-            case OrderItemType::LISTING->value:
-                if (!Listing::where('id', $requestEntityId)->exists()) {
+            case OrderItemType::PRODUCT->value:
+                if (!Product::where('id', $requestEntityId)->exists()) {
                     $fail("The $attribute.entity_id does not exist for the specified entity type.");
                 }
                 break;

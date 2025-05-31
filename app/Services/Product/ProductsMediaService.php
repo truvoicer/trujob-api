@@ -4,7 +4,8 @@ namespace App\Services\Product;
 
 use App\Models\Product;
 use App\Models\ProductFeature;
-use App\Models\ProductMedia;
+use App\Models\MediaProduct;
+use App\Models\MediaProduct;
 use App\Models\User;
 use App\Services\Media\ImageUploadService;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class ProductsMediaService
     private User $user;
     private Request $request;
     private ImageUploadService $imageUploadService;
-    private ProductMedia $productMedia;
+    private MediaProduct $productMedia;
     private array $errors = [];
 
 
@@ -33,26 +34,26 @@ class ProductsMediaService
         $this->imageUploadService = $imageUploadService;
     }
 
-    public function createProductMedia(array $data = [])
+    public function createMediaProduct(array $data = [])
     {
-        $this->productMedia = new ProductMedia();
-        return $this->saveProductMedia($data);
+        $this->productMedia = new MediaProduct();
+        return $this->saveMediaProduct($data);
     }
 
-    public function updateProductMedia(array $data = [])
+    public function updateMediaProduct(array $data = [])
     {
         try {
-            return $this->saveProductMedia($data);
+            return $this->saveMediaProduct($data);
         } catch (\Exception $exception) {
             $this->addError($exception->getMessage());
             return false;
         }
     }
 
-    public function deleteProductMedia()
+    public function deleteMediaProduct()
     {
         try {
-            $deleteFile = $this->deleteProductMediaFile();
+            $deleteFile = $this->deleteMediaProductFile();
             if (!$deleteFile) {
                 $this->addError('Error deleting file');
             }
@@ -67,23 +68,23 @@ class ProductsMediaService
         }
     }
 
-    public function saveProductMedia(array $data = [])
+    public function saveMediaProduct(array $data = [])
     {
         try {
             $this->productMedia->fill($data);
-            $saveProductMedia = $this->productMedia->save();
-            if (!$saveProductMedia) {
+            $saveMediaProduct = $this->productMedia->save();
+            if (!$saveMediaProduct) {
                 $this->addError('Error saving product media', $data);
                 return false;
             }
-            return $this->storeProductMediaUpload($data);
+            return $this->storeMediaProductUpload($data);
         } catch (\Exception $exception) {
             $this->addError($exception->getMessage());
             return false;
         }
     }
 
-    private function getProductMediaUploadKey(string $type)
+    private function getMediaProductUploadKey(string $type)
     {
         if (!isset($type)) {
             $this->addError('Type is missing from product media', [$type]);
@@ -100,10 +101,10 @@ class ProductsMediaService
         }
     }
 
-    private function getProductMediaUploadPath(array $data = [])
+    private function getMediaProductUploadPath(array $data = [])
     {
         $product = $this->productMedia->product()->first();
-        $getUploadKey = $this->getProductMediaUploadKey($data['type']);
+        $getUploadKey = $this->getMediaProductUploadKey($data['type']);
         if (!$getUploadKey) {
             return false;
         }
@@ -127,18 +128,18 @@ class ProductsMediaService
         return implode('/', $path);
     }
 
-    public static function getProductMediaUploadUrl(ProductMedia $productMedia)
+    public static function getMediaProductUploadUrl(MediaProduct $productMedia)
     {
         switch ($productMedia->filesystem) {
             case 'local' :
-                return self::getProductMediaLocalUrl($productMedia);
+                return self::getMediaProductLocalUrl($productMedia);
             case 'external_link' :
                 return $productMedia->url;
             default:
                 return false;
         }
     }
-    public static function getProductMediaLocalUrl(ProductMedia $productMedia)
+    public static function getMediaProductLocalUrl(MediaProduct $productMedia)
     {
         switch ($productMedia->category) {
             case 'product_image' :
@@ -149,19 +150,19 @@ class ProductsMediaService
         }
     }
 
-    public function deleteProductMediaFile()
+    public function deleteMediaProductFile()
     {
         $fileSystem = $this->productMedia->filesystem;
         switch ($fileSystem) {
             case 'local':
-                return $this->deleteLocalProductMediaFile();
+                return $this->deleteLocalMediaProductFile();
             case 'external_link':
             default:
                 return true;
         }
     }
 
-    public function deleteLocalProductMediaFile()
+    public function deleteLocalMediaProductFile()
     {
         $path = $this->productMedia->path;
         if (!$path) {
@@ -176,12 +177,12 @@ class ProductsMediaService
         return Storage::delete($filePath);
     }
 
-    public function storeProductMediaUpload(array $data = [])
+    public function storeMediaProductUpload(array $data = [])
     {
         try {
             $name = "{$this->productMedia->category}__{$this->productMedia->id}";
-            $path = $this->getProductMediaUploadPath($data);
-            $key = $this->getProductMediaUploadKey($data['type']);
+            $path = $this->getMediaProductUploadPath($data);
+            $key = $this->getMediaProductUploadKey($data['type']);
             if (!$path || !$key) {
                 return false;
             }
@@ -195,8 +196,8 @@ class ProductsMediaService
             ];
 
             $this->productMedia->fill($data);
-            $saveProductMedia = $this->productMedia->save();
-            if (!$saveProductMedia) {
+            $saveMediaProduct = $this->productMedia->save();
+            if (!$saveMediaProduct) {
                 $this->addError('Error saving product media', $data);
                 return false;
             }
@@ -246,17 +247,17 @@ class ProductsMediaService
     }
 
     /**
-     * @return ProductMedia
+     * @return MediaProduct
      */
-    public function getProductMedia(): ProductMedia
+    public function getMediaProduct(): MediaProduct
     {
         return $this->productMedia;
     }
 
     /**
-     * @param ProductMedia $productMedia
+     * @param MediaProduct $productMedia
      */
-    public function setProductMedia(ProductMedia $productMedia): self
+    public function setMediaProduct(MediaProduct $productMedia): self
     {
         $this->productMedia = $productMedia;
         return $this;

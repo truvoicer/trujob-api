@@ -8,7 +8,7 @@ use App\Helpers\ProductHelpers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\BaseService;
-use App\Services\Listing\ListingsAdminService;
+use App\Services\Product\ProductsAdminService;
 
 class OrderItemService extends BaseService
 {

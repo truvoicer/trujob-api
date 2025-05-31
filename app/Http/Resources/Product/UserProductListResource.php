@@ -18,7 +18,7 @@ class UserProductListResource extends JsonResource
     public function toArray($request)
     {
         $data = parent::toArray($request);
-        $data['productMedia'] = ProductMediaResource::make($this->productMedia->where('category', 'thumbnail')->first());
+        $data['productMedia'] = MediaProductResource::make($this->productMedia->where('category', 'thumbnail')->first());
         return $data;
     }
 }

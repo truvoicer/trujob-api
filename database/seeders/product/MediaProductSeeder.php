@@ -4,7 +4,7 @@ namespace Database\Seeders\product;
 
 use Illuminate\Database\Seeder;
 
-class ProductMediaSeeder extends Seeder
+class MediaProductSeeder extends Seeder
 {
     /**
      * Run the database seeds.

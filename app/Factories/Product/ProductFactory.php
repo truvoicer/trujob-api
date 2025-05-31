@@ -4,14 +4,14 @@ namespace App\Factories\Product;
 
 use App\Contracts\Product\Product;
 use App\Enums\Product\ProductType;
-use App\Services\Listing\ListingProductService;
+use App\Services\Product\ProductProductService;
 
 class ProductFactory
 {
     public static function create(ProductType $productType): Product
     {
         return match ($productType) {
-            ProductType::LISTING => app()->make(ListingProductService::class),
+            ProductType::PRODUCT => app()->make(ProductProductService::class),
         };
     }
 }

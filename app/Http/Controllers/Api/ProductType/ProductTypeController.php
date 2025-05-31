@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\ProductType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductType\StoreProductTypeRequest;
 use App\Http\Requests\ProductType\UpdateProductTypeRequest;
-use App\Http\Resources\Listing\ProductTypeResource;
+use App\Http\Resources\Product\ProductTypeResource;
 use App\Models\ProductType;
 use App\Repositories\ProductTypeRepository;
 use App\Services\ProductType\ProductTypeService;

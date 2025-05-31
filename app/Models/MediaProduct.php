@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Database\Factories\product\ProductMediaFactory;
+use Database\Factories\product\MediaProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductMedia extends Model
+class MediaProduct extends Model
 {
     use HasFactory;
 
@@ -21,7 +21,7 @@ class ProductMedia extends Model
 
     protected static function newFactory()
     {
-        return ProductMediaFactory::new();
+        return MediaProductFactory::new();
     }
 
     public function product()

@@ -3,7 +3,7 @@
 namespace App\Helpers\Tools;
 
 use App\Enums\Block\BlockType;
-use App\Http\Requests\Listing\ListingFetchRequest;
+use App\Http\Requests\Product\ProductFetchRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Validator as ValidationValidator;
@@ -57,13 +57,13 @@ class ValidationHelpers
     public static function buildRequestPropertyRules(?string $type = null): array
     {
         switch ($type) {
-            case BlockType::LISTINGS_GRID->value:
+            case BlockType::PRODUCTS_GRID->value:
                 return [
                     'properties.init' => [
                         'sometimes',
                         'array',
                     ],
-                    ...ValidationHelpers::nestedValidationRules((new ListingFetchRequest())->rules(), 'properties.init')
+                    ...ValidationHelpers::nestedValidationRules((new ProductFetchRequest())->rules(), 'properties.init')
                 ];
             default:
                 return [];

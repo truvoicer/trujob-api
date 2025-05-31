@@ -27,7 +27,7 @@ class UserOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Order $listing, Request $request) {
+    public function index(Order $product, Request $request) {
         $this->orderRepository->setQuery(
             $request->user()->user->orders()
         );
@@ -50,25 +50,25 @@ class UserOrderController extends Controller
         );
     }
 
-    public function show(Order $listing, Order $order, Request $request) {
+    public function show(Order $product, Order $order, Request $request) {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
-        $check = $listing->orders()->where('orders.id', $order->id)->first();
+        $check = $product->orders()->where('orders.id', $order->id)->first();
         if (!$check) {
             return response()->json([
-                'message' => 'Order not found in listing',
+                'message' => 'Order not found in product',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return new OrderResource($order);
     }
 
-    public function store(Order $listing, StoreOrderRequest $request) {
+    public function store(Order $product, StoreOrderRequest $request) {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
 
-        if (!$this->orderService->createOrder($listing, $request->validated())) {
+        if (!$this->orderService->createOrder($product, $request->validated())) {
             return response()->json([
-                'message' => 'Error creating listing order',
+                'message' => 'Error creating product order',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
@@ -77,13 +77,13 @@ class UserOrderController extends Controller
     }
 
     
-    public function update(Order $listing, Order $order, UpdateOrderRequest $request) {
+    public function update(Order $product, Order $order, UpdateOrderRequest $request) {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
 
-        if (!$this->orderService->updateOrder($listing, $order, $request->validated())) {
+        if (!$this->orderService->updateOrder($product, $order, $request->validated())) {
             return response()->json([
-                'message' => 'Error updating listing order',
+                'message' => 'Error updating product order',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
@@ -91,13 +91,13 @@ class UserOrderController extends Controller
         ], Response::HTTP_OK);
     }
     
-    public function destroy(Order $listing, Order $order, Request $request) {
+    public function destroy(Order $product, Order $order, Request $request) {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
         
-        if (!$this->orderService->deleteOrder($listing, $order)) {
+        if (!$this->orderService->deleteOrder($product, $order)) {
             return response()->json([
-                'message' => 'Error deleting listing order',
+                'message' => 'Error deleting product order',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([

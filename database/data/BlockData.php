@@ -13,7 +13,7 @@ return [
         'type' => BlockType::ICON_GRID,
     ],
     [
-        'type' => BlockType::LISTINGS_GRID,
+        'type' => BlockType::PRODUCTS_GRID,
     ],
     [
         'type' => BlockType::LOGIN,
@@ -25,7 +25,7 @@ return [
         'type' => BlockType::MANAGE_PAGES,
     ],
     [
-        'type' => BlockType::MANAGE_LISTINGS,
+        'type' => BlockType::MANAGE_PRODUCTS,
     ],
     [
         'type' => BlockType::MANAGE_MENUS,

@@ -2,9 +2,9 @@
 
 namespace App\Services\Messaging;
 
-use App\Models\Listing;
-use App\Models\ListingFeature;
-use App\Models\ListingMedia;
+use App\Models\Product;
+use App\Models\ProductFeature;
+use App\Models\MediaProduct;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\User;
@@ -18,7 +18,7 @@ class MessagingService
     private User $user;
     private Request $request;
 
-    private Listing $listing;
+    private Product $product;
     private MessagingGroup $messagingGroup;
     private MessagingGroupMessage $messagingGroupMessage;
 
@@ -34,7 +34,7 @@ class MessagingService
         $this->messagingGroup = new MessagingGroup([
             'user_id' => $this->user->id
         ]);
-        $createMessageGroup = $this->listing->listingMessagingGroup()->save($this->messagingGroup);
+        $createMessageGroup = $this->product->productMessagingGroup()->save($this->messagingGroup);
         if (!$createMessageGroup) {
             $this->addError('Error creating message group for user', $data);
             return false;
@@ -120,19 +120,19 @@ class MessagingService
     }
 
     /**
-     * @return Listing
+     * @return Product
      */
-    public function getListing(): Listing
+    public function getProduct(): Product
     {
-        return $this->listing;
+        return $this->product;
     }
 
     /**
-     * @param Listing $listing
+     * @param Product $product
      */
-    public function setListing(Listing $listing): void
+    public function setProduct(Product $product): void
     {
-        $this->listing = $listing;
+        $this->product = $product;
     }
 
     /**

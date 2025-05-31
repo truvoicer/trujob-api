@@ -12,7 +12,7 @@ class CategoryService extends BaseService
     {
         $category = new Category($data);
         if (!$category->save()) {
-            throw new \Exception('Error creating listing category');
+            throw new \Exception('Error creating product category');
         }
         return true;
     }
@@ -20,7 +20,7 @@ class CategoryService extends BaseService
     public function updateCategory(Category $category, array $data)
     {
         if (!$category->update($data)) {
-            throw new \Exception('Error updating listing category');
+            throw new \Exception('Error updating product category');
         }
         return true;
     }
@@ -28,7 +28,7 @@ class CategoryService extends BaseService
     public function deleteCategory(Category $category)
     {
         if (!$category->delete()) {
-            throw new \Exception('Error deleting listing category');
+            throw new \Exception('Error deleting product category');
         }
         return true;
     }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Feature;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Feature\StoreFeatureRequest;
 use App\Http\Requests\Feature\UpdateFeatureRequest;
-use App\Http\Resources\Listing\FeatureResource;
+use App\Http\Resources\Product\FeatureResource;
 use App\Models\Feature;
 use App\Repositories\FeatureRepository;
 use App\Services\Feature\FeatureService;
@@ -68,11 +68,11 @@ class FeatureController extends Controller
 
         if (!$this->featureService->updateFeature($feature, $request->validated())) {
             return response()->json([
-                'message' => 'Error updating listing feature',
+                'message' => 'Error updating product feature',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing feature updated',
+            'message' => 'Product feature updated',
         ], Response::HTTP_OK);
     }
     public function destroy(Feature $feature, Request $request) {
@@ -81,11 +81,11 @@ class FeatureController extends Controller
         
         if (!$this->featureService->deleteFeature($feature)) {
             return response()->json([
-                'message' => 'Error deleting listing feature',
+                'message' => 'Error deleting product feature',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing feature deleted',
+            'message' => 'Product feature deleted',
         ], Response::HTTP_OK);
     }
 }

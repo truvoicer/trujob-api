@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
-use App\Http\Resources\Listing\CategoryResource;
+use App\Http\Resources\Product\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use App\Services\Category\CategoryService;

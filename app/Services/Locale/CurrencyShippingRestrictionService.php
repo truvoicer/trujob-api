@@ -3,7 +3,7 @@
 namespace App\Services\Locale;
 
 use App\Contracts\Shipping\ShippingRestriction;
-use App\Http\Resources\Listing\CurrencyResource;
+use App\Http\Resources\Product\CurrencyResource;
 use App\Models\Currency;
 use App\Repositories\CurrencyRepository;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;

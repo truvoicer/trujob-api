@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Messaging;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Messaging\StoreMessagingGroupMessageRequest;
 use App\Http\Requests\Messaging\UpdateMessagingGroupMessageRequest;
-use App\Models\Listing;
+use App\Models\Product;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\User;
@@ -22,7 +22,7 @@ class MessagingGroupMessageController extends Controller
         $this->messagingService = $messagingService;
     }
 
-    public function createMessage(Listing $listing, MessagingGroup $messagingGroup, Request $request) {
+    public function createMessage(Product $product, MessagingGroup $messagingGroup, Request $request) {
         $this->messagingService->setUser($request->user());
         $this->messagingService->setMessagingGroup($messagingGroup);
         $create = $this->messagingService->createMessageGroupMessage($request->all());
@@ -37,7 +37,7 @@ class MessagingGroupMessageController extends Controller
         return $this->sendSuccessResponse('Message sent', [], $this->messagingService->getErrors());
     }
 
-    public function updateMessage(Listing $listing, MessagingGroup $messagingGroup, MessagingGroupMessage $messagingGroupMessage,  Request $request) {
+    public function updateMessage(Product $product, MessagingGroup $messagingGroup, MessagingGroupMessage $messagingGroupMessage,  Request $request) {
         $this->messagingService->setUser($request->user());
         $this->messagingService->setMessagingGroupMessage($messagingGroupMessage);
         $update = $this->messagingService->updateMessage($request->all());
@@ -51,7 +51,7 @@ class MessagingGroupMessageController extends Controller
         }
         return $this->sendSuccessResponse('Message updated', [], $this->messagingService->getErrors());
     }
-    public function deleteMessage(Listing $listing, MessagingGroup $messagingGroup, MessagingGroupMessage $messagingGroupMessage, Request $request) {
+    public function deleteMessage(Product $product, MessagingGroup $messagingGroup, MessagingGroupMessage $messagingGroupMessage, Request $request) {
         $this->messagingService->setUser($request->user());
         $this->messagingService->setMessagingGroupMessage($messagingGroupMessage);
         if (!$this->messagingService->deleteMessage()) {

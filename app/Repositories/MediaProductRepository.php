@@ -2,16 +2,16 @@
 
 namespace App\Repositories;
 
-use App\Models\ProductMedia;
+use App\Models\MediaProduct;
 
-class ProductMediaRepository extends BaseRepository
+class MediaProductRepository extends BaseRepository
 {
     public function __construct()
     {
-        parent::__construct(ProductMedia::class);
+        parent::__construct(MediaProduct::class);
     }
 
-    public function getModel(): ProductMedia
+    public function getModel(): MediaProduct
     {
         return parent::getModel();
     }

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api\Follow;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Listing\StoreListingFollowRequest;
-use App\Http\Requests\Listing\UpdateListingFollowRequest;
-use App\Http\Resources\Listing\ListingFollowResource;
-use App\Models\Listing;
-use App\Models\ListingFollow;
+use App\Http\Requests\Product\StoreProductFollowRequest;
+use App\Http\Requests\Product\UpdateProductFollowRequest;
+use App\Http\Resources\Product\ProductFollowResource;
+use App\Models\Product;
+use App\Models\ProductFollow;
 use App\Models\User;
-use App\Repositories\ListingRepository;
-use App\Services\Listing\ListingFollowService;
+use App\Repositories\ProductRepository;
+use App\Services\Product\ProductFollowService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,8 +18,8 @@ class FollowController extends Controller
 {
 
     public function __construct(
-        private ListingFollowService $listingFollowService,
-        private ListingRepository $listingRepository,
+        private ProductFollowService $productFollowService,
+        private ProductRepository $productRepository,
     ) {}
 
 
@@ -28,75 +28,75 @@ class FollowController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Listing $listing, Request $request)
+    public function index(Product $product, Request $request)
     {
-        $this->listingRepository->setQuery(
-            $listing->follows()
+        $this->productRepository->setQuery(
+            $product->follows()
         );
-        $this->listingRepository->setPagination(true);
-        $this->listingRepository->setSortField(
+        $this->productRepository->setPagination(true);
+        $this->productRepository->setSortField(
             $request->get('sort', 'created_at')
         );
-        $this->listingRepository->setOrderDir(
+        $this->productRepository->setOrderDir(
             $request->get('order', 'desc')
         );
-        $this->listingRepository->setPerPage(
+        $this->productRepository->setPerPage(
             $request->get('per_page', 10)
         );
-        $this->listingRepository->setPage(
+        $this->productRepository->setPage(
             $request->get('page', 1)
         );
 
-        return ListingFollowResource::collection(
-            $this->listingRepository->findMany()
+        return ProductFollowResource::collection(
+            $this->productRepository->findMany()
         );
     }
-    public function store(Listing $listing, StoreListingFollowRequest $request)
+    public function store(Product $product, StoreProductFollowRequest $request)
     {
-        $this->listingFollowService->setUser($request->user()->user);
-        $this->listingFollowService->setSite($request->user()->site);
+        $this->productFollowService->setUser($request->user()->user);
+        $this->productFollowService->setSite($request->user()->site);
 
         if (
-            !$this->listingFollowService->createListingFollow(
-                $listing,
+            !$this->productFollowService->createProductFollow(
+                $product,
                 $request->validated('user_ids', [])
             )
         ) {
             return response()->json([
-                'message' => 'Error creating listing follow',
+                'message' => 'Error creating product follow',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing follow created',
+            'message' => 'Product follow created',
         ], Response::HTTP_CREATED);
     }
 
-    public function update(Listing $listing, ListingFollow $listingFollow, UpdateListingFollowRequest $request)
+    public function update(Product $product, ProductFollow $productFollow, UpdateProductFollowRequest $request)
     {
-        $this->listingFollowService->setUser($request->user()->user);
-        $this->listingFollowService->setSite($request->user()->site);
+        $this->productFollowService->setUser($request->user()->user);
+        $this->productFollowService->setSite($request->user()->site);
 
-        if (!$this->listingFollowService->updateListingFollow($listingFollow, $request->validated())) {
+        if (!$this->productFollowService->updateProductFollow($productFollow, $request->validated())) {
             return response()->json([
-                'message' => 'Error updating listing follow',
+                'message' => 'Error updating product follow',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing follow updated',
+            'message' => 'Product follow updated',
         ], Response::HTTP_OK);
     }
-    public function destroy(Listing $listing, ListingFollow $listingFollow, Request $request)
+    public function destroy(Product $product, ProductFollow $productFollow, Request $request)
     {
-        $this->listingFollowService->setUser($request->user()->user);
-        $this->listingFollowService->setSite($request->user()->site);
+        $this->productFollowService->setUser($request->user()->user);
+        $this->productFollowService->setSite($request->user()->site);
 
-        if (!$this->listingFollowService->deleteListingFollow($listingFollow)) {
+        if (!$this->productFollowService->deleteProductFollow($productFollow)) {
             return response()->json([
-                'message' => 'Error deleting listing follow',
+                'message' => 'Error deleting product follow',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Listing follow deleted',
+            'message' => 'Product follow deleted',
         ], Response::HTTP_OK);
     }
 }

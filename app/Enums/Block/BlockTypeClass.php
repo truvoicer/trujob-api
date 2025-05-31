@@ -2,16 +2,16 @@
 namespace App\Enums\Block;
 
 use App\Enums\Block\BlockType;
-use App\Services\Block\Type\ListingsBlockType;
+use App\Services\Block\Type\ProductsBlockType;
 
 enum BlockTypeClass: string
 {
-    case LISTINGS_BLOCK = ListingsBlockType::class;
+    case PRODUCTS_BLOCK = ProductsBlockType::class;
 
     static public function getBlockTypeClass(BlockType $blockType): BlockTypeClass|null
     {
         return match ($blockType) {
-            BlockType::LISTINGS_GRID => BlockTypeClass::LISTINGS_BLOCK,
+            BlockType::PRODUCTS_GRID => BlockTypeClass::PRODUCTS_BLOCK,
             default => null,
         };
     }

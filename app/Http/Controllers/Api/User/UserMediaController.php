@@ -10,7 +10,7 @@ use App\Models\UserMedia;
 class UserMediaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a product of the resource.
      *
      * @return \Illuminate\Http\Response
      */

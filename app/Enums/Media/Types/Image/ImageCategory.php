@@ -12,5 +12,5 @@ enum ImageCategory: string
     case BANNER = 'banner';
     case AVATAR = 'avatar';
     case FAVICON = 'favicon';
-    case LISTING_IMAGE = 'listing_image';
+    case PRODUCT_IMAGE = 'product_image';
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Messaging;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Messaging\StoreMessagingGroupRequest;
 use App\Http\Requests\Messaging\UpdateMessagingGroupRequest;
-use App\Models\Listing;
+use App\Models\Product;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\User;
@@ -22,9 +22,9 @@ class MessagingGroupController extends Controller
         $this->messagingService = $messagingService;
     }
 
-    public function createMessageGroup(Listing $listing, Request $request) {
+    public function createMessageGroup(Product $product, Request $request) {
         $this->messagingService->setUser($request->user());
-        $this->messagingService->setListing($listing);
+        $this->messagingService->setProduct($product);
         $create = $this->messagingService->createMessageGroup($request->all());
         if (!$create) {
             return $this->sendErrorResponse(
