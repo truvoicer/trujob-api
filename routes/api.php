@@ -362,7 +362,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
                 });
             });
-            Route::prefix('product-type')->name('product_type.')->group(function () {
+            Route::prefix('product-type')->name('product-type.')->group(function () {
                 Route::get('/', [ProductProductTypeController::class, 'index'])->name('index');
                 Route::post('/{productType}/store', [ProductProductTypeController::class, 'store'])->name('store');
                 Route::delete('/{productType}/delete', [ProductProductTypeController::class, 'destroy'])->name('delete');

@@ -5,7 +5,6 @@ namespace App\Services\Product;
 use App\Models\Product;
 use App\Models\ProductFeature;
 use App\Models\MediaProduct;
-use App\Models\MediaProduct;
 use App\Models\User;
 use App\Services\Media\ImageUploadService;
 use Illuminate\Http\Request;

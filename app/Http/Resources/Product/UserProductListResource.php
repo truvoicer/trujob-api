@@ -3,7 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use App\Http\Resources\User\UserResource;
-use App\Services\Product\ProductsFetchService;
+use App\Services\Product\ProductFetchService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserProductListResource extends JsonResource

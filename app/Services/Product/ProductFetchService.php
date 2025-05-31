@@ -8,11 +8,11 @@ use App\Http\Requests\Product\ProductFetchRequest;
 use App\Models\Product;
 use App\Services\BaseService;
 use App\Services\FetchService;
-use App\Traits\Products\ProductsTrait;
+use App\Traits\Product\ProductTrait;
 
-class ProductsFetchService extends BaseService
+class ProductFetchService extends BaseService
 {
-    use FetchService, ProductsTrait;
+    use FetchService, ProductTrait;
 
     public function handleRequest(ProductFetchRequest $request): array
     {

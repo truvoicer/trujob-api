@@ -3,11 +3,11 @@
 namespace App\Services\Block\Type;
 
 use App\Models\PageBlock;
-use App\Traits\Products\ProductsTrait;
+use App\Traits\Product\ProductTrait;
 
 class ProductsBlockType extends BlockTypeBase
 {
-   use ProductsTrait;
+   use ProductTrait;
 
     public function buildBlockUpdateData(PageBlock $pageBlock, array $data): array
     {

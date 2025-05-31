@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Traits\Products;
+namespace App\Traits\Product;
 
 use App\Enums\Product\ProductFetchProperty;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-trait ProductsTrait
+trait ProductTrait
 {
     public function buildProductsQuery($query, array $data)
     {
