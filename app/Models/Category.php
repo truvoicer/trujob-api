@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\listing\CategoryFactory;
+use Database\Factories\product\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -20,9 +20,9 @@ class Category extends Model
         return CategoryFactory::new();
     }
 
-    public function listings()
+    public function products()
     {
-        return $this->belongsToMany(Listing::class, 'listing_categories');
+        return $this->belongsToMany(Product::class, 'product_categories');
     }
 
     public function discounts()

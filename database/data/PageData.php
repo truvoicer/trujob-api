@@ -2,8 +2,8 @@
 
 use App\Enums\Auth\ApiAbility;
 use App\Enums\Block\BlockType;
-use App\Enums\Listing\ListingFetchProperty;
-use App\Enums\Listing\ListingType;
+use App\Enums\Product\ProductFetchProperty;
+use App\Enums\Product\ProductType;
 use App\Enums\ViewType;
 use App\Enums\Widget\Widget;
 
@@ -42,7 +42,7 @@ return [
                 'has_sidebar' => true,
                 'properties' => [
                     'init' => [
-                        ListingFetchProperty::TYPE->value => [ListingType::EVENT->value],
+                        ProductFetchProperty::TYPE->value => [ProductType::EVENT->value],
                     ],
                 ],
             ],
@@ -264,18 +264,18 @@ return [
     ],
     [
         'site_id' => 1,
-        'permalink' => '/admin/listing',
-        'name' => 'admin_listing',
-        'title' => 'Listing',
-        'content' => 'Welcome to the listing admin page',
+        'permalink' => '/admin/product',
+        'name' => 'admin_product',
+        'title' => 'Product',
+        'content' => 'Welcome to the product admin page',
         'view' => ViewType::AdminTabPage,
         'blocks' => [
             [
                 'type' => BlockType::MANAGE_LISTINGS,
                 'order' => 0,
-                'title' => 'Manage Listings',
-                'nav_title' => 'Listings',
-                'subtitle' => 'Manage your listings here',
+                'title' => 'Manage Products',
+                'nav_title' => 'Products',
+                'subtitle' => 'Manage your products here',
                 'default' => true,
             ],
             [
@@ -313,9 +313,9 @@ return [
             [
                 'type' => BlockType::MANAGE_LISTING_TYPES,
                 'order' => 0,
-                'title' => 'Manage Listing Types',
-                'nav_title' => 'Listing Types',
-                'subtitle' => 'Manage your listing types here',
+                'title' => 'Manage Product Types',
+                'nav_title' => 'Product Types',
+                'subtitle' => 'Manage your product types here',
                 'default' => false,
             ],
             [
@@ -375,9 +375,9 @@ return [
             [
                 'type' => BlockType::MANAGE_SITE_SETTINGS,
                 'order' => 0,
-                'title' => 'Manage Listings',
-                'nav_title' => 'Listings',
-                'subtitle' => 'Manage your listings here',
+                'title' => 'Manage Products',
+                'nav_title' => 'Products',
+                'subtitle' => 'Manage your products here',
                 'default' => true,
             ],
         ],

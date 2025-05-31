@@ -7,7 +7,7 @@ use App\Enums\Pagination\PaginationScrollType;
 use App\Enums\Pagination\PaginationType;
 use App\Enums\Widget\Widget;
 use App\Helpers\Tools\ValidationHelpers;
-use App\Http\Requests\Listing\ListingFetchRequest;
+use App\Http\Requests\Product\ProductFetchRequest;
 use App\Models\Sidebar;
 use App\Rules\IdOrNameExists;
 use App\Rules\StringOrIntger;

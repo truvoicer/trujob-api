@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
-use App\Http\Resources\Listing\ListingListResource;
+use App\Http\Resources\Product\ProductListResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderShipmentResource extends JsonResource
@@ -18,7 +18,7 @@ class OrderShipmentResource extends JsonResource
 
         return [
             'shipping_method' => $this->whenLoaded('shippingMethod', function () {
-                return ListingListResource::make($this->shippingMethod);
+                return ProductListResource::make($this->shippingMethod);
             }),
             'tracking_number' => $this->tracking_number,
             'carrier' => $this->carrier,

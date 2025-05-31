@@ -509,9 +509,9 @@ class BaseRepository
     public function insert(array $data)
     {
         $this->model = $this->getModelInstance($data);
-        $createListing = $this->model->save();
-        if (!$createListing) {
-            $this->addError('repository_insert_error', 'Error creating listing for user', $data);
+        $createProduct = $this->model->save();
+        if (!$createProduct) {
+            $this->addError('repository_insert_error', 'Error creating product for user', $data);
             return false;
         }
         return true;
@@ -520,9 +520,9 @@ class BaseRepository
     public function update(array $data)
     {
         $this->model->fill($data);
-        $saveListing = $this->model->save();
-        if (!$saveListing) {
-            $this->addError('repository_update_error', 'Error saving listing', $data);
+        $saveProduct = $this->model->save();
+        if (!$saveProduct) {
+            $this->addError('repository_update_error', 'Error saving product', $data);
             return false;
         }
         return true;
@@ -544,7 +544,7 @@ class BaseRepository
     public function delete()
     {
         if (!$this->model->delete()) {
-            $this->addError('repository_delete_error', 'Error deleting listing');
+            $this->addError('repository_delete_error', 'Error deleting product');
             return false;
         }
         return true;

@@ -19,12 +19,12 @@ use Database\Seeders\admin\SidebarSeeder;
 use Database\Seeders\admin\SiteSeeder;
 use Database\Seeders\admin\WidgetSeeder;
 use Database\Seeders\firebase\FirebaseTopicSeeder;
-use Database\Seeders\listing\BrandSeeder;
-use Database\Seeders\listing\CategorySeeder;
-use Database\Seeders\listing\ColorSeeder;
-use Database\Seeders\listing\FeatureSeeder;
-use Database\Seeders\listing\ListingTypeSeeder;
-use Database\Seeders\listing\ProductTypeSeeder;
+use Database\Seeders\product\BrandSeeder;
+use Database\Seeders\product\CategorySeeder;
+use Database\Seeders\product\ColorSeeder;
+use Database\Seeders\product\FeatureSeeder;
+use Database\Seeders\product\ProductTypeSeeder;
+use Database\Seeders\product\ProductTypeSeeder;
 use Database\Seeders\locale\CurrencySeeder;
 use Database\Seeders\locale\GeoDataSeeder;
 use Database\Seeders\locale\LocaleSeeder;
@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             FeatureSeeder::class,
             ProductTypeSeeder::class,
-            ListingTypeSeeder::class,
+            ProductTypeSeeder::class,
             PriceTypeSeeder::class,
             PaymentGatewaySeeder::class,
             BlockSeeder::class,

@@ -12,12 +12,12 @@ class Transaction extends Model
         'user_id',
     ];
     
-    public function listings() {
-        return $this->belongsToMany(Listing::class, 'listing_transactions');
+    public function products() {
+        return $this->belongsToMany(Product::class, 'product_transactions');
     }
     
-    public function listing() {
-        return $this->belongsTo(Listing::class);
+    public function product() {
+        return $this->belongsTo(Product::class);
     }
 
     public function user() {

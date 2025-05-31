@@ -17,17 +17,19 @@ use App\Http\Controllers\Api\Brand\BrandController;
 use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Color\ColorController;
 use App\Http\Controllers\Api\Discount\DiscountController;
+use App\Http\Controllers\Api\Discount\DiscountScopeController;
+use App\Http\Controllers\Api\Discount\DiscountTypeController;
 use App\Http\Controllers\Api\Discount\UserDiscountUsageController;
-use App\Http\Controllers\Api\Listing\InitialiseListingController;
-use App\Http\Controllers\Api\Listing\Brand\ListingBrandController;
-use App\Http\Controllers\Api\Listing\Category\ListingCategoryController;
-use App\Http\Controllers\Api\Listing\Color\ListingColorController;
-use App\Http\Controllers\Api\Listing\ListingController;
-use App\Http\Controllers\Api\Listing\Media\ListingMediaController;
-use App\Http\Controllers\Api\Listing\ProductType\ListingProductTypeController;
-use App\Http\Controllers\Api\Listing\ListingPublicController;
+use App\Http\Controllers\Api\Product\InitialiseProductController;
+use App\Http\Controllers\Api\Product\Brand\ProductBrandController;
+use App\Http\Controllers\Api\Product\Category\ProductCategoryController;
+use App\Http\Controllers\Api\Product\Color\ProductColorController;
+use App\Http\Controllers\Api\Product\ProductController;
+use App\Http\Controllers\Api\Product\Media\ProductMediaController;
+use App\Http\Controllers\Api\Product\ProductType\ProductProductTypeController;
+use App\Http\Controllers\Api\Product\ProductPublicController;
 use App\Http\Controllers\Api\ProductType\ProductTypeController;
-use App\Http\Controllers\Api\Listing\UserListingController;
+use App\Http\Controllers\Api\Product\UserProductController;
 use App\Http\Controllers\Api\Locale\CountryController;
 use App\Http\Controllers\Api\Locale\CurrencyController;
 use App\Http\Controllers\Api\Menu\AppMenuController;
@@ -46,11 +48,11 @@ use App\Http\Controllers\Api\Page\PageViewController;
 use App\Http\Controllers\Api\Page\SitePageController;
 use App\Http\Controllers\Api\Link\LinkTargetController;
 use App\Http\Controllers\Api\Feature\FeatureController;
-use App\Http\Controllers\Api\Listing\Feature\ListingFeatureController;
-use App\Http\Controllers\Api\Listing\Follow\ListingFollowController;
-use App\Http\Controllers\Api\Listing\Price\ListingPriceController;
-use App\Http\Controllers\Api\Listing\Review\ListingReviewController;
-use App\Http\Controllers\Api\Listing\Type\ListingTypeController;
+use App\Http\Controllers\Api\Product\Feature\ProductFeatureController;
+use App\Http\Controllers\Api\Product\Follow\ProductFollowController;
+use App\Http\Controllers\Api\Product\Price\ProductPriceController;
+use App\Http\Controllers\Api\Product\Review\ProductReviewController;
+use App\Http\Controllers\Api\Product\Type\ProductTypeController;
 use App\Http\Controllers\Api\Locale\AddressController;
 use App\Http\Controllers\Api\Locale\BulkCountryController;
 use App\Http\Controllers\Api\Locale\BulkCurrencyController;
@@ -137,10 +139,10 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 
 
-    Route::prefix('listing')->name('listing.')->group(function () {
-        Route::get('/', [ListingPublicController::class, 'index'])->name('index');
-        Route::prefix('{listing}')->name('item.')->group(function () {
-            Route::get('/', [ListingController::class, 'show'])->name('fetch');
+    Route::prefix('product')->name('product.')->group(function () {
+        Route::get('/', [ProductPublicController::class, 'index'])->name('index');
+        Route::prefix('{product}')->name('item.')->group(function () {
+            Route::get('/', [ProductController::class, 'show'])->name('fetch');
         });
     });
 
@@ -161,10 +163,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/brand', [BrandController::class, 'index'])->name('brand.index');
     Route::get('/color', [ColorController::class, 'index'])->name('color.index');
     Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product_type.index');
-    Route::get('/listing-type', [ListingTypeController::class, 'index'])->name('listing-type.index');
+    Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product-type.index');
     Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
     Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
+    Route::prefix('discount')->name('discount.')->group(function () {
+        Route::get('/type', DiscountTypeController::class)->name('type.index');
+        Route::get('/scope', DiscountScopeController::class)->name('scope.index');
+    });
     Route::prefix('locale')->name('locale.')->group(function () {
         Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
         Route::get('/country', [CountryController::class, 'index'])->name('country.index');
@@ -203,9 +209,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 
     Route::prefix('user')->name('user.')->group(function () {
-        Route::prefix('listing')->name('listing.')->group(function () {
-            Route::get('/', [UserListingController::class, 'index'])->name('index');
-            Route::get('/{listing?}', [UserListingController::class, 'show'])->name('edit');
+        Route::prefix('product')->name('product.')->group(function () {
+            Route::get('/', [UserProductController::class, 'index'])->name('index');
+            Route::get('/{product?}', [UserProductController::class, 'show'])->name('edit');
         });
 
         Route::prefix('{user}')->group(function () {
@@ -248,15 +254,15 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
             });
             Route::prefix('discount')->name('discount.')->group(function () {
-                    Route::get('/', [OrderDiscountController::class, 'index'])->name('index');
-                    Route::prefix('bulk')->name('bulk.')->group(function () {
-                        Route::post('/store', BulkOrderDiscountController::class)->name('store');
-                    });
-                    Route::prefix('{discount}')->group(function () {
-                        Route::post('/store', [OrderDiscountController::class, 'store'])->name('store');
-                        Route::delete('/destroy', [OrderDiscountController::class, 'destroy'])->name('destroy');
-                    });
+                Route::get('/', [OrderDiscountController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', BulkOrderDiscountController::class)->name('store');
                 });
+                Route::prefix('{discount}')->group(function () {
+                    Route::post('/store', [OrderDiscountController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [OrderDiscountController::class, 'destroy'])->name('destroy');
+                });
+            });
         });
     });
     Route::prefix('transaction')->name('transaction.')->group(function () {
@@ -266,21 +272,21 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::patch('/{transaction}/update', [TransactionController::class, 'update'])->name('update');
         Route::delete('/{transaction}/delete', [TransactionController::class, 'destroy'])->name('delete');
     });
-    Route::prefix('listing')->name('listing.')->group(function () {
-        Route::post('/store', [ListingController::class, 'store'])->name('store');
-        Route::get('/initialize', InitialiseListingController::class)->name('initialize');
+    Route::prefix('product')->name('product.')->group(function () {
+        Route::post('/store', [ProductController::class, 'store'])->name('store');
+        Route::get('/initialize', InitialiseProductController::class)->name('initialize');
 
-        Route::prefix('{listing?}')->group(function () {
-            Route::patch('/update', [ListingController::class, 'update'])->name('update');
-            Route::delete('/delete', [ListingController::class, 'destroy'])->name('delete');
+        Route::prefix('{product?}')->group(function () {
+            Route::patch('/update', [ProductController::class, 'update'])->name('update');
+            Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
 
             Route::prefix('price')->name('price.')->group(function () {
-                Route::get('/', [ListingPriceController::class, 'index'])->name('index');
-                Route::post('/store', [ListingPriceController::class, 'store'])->name('store');
+                Route::get('/', [ProductPriceController::class, 'index'])->name('index');
+                Route::post('/store', [ProductPriceController::class, 'store'])->name('store');
                 Route::prefix('{price}')->group(function () {
-                    Route::get('/', [ListingPriceController::class, 'show'])->name('show');
-                    Route::patch('/update', [ListingPriceController::class, 'update'])->name('update');
-                    Route::delete('/delete', [ListingPriceController::class, 'destroy'])->name('delete');
+                    Route::get('/', [ProductPriceController::class, 'show'])->name('show');
+                    Route::patch('/update', [ProductPriceController::class, 'update'])->name('update');
+                    Route::delete('/delete', [ProductPriceController::class, 'destroy'])->name('delete');
 
                     Route::prefix('tax-rate')->name('tax-rate.')->group(function () {
                         Route::get('/', [PriceTaxRateController::class, 'index'])->name('index');
@@ -304,63 +310,63 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             });
 
             Route::prefix('feature')->name('feature.')->group(function () {
-                Route::get('/', [ListingFeatureController::class, 'index'])->name('index');
-                Route::post('/{feature}/store', [ListingFeatureController::class, 'store'])->name('store');
-                Route::delete('/{feature}/delete', [ListingFeatureController::class, 'destroy'])->name('delete');
+                Route::get('/', [ProductFeatureController::class, 'index'])->name('index');
+                Route::post('/{feature}/store', [ProductFeatureController::class, 'store'])->name('store');
+                Route::delete('/{feature}/delete', [ProductFeatureController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
                 });
             });
             Route::prefix('follow')->name('follow.')->group(function () {
-                Route::get('/', [ListingFollowController::class, 'index'])->name('index');
-                Route::post('/store', [ListingFollowController::class, 'store'])->name('store');
-                Route::delete('/{listingFollow}/delete', [ListingFollowController::class, 'destroy'])->name('delete');
+                Route::get('/', [ProductFollowController::class, 'index'])->name('index');
+                Route::post('/store', [ProductFollowController::class, 'store'])->name('store');
+                Route::delete('/{productFollow}/delete', [ProductFollowController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
                 });
             });
             Route::prefix('review')->name('review.')->group(function () {
-                Route::get('/', [ListingReviewController::class, 'index'])->name('index');
-                Route::post('/{listingReview}/store', [ListingReviewController::class, 'store'])->name('store');
-                Route::delete('/{listingReview}/delete', [ListingReviewController::class, 'destroy'])->name('delete');
+                Route::get('/', [ProductReviewController::class, 'index'])->name('index');
+                Route::post('/{productReview}/store', [ProductReviewController::class, 'store'])->name('store');
+                Route::delete('/{productReview}/delete', [ProductReviewController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
                 });
             });
             Route::prefix('category')->name('category.')->group(function () {
-                Route::get('/', [ListingCategoryController::class, 'index'])->name('index');
-                Route::post('/{category}/store', [ListingCategoryController::class, 'store'])->name('store');
-                Route::delete('/{category}/delete', [ListingCategoryController::class, 'destroy'])->name('delete');
+                Route::get('/', [ProductCategoryController::class, 'index'])->name('index');
+                Route::post('/{category}/store', [ProductCategoryController::class, 'store'])->name('store');
+                Route::delete('/{category}/delete', [ProductCategoryController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
                 });
             });
             Route::prefix('brand')->name('brand.')->group(function () {
-                Route::get('/', [ListingBrandController::class, 'index'])->name('index');
-                Route::post('/{brand}/store', [ListingBrandController::class, 'store'])->name('store');
-                Route::delete('/{brand}/delete', [ListingBrandController::class, 'destroy'])->name('delete');
+                Route::get('/', [ProductBrandController::class, 'index'])->name('index');
+                Route::post('/{brand}/store', [ProductBrandController::class, 'store'])->name('store');
+                Route::delete('/{brand}/delete', [ProductBrandController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
                 });
             });
             Route::prefix('color')->name('color.')->group(function () {
-                Route::get('/', [ListingColorController::class, 'index'])->name('index');
-                Route::post('/{color}/store', [ListingColorController::class, 'store'])->name('store');
-                Route::delete('/{color}/delete', [ListingColorController::class, 'destroy'])->name('delete');
+                Route::get('/', [ProductColorController::class, 'index'])->name('index');
+                Route::post('/{color}/store', [ProductColorController::class, 'store'])->name('store');
+                Route::delete('/{color}/delete', [ProductColorController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
                 });
             });
             Route::prefix('product-type')->name('product_type.')->group(function () {
-                Route::get('/', [ListingProductTypeController::class, 'index'])->name('index');
-                Route::post('/{productType}/store', [ListingProductTypeController::class, 'store'])->name('store');
-                Route::delete('/{productType}/delete', [ListingProductTypeController::class, 'destroy'])->name('delete');
+                Route::get('/', [ProductProductTypeController::class, 'index'])->name('index');
+                Route::post('/{productType}/store', [ProductProductTypeController::class, 'store'])->name('store');
+                Route::delete('/{productType}/delete', [ProductProductTypeController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
                     Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
                     Route::delete('/store', BulkUserDeleteController::class)->name('store');
@@ -383,14 +389,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
         Route::prefix('media')->name('media.')->group(function () {
 
-            Route::prefix('{listingMedia?}')->name('item.')->group(function () {
-                Route::get('/fetch', [ListingMediaController::class, 'fetchMedia'])->name('fetch');
-                Route::patch('/update', [ListingMediaController::class, 'updateListingMedia'])->name('update');
-                Route::delete('/delete', [ListingMediaController::class, 'deleteListingMedia'])->name('delete');
+            Route::prefix('{productMedia?}')->name('item.')->group(function () {
+                Route::get('/fetch', [ProductMediaController::class, 'fetchMedia'])->name('fetch');
+                Route::patch('/update', [ProductMediaController::class, 'updateProductMedia'])->name('update');
+                Route::delete('/delete', [ProductMediaController::class, 'deleteProductMedia'])->name('delete');
             });
 
-            Route::get('/fetch', [ListingMediaController::class, 'fetchMedia'])->name('fetch');
-            Route::post('/store', [ListingMediaController::class, 'storeListingMedia'])->name('store');
+            Route::get('/fetch', [ProductMediaController::class, 'fetchMedia'])->name('fetch');
+            Route::post('/store', [ProductMediaController::class, 'storeProductMedia'])->name('store');
         });
     });
 
@@ -574,8 +580,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::patch('/{feature}/update', [FeatureController::class, 'update'])->name('update');
         Route::delete('/{feature}/delete', [FeatureController::class, 'destroy'])->name('delete');
     });
-    Route::prefix('listing')->name('listing.')->group(function () {
-        Route::get('/', [ListingController::class, 'index'])->name('index');
+    Route::prefix('product')->name('product.')->group(function () {
+        Route::get('/', [ProductController::class, 'index'])->name('index');
     });
 
     Route::prefix('/user')->name('user.')->group(function () {

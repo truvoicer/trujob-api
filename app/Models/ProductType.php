@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\listing\ProductTypeFactory;
+use Database\Factories\product\ProductTypeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +18,7 @@ class ProductType extends Model
     }
 
 
-    public function listings() {
-        return $this->belongsToMany(Listing::class, 'listing_product_types');
+    public function products() {
+        return $this->belongsToMany(Product::class, 'product_product_types');
     }
 }

@@ -26,9 +26,9 @@ class Currency extends Model
         return $this->belongsTo(UserProfile::class);
     }
 
-    public function listingTransaction()
+    public function productTransaction()
     {
-        return $this->belongsTo(ListingPrice::class);
+        return $this->belongsTo(ProductPrice::class);
     }
 
 

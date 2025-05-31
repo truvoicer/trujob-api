@@ -32,7 +32,7 @@ class UpdateOrderItemRequest extends FormRequest
             'payment_gateway_id' => ['sometimes', 'integer', 'exists:payment_gateways,id'],
             'quantity' => ['sometimes', 'integer', 'min:1'],
             'entity_type' => ['sometimes', Rule::enum(OrderItemType::class), new OrderItemEntityType,],
-            'entity_id' => ['sometimes', 'integer', 'exists:listings,id'],
+            'entity_id' => ['sometimes', 'integer', 'exists:products,id'],
         ];
     }
 }

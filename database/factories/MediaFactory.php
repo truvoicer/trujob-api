@@ -12,7 +12,7 @@ use App\Models\Media;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ListingMedia>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductMedia>
  */
 class MediaFactory extends Factory
 {

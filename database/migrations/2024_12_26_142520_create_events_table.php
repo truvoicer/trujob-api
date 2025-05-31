@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Listing\Type\Event\EventProperty;
+use App\Enums\Product\Type\Event\EventProperty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,10 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_listings', function (Blueprint $table) {
+        Schema::create('event_products', function (Blueprint $table) {
             $table->id();
             $table->foreignId( 'created_by_user_id')->constrained('users');
-            $table->foreignId( 'listing_id')->constrained('listings')->onDelete('cascade');
+            $table->foreignId( 'product_id')->constrained('products')->onDelete('cascade');
             $table->text(EventProperty::NOTES->value)->nullable();
             $table->string(EventProperty::LOCATION->value)->nullable();
             $table->string(EventProperty::LATITUDE->value)->nullable();

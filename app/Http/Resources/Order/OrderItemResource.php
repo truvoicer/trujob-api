@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources\Order;
 
-use App\Http\Resources\Listing\ListingListResource;
+use App\Http\Resources\Product\ProductListResource;
 use App\Http\Resources\PaymentGateway\PaymentGatewayResource;
 use App\Http\Resources\User\UserResource;
-use App\Models\Listing;
+use App\Models\Product;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderItemResource extends JsonResource
@@ -24,7 +24,7 @@ class OrderItemResource extends JsonResource
             'quantity' => $this->quantity,
             'productable_id' => $this->productable_id,
             'productable_type' => $this->productable_type,
-            'entity' => ListingListResource::make($this->productable)
+            'entity' => ProductListResource::make($this->productable)
         ];
     }
 }

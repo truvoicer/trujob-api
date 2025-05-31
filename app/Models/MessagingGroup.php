@@ -27,9 +27,9 @@ class MessagingGroup extends Model
         return $this->hasMany(MessagingGroupMessage::class);
     }
 
-    public function listing()
+    public function product()
     {
-        return $this->belongsTo(Listing::class);
+        return $this->belongsTo(Product::class);
     }
     public function user()
     {

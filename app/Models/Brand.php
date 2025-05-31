@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\listing\BrandFactory;
+use Database\Factories\product\BrandFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +18,7 @@ class Brand extends Model
         return BrandFactory::new();
     }
 
-    public function listings() {
-        return $this->belongsToMany(Listing::class, 'listing_brands');
+    public function products() {
+        return $this->belongsToMany(Product::class, 'product_brands');
     }
 }

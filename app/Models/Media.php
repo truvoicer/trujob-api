@@ -15,8 +15,8 @@ class Media extends Model
         return $this->belongsToMany(Site::class);
     }
 
-    public function listings()
+    public function products()
     {
-        return $this->belongsToMany(Listing::class, 'listing_media');
+        return $this->belongsToMany(Product::class, 'product_media');
     }
 }

@@ -89,19 +89,19 @@ class User extends Authenticatable
         return $this->hasMany(UserFollow::class);
     }
 
-    public function listings()
+    public function products()
     {
-        return $this->hasMany(Listing::class);
+        return $this->hasMany(Product::class);
     }
 
-    public function listingFollow()
+    public function productFollow()
     {
-        return $this->hasMany(ListingFollow::class);
+        return $this->hasMany(ProductFollow::class);
     }
 
-    public function listingTransaction()
+    public function productTransaction()
     {
-        return $this->hasMany(ListingPrice::class);
+        return $this->hasMany(ProductPrice::class);
     }
     public function messagingGroup()
     {

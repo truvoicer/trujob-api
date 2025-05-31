@@ -31,7 +31,7 @@ class StoreOrderItemRequest extends FormRequest
             'payment_gateway_id' => ['required', 'integer', 'exists:payment_gateways,id'],
             'quantity' => ['required', 'integer', 'min:1'],
             'entity_type' => ['required', Rule::enum(OrderItemType::class), new OrderItemEntityType,],
-            'entity_id' => ['required', 'integer', 'exists:listings,id'],
+            'entity_id' => ['required', 'integer', 'exists:products,id'],
         ];
     }
 }

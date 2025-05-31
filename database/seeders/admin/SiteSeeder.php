@@ -21,14 +21,14 @@ use App\Models\UserReview;
 use App\Models\UserReward;
 use App\Models\UserSetting;
 use Illuminate\Database\Seeder;
-use App\Models\Listing;
-use App\Models\ListingBrand;
-use App\Models\ListingCategory;
-use App\Models\ListingColor;
-use App\Models\ListingFeature;
-use App\Models\ListingFollow;
-use App\Models\ListingProductType;
-use App\Models\ListingReview;
+use App\Models\Product;
+use App\Models\ProductBrand;
+use App\Models\ProductCategory;
+use App\Models\ProductColor;
+use App\Models\ProductFeature;
+use App\Models\ProductFollow;
+use App\Models\ProductProductType;
+use App\Models\ProductReview;
 use App\Models\ProductType;
 
 class SiteSeeder extends Seeder
@@ -66,14 +66,14 @@ class SiteSeeder extends Seeder
                     User::factory()
                         ->count(10)
                         ->has(
-                            Listing::factory()
+                            Product::factory()
                                 ->count(5)
-                                ->has(ListingReview::factory()->count(5))
-                                ->has(ListingFollow::factory()->count(5))
+                                ->has(ProductReview::factory()->count(5))
+                                ->has(ProductFollow::factory()->count(5))
                                 ->has(
                                     Media::factory()
                                         ->count(1)
-                                        ->state(function (array $attributes, Listing $listing) {
+                                        ->state(function (array $attributes, Product $product) {
                                             $randomNumberBetween = random_int(1, 100);
                                             return [
                                                 'type' => MediaType::IMAGE,
@@ -101,27 +101,27 @@ class SiteSeeder extends Seeder
                 ->create($item);
         }
         foreach (User::all() as $user) {
-            if ($user->listings->count() == 0) {
+            if ($user->products->count() == 0) {
                 continue;
             }
-            foreach ($user->listings as $listing) {
-                $listing->categories()->attach(
+            foreach ($user->products as $product) {
+                $product->categories()->attach(
                     Category::all()->random(1)
                         ->pluck('id')
                 );
-                $listing->brands()->attach(
+                $product->brands()->attach(
                     Brand::all()->random(1)
                         ->pluck('id')
                 );
-                $listing->colors()->attach(
+                $product->colors()->attach(
                     Color::all()->random(1)
                         ->pluck('id')
                 );
-                $listing->features()->attach(
+                $product->features()->attach(
                     Feature::all()->random(1)
                         ->pluck('id')
                 );
-                $listing->productTypes()->attach(
+                $product->productTypes()->attach(
                     ProductType::all()->random(1)
                         ->pluck('id')
                 );

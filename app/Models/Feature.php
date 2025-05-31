@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Database\Factories\listing\FeatureFactory;
+use Database\Factories\product\FeatureFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +19,7 @@ class Feature extends Model
         return FeatureFactory::new();
     }
 
-    public function listings() {
-        return $this->belongsToMany(Listing::class, 'listing_features');
+    public function products() {
+        return $this->belongsToMany(Product::class, 'product_features');
     }
 }

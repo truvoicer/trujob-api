@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Shipping;
 
-use App\Http\Resources\Listing\CountryResource;
+use App\Http\Resources\Product\CountryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ShippingZoneResource extends JsonResource

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Discount;
 
 use App\Enums\Order\Discount\DiscountScope;
 use App\Enums\Order\Discount\DiscountType;
+use App\Enums\Product\ProductType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -106,7 +107,7 @@ class UpdateDiscountRequest extends FormRequest
             ],
             'products.*.product_type' => [
                 'required',
-                'string',
+                Rule::enum(ProductType::class)
             ],
             'products.*.price_id' => [
                 'required',

@@ -2,7 +2,7 @@
 
 namespace Database\Factories\messaging;
 
-use App\Models\Listing;
+use App\Models\Product;
 use App\Models\MessagingGroup;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -22,10 +22,10 @@ class MessagingGroupFactory extends Factory
     public function configure()
     {
         return $this->afterMaking(function (MessagingGroup $messagingGroup) {
-            $listing = $messagingGroup->listing()->first();
-            if ($listing->id === $messagingGroup->listing_id) {
-                $newListing = Listing::where('id', '<>', $messagingGroup->listing_id)->first();
-                $messagingGroup->listing_id = $newListing->id;
+            $product = $messagingGroup->product()->first();
+            if ($product->id === $messagingGroup->product_id) {
+                $newProduct = Product::where('id', '<>', $messagingGroup->product_id)->first();
+                $messagingGroup->product_id = $newProduct->id;
             }
             return $messagingGroup;
         });
@@ -37,12 +37,12 @@ class MessagingGroupFactory extends Factory
      */
     public function definition()
     {
-        $listingIds = array_map(function ($user) {
+        $productIds = array_map(function ($user) {
             return $user['id'];
-        }, Listing::all()->toArray());
+        }, Product::all()->toArray());
 
         return [
-            'listing_id' => fake()->randomElement($listingIds)
+            'product_id' => fake()->randomElement($productIds)
         ];
     }
 }

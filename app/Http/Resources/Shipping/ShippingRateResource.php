@@ -2,8 +2,8 @@
 
 namespace App\Http\Resources\Shipping;
 
-use App\Http\Resources\Listing\CountryResource;
-use App\Http\Resources\Listing\CurrencyResource;
+use App\Http\Resources\Product\CountryResource;
+use App\Http\Resources\Product\CurrencyResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ShippingRateResource extends JsonResource

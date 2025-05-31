@@ -36,9 +36,9 @@ class Price extends Model
         return $this->belongsTo(PriceType::class);
     }
 
-    public function listings()
+    public function products()
     {
-        return $this->belongsToMany(Listing::class, 'listing_prices');
+        return $this->belongsToMany(Product::class, 'product_prices');
     }
 
     public function country()

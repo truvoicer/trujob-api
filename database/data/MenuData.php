@@ -155,8 +155,8 @@ return [
                 'order' => 0,
             ],
             [
-                'page_name' => 'admin_listing',
-                'label' => 'Listing',
+                'page_name' => 'admin_product',
+                'label' => 'Product',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,

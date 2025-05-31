@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Tax;
 
-use App\Http\Resources\Listing\CountryResource;
+use App\Http\Resources\Product\CountryResource;
 use App\Http\Resources\Region\RegionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
