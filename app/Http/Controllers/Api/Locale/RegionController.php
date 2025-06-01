@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\Region;
+namespace App\Http\Controllers\Api\Locale;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Region\StoreRegionRequest;
 use App\Http\Requests\Region\UpdateRegionRequest;
-use App\Http\Resources\Region\RegionResource;
+use App\Http\Resources\RegionResource;
 use App\Models\Region;
 use App\Repositories\RegionRepository;
-use App\Services\Region\RegionService;
+use App\Services\Locale\RegionService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,6 +37,14 @@ class RegionController extends Controller
             $request->get('page', 1)
         );
         
+        $search = $request->get('query', null);
+        if ($search) {
+            $this->regionRepository->addWhere(
+                'name',
+                "%$search%",
+                'like',
+            );
+        }
         return RegionResource::collection(
             $this->regionRepository->findMany()
         );
@@ -88,5 +96,4 @@ class RegionController extends Controller
             'message' => 'Region deleted',
         ], Response::HTTP_OK);
     }
-
 }

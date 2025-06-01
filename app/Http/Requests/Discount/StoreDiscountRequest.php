@@ -90,11 +90,12 @@ class StoreDiscountRequest extends FormRequest
                 'required',
                 Rule::enum(DiscountScope::class)
             ],
+
             'code' => [
                 'nullable',
                 'string',
                 'max:32',
-                'unique:discounts,code'
+                'unique:discounts,code,NULL,id,deleted_at,NULL'
             ],
             'is_code_required' => ['boolean'],
             'products' => [

@@ -14,13 +14,18 @@ return new class extends Migration
         Schema::create('regions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('country_id')->constrained()->cascadeOnDelete();
-            $table->string('name');
-            $table->string('code')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->string('name');
+            $table->string('admin_name');
+            $table->string('toponym_name');
+            $table->string('category')->nullable();
+            $table->string('description')->nullable();
+            $table->decimal('lng', 10, 7);
+            $table->decimal('lat', 10, 7);
+            $table->bigInteger('population')->nullable();
             $table->timestamps();
             $table->softDeletes();
             
-            $table->unique(['country_id', 'code']);
             $table->index('is_active');
         });
     }

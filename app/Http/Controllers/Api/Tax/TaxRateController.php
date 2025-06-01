@@ -27,7 +27,7 @@ class TaxRateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(TaxRate $taxRate, Request $request) {
+    public function index(Request $request) {
         $this->taxRateRepository->setPagination(true);
         $this->taxRateRepository->setSortField(
             $request->get('sort', 'name')
@@ -47,7 +47,7 @@ class TaxRateController extends Controller
         );
     }
 
-    public function show(TaxRate $taxRate, Request $request) {
+    public function show(TaxRate $taxRate, StoreTaxRateRequest $request) {
         $this->taxRateService->setUser($request->user()->user);
         $this->taxRateService->setSite($request->user()->site);
         

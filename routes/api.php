@@ -85,7 +85,7 @@ use App\Http\Controllers\Api\Price\PriceController;
 use App\Http\Controllers\Api\Price\PriceDiscountController;
 use App\Http\Controllers\Api\Price\PriceTaxRateController;
 use App\Http\Controllers\Api\Price\PriceTypeController;
-use App\Http\Controllers\Api\Region\RegionController;
+use App\Http\Controllers\Api\Locale\RegionController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\BulkShippingMethodDiscountController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\ShippingMethodDiscountController;
@@ -103,7 +103,10 @@ use App\Http\Controllers\Api\Sidebar\SidebarWidgetReorderController;
 use App\Http\Controllers\Api\Sidebar\SidebarWidgetRoleController;
 use App\Http\Controllers\Api\Site\SiteTokenController;
 use App\Http\Controllers\Api\Site\Setting\SiteSettingController;
+use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
+use App\Http\Controllers\Api\Tax\TaxRateScopeController;
+use App\Http\Controllers\Api\Tax\TaxRateTypeController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\Transaction\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\RoleController;
@@ -173,6 +176,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('locale')->name('locale.')->group(function () {
         Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
         Route::get('/country', [CountryController::class, 'index'])->name('country.index');
+        Route::get('/region', [RegionController::class, 'index'])->name('region.index');
         Route::prefix('address')->name('address.')->group(function () {
             Route::get('/', [AddressController::class, 'index'])->name('index');
             Route::post('/store', [AddressController::class, 'store'])->name('store');
@@ -193,6 +197,15 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('tax-rate')->name('tax-rate.')->group(function () {
         Route::get('/', [TaxRateController::class, 'index'])->name('index');
         Route::post('/store', [TaxRateController::class, 'store'])->name('store');
+        Route::prefix('type')->name('type.')->group(function () {
+            Route::get('/', [TaxRateTypeController::class, 'index'])->name('index');
+        });
+        Route::prefix('scope')->name('scope.')->group(function () {
+            Route::get('/', [TaxRateScopeController::class, 'index'])->name('index');
+        });
+        Route::prefix('amount-type')->name('amount-type.')->group(function () {
+            Route::get('/', [TaxRateAmountTypeController::class, 'index'])->name('index');
+        });
         Route::prefix('{taxRate}')->group(function () {
             Route::get('/', [TaxRateController::class, 'show'])->name('show');
             Route::patch('/update', [TaxRateController::class, 'update'])->name('update');

@@ -40,4 +40,9 @@ class Country extends Model
     {
         return $this->belongsToMany(ShippingZone::class, 'shipping_zone_countries');
     }
+
+    public function regions()
+    {
+        return $this->hasMany(Region::class);
+    }
 }

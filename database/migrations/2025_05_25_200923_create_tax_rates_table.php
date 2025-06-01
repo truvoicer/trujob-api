@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Order\Tax\TaxRateAmountType;
 use App\Enums\Order\Tax\TaxScope;
 use App\Enums\Order\Tax\TaxRateType;
 use Illuminate\Database\Migrations\Migration;
@@ -19,6 +20,9 @@ return new class extends Migration
 
             $table->enum('type', array_map(fn(TaxRateType $type) => $type->value, TaxRateType::cases()))
                 ->comment('Type of tax rate');
+                
+            $table->enum('amount_type', array_map(fn(TaxRateAmountType $type) => $type->value, TaxRateAmountType::cases()))
+                ->comment('Amount type of tax rate');
 
             $table->boolean('fixed_rate')
                 ->default(false)

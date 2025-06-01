@@ -31,8 +31,14 @@ class SiteSettingController extends Controller
 
     public function show(Site $site)
     {
+        $settings = $site->settings()->first();
+        if (!$settings) {
+            return response()->json([
+                'message' => 'Site settings not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
         return new SiteSettingResource(
-            $site->settings()->first()
+            $settings
         );
     }
 

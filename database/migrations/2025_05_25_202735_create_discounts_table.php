@@ -49,7 +49,7 @@ return new class extends Migration
             );
 
             // Code-based discounts
-            $table->string('code', 32)->nullable()->unique();
+            $table->string('code', 32)->nullable();
             $table->boolean('is_code_required')->default(false);
 
             $table->timestamps();

@@ -22,7 +22,7 @@ class DiscountResource extends JsonResource
             'type' => $this->type,
             'amount' => $this->amount,
             'rate' => $this->rate,
-            'currency_id' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
+            'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
             'starts_at' => $this->starts_at,
             'ends_at' => $this->ends_at,
             'is_active' => $this->is_active,

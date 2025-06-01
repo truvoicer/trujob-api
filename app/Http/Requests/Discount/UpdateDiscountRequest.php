@@ -29,7 +29,7 @@ class UpdateDiscountRequest extends FormRequest
     {
         return [
             'name' => [
-                'required',
+                'sometimes',
                 'string',
                 'max:100'
             ],
@@ -38,7 +38,7 @@ class UpdateDiscountRequest extends FormRequest
                 'string'
             ],
             'type' => [
-                'required',
+                'sometimes',
                 Rule::enum(DiscountType::class)
             ],
             'amount' => [
@@ -51,10 +51,10 @@ class UpdateDiscountRequest extends FormRequest
                 'numeric',
                 'between:0,100'
             ],
-            'currency_code' => [
-                'nullable',
-                'string',
-                'size:3'
+            'currency_id' => [
+                'sometimes',
+                'integer',
+                'exists:currencies,id'
             ],
             'starts_at' => [
                 'sometimes',
@@ -87,7 +87,7 @@ class UpdateDiscountRequest extends FormRequest
                 'min:1'
             ],
             'scope' => [
-                'required',
+                'sometimes',
                 Rule::enum(DiscountScope::class)
             ],
             'code' => [
@@ -102,15 +102,15 @@ class UpdateDiscountRequest extends FormRequest
                 'array'
             ],
             'products.*.product_id' => [
-                'required',
+                'sometimes',
                 'integer',
             ],
             'products.*.product_type' => [
-                'required',
+                'sometimes',
                 Rule::enum(ProductType::class)
             ],
             'products.*.price_id' => [
-                'required',
+                'sometimes',
                 'integer',
                 'exists:prices,id'
             ],
