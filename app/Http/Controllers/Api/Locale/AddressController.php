@@ -25,10 +25,10 @@ class AddressController extends Controller
         $this->addressService->setUser($request->user()->user);
         $this->addressService->setSite($request->user()->site);
         $this->addressRepository->setPagination(true);
-        $this->addressRepository->setSortField(
+        $this->addressRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->addressRepository->setOrderDir(
+        $this->addressRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->addressRepository->setPerPage(

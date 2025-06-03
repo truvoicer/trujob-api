@@ -33,10 +33,10 @@ class OrderItemController extends Controller
             $order->items()
         );
         $this->orderItemRepository->setPagination(true);
-        $this->orderItemRepository->setSortField(
+        $this->orderItemRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->orderItemRepository->setOrderDir(
+        $this->orderItemRepository->setOrderByDir(
             $request->get('orderItem', 'desc')
         );
         $this->orderItemRepository->setPerPage(

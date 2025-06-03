@@ -29,6 +29,7 @@ class StoreCurrencyRequest extends FormRequest
             'code' => ['required', 'string', 'max:3'],
             'symbol' => ['required', 'string', 'max:3'],
             'country_id' => ['required', 'integer', 'exists:countries,id'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 }

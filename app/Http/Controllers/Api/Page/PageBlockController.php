@@ -36,10 +36,10 @@ class PageBlockController extends Controller
             $page->pageBlocks()
         );
         $this->pageBlockRepository->setPagination(true);
-        $this->pageBlockRepository->setSortField(
+        $this->pageBlockRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->pageBlockRepository->setOrderDir(
+        $this->pageBlockRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->pageBlockRepository->setPerPage(

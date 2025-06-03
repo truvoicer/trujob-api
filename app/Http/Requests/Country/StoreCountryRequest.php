@@ -28,6 +28,7 @@ class StoreCountryRequest extends FormRequest
             'iso2' => ['required', 'string', 'max:2'],
             'iso3' => ['required', 'string', 'max:3'],
             'phone_code' => ['required', 'string', 'max:5'],
+            'is_active' => ['required', 'boolean'],
         ];
     }
 }

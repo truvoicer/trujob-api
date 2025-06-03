@@ -34,10 +34,10 @@ class MenuItemController extends Controller
             $menu->menuItems()
         );
         $this->menuRepository->setPagination(true);
-        $this->menuRepository->setSortField(
+        $this->menuRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->menuRepository->setOrderDir(
+        $this->menuRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->menuRepository->setPerPage(

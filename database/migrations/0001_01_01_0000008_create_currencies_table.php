@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('name_plural');
             $table->string('code');
             $table->string('symbol');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

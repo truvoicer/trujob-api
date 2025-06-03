@@ -132,8 +132,8 @@ class FileSystemService
     }
 
     public function findByParams(string $sort, string  $order, int $count = -1) {
-        $this->fileRepository->setOrderDir($order);
-        $this->fileRepository->setSortField($sort);
+        $this->fileRepository->setOrderByDir($order);
+        $this->fileRepository->setOrderByColumn($sort);
         $this->fileRepository->setLimit($count);
         return $this->fileRepository->findMany();
     }

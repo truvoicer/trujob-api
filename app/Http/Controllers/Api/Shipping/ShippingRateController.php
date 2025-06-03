@@ -24,10 +24,10 @@ class ShippingRateController extends Controller
 
     public function index(Request $request) {
         $this->shippingRateRepository->setPagination(true);
-        $this->shippingRateRepository->setSortField(
+        $this->shippingRateRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->shippingRateRepository->setOrderDir(
+        $this->shippingRateRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->shippingRateRepository->setPerPage(

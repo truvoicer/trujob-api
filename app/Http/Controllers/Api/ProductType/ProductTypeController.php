@@ -24,10 +24,10 @@ class ProductTypeController extends Controller
 
     public function index(Request $request) {
         $this->productTypeRepository->setPagination(true);
-        $this->productTypeRepository->setSortField(
+        $this->productTypeRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->productTypeRepository->setOrderDir(
+        $this->productTypeRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->productTypeRepository->setPerPage(

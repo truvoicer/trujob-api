@@ -18,10 +18,10 @@ class ProductController extends ProductBaseController
         $this->productsFetchService->setSite($request->user()->site);
 
         $this->productRepository->setPagination(true);
-        $this->productRepository->setSortField(
+        $this->productRepository->setOrderByColumn(
             $request->get('sort', 'title')
         );
-        $this->productRepository->setOrderDir(
+        $this->productRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->productRepository->setPerPage(

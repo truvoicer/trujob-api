@@ -25,10 +25,10 @@ class CountryController extends Controller
         $this->countryService->setUser($request->user()->user);
         $this->countryService->setSite($request->user()->site);
         $this->countryRepository->setPagination(true);
-        $this->countryRepository->setSortField(
+        $this->countryRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->countryRepository->setOrderDir(
+        $this->countryRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->countryRepository->setPerPage(

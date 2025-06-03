@@ -27,10 +27,10 @@ class ProductCategoryController extends Controller
             $product->categories()
         );
         $this->productRepository->setPagination(true);
-        $this->productRepository->setSortField(
+        $this->productRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->productRepository->setOrderDir(
+        $this->productRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->productRepository->setPerPage(

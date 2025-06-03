@@ -37,8 +37,8 @@ class PageRepository extends BaseRepository
                 $query->orderBy('order');
             }
         ]);
-        $this->setSortField('created_at');
-        $this->setOrderDir('desc');
+        $this->setOrderByColumn('created_at');
+        $this->setOrderByDir('desc');
         return $this->findMany();
     }
 

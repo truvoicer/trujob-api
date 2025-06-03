@@ -25,6 +25,7 @@ class CurrencySeeder extends Seeder
 
             $country = Country::where('iso2', $countryData['cca2'])->first();
             if (!$country) {
+                var_dump("Country not found for ISO2: {$countryData['cca2']}");
                 continue;
             }
 

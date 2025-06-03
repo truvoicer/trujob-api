@@ -25,10 +25,10 @@ class OrderDiscountController extends Controller
             $order->discounts()
         );
         $this->orderRepository->setPagination(true);
-        $this->orderRepository->setSortField(
+        $this->orderRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->orderRepository->setOrderDir(
+        $this->orderRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->orderRepository->setPerPage(

@@ -28,10 +28,10 @@ class CurrencyController extends Controller
         $this->currencyService->setSite($request->user()->site);
 
         $this->currencyRepository->setPagination(true);
-        $this->currencyRepository->setSortField(
+        $this->currencyRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->currencyRepository->setOrderDir(
+        $this->currencyRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->currencyRepository->setPerPage(

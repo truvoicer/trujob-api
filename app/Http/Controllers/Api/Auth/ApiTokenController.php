@@ -34,10 +34,10 @@ class ApiTokenController extends Controller
             $request->user()->user->tokens()
         );
         $this->userRepository->setPagination(true);
-        $this->userRepository->setSortField(
+        $this->userRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->userRepository->setOrderDir(
+        $this->userRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->userRepository->setPerPage(

@@ -24,10 +24,10 @@ class PaymentGatewayController extends Controller
 
     public function index(Request $request) {
         $this->paymentGatewayRepository->setPagination(true);
-        $this->paymentGatewayRepository->setSortField(
+        $this->paymentGatewayRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->paymentGatewayRepository->setOrderDir(
+        $this->paymentGatewayRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->paymentGatewayRepository->setPerPage(

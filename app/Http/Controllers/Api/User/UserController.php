@@ -34,10 +34,10 @@ class UserController extends Controller
             $request->user()->site->users()
         );
         $this->userRepository->setPagination(true);
-        $this->userRepository->setSortField(
+        $this->userRepository->setOrderByColumn(
             $request->get('sort', 'first_name')
         );
-        $this->userRepository->setOrderDir(
+        $this->userRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->userRepository->setPerPage(
@@ -46,6 +46,20 @@ class UserController extends Controller
         $this->userRepository->setPage(
             $request->get('page', 1)
         );
+
+        if ($request->query->getBoolean('fix_session_user')) {
+            // $fixedRows = array_map(function ($row) {
+            //     list($column, $value) = explode('.', $row);
+            //     return [
+            //         'column' => $row['column'],
+            //         'value' => $row['value'],
+            //     ];
+            // }, explode(',', $fixedRows));
+            $this->userRepository->setFixedRows([[
+                'column' => 'users.id',
+                'value' => $request->user()->user->id
+            ]]);
+        }
 
         return UserResource::collection(
             $this->userRepository->findMany()

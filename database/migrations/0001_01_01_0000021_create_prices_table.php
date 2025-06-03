@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('created_by_user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('currency_id')->nullable()->constrained('currencies')->nullOnDelete('cascade');
             $table->foreignId('country_id')->nullable()->constrained('countries')->nullOnDelete('cascade');
             $table->foreignId('price_type_id')->nullable()->constrained('price_types')->nullOnDelete();

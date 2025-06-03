@@ -32,10 +32,10 @@ class ProductFeatureController extends Controller
             $product->features()
         );
         $this->productFeatureRepository->setPagination(true);
-        $this->productFeatureRepository->setSortField(
+        $this->productFeatureRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->productFeatureRepository->setOrderDir(
+        $this->productFeatureRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->productFeatureRepository->setPerPage(

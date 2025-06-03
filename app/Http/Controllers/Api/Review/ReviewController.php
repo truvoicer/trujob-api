@@ -32,10 +32,10 @@ class ReviewController extends Controller
      */
     public function index(Request $request) {
         $this->productReviewRepository->setPagination(true);
-        $this->productReviewRepository->setSortField(
+        $this->productReviewRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->productReviewRepository->setOrderDir(
+        $this->productReviewRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->productReviewRepository->setPerPage(

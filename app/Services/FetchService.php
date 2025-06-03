@@ -13,7 +13,7 @@ trait FetchService
     private int $limit = 10;
     private int $offset = 0;
     private int $page = 1;
-    private string $orderDir = 'desc';
+    private string $orderByDir = 'desc';
 
     private bool $pagination = true;
     private int $total = 0;
@@ -127,17 +127,17 @@ trait FetchService
     /**
      * @return string
      */
-    public function getOrderDir(): string
+    public function getOrderByDir(): string
     {
-        return $this->orderDir;
+        return $this->orderByDir;
     }
 
     /**
-     * @param string $orderDir
+     * @param string $orderByDir
      */
-    public function setOrderDir(string $orderDir): void
+    public function setOrderByDir(string $orderByDir): void
     {
-        $this->orderDir = $orderDir;
+        $this->orderByDir = $orderByDir;
     }
 
     /**

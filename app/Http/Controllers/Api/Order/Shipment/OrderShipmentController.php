@@ -33,10 +33,10 @@ class OrderShipmentController extends Controller
             $order->items()
         );
         $this->orderShipmentRepository->setPagination(true);
-        $this->orderShipmentRepository->setSortField(
+        $this->orderShipmentRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->orderShipmentRepository->setOrderDir(
+        $this->orderShipmentRepository->setOrderByDir(
             $request->get('orderShipment', 'desc')
         );
         $this->orderShipmentRepository->setPerPage(

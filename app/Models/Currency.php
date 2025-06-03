@@ -13,7 +13,12 @@ class Currency extends Model
         'name',
         'name_plural',
         'code',
-        'symbol'
+        'symbol',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function country()

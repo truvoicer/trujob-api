@@ -29,10 +29,10 @@ class TaxRateController extends Controller
      */
     public function index(Request $request) {
         $this->taxRateRepository->setPagination(true);
-        $this->taxRateRepository->setSortField(
+        $this->taxRateRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->taxRateRepository->setOrderDir(
+        $this->taxRateRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->taxRateRepository->setPerPage(

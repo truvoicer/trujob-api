@@ -32,10 +32,10 @@ class TransactionController extends Controller
             $transaction->transactions()
         );
         $this->transactionRepository->setPagination(true);
-        $this->transactionRepository->setSortField(
+        $this->transactionRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->transactionRepository->setOrderDir(
+        $this->transactionRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->transactionRepository->setPerPage(

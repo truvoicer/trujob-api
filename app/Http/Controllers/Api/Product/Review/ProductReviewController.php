@@ -34,10 +34,10 @@ class ProductReviewController extends Controller
             $product->productReview()
         );
         $this->productRepository->setPagination(true);
-        $this->productRepository->setSortField(
+        $this->productRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->productRepository->setOrderDir(
+        $this->productRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->productRepository->setPerPage(

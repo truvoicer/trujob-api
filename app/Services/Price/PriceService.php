@@ -15,6 +15,9 @@ class PriceService extends BaseService
 
     public function createPrice(array $data): bool
     {
+        if (empty($data['created_by_user_id'])) {
+            $data['created_by_user_id'] = request()->user()->id ?? null;
+        }
         $price = new Price($data);
         if (!$price->save()) {
             throw new \Exception('Error creating price');
@@ -24,6 +27,9 @@ class PriceService extends BaseService
 
     public function updatePrice(Price $price, array $data): bool
     {
+        if (empty($data['created_by_user_id'])) {
+            $data['created_by_user_id'] = request()->user()->id ?? null;
+        }
         if (!$price->update($data)) {
             throw new \Exception('Error updating price');
         }

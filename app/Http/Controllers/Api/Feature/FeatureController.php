@@ -30,10 +30,10 @@ class FeatureController extends Controller
      */
     public function index(Request $request) {
         $this->featureRepository->setPagination(true);
-        $this->featureRepository->setSortField(
+        $this->featureRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->featureRepository->setOrderDir(
+        $this->featureRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->featureRepository->setPerPage(

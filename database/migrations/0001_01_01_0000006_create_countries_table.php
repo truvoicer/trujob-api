@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('iso2');
             $table->string('iso3');
             $table->string('phone_code')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

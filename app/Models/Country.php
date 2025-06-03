@@ -12,7 +12,12 @@ class Country extends Model
         'name',
         'iso2',
         'iso3',
-        'phone_code'
+        'phone_code',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
 

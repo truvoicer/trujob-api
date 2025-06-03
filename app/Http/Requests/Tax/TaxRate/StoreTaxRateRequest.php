@@ -41,6 +41,8 @@ class StoreTaxRateRequest extends FormRequest
                 'between:0,100'
             ],
             'country_id' => ['required', 'integer', 'exists:countries,id'],
+            'currency_id' => ['required', 'integer', 'exists:currencies,id'],
+            'has_region' => ['required', 'boolean'],
             'region_id' => ['required', 'integer', 'exists:regions,id'],
             'is_default' => ['required', 'boolean'],
             'scope' => ['required', Rule::enum(TaxScope::class)],

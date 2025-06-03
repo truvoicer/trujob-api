@@ -28,10 +28,10 @@ class PageSidebarController extends Controller
             $page->sidebars()
         );
         $this->pageRepository->setPagination(true);
-        $this->pageRepository->setSortField(
+        $this->pageRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->pageRepository->setOrderDir(
+        $this->pageRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->pageRepository->setPerPage(

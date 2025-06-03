@@ -19,6 +19,7 @@ use Database\Seeders\admin\SidebarSeeder;
 use Database\Seeders\admin\SiteSeeder;
 use Database\Seeders\admin\WidgetSeeder;
 use Database\Seeders\firebase\FirebaseTopicSeeder;
+use Database\Seeders\locale\CountrySeeder;
 use Database\Seeders\product\BrandSeeder;
 use Database\Seeders\product\CategorySeeder;
 use Database\Seeders\product\ColorSeeder;
@@ -44,7 +45,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
-            LocaleSeeder::class,
+            // LocaleSeeder::class,
+            CountrySeeder::class,
             CurrencySeeder::class,
             RegionSeeder::class,
             FirebaseTopicSeeder::class,

@@ -14,6 +14,8 @@ class TaxRate extends Model
         'type',
         'rate',
         'country_id',
+        'currency_id',
+        'has_region',
         'region',
         'is_default',
         'applies_to',
@@ -24,6 +26,7 @@ class TaxRate extends Model
         'rate' => 'decimal:5',
         'is_default' => 'boolean',
         'is_active' => 'boolean',
+        'has_region' => 'boolean',
     ];
 
     public function prices()

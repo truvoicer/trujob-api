@@ -26,8 +26,8 @@ class ProductProductService implements Product
         ?string $search = null
     ): Collection|LengthAwarePaginator {
         $this->productRepository->setPagination(true);
-        $this->productRepository->setSortField($sort);
-        $this->productRepository->setOrderDir($order);
+        $this->productRepository->setOrderByColumn($sort);
+        $this->productRepository->setOrderByDir($order);
         $this->productRepository->setPerPage($perPage);
         $this->productRepository->setPage($page);
         if ($search) {

@@ -42,6 +42,8 @@ class UpdateTaxRateRequest extends FormRequest
                 'between:0,100'
             ],
             'country_id' => ['sometimes', 'integer', 'exists:countries,id'],
+            'currency_id' => ['sometimes', 'integer', 'exists:currencies,id'],
+            'has_region' => ['sometimes', 'boolean'],
             'region_id' => ['sometimes', 'integer', 'exists:regions,id'],
             'is_default' => ['sometimes', 'boolean'],
             'scope' => ['sometimes', Rule::enum(TaxScope::class)],

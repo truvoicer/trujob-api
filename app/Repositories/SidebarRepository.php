@@ -41,8 +41,8 @@ class SidebarRepository extends BaseRepository
     public function findSidebarWidgets(Sidebar $sidebar)
     {
         $this->setQuery($sidebar->sidebarWidgets());
-        $this->setOrderDir('asc');
-        $this->setSortField('order');
+        $this->setOrderByDir('asc');
+        $this->setOrderByColumn('order');
         return $this->findMany();
     }
 }

@@ -26,10 +26,10 @@ class ShippingRestrictionController extends Controller
     public function index(Request $request)
     {
         $this->shippingRestrictionRepository->setPagination(true);
-        $this->shippingRestrictionRepository->setSortField(
+        $this->shippingRestrictionRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->shippingRestrictionRepository->setOrderDir(
+        $this->shippingRestrictionRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->shippingRestrictionRepository->setPerPage(

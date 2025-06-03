@@ -24,10 +24,10 @@ class BrandController extends Controller
 
     public function index(Request $request) {
         $this->brandRepository->setPagination(true);
-        $this->brandRepository->setSortField(
+        $this->brandRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->brandRepository->setOrderDir(
+        $this->brandRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->brandRepository->setPerPage(

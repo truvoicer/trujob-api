@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Tax;
 
 use App\Http\Resources\Product\CountryResource;
+use App\Http\Resources\Product\CurrencyResource;
 use App\Http\Resources\Region\RegionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,8 @@ class TaxRateResource extends JsonResource
             'amount' => $this->name,
             'rate' => $this->name,
             'country' => $this->whenLoaded('country', CountryResource::make($this->country)),
+            'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
+            'has_region' => $this->has_region,
             'region' => $this->whenLoaded('region', RegionResource::make($this->region)),
             'is_default' => $this->name,
             'scope' => $this->name,

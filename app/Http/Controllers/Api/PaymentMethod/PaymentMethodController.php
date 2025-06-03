@@ -24,10 +24,10 @@ class PaymentMethodController extends Controller
 
     public function index(Request $request) {
         $this->paymentMethodRepository->setPagination(true);
-        $this->paymentMethodRepository->setSortField(
+        $this->paymentMethodRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->paymentMethodRepository->setOrderDir(
+        $this->paymentMethodRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->paymentMethodRepository->setPerPage(

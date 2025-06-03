@@ -26,10 +26,10 @@ class ShippingMethodDiscountController extends Controller
             $shippingMethod->discounts()
         );
         $this->shippingMethodRepository->setPagination(true);
-        $this->shippingMethodRepository->setSortField(
+        $this->shippingMethodRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->shippingMethodRepository->setOrderDir(
+        $this->shippingMethodRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->shippingMethodRepository->setPerPage(

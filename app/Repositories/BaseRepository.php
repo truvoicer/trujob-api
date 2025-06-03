@@ -22,19 +22,21 @@ class BaseRepository
 
     const DEFAULT_WHERE = [];
     const AVAILABLE_ORDER_DIRECTIONS = ['asc', 'desc'];
-    const DEFAULT_SORT_FIELD = 'id';
-    const DEFAULT_ORDER_DIR = 'asc';
+    const DEFAULT_ORDER_BY_COLUMN = 'id';
+    const DEFAULT_ORDER_BY_DIR = 'asc';
     const DEFAULT_LIMIT = -1;
     const DEFAULT_OFFSET = 0;
     protected DbHelpers $dbHelpers;
     protected string $modelClassName;
     protected object $model;
     private array $where = self::DEFAULT_WHERE;
-    private string $sortField = self::DEFAULT_SORT_FIELD;
-    private string $orderDir = self::DEFAULT_ORDER_DIR;
+    private string $orderByColumn = self::DEFAULT_ORDER_BY_COLUMN;
+    private string $orderByDir = self::DEFAULT_ORDER_BY_DIR;
+    private array $orderBy = [];
     private int $limit = self::DEFAULT_LIMIT;
     private int $offset = self::DEFAULT_OFFSET;
 
+    private array $fixedRows = [];
     private array $whereDoesntHave = [];
     private array $whereHas = [];
     private array $with = [];
@@ -57,8 +59,8 @@ class BaseRepository
     public function getRoles(Model $model): Collection
     {
         $this->setQuery($model->roles());
-        $this->setOrderDir('asc');
-        $this->setSortField('name');
+        $this->setOrderByDir('asc');
+        $this->setOrderByColumn('name');
         return $this->findMany();
     }
 
@@ -359,8 +361,8 @@ class BaseRepository
             }
             $query = $this->buildWhereQuery($query, $where, $where['op']);
         }
-        if (!in_array($this->orderDir, self::AVAILABLE_ORDER_DIRECTIONS)) {
-            $this->orderDir = self::DEFAULT_ORDER_DIR;
+        if (!in_array($this->orderByDir, self::AVAILABLE_ORDER_DIRECTIONS)) {
+            $this->orderByDir = self::DEFAULT_ORDER_BY_DIR;
         }
         $query = $this->getResultsQuery($query);
         $this->reset();
@@ -370,10 +372,32 @@ class BaseRepository
     protected function reset()
     {
         $this->where = self::DEFAULT_WHERE;
-        $this->sortField = self::DEFAULT_SORT_FIELD;
-        $this->orderDir = self::DEFAULT_ORDER_DIR;
+        $this->orderByColumn = self::DEFAULT_ORDER_BY_COLUMN;
+        $this->orderByDir = self::DEFAULT_ORDER_BY_DIR;
         $this->limit = self::DEFAULT_LIMIT;
         $this->offset = self::DEFAULT_OFFSET;
+    }
+
+    public function setFixedRows(array $fixedRows): self
+    {
+        $this->fixedRows = $fixedRows;
+        return $this;
+    }
+
+    public function getFixedRows(): array
+    {
+        return $this->fixedRows;
+    }
+
+    public function setOrderBy(array $orderBy): self
+    {
+        $this->orderBy = $orderBy;
+        return $this;
+    }
+
+    public function getOrderBy() : array
+    {
+        return $this->orderBy;
     }
 
     public function setQuery($query)
@@ -411,8 +435,8 @@ class BaseRepository
 
     public function findAllWithParams(string $sort = "name", ?string $order = "asc", ?int $count = null)
     {
-        $this->setOrderDir($order);
-        $this->setSortField($sort);
+        $this->setOrderByDir($order);
+        $this->setOrderByColumn($sort);
         if ($count !== null) {
             $this->setLimit($count);
         }
@@ -427,9 +451,9 @@ class BaseRepository
             $query = $this->addLoadToQuery($query);
         }
 
-        if ($this->sortField) {
-            $query->orderBy($this->sortField, $this->orderDir);
-        }
+        $query = $this->addOrderToQuery($query);
+        
+        
         if (!$this->paginate && $this->limit > -1) {
             $query->limit($this->limit);
         }
@@ -439,6 +463,56 @@ class BaseRepository
         }
         return $query;
     }
+
+    private function addOrderToQuery(EloquentBuilder|Relation $query): EloquentBuilder|Relation 
+    {
+        $orderByArray = $this->buildOrderByArray();
+        $fixedRowsArray = $this->buildFixedRowsQuery();
+        
+        $orderBy = array_merge($fixedRowsArray, $orderByArray);
+        
+        foreach ($orderBy as $order) {
+            if (isset($order['column']) && isset($order['dir'])) {
+                $query->orderByRaw("{$order['column']} {$order['dir']}");
+            }
+        }
+        return $query;
+    }
+
+    private function buildOrderByArray(): array
+    {
+        if (!count($this->orderBy)) {
+            return [[
+                'column' => $this->orderByColumn,
+                'dir' => $this->orderByDir,
+            ]];
+        } 
+        
+        return $this->orderBy;
+    }
+
+    public function buildFixedRowsQuery(): array {
+        $fixedRowConfig = array_filter(
+            $this->getFixedRows(),
+            fn($row) => is_array($row) && isset($row['column']) && isset($row['value']),
+            ARRAY_FILTER_USE_BOTH
+        );
+        
+        if (!count($fixedRowConfig)) {
+            return [];
+        }
+        
+        return array_map(
+            function ($row) {
+                return [
+                    'column' => "{$row['column']}={$row['value']}",
+                    'dir' => 'desc',
+                ];
+            },
+            $fixedRowConfig
+        );
+    }
+
     protected function getResults(Relation|EloquentBuilder $query): Collection|LengthAwarePaginator
     {
         if ($this->paginate) {
@@ -592,25 +666,25 @@ class BaseRepository
         return $this;
     }
 
-    public function getSortField(): string
+    public function getOrderByColumn(): string
     {
-        return $this->sortField;
+        return $this->orderByColumn;
     }
 
-    public function setSortField(string $sortField): self
+    public function setOrderByColumn(string $orderByColumn): self
     {
-        $this->sortField = $sortField;
+        $this->orderByColumn = $orderByColumn;
         return $this;
     }
 
-    public function getOrderDir(): string
+    public function getOrderByDir(): string
     {
-        return $this->orderDir;
+        return $this->orderByDir;
     }
 
-    public function setOrderDir(string $orderDir): self
+    public function setOrderByDir(string $orderByDir): self
     {
-        $this->orderDir = $orderDir;
+        $this->orderByDir = $orderByDir;
         return $this;
     }
 

@@ -33,10 +33,10 @@ class PriceTaxRateController extends Controller
         $this->priceTaxRateService->setSite($request->user()->site);
 
         $this->priceTaxRateRepository->setPagination(true);
-        $this->priceTaxRateRepository->setSortField(
+        $this->priceTaxRateRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->priceTaxRateRepository->setOrderDir(
+        $this->priceTaxRateRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->priceTaxRateRepository->setPerPage(

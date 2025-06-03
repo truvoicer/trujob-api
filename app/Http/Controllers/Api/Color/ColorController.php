@@ -24,10 +24,10 @@ class ColorController extends Controller
 
     public function index(Request $request) {
         $this->colorRepository->setPagination(true);
-        $this->colorRepository->setSortField(
+        $this->colorRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->colorRepository->setOrderDir(
+        $this->colorRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->colorRepository->setPerPage(

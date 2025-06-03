@@ -27,7 +27,7 @@ class UpdatePriceRequest extends FormRequest
             'amount' => ['sometimes', 'numeric'],
             'currency_id' => ['sometimes', 'integer', 'exists:currencies,id'],
             'country_id' => ['sometimes', 'integer', 'exists:countries,id'],
-            'user_id' => ['sometimes', 'integer', 'exists:users,id'],
+            'created_by_user_id' => ['sometimes', 'integer', 'exists:users,id'],
             'type_id' => ['sometimes', 'integer', 'exists:price_types,id'],
             'valid_from' => ['sometimes', 'date'],
             'valid_to' => ['nullable', 'date'],

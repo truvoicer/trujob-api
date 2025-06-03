@@ -22,7 +22,7 @@ class PriceResource extends JsonResource
             'amount' => $this->amount,
             'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
             'country' => $this->whenLoaded('country', CountryResource::make($this->country)),
-            'user' => $this->whenLoaded('user', UserResource::make($this->user)),
+            'created_by_user' => $this->whenLoaded('createdByUser', UserResource::make($this->user)),
             'price_type' => $this->whenLoaded('priceType', PriceTypeResource::make($this->priceType)),
             'valid_from' => $this->valid_from,
             'valid_to' => $this->valid_to,

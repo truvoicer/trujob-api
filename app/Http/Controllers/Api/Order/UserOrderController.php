@@ -32,10 +32,10 @@ class UserOrderController extends Controller
             $request->user()->user->orders()
         );
         $this->orderRepository->setPagination(true);
-        $this->orderRepository->setSortField(
+        $this->orderRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->orderRepository->setOrderDir(
+        $this->orderRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->orderRepository->setPerPage(

@@ -24,10 +24,10 @@ class ShippingZoneController extends Controller
 
     public function index(Request $request) {
         $this->shippingZoneRepository->setPagination(true);
-        $this->shippingZoneRepository->setSortField(
+        $this->shippingZoneRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->shippingZoneRepository->setOrderDir(
+        $this->shippingZoneRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->shippingZoneRepository->setPerPage(

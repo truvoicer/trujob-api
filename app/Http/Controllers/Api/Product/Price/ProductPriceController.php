@@ -26,10 +26,10 @@ class ProductPriceController extends Controller
             $product->prices()
         );
         $this->productPriceRepository->setPagination(true);
-        $this->productPriceRepository->setSortField(
+        $this->productPriceRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->productPriceRepository->setOrderDir(
+        $this->productPriceRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->productPriceRepository->setPerPage(

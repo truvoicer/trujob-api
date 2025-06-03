@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Price;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Price\StorePriceRequest;
 use App\Http\Requests\Price\UpdatePriceRequest;
-use App\Http\Resources\PriceResource;
+use App\Http\Resources\Price\PriceResource;
 use App\Models\Price;
 use App\Repositories\PriceRepository;
 use App\Services\Price\PriceService;
@@ -32,10 +32,10 @@ class PriceController extends Controller
         $this->priceService->setSite($request->user()->site);
 
         $this->priceRepository->setPagination(true);
-        $this->priceRepository->setSortField(
+        $this->priceRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->priceRepository->setOrderDir(
+        $this->priceRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->priceRepository->setPerPage(

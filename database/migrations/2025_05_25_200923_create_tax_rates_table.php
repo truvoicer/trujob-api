@@ -38,6 +38,14 @@ return new class extends Migration
             $table->foreignId('country_id')
                 ->constrained('countries')
                 ->comment('Country');
+
+            $table->foreignId('currency_id')
+                ->constrained('currencies')
+                ->comment('Currency for the tax rate, used if fixed_rate is true');
+
+                $table->boolean('has_region')
+                ->default(false)
+                ->comment('Indicates if the tax rate applies to a specific region within the country');
                 
             $table->foreignId('region_id')
                 ->nullable()

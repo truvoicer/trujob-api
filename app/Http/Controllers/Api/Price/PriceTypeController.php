@@ -30,10 +30,10 @@ class PriceTypeController extends Controller
         $this->priceTypeService->setSite($request->user()->site);
 
         $this->priceTypeRepository->setPagination(true);
-        $this->priceTypeRepository->setSortField(
+        $this->priceTypeRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->priceTypeRepository->setOrderDir(
+        $this->priceTypeRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->priceTypeRepository->setPerPage(

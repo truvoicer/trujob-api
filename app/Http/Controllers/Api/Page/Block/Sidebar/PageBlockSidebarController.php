@@ -31,10 +31,10 @@ class PageBlockSidebarController extends Controller
             $pageBlock->pageBlockSidebars()
         );
         $this->pageBlockRepository->setPagination(true);
-        $this->pageBlockRepository->setSortField(
+        $this->pageBlockRepository->setOrderByColumn(
             $request->get('sort', 'order')
         );
-        $this->pageBlockRepository->setOrderDir(
+        $this->pageBlockRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->pageBlockRepository->setPerPage(

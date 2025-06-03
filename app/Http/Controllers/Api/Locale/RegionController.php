@@ -24,10 +24,10 @@ class RegionController extends Controller
 
     public function index(Request $request) {
         $this->regionRepository->setPagination(true);
-        $this->regionRepository->setSortField(
+        $this->regionRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->regionRepository->setOrderDir(
+        $this->regionRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->regionRepository->setPerPage(

@@ -19,15 +19,15 @@ class BaseRepository
 
     const DEFAULT_WHERE = [];
     const AVAILABLE_ORDER_DIRECTIONS = ['asc', 'desc'];
-    const DEFAULT_SORT_FIELD = 'id';
-    const DEFAULT_ORDER_DIR = 'asc';
+    const DEFAULT_ORDER_BY_COLUMN = 'id';
+    const DEFAULT_ORDER_BY_DIR = 'asc';
     const DEFAULT_LIMIT = -1;
     const DEFAULT_OFFSET = 0;
     protected DbHelpers $dbHelpers;
     private array $where = self::DEFAULT_WHERE;
     private array $whereGroups = [];
-    private string $sortField = self::DEFAULT_SORT_FIELD;
-    private string $orderDir = self::DEFAULT_ORDER_DIR;
+    private string $orderByColumn = self::DEFAULT_ORDER_BY_COLUMN;
+    private string $orderByDir = self::DEFAULT_ORDER_BY_DIR;
     private array $orderBy = [];
     private int $limit = self::DEFAULT_LIMIT;
     private int $offset = self::DEFAULT_OFFSET;
@@ -236,10 +236,10 @@ class BaseRepository
             }
         }
 
-        if (!in_array($this->orderDir, self::AVAILABLE_ORDER_DIRECTIONS)) {
-            $this->orderDir = self::DEFAULT_ORDER_DIR;
+        if (!in_array($this->orderByDir, self::AVAILABLE_ORDER_DIRECTIONS)) {
+            $this->orderByDir = self::DEFAULT_ORDER_BY_DIR;
         }
-        $query->orderBy($this->sortField, $this->orderDir);
+        $query->orderBy($this->orderByColumn, $this->orderByDir);
         foreach ($this->orderBy as $orderBy) {
             $query->orderBy($orderBy[0], $orderBy[1]);
         }
@@ -255,8 +255,8 @@ class BaseRepository
     protected function reset()
     {
         $this->where = self::DEFAULT_WHERE;
-        $this->sortField = self::DEFAULT_SORT_FIELD;
-        $this->orderDir = self::DEFAULT_ORDER_DIR;
+        $this->orderByColumn = self::DEFAULT_ORDER_BY_COLUMN;
+        $this->orderByDir = self::DEFAULT_ORDER_BY_DIR;
         $this->limit = self::DEFAULT_LIMIT;
         $this->offset = self::DEFAULT_OFFSET;
     }
@@ -286,8 +286,8 @@ class BaseRepository
 
     public function findAllWithParams(string $sort = "name", ?string $order = "asc", ?int $count = null)
     {
-        $this->setOrderDir($order);
-        $this->setSortField($sort);
+        $this->setOrderByDir($order);
+        $this->setOrderByColumn($sort);
         if ($count !== null) {
             $this->setLimit($count);
         }
@@ -421,25 +421,25 @@ class BaseRepository
         return $this;
     }
 
-    public function getSortField(): string
+    public function getOrderByColumn(): string
     {
-        return $this->sortField;
+        return $this->orderByColumn;
     }
 
-    public function setSortField(string $sortField): self
+    public function setOrderByColumn(string $orderByColumn): self
     {
-        $this->sortField = $sortField;
+        $this->orderByColumn = $orderByColumn;
         return $this;
     }
 
-    public function getOrderDir(): string
+    public function getOrderByDir(): string
     {
-        return $this->orderDir;
+        return $this->orderByDir;
     }
 
-    public function setOrderDir(string $orderDir): self
+    public function setOrderByDir(string $orderByDir): self
     {
-        $this->orderDir = $orderDir;
+        $this->orderByDir = $orderByDir;
         return $this;
     }
 

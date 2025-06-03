@@ -9,6 +9,12 @@ class TaxRateService extends BaseService
 {
     public function createTaxRate(array $data)
     {
+        if (!empty($data['has_region']) && empty($data['region_id'])) {
+            throw new \Exception('Region ID is required when has_region is true');
+        }
+        if (empty($data['has_region'])) {
+            $data['region_id'] = null;
+        }
         $taxRate = new TaxRate($data);
         if (!$taxRate->save()) {
             throw new \Exception('Error creating tax rate');
@@ -18,6 +24,12 @@ class TaxRateService extends BaseService
     }
     public function updateTaxRate(TaxRate $taxRate, array $data)
     {
+        if (!empty($data['has_region']) && empty($data['region_id'])) {
+            throw new \Exception('Region ID is required when has_region is true');
+        }
+        if (empty($data['has_region'])) {
+            $data['region_id'] = null;
+        }
         if (!$taxRate->update($data)) {
             throw new \Exception('Error updating tax rate');
         }

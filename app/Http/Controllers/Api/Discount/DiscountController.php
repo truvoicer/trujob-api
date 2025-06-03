@@ -30,10 +30,10 @@ class DiscountController extends Controller
     public function index(Request $request)
     {
         $this->discountRepository->setPagination(true);
-        $this->discountRepository->setSortField(
+        $this->discountRepository->setOrderByColumn(
             $request->get('sort', 'name')
         );
-        $this->discountRepository->setOrderDir(
+        $this->discountRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->discountRepository->setPerPage(

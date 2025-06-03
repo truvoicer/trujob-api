@@ -30,10 +30,10 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $this->orderRepository->setPagination(true);
-        $this->orderRepository->setSortField(
+        $this->orderRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
         );
-        $this->orderRepository->setOrderDir(
+        $this->orderRepository->setOrderByDir(
             $request->get('order', 'desc')
         );
         $this->orderRepository->setPerPage(

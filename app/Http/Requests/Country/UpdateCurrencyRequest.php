@@ -28,6 +28,7 @@ class UpdateCountryRequest extends FormRequest
             'iso2' => ['sometimes', 'string', 'max:2'],
             'iso3' => ['sometimes', 'string', 'max:3'],
             'phone_code' => ['sometimes', 'string', 'max:5'],
+            'is_active' => ['sometimes', 'boolean'],
         ];
     }
     

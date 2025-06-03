@@ -26,10 +26,10 @@ class RoleController extends Controller
         $this->roleService->setUser($request->user()->user);
         $this->roleRepository->setQuery(Role::query());
         $this->roleRepository->setPagination(true);
-        $this->roleRepository->setSortField(
+        $this->roleRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->roleRepository->setOrderDir(
+        $this->roleRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->roleRepository->setPerPage(

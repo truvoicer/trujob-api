@@ -25,10 +25,10 @@ class CategoryController extends Controller
     public function index(Request $request) {
 
         $this->categoryRepository->setPagination(true);
-        $this->categoryRepository->setSortField(
+        $this->categoryRepository->setOrderByColumn(
             $request->get('sort', 'label')
         );
-        $this->categoryRepository->setOrderDir(
+        $this->categoryRepository->setOrderByDir(
             $request->get('order', 'asc')
         );
         $this->categoryRepository->setPerPage(
