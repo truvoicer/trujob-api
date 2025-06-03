@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Tax\TaxRate;
 
+use App\Enums\Order\Tax\TaxRateAmountType;
 use App\Enums\Order\Tax\TaxRateType;
 use App\Enums\Order\Tax\TaxScope;
 use Illuminate\Foundation\Http\FormRequest;
@@ -29,25 +30,29 @@ class StoreTaxRateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:50'],
             'type' => ['required', Rule::enum((TaxRateType::class))],
+            'amount_type' => ['required', Rule::enum((TaxRateAmountType::class))],
             'amount' => [
-                'required_if:fixed_rate,true',
+                'required_if:amount_type,fixed',
                 'nullable',
                 'numeric',
                 'min:0'
             ],
             'rate' => [
-                'required_if:fixed_rate,false',
+                'required_if:amount_type,percentage',
                 'numeric',
                 'between:0,100'
             ],
             'country_id' => ['required', 'integer', 'exists:countries,id'],
             'currency_id' => ['required', 'integer', 'exists:currencies,id'],
             'has_region' => ['required', 'boolean'],
-            'region_id' => ['required', 'integer', 'exists:regions,id'],
+            'region_id' => [
+                'required_if:has_region,true',
+                'integer',
+                'exists:regions,id'
+            ],
             'is_default' => ['required', 'boolean'],
             'scope' => ['required', Rule::enum(TaxScope::class)],
             'is_active' => ['required', 'boolean'],
-            'fixed_rate' => ['required', 'boolean'],
         ];
     }
 }

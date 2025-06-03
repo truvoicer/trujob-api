@@ -2,7 +2,7 @@
 
 namespace App\Services\Product;
 
-use App\Contracts\Product\Product;
+use App\Contracts\Product\Product as ProductContract;
 use App\Models\Discount;
 use App\Models\Product;
 use App\Models\Order;
@@ -11,7 +11,7 @@ use App\Repositories\ProductRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ProductProductService implements Product
+class ProductProductService implements ProductContract
 {
     public function __construct(
         protected ProductRepository $productRepository,

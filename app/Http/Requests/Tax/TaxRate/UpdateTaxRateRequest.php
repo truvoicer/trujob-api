@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Tax\TaxRate;
 
+use App\Enums\Order\Tax\TaxRateAmountType;
 use App\Enums\Order\Tax\TaxRateType;
 use App\Enums\Order\Tax\TaxScope;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,25 +31,29 @@ class UpdateTaxRateRequest extends FormRequest
         return [
             'name' => ['sometimes', 'string', 'max:50'],
             'type' => ['sometimes', Rule::enum((TaxRateType::class))],
+            'amount_type' => ['sometimes', Rule::enum((TaxRateAmountType::class))],
             'amount' => [
-                'required_if:fixed_rate,true',
-                'nullable', 
-                'numeric', 
+                'required_if:amount_type,fixed',
+                'nullable',
+                'numeric',
                 'min:0'
             ],
             'rate' => [
-                'required_if:fixed_rate,false',
-                'numeric', 
+                'required_if:amount_type,percentage',
+                'numeric',
                 'between:0,100'
             ],
             'country_id' => ['sometimes', 'integer', 'exists:countries,id'],
             'currency_id' => ['sometimes', 'integer', 'exists:currencies,id'],
             'has_region' => ['sometimes', 'boolean'],
-            'region_id' => ['sometimes', 'integer', 'exists:regions,id'],
+            'region_id' => [
+                'required_if:has_region,true',
+                'integer',
+                'exists:regions,id'
+            ],
             'is_default' => ['sometimes', 'boolean'],
             'scope' => ['sometimes', Rule::enum(TaxScope::class)],
             'is_active' => ['sometimes', 'boolean'],
-            'fixed_rate' => ['sometimes', 'boolean'],
         ];
     }
 }

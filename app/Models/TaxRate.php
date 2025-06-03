@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\Order\Tax\TaxRateAmountType;
+use App\Enums\Order\Tax\TaxRateType;
+use App\Enums\Order\Tax\TaxScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +15,7 @@ class TaxRate extends Model
     protected $fillable = [
         'name',
         'type',
+        'amount_type',
         'rate',
         'country_id',
         'currency_id',
@@ -23,6 +27,9 @@ class TaxRate extends Model
     ];
 
     protected $casts = [
+        'amount_type' => TaxRateAmountType::class,
+        'type' => TaxRateType::class,
+        'scope' => TaxScope::class,
         'rate' => 'decimal:5',
         'is_default' => 'boolean',
         'is_active' => 'boolean',
@@ -58,5 +65,13 @@ class TaxRate extends Model
                   ->orWhereNull('region');
             })
             ->orderByDesc('region'); // Prefer region-specific rates over null
+    }
+
+    public function country() {
+        return $this->belongsTo(Country::class);
+    }
+
+    public function currency() {
+        return $this->belongsTo(Currency::class);
     }
 }

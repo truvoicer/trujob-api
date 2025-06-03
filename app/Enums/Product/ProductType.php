@@ -1,18 +1,31 @@
 <?php
 namespace App\Enums\Product;
 
+use App\Models\Product;
+
 enum ProductType: string
 {
-    case EVENT = 'event';
-    case VEHICLE = 'vehicle';
-    case SERVICE = 'service';
-    case REAL_ESTATE = 'real-estate';
-    case JOB = 'job';
-    case PET = 'pet';
-    case ITEM = 'item';
-    case PROPERTY = 'property';
-    case BUSINESS = 'business';
-    case TICKET = 'ticket';
-    case COURSE = 'course';
-    case FOOD = 'food';
+    case PRODUCT = Product::class;
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::PRODUCT => 'Product',
+        };
+    }
+
+    public function id(): string
+    {
+        return match ($this) {
+            self::PRODUCT => 'product',
+        };
+    }
+
+    public function getById(string $id): ?self
+    {
+        return match ($id) {
+            'product' => self::PRODUCT,
+            default => null,
+        };
+    }
 }
