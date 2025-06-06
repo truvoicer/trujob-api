@@ -21,7 +21,6 @@ class TaxRate extends Model
         'currency_id',
         'has_region',
         'region',
-        'is_default',
         'applies_to',
         'is_active'
     ];
@@ -31,7 +30,6 @@ class TaxRate extends Model
         'type' => TaxRateType::class,
         'scope' => TaxScope::class,
         'rate' => 'decimal:5',
-        'is_default' => 'boolean',
         'is_active' => 'boolean',
         'has_region' => 'boolean',
     ];
@@ -73,5 +71,14 @@ class TaxRate extends Model
 
     public function currency() {
         return $this->belongsTo(Currency::class);
+    }
+
+    public function default() {
+        return $this->hasOne(DefaultTaxRate::class);
+    }
+
+    public function isDefault()
+    {
+        return $this->default()->exists();
     }
 }

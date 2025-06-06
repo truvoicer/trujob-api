@@ -54,28 +54,19 @@ class ProductProductService implements ProductContract
         $data['order_id'] = $order->id;
         return $product->orderItems()->create($data);
     }
+
     public function updateOrderItem(
         Order $order,
         OrderItem $orderItem,
         array $data = []
     ): OrderItem {
-        if (empty($data['entity_id'])) {
-            throw new \Exception('Entity ID is required to create an order item');
-        }
-        $product = $this->productRepository->findById($data['entity_id'] ?? null);
+        $product = $this->productRepository->findById($orderItem->productable_id);
         if (!$product) {
             throw new \Exception('Product does not exist');
         }
         $existsInOrder = $order->items()->where('id', $orderItem->id)->exists();
         if (!$existsInOrder) {
             throw new \Exception('Order item does not exist in the order');
-        }
-        if (!empty($data['entity_id'])) {
-            $data['productable_id'] = $data['entity_id'];
-        }
-
-        if (!empty($data['entity_type'])) {
-            $data['productable_type'] = Product::class;
         }
 
         if (!$orderItem->update($data)) {

@@ -36,7 +36,7 @@ class OrderItemService extends BaseService
     public function updateOrderItem(Order $order, OrderItem $orderItem, array $data)
     {
         return ProductFactory::create(
-            ProductHelpers::validateProductableByArray('entity_type', $data)
+            ProductType::tryFrom($orderItem->productable_type)
         )
             ->updateOrderItem(
                 $order,

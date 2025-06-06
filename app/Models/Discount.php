@@ -102,4 +102,13 @@ class Discount extends Model
             && now()->between($this->starts_at, $this->ends_at)
             && ($this->usage_limit === null || $this->usage_count < $this->usage_limit);
     }
+
+    public function default() {
+        return $this->hasOne(DefaultDiscount::class, 'discount_id');
+    }
+
+    public function isDefault(): bool
+    {
+        return $this->default()->exists();
+    }
 }

@@ -16,16 +16,16 @@ return new class extends Migration
             $table->foreignId('shipping_zone_id')->constrained()->cascadeOnDelete();
             $table->foreignId('currency_id')->constrained('currencies')->cascadeOnDelete();
             $table->enum(
-                'rate_type',
+                'type',
                 array_map(fn(ShippingRateType $rate) => $rate->value, ShippingRateType::cases())
             );
-            $table->decimal('min_value', 10, 2)->nullable();
-            $table->decimal('max_value', 10, 2)->nullable();
-            $table->decimal('rate_amount', 10, 2);
+            $table->decimal('min_amount', 10, 2)->nullable();
+            $table->decimal('max_amount', 10, 2)->nullable();
+            $table->decimal('amount', 10, 2);
             $table->boolean('is_free_shipping_possible')->default(false);
             $table->timestamps();
 
-            $table->index(['shipping_zone_id', 'rate_type', 'min_value', 'max_value'], 'idx_shipping_zone_rate_type');
+            $table->index(['shipping_zone_id', 'rate_type', 'min_amount', 'max_amount'], 'idx_shipping_zone_amount_type');
         });
     }
 

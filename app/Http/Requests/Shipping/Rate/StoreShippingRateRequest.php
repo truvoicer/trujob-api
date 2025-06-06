@@ -34,22 +34,22 @@ class StoreShippingRateRequest extends FormRequest
                 'required',
                 'exists:shipping_zones,id'
             ],
-            'rate_type' => [
+            'type' => [
                 'required',
                 Rule::enum(ShippingRateType::class)
             ],
-            'min_value' => [
+            'min_amount' => [
                 'nullable',
                 'numeric',
                 'min:0'
             ],
-            'max_value' => [
+            'max_amount' => [
                 'nullable',
                 'numeric',
                 'min:0',
-                'gt:min_value'
+                'gt:min_amount'
             ],
-            'rate_amount' => [
+            'amount' => [
                 'required',
                 'numeric',
                 'min:0'

@@ -47,7 +47,7 @@ class TaxRateController extends Controller
         );
     }
 
-    public function show(TaxRate $taxRate, StoreTaxRateRequest $request) {
+    public function show(TaxRate $taxRate, Request $request) {
         $this->taxRateService->setUser($request->user()->user);
         $this->taxRateService->setSite($request->user()->site);
         

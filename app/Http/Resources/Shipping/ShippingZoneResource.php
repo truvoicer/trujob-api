@@ -18,8 +18,13 @@ class ShippingZoneResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'countries' => $this->whenLoaded('countries', CountryResource::collection($this->countries)),
+            'description' => $this->description,
+            'countries' => $this->whenLoaded(
+                'countries', 
+                CountryResource::collection($this->countries)
+            ),
             'is_active' => $this->is_active,
+            'all' => $this->all,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

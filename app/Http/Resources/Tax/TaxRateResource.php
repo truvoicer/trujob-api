@@ -28,7 +28,7 @@ class TaxRateResource extends JsonResource
             'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
             'has_region' => $this->has_region,
             'region' => $this->whenLoaded('region', RegionResource::make($this->region)),
-            'is_default' => $this->is_default,
+            'is_default' => $this->isDefault(),
             'scope' => $this->scope,
             'is_active' => $this->is_active,
             'fixed_rate' => $this->fixed_rate,

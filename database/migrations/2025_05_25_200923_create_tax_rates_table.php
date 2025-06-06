@@ -57,10 +57,6 @@ return new class extends Migration
                 ->default(true)
                 ->comment('Indicates if the tax rate is currently active');
 
-            $table->boolean('is_default')
-                ->default(false)
-                ->comment('Default rate for the country/region');
-
             $table->enum('scope', array_map(fn(TaxScope $type) => $type->value, TaxScope::cases()))
                 ->comment('Tax scope');
 

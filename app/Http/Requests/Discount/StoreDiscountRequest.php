@@ -98,6 +98,7 @@ class StoreDiscountRequest extends FormRequest
                 'unique:discounts,code,NULL,id,deleted_at,NULL'
             ],
             'is_code_required' => ['boolean'],
+            'is_default' => ['sometimes', 'boolean'],
             'products' => [
                 'nullable',
                 'array'

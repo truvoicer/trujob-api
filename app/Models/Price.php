@@ -10,7 +10,7 @@ class Price extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'created_by_user_id',
         'price_type_id',
         'country_id',
         'currency_id',
@@ -21,14 +21,15 @@ class Price extends Model
         'is_active',
     ];
     protected $casts = [
+        'amount' => 'decimal:2',
         'valid_from' => 'datetime',
         'valid_to' => 'datetime',
         'is_default' => 'boolean',
         'is_active' => 'boolean',
     ];
-    public function user()
+    public function createdByUser()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
     public function priceType()
@@ -60,8 +61,6 @@ class Price extends Model
     public function taxRates()
     {
         return $this->belongsToMany(TaxRate::class, 'price_tax_rates')
-            ->using(PriceTaxRate::class)
-            ->withPivot('is_primary')
             ->withTimestamps();
     }
 

@@ -2,10 +2,8 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Enums\Price\PriceType;
 use App\Http\Resources\Product\ProductListResource;
-use App\Http\Resources\PaymentGateway\PaymentGatewayResource;
-use App\Http\Resources\User\UserResource;
-use App\Models\Product;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderItemResource extends JsonResource
@@ -18,13 +16,19 @@ class OrderItemResource extends JsonResource
      */
     public function toArray($request)
     {
-
+        $this->setPriceType(PriceType::ONE_TIME);
         return [
             'id' => $this->id,
-            'quantity' => $this->quantity,
             'productable_id' => $this->productable_id,
             'productable_type' => $this->productable_type,
-            'entity' => ProductListResource::make($this->productable)
+            'entity' => ProductListResource::make($this->productable),
+            'total_price' => $this->calculateTotalPrice(),
+            'quantity' => $this->calculateQuantity(),
+            'tax_without_price' => $this->calculateTaxWithoutPrice(),
+            'total_price_with_tax' => $this->calculateTotalPriceWithTax(),
+            'discount' => $this->calculateDiscount(),
+            'total_price_after_discount' => $this->calculateTotalPriceAfterDiscount(),
+            'total_price_after_tax_and_discount' => $this->calculateTotalPriceAfterTaxAndDiscount(),
         ];
     }
 }

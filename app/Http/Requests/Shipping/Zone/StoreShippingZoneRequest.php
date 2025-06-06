@@ -29,12 +29,21 @@ class StoreShippingZoneRequest extends FormRequest
                 'string',
                 'max:100'
             ],
+            'description' => [
+                'nullable',
+                'string',
+                'max:500'
+            ],
             'country_ids' => [
                 'required',
                 'array'
             ],
             'country_ids.*' => ['exists:countries,id'],
             'is_active' => ['boolean'],
+            'all' => [
+                'boolean',
+                'nullable'
+            ],
         ];
     }
 }

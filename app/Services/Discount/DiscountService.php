@@ -27,6 +27,14 @@ class DiscountService extends BaseService
         return true;
     }
 
+    public function updateDefaultTaxRate(Discount $discount, array $data): void
+    {
+        if (array_key_exists('is_default', $data)  && $data['is_default']) {
+            $discount->default()->create();
+        } else if (array_key_exists('is_default', $data) && !$data['is_default']) {
+            $discount->default()->delete();
+        }
+    }
     public function relatedData(Discount $discount, array $data) {
 
         if (!empty($data['products']) && is_array($data['products'])) {
@@ -40,6 +48,7 @@ class DiscountService extends BaseService
         if (!empty($data['category_ids']) && is_array($data['category_ids'])) {
             $discount->categories()->sync($data['category_ids']);
         }
+        $this->updateDefaultTaxRate($discount, $data);
         return $discount;
     }
 

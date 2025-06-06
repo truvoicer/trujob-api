@@ -11,11 +11,14 @@ class ShippingZone extends Model
 
     protected $fillable = [
         'name',
-        'is_active'
+        'description',
+        'is_active',
+        'all',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'all' => 'boolean',
     ];
 
     public function discounts()

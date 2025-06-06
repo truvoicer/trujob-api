@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Model\Order\CalculateOrderTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Order extends Model
 {
+    use CalculateOrderTrait;
     
     public function items()
     {
@@ -35,4 +37,5 @@ class Order extends Model
         return $this->belongsToMany(Discount::class, 'discount_orders')
             ->withTimestamps();
     }
+
 }

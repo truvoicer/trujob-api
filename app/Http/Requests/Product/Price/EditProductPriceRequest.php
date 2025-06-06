@@ -24,7 +24,7 @@ class EditProductPriceRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => ['sometimes', 'integer', 'exists:users,id'],
+            'created_by_user_id' => ['sometimes', 'integer', 'exists:users,id'],
             'price_type_id' => ['sometimes', 'integer', 'exists:product_types,id'],
             'amount' => ['sometimes', 'numeric'],
             'currency_id' => ['sometimes', 'integer', 'exists:currencies,id'],
@@ -33,6 +33,10 @@ class EditProductPriceRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
             'valid_from' => ['sometimes', 'date'],
             'valid_to' => ['sometimes', 'date', 'after:valid_from'],
+            'tax_rate_ids' => ['sometimes', 'array'],
+            'tax_rate_ids.*' => ['integer', 'exists:tax_rates,id'],
+            'discount_ids' => ['sometimes', 'array'],
+            'discount_ids.*' => ['integer', 'exists:discounts,id'],
         ];
     }
 }

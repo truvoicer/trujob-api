@@ -33,6 +33,7 @@ class DiscountResource extends JsonResource
             'scope' => $this->scope,
             'code' => $this->code,
             'is_code_required' => $this->is_code_required,
+            'is_default' => $this->isDefault(),
             // 'products' => $this->whenLoaded('products', ),
             // 'category_ids' => $this->name,
             'created_at' => $this->created_at,

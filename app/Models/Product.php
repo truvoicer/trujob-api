@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Price\PriceType;
 use Database\Factories\product\ProductFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,7 +27,7 @@ class Product extends Model
         'allow_offers' => 'boolean',
         'quantity' => 'integer',
     ];
-    
+
     protected static function newFactory()
     {
         return ProductFactory::new();
@@ -114,14 +115,22 @@ class Product extends Model
     {
         return $this->morphMany(OrderItem::class, 'productable');
     }
-    
-    public function taxRates(): MorphMany
-    {
-        return $this->morphMany(PriceTaxRate::class, 'product_tax_rateable');
-    }
-    
+
     public function shippingRestrictions(): MorphMany
     {
         return $this->morphMany(ShippingRestriction::class, 'restrictionable');
+    }
+
+    public function getDefaultPrice(?PriceType $priceType): ?Price
+    {
+        if ($priceType) {
+            return $this->prices()
+                ->where('is_default', true)
+                ->whereRelation('priceType', 'name', $priceType->value)
+                ->first();
+        }
+        return $this->prices
+            ->where('is_default', true)
+            ->first();
     }
 }

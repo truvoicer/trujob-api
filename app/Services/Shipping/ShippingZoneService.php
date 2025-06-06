@@ -19,7 +19,7 @@ class ShippingZoneService extends BaseService
             throw new \Exception('Error creating shipping zone');
         }
         $shippingZone->refresh();
-        if (count($countryIds)) {
+        if (empty($data['all']) && count($countryIds)) {
             $shippingZone->countries()->sync($countryIds);
         }
         return true;
@@ -35,7 +35,7 @@ class ShippingZoneService extends BaseService
             throw new \Exception('Error updating shipping zone');
         }
         $shippingZone->refresh();
-        if (count($countryIds)) {
+        if (empty($data['all']) && count($countryIds)) {
             $shippingZone->countries()->sync($countryIds);
         }
         return true;

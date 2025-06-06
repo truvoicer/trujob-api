@@ -96,6 +96,7 @@ class UpdatePriceDiscountRequest extends FormRequest
                 'unique:discounts,code'
             ],
             'is_code_required' => ['boolean'],
+            'is_default' => ['sometimes', 'boolean']
         ];
     
     }

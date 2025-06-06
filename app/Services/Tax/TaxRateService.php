@@ -20,6 +20,8 @@ class TaxRateService extends BaseService
             throw new \Exception('Error creating tax rate');
         }
 
+        $this->updateDefaultTaxRate($taxRate, $data);
+
         return $taxRate;
     }
     public function updateTaxRate(TaxRate $taxRate, array $data)
@@ -33,7 +35,19 @@ class TaxRateService extends BaseService
         if (!$taxRate->update($data)) {
             throw new \Exception('Error updating tax rate');
         }
+
+        $this->updateDefaultTaxRate($taxRate, $data);
+
         return $taxRate;
+    }
+
+    public function updateDefaultTaxRate(TaxRate $taxRate, array $data): void
+    {
+        if (array_key_exists('is_default', $data)  && $data['is_default']) {
+            $taxRate->default()->create();
+        } else if (array_key_exists('is_default', $data) && !$data['is_default']) {
+            $taxRate->default()->delete();
+        }
     }
 
     public function deleteTaxRate(TaxRate $taxRate)
