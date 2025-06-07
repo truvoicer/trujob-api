@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Service;
+namespace App\Enums\Product\Category\Service;
 
 enum ServiceProperty: string
 {

@@ -18,16 +18,34 @@ class ShippingRateResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'shipping_method' => $this->whenLoaded('shippingMethod', ShippingMethodResource::make(
-                $this->shippingMethod
-            )),
-            'shippingZone' => $this->whenLoaded('shippingZone', ShippingZoneResource::make(
+            'shipping_method' => $this->whenLoaded(
+                'shippingMethod',
+                [
+                    'id' => $this->shippingMethod->id,
+                    'name' => $this->shippingMethod->name,
+                ]
+            ),
+            'shipping_zone' => $this->whenLoaded('shippingZone', ShippingZoneResource::make(
                 $this->shippingZone
             )),
             'rate_type' => $this->rate_type,
-            'min_value' => $this->min_value,
-            'max_value' => $this->max_value,
-            'rate_amount' => $this->rate_amount,
+            'weight_limit' => $this->weight_limit,
+            'height_limit' => $this->height_limit,
+            'width_limit' => $this->width_limit,
+            'length_limit' => $this->length_limit,
+            'weight_unit' => $this->weight_unit,
+            'height_unit' => $this->height_unit,
+            'width_unit' => $this->width_unit,
+            'length_unit' => $this->length_unit,
+            'min_weight' => $this->min_weight,
+            'max_weight' => $this->max_weight,
+            'min_height' => $this->min_height,
+            'max_height' => $this->max_height,
+            'min_length' => $this->min_length,
+            'max_length' => $this->max_length,
+            'min_width' => $this->min_width,
+            'max_width' => $this->max_width,
+            'amount' => $this->amount,
             'currency' => $this->whenLoaded('currency', CurrencyResource::make(
                 $this->currency
             )),

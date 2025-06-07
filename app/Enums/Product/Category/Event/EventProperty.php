@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Event;
+namespace App\Enums\Product\Category\Event;
 
 enum EventProperty: string
 {

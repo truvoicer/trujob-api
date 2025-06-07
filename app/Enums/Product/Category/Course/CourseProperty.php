@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Course;
+namespace App\Enums\Product\Category\Course;
 
 enum CourseProperty: string
 {

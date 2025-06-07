@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Business;
+namespace App\Enums\Product\Category\Business;
 
 enum BusinessProperty: string
 {

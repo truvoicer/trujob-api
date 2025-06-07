@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\RealEstate;
+namespace App\Enums\Product\Category\RealEstate;
 
 enum RealEstateProperty: string
 {

@@ -24,6 +24,11 @@ class ShippingMethodResource extends JsonResource
             'display_order' => $this->display_order,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'rates' => $this->whenLoaded('rates', ShippingRateResource::collection($this->rates)),
+            'restrictions' => $this->whenLoaded(
+                'restrictions', 
+                ShippingRestrictionResource::collection($this->restrictions)
+            ),
         ];
     }
 }

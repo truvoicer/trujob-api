@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\Order\Shipping\ShippingRateType;
+use App\Enums\Order\Shipping\ShippingUnit;
+use App\Enums\Order\Shipping\ShippingWeightUnit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,20 +15,48 @@ class ShippingRate extends Model
     protected $fillable = [
         'shipping_method_id',
         'shipping_zone_id',
-        'rate_type',
-        'min_value',
-        'max_value',
-        'rate_amount',
+        'type',
+        'weight_limit',
+        'height_limit',
+        'width_limit',
+        'length_limit',
+        'weight_unit',
+        'height_unit',
+        'width_unit',
+        'length_unit',
+        'min_weight',
+        'max_weight',
+        'min_height',
+        'max_height',
+        'min_width',
+        'max_width',
+        'min_length',
+        'max_length',
+        'amount',
         'currency_id',
         'is_free_shipping_possible'
     ];
 
     protected $casts = [
-        'rate_type' => ShippingRateType::class,
-        'rate_amount' => 'decimal:2',
-        'min_value' => 'decimal:2',
-        'max_value' => 'decimal:2',
+        'type' => ShippingRateType::class,
+        'amount' => 'decimal:2',
+        'min_weight' => 'decimal:2',
+        'max_weight' => 'decimal:2',
+        'min_height' => 'decimal:2',
+        'max_height' => 'decimal:2',
+        'min_width' => 'decimal:2',
+        'max_width' => 'decimal:2',
+        'min_length' => 'decimal:2',
+        'max_length' => 'decimal:2',
         'is_free_shipping_possible' => 'boolean',
+        'weight_limit' => 'boolean',
+        'height_limit' => 'boolean',
+        'width_limit' => 'boolean',
+        'length_limit' => 'boolean',
+        'weight_unit' => ShippingWeightUnit::class,
+        'height_unit' => ShippingUnit::class,
+        'width_unit' => ShippingUnit::class,
+        'length_unit' => ShippingUnit::class,
     ];
 
     public function shippingMethod()

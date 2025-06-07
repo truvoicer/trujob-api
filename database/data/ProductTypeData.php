@@ -1,65 +1,65 @@
 <?php
 
-use App\Enums\Product\ProductType;
+use App\Enums\Product\ProductCategory;
 
 return [
     [
-        'name' => ProductType::EVENT,
+        'name' => ProductCategory::EVENT,
         'label' => 'Event',
         'description' => 'Event description',
     ],
     [
-        'name' => ProductType::VEHICLE,
+        'name' => ProductCategory::VEHICLE,
         'label' => 'Vehicle',
         'description' => 'Vehicle description',
     ],
     [
-        'name' => ProductType::SERVICE,
+        'name' => ProductCategory::SERVICE,
         'label' => 'Service',
         'description' => 'Service description',
     ],
     [
-        'name' => ProductType::REAL_ESTATE,
+        'name' => ProductCategory::REAL_ESTATE,
         'label' => 'Real Estate',
         'description' => 'Real Estate description',
     ],
     [
-        'name' => ProductType::JOB,
+        'name' => ProductCategory::JOB,
         'label' => 'Job',
         'description' => 'Job description',
     ],
     [
-        'name' => ProductType::PET,
+        'name' => ProductCategory::PET,
         'label' => 'Pet',
         'description' => 'Pet description',
     ],
     [
-        'name' => ProductType::ITEM,
+        'name' => ProductCategory::ITEM,
         'label' => 'Item',
         'description' => 'Item description',
     ],
     [
-        'name' => ProductType::PROPERTY,
+        'name' => ProductCategory::PROPERTY,
         'label' => 'Property',
         'description' => 'Property description',
     ],
     [
-        'name' => ProductType::BUSINESS,
+        'name' => ProductCategory::BUSINESS,
         'label' => 'Business',
         'description' => 'Business description',
     ],
     [
-        'name' => ProductType::TICKET,
+        'name' => ProductCategory::TICKET,
         'label' => 'Ticket',
         'description' => 'Ticket description',
     ],
     [
-        'name' => ProductType::COURSE,
+        'name' => ProductCategory::COURSE,
         'label' => 'Course',
         'description' => 'Course description',
     ],
     [
-        'name' => ProductType::FOOD,
+        'name' => ProductCategory::FOOD,
         'label' => 'Food',
         'description' => 'Food description',
     ]

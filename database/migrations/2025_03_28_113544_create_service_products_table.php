@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Product\Type\Service\ServiceProperty;
+use App\Enums\Product\Category\Service\ServiceProperty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

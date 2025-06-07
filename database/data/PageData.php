@@ -3,7 +3,7 @@
 use App\Enums\Auth\ApiAbility;
 use App\Enums\Block\BlockType;
 use App\Enums\Product\ProductFetchProperty;
-use App\Enums\Product\ProductType;
+use App\Enums\Product\ProductCategory;
 use App\Enums\ViewType;
 use App\Enums\Widget\Widget;
 
@@ -42,7 +42,7 @@ return [
                 'has_sidebar' => true,
                 'properties' => [
                     'init' => [
-                        ProductFetchProperty::TYPE->value => [ProductType::EVENT->value],
+                        ProductFetchProperty::TYPE->value => [ProductCategory::EVENT->value],
                     ],
                 ],
             ],

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Item;
+namespace App\Enums\Product\Category\Item;
 
 enum ItemProperty: string
 {

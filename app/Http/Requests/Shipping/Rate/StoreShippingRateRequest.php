@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Shipping\Rate;
 
 use App\Enums\Order\Shipping\ShippingRateType;
+use App\Enums\Order\Shipping\ShippingUnit;
+use App\Enums\Order\Shipping\ShippingWeightUnit;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -37,17 +39,70 @@ class StoreShippingRateRequest extends FormRequest
             'type' => [
                 'required',
                 Rule::enum(ShippingRateType::class)
+            ], 
+            'weight_limit' => ['required', 'boolean'],
+            'height_limit' => ['required', 'boolean'],
+            'width_limit' => ['required', 'boolean'],
+            'length_limit' => ['required', 'boolean'],
+            'weight_unit' => [
+                'required_if:weight_limit,true',
+                Rule::enum(ShippingWeightUnit::class)
             ],
-            'min_amount' => [
-                'nullable',
+            'height_unit' => [
+                'required_if:height_limit,true',
+                Rule::enum(ShippingUnit::class)
+            ],
+            'width_unit' => [
+                'required_if:width_limit,true',
+                Rule::enum(ShippingUnit::class)
+            ],
+            'length_unit' => [
+                'required_if:length_limit,true',
+                Rule::enum(ShippingUnit::class)
+            ],
+            'min_weight' => [
+                'required_if:weight_limit,true',
                 'numeric',
                 'min:0'
             ],
-            'max_amount' => [
-                'nullable',
+            'max_weight' => [
+                'required_if:weight_limit,true',
                 'numeric',
                 'min:0',
-                'gt:min_amount'
+                'gte:min_weight'
+            ],
+            'min_height' => [
+                'required_if:height_limit,true',
+                'numeric',
+                'min:0'
+            ],
+            'max_height' => [
+                'required_if:height_limit,true',
+                'numeric',
+                'min:0',
+                'gte:min_height'
+            ],
+            'min_width' => [
+                'required_if:width_limit,true',
+                'numeric',
+                'min:0'
+            ],
+            'max_width' => [
+                'required_if:width_limit,true',
+                'numeric',
+                'min:0',
+                'gte:min_width'
+            ],
+            'min_length' => [
+                'required_if:length_limit,true',
+                'numeric',
+                'min:0'
+            ],
+            'max_length' => [
+                'required_if:length_limit,true',
+                'numeric',
+                'min:0',
+                'gte:min_length'
             ],
             'amount' => [
                 'required',

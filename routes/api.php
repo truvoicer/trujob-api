@@ -104,6 +104,8 @@ use App\Http\Controllers\Api\Sidebar\SidebarWidgetRoleController;
 use App\Http\Controllers\Api\Site\SiteTokenController;
 use App\Http\Controllers\Api\Site\Setting\SiteSettingController;
 use App\Http\Controllers\Api\Shipping\ShippingRateTypeController;
+use App\Http\Controllers\Api\Shipping\ShippingUnitController;
+use App\Http\Controllers\Api\Shipping\ShippingWeightUnitController;
 use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
 use App\Http\Controllers\Api\Tax\TaxRateScopeController;
@@ -441,6 +443,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
 
     Route::prefix('shipping')->name('shipping.')->group(function () {
+        Route::get('/unit', [ShippingUnitController::class, 'index'])->name('unit.index');
+        Route::get('/weight-unit', [ShippingWeightUnitController::class, 'index'])->name('weight-unit.index');
         Route::prefix('rate')->name('rate.')->group(function () {
             Route::get('/type', [ShippingRateTypeController::class, 'index'])->name('index');
         });

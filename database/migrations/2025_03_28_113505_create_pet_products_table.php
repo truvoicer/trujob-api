@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Product\Type\Pet\PetProperty;
+use App\Enums\Product\Category\Pet\PetProperty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

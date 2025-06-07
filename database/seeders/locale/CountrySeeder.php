@@ -12,7 +12,7 @@ class CountrySeeder extends Seeder
  public function run()
     {
         // Fetch country data from a reliable API
-        $response = Http::get('https://restcountries.com/v3.1/all');
+        $response = Http::get('https://restcountries.com/v3.1/all?fields=name,cca2,cca3,idd');
         $countries = $response->json();
 
         foreach ($countries as $country) {

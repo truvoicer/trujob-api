@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Pet;
+namespace App\Enums\Product\Category\Pet;
 
 enum PetProperty: string
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Food;
+namespace App\Enums\Product\Category\Food;
 
 enum FoodProperty: string
 {

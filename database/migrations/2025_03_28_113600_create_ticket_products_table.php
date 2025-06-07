@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Product\Type\Ticket\TicketProperty;
+use App\Enums\Product\Category\Ticket\TicketProperty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Job;
+namespace App\Enums\Product\Category\Job;
 
 enum JobProperty: string
 {

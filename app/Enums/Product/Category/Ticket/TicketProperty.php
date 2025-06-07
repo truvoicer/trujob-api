@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Ticket;
+namespace App\Enums\Product\Category\Ticket;
 
 enum TicketProperty: string
 {

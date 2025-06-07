@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\Product\Type\Event\EventProperty;
+use App\Enums\Product\Category\Event\EventProperty;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

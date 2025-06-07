@@ -18,7 +18,6 @@ class ShippingRestrictionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'shipping_method' => $this->whenLoaded('shippingMethod', ShippingMethodResource::make($this->shippingMethod)),
             'restrictionable_id' => $this->restrictionable_id,
             'restrictionable_type' => $this->restrictionable_type,
             'action' => $this->action, // Assuming type is an enum or string

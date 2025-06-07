@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Enums\Product\Type\Vehicle;
+namespace App\Enums\Product\Category\Vehicle;
 
 enum VehicleProperty: string
 {
