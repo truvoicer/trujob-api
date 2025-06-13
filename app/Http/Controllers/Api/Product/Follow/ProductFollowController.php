@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Product\Follow;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\StoreProductFollowRequest;
-use App\Http\Requests\Product\UpdateProductFollowRequest;
+use App\Http\Requests\Product\Follow\StoreProductFollowRequest;
+use App\Http\Requests\Product\Follow\UpdateProductFollowRequest;
 use App\Http\Resources\Product\ProductFollowResource;
 use App\Models\Product;
 use App\Models\ProductFollow;

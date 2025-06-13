@@ -23,7 +23,7 @@ class ProductPriceService extends BaseService
         $product->prices()->attach($productPrice->id);
 
         $this->updateDefaults($product, $productPrice, $data);
-        
+
         if (is_array($taxRateIds)) {
             $this->syncTaxRateIds($productPrice, $taxRateIds);
         }
@@ -59,7 +59,7 @@ class ProductPriceService extends BaseService
         }
         return true;
     }
-    
+
 
     public function updateDefaults(Product $product, Price $price, array $data)
     {
@@ -87,6 +87,16 @@ class ProductPriceService extends BaseService
         if (!$product->prices()->detach($productPrice)) {
             throw new \Exception('Error detaching product price');
         }
+        return true;
+    }
+
+    public function attachBulkPricesToProduct(Product $product, array $prices) {
+        $product->prices()->attach($prices);
+        return true;
+    }
+
+    public function detachBulkPricesFromProduct(Product $product, array $prices) {
+        $product->prices()->detach($prices);
         return true;
     }
 }

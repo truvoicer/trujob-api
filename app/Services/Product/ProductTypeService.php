@@ -8,6 +8,17 @@ use App\Services\BaseService;
 
 class ProductTypeService extends BaseService
 {
+    public function attachBulkTypesToProduct(Product $product, array $typeIds): bool
+    {
+        $product->productTypes()->attach($typeIds);
+        return true;
+    }
+
+    public function detachBulkTypesFromProduct(Product $product, array $typeIds): bool
+    {
+        $product->productTypes()->detach($typeIds);
+        return true;
+    }
 
     public function createProductType(array $data)
     {

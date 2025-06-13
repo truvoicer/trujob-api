@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Review;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\StoreProductReviewRequest;
-use App\Http\Requests\Product\UpdateProductReviewRequest;
+use App\Http\Requests\Product\Review\StoreProductReviewRequest;
+use App\Http\Requests\Product\Review\UpdateProductReviewRequest;
 use App\Http\Resources\Product\ProductReviewResource;
 use App\Models\Product;
 use App\Models\ProductReview;
@@ -44,7 +44,7 @@ class ReviewController extends Controller
         $this->productReviewRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return ProductReviewResource::collection(
             $this->productReviewRepository->findMany()
         );
@@ -80,7 +80,7 @@ class ReviewController extends Controller
     public function destroy(ProductReview $review, Request $request) {
         $this->reviewService->setUser($request->user()->user);
         $this->reviewService->setSite($request->user()->site);
-        
+
         if (!$this->reviewService->deleteproductReview($review)) {
             return response()->json([
                 'message' => 'Error deleting product review',

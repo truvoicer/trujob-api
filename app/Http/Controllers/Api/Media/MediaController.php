@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api\Media;
 
-use App\Http\Requests\Product\StoreMediaProductRequest;
+use App\Http\Requests\Product\Media\StoreMediaProductRequest;
 use App\Http\Resources\Product\MediaProductResource;
 use App\Http\Resources\Product\ProductListResource;
 use App\Models\Product;
 use App\Models\MediaProduct;
-use App\Services\Product\ProductsMediaService;
+use App\Services\Product\ProductMediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,7 +55,7 @@ class MediaController extends ProductController
      * @param StoreMediaProductRequest $request
      * @return JsonResponse
      */
-    public function updateMediaProduct(MediaProduct $productMedia, Request $request, ProductsMediaService $productsMediaService)
+    public function updateMediaProduct(MediaProduct $productMedia, Request $request, ProductMediaService $productsMediaService)
     {
         $productsMediaService->setUser($request->user());
         $productsMediaService->setMediaProduct($productMedia);
@@ -81,7 +81,7 @@ class MediaController extends ProductController
      * @param StoreMediaProductRequest $request
      * @return JsonResponse
      */
-    public function deleteMediaProduct(MediaProduct $productMedia, ProductsMediaService $productsMediaService)
+    public function deleteMediaProduct(MediaProduct $productMedia, ProductMediaService $productsMediaService)
     {
         $productsMediaService->setMediaProduct($productMedia);
         $deleteMediaProduct = $productsMediaService->deleteMediaProduct();

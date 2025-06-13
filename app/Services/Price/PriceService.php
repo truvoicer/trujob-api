@@ -43,4 +43,17 @@ class PriceService extends BaseService
         return true;
     }
 
+    public function destroyBulkPrices(array $ids): bool
+    {
+        $prices = Price::whereIn('id', $ids)->get();
+        if ($prices->isEmpty()) {
+            throw new \Exception('No prices found for the given IDs');
+        }
+        foreach ($prices as $price) {
+            if (!$this->deletePrice($price)) {
+                throw new \Exception('Error deleting price with ID: ' . $price->id);
+            }
+        }
+        return true;
+    }
 }

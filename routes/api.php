@@ -25,7 +25,6 @@ use App\Http\Controllers\Api\Product\Brand\ProductBrandController;
 use App\Http\Controllers\Api\Product\Category\ProductCategoryController;
 use App\Http\Controllers\Api\Product\Color\ProductColorController;
 use App\Http\Controllers\Api\Product\ProductController;
-use App\Http\Controllers\Api\Product\Media\ProductMediaController;
 use App\Http\Controllers\Api\Product\ProductType\ProductProductTypeController;
 use App\Http\Controllers\Api\Product\ProductPublicController;
 use App\Http\Controllers\Api\Product\UserProductController;
@@ -82,10 +81,23 @@ use App\Http\Controllers\Api\PaymentMethod\PaymentMethodController;
 use App\Http\Controllers\Api\Site\SiteController;
 use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\Price\PriceController;
-use App\Http\Controllers\Api\Price\PriceDiscountController;
-use App\Http\Controllers\Api\Price\PriceTaxRateController;
-use App\Http\Controllers\Api\Price\PriceTypeController;
+use App\Http\Controllers\Api\Price\Discount\PriceDiscountController;
+use App\Http\Controllers\Api\Price\TaxRate\PriceTaxRateController;
+use App\Http\Controllers\Api\Price\Type\PriceTypeController;
 use App\Http\Controllers\Api\Locale\RegionController;
+use App\Http\Controllers\Api\Price\BulkPriceController;
+use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
+use App\Http\Controllers\Api\Price\TaxRate\BulkPriceTaxRateController;
+use App\Http\Controllers\Api\Price\Type\BulkPriceTypeController;
+use App\Http\Controllers\Api\Product\Brand\BulkProductBrandController;
+use App\Http\Controllers\Api\Product\Category\BulkProductCategoryController;
+use App\Http\Controllers\Api\Product\Color\BulkProductColorController;
+use App\Http\Controllers\Api\Product\Feature\BulkProductFeatureController;
+use App\Http\Controllers\Api\Product\Follow\BulkProductFollowController;
+use App\Http\Controllers\Api\Product\Media\ProductMediaController;
+use App\Http\Controllers\Api\Product\Price\BulkProductPriceController;
+use App\Http\Controllers\Api\Product\Review\BulkProductReviewController;
+use App\Http\Controllers\Api\Product\Type\BulkProductTypeController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\BulkShippingMethodDiscountController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\ShippingMethodDiscountController;
@@ -111,7 +123,7 @@ use App\Http\Controllers\Api\Tax\TaxRateController;
 use App\Http\Controllers\Api\Tax\TaxRateScopeController;
 use App\Http\Controllers\Api\Tax\TaxRateTypeController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
-use App\Http\Controllers\Api\Transaction\Transaction\TransactionController;
+use App\Http\Controllers\Api\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\User\UserSellerController;
@@ -287,6 +299,36 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::patch('/{transaction}/update', [TransactionController::class, 'update'])->name('update');
         Route::delete('/{transaction}/delete', [TransactionController::class, 'destroy'])->name('delete');
     });
+    Route::prefix('price')->name('price.')->group(function () {
+        Route::prefix('{price}')->group(function () {
+            Route::prefix('tax-rate')->name('tax-rate.')->group(function () {
+                Route::get('/', [PriceTaxRateController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkPriceTaxRateController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkPriceTaxRateController::class, 'destroy'])->name('destroy');
+                });
+                Route::prefix('{taxRate}')->group(function () {
+                    Route::get('/', [PriceTaxRateController::class, 'show'])->name('show');
+                    Route::post('/store', [PriceTaxRateController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [PriceTaxRateController::class, 'destroy'])->name('destroy');
+                });
+            });
+
+            Route::prefix('discount')->name('discount')->group(function () {
+                Route::get('/', [PriceDiscountController::class, 'index'])->name('index');
+                Route::post('/store', [PriceDiscountController::class, 'store'])->name('store');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkPriceDiscountController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkPriceDiscountController::class, 'destroy'])->name('destroy');
+                });
+                Route::prefix('{discount}')->group(function () {
+                    Route::get('/', [PriceDiscountController::class, 'show'])->name('show');
+                    Route::patch('/update', [PriceDiscountController::class, 'update'])->name('update');
+                    Route::delete('/destroy', [PriceDiscountController::class, 'destroy'])->name('destroy');
+                });
+            });
+        });
+    });
     Route::prefix('product')->name('product.')->group(function () {
         Route::post('/store', [ProductController::class, 'store'])->name('store');
         Route::get('/initialize', InitialiseProductController::class)->name('initialize');
@@ -294,98 +336,83 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{product?}')->group(function () {
             Route::patch('/update', [ProductController::class, 'update'])->name('update');
             Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
-
             Route::prefix('price')->name('price.')->group(function () {
                 Route::get('/', [ProductPriceController::class, 'index'])->name('index');
                 Route::post('/store', [ProductPriceController::class, 'store'])->name('store');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkProductPriceController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductPriceController::class, 'destroy'])->name('destroy');
+                });
                 Route::prefix('{price}')->group(function () {
                     Route::get('/', [ProductPriceController::class, 'show'])->name('show');
                     Route::patch('/update', [ProductPriceController::class, 'update'])->name('update');
                     Route::delete('/delete', [ProductPriceController::class, 'destroy'])->name('delete');
-
-                    Route::prefix('tax-rate')->name('tax-rate.')->group(function () {
-                        Route::get('/', [PriceTaxRateController::class, 'index'])->name('index');
-                        Route::prefix('{taxRate}')->group(function () {
-                            Route::get('/', [PriceTaxRateController::class, 'show'])->name('show');
-                            Route::post('/store', [PriceTaxRateController::class, 'store'])->name('store');
-                            Route::delete('/destroy', [PriceTaxRateController::class, 'destroy'])->name('destroy');
-                        });
-                    });
-
-                    Route::prefix('discount')->name('discount')->group(function () {
-                        Route::get('/', [PriceDiscountController::class, 'index'])->name('index');
-                        Route::post('/store', [PriceDiscountController::class, 'store'])->name('store');
-                        Route::prefix('{discount}')->group(function () {
-                            Route::get('/', [PriceDiscountController::class, 'show'])->name('show');
-                            Route::patch('/update', [PriceDiscountController::class, 'update'])->name('update');
-                            Route::delete('/destroy', [PriceDiscountController::class, 'destroy'])->name('destroy');
-                        });
-                    });
                 });
             });
-
             Route::prefix('feature')->name('feature.')->group(function () {
                 Route::get('/', [ProductFeatureController::class, 'index'])->name('index');
-                Route::post('/{feature}/store', [ProductFeatureController::class, 'store'])->name('store');
-                Route::delete('/{feature}/delete', [ProductFeatureController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
-                    Route::delete('/store', BulkUserDeleteController::class)->name('store');
+                    Route::post('/store', [BulkProductFeatureController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductFeatureController::class, 'destroy'])->name('destroy');
+                });
+                Route::prefix('{feature}')->group(function () {
+                    Route::post('/store', [ProductFeatureController::class, 'store'])->name('store');
+                    Route::delete('/delete', [ProductFeatureController::class, 'destroy'])->name('delete');
                 });
             });
             Route::prefix('follow')->name('follow.')->group(function () {
                 Route::get('/', [ProductFollowController::class, 'index'])->name('index');
                 Route::post('/store', [ProductFollowController::class, 'store'])->name('store');
-                Route::delete('/{productFollow}/delete', [ProductFollowController::class, 'destroy'])->name('delete');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
-                    Route::delete('/store', BulkUserDeleteController::class)->name('store');
+                    Route::post('/store', [BulkProductFollowController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductFollowController::class, 'destroy'])->name('destroy');
                 });
+                Route::delete('/{productFollow}/delete', [ProductFollowController::class, 'destroy'])->name('delete');
             });
             Route::prefix('review')->name('review.')->group(function () {
                 Route::get('/', [ProductReviewController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkProductReviewController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductReviewController::class, 'destroy'])->name('destroy');
+                });
                 Route::post('/{productReview}/store', [ProductReviewController::class, 'store'])->name('store');
                 Route::delete('/{productReview}/delete', [ProductReviewController::class, 'destroy'])->name('delete');
-                Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
-                    Route::delete('/store', BulkUserDeleteController::class)->name('store');
-                });
             });
             Route::prefix('category')->name('category.')->group(function () {
                 Route::get('/', [ProductCategoryController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkProductCategoryController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductCategoryController::class, 'destroy'])->name('destroy');
+                });
                 Route::post('/{category}/store', [ProductCategoryController::class, 'store'])->name('store');
                 Route::delete('/{category}/delete', [ProductCategoryController::class, 'destroy'])->name('delete');
-                Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
-                    Route::delete('/store', BulkUserDeleteController::class)->name('store');
-                });
             });
             Route::prefix('brand')->name('brand.')->group(function () {
                 Route::get('/', [ProductBrandController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkProductBrandController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductBrandController::class, 'destroy'])->name('destroy');
+                });
                 Route::post('/{brand}/store', [ProductBrandController::class, 'store'])->name('store');
                 Route::delete('/{brand}/delete', [ProductBrandController::class, 'destroy'])->name('delete');
-                Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
-                    Route::delete('/store', BulkUserDeleteController::class)->name('store');
-                });
             });
             Route::prefix('color')->name('color.')->group(function () {
                 Route::get('/', [ProductColorController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkProductColorController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductColorController::class, 'destroy'])->name('destroy');
+                });
                 Route::post('/{color}/store', [ProductColorController::class, 'store'])->name('store');
                 Route::delete('/{color}/delete', [ProductColorController::class, 'destroy'])->name('delete');
-                Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
-                    Route::delete('/store', BulkUserDeleteController::class)->name('store');
-                });
             });
             Route::prefix('product-type')->name('product-type.')->group(function () {
                 Route::get('/', [ProductProductTypeController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkProductTypeController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductTypeController::class, 'destroy'])->name('destroy');
+                });
                 Route::post('/{productType}/store', [ProductProductTypeController::class, 'store'])->name('store');
                 Route::delete('/{productType}/delete', [ProductProductTypeController::class, 'destroy'])->name('delete');
-                Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
-                    Route::delete('/store', BulkUserDeleteController::class)->name('store');
-                });
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/store', [MessagingGroupController::class, 'storeMessageGroup'])->name('store');
@@ -403,15 +430,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
 
         Route::prefix('media')->name('media.')->group(function () {
-
+            Route::get('/', [ProductMediaController::class, 'index'])->name('index');
+            Route::post('/store', [ProductMediaController::class, 'store'])->name('store');
             Route::prefix('{productMedia?}')->name('item.')->group(function () {
-                Route::get('/fetch', [ProductMediaController::class, 'fetchMedia'])->name('fetch');
-                Route::patch('/update', [ProductMediaController::class, 'updateProductMedia'])->name('update');
-                Route::delete('/delete', [ProductMediaController::class, 'deleteProductMedia'])->name('delete');
+                Route::get('/', [ProductMediaController::class, 'show'])->name('show');
+                Route::patch('/update', [ProductMediaController::class, 'update'])->name('update');
+                Route::delete('/destroy', [ProductMediaController::class, 'destroy'])->name('destroy');
             });
-
-            Route::get('/fetch', [ProductMediaController::class, 'fetchMedia'])->name('fetch');
-            Route::post('/store', [ProductMediaController::class, 'storeProductMedia'])->name('store');
         });
     });
 
@@ -565,12 +590,20 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
     Route::prefix('price')->name('price.')->group(function () {
         Route::post('/store', [PriceController::class, 'store'])->name('store');
+
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/destroy', [BulkPriceController::class, 'destroy'])->name('destroy');
+        });
         Route::get('/{price}', [PriceController::class, 'show'])->name('show');
         Route::patch('/{price}/update', [PriceController::class, 'update'])->name('update');
         Route::delete('/{price}/delete', [PriceController::class, 'destroy'])->name('delete');
     });
     Route::prefix('price-type')->name('price-type.')->group(function () {
         Route::post('/store', [PriceTypeController::class, 'store'])->name('store');
+
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/destroy', [BulkPriceTypeController::class, 'destroy'])->name('destroy');
+        });
         Route::get('/{priceType}', [PriceTypeController::class, 'show'])->name('show');
         Route::patch('/{priceType}/update', [PriceTypeController::class, 'update'])->name('update');
         Route::delete('/{priceType}/delete', [PriceTypeController::class, 'destroy'])->name('delete');
@@ -608,7 +641,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('/user')->name('user.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::prefix('bulk')->name('bulk.')->group(function () {
-            Route::delete('/delete', BulkUserDeleteController::class)->name('delete');
+            Route::delete('/destroy', BulkUserDeleteController::class)->name('destroy');
         });
         Route::patch('/store', [UserController::class, 'store'])->name('store');
         Route::prefix('{user}')->group(function () {
@@ -701,7 +734,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/show', [PageViewController::class, 'index'])->name('view.index');
         Route::post('/store', [PageController::class, 'store'])->name('store');
         Route::prefix('bulk')->name('bulk.')->group(function () {
-            Route::delete('/delete', PageBulkDeleteController::class)->name('delete');
+            Route::delete('/destroy', PageBulkDeleteController::class)->name('destroy');
         });
         Route::prefix('{page}')->group(function () {
             Route::get('/', [PageController::class, 'show'])->name('show');
@@ -815,7 +848,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/store', [MenuController::class, 'store'])->name('store');
         Route::get('/item/type', MenuItemTypeController::class)->name('item.type');
         Route::prefix('bulk')->name('bulk.')->group(function () {
-            Route::delete('/delete', MenuBulkDeleteController::class)->name('delete');
+            Route::delete('/destroy', MenuBulkDeleteController::class)->name('destroy');
         });
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'update'])->name('update');
@@ -866,7 +899,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/', [SidebarController::class, 'index'])->name('index');
         Route::post('/store', [SidebarController::class, 'store'])->name('store');
         Route::prefix('bulk')->name('bulk.')->group(function () {
-            Route::delete('/delete', SidebarBulkDeleteController::class)->name('delete');
+            Route::delete('/destroy', SidebarBulkDeleteController::class)->name('destroy');
         });
         Route::prefix('{sidebar}')->group(function () {
             Route::get('/', [SidebarController::class, 'show'])->name('show');
@@ -908,7 +941,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/', [WidgetController::class, 'index'])->name('index');
         Route::post('/store', [WidgetController::class, 'store'])->name('store');
         Route::prefix('bulk')->name('bulk.')->group(function () {
-            Route::delete('/delete', WidgetBulkDeleteController::class)->name('delete');
+            Route::delete('/destroy', WidgetBulkDeleteController::class)->name('destroy');
         });
         Route::prefix('{widget}')->group(function () {
             Route::get('/', [WidgetController::class, 'show'])->name('show');

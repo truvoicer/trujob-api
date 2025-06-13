@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Product\Color;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\StoreProductColorRequest;
-use App\Http\Requests\Product\UpdateProductColorRequest;
+use App\Http\Requests\Product\Color\StoreProductColorRequest;
+use App\Http\Requests\Product\Color\UpdateProductColorRequest;
 use App\Http\Resources\Product\ProductColorResource;
 use App\Models\Color;
 use App\Models\Product;

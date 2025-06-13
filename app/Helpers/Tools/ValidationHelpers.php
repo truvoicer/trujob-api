@@ -44,7 +44,7 @@ class ValidationHelpers
 
             if (is_array($data[$key])) {
                 $validate = self::nestedValidation($data[$key], $ruleConfig, $depth + 1);
-                
+
                 if ($validate instanceof MessageBag) {
                     return $validate;
                 }
@@ -68,5 +68,16 @@ class ValidationHelpers
             default:
                 return [];
         }
+    }
+
+    public static function validateBulkIdExists(string $table, string $column = 'id', ?string $field = 'ids'): ValidationValidator
+    {
+        return Validator::make(
+            request()->all(),
+            [
+                $field => 'required|array|min:1',
+                "$field.*" => "required|integer|exists:$table,$column",
+            ]
+        );
     }
 }

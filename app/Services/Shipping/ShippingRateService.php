@@ -48,4 +48,15 @@ class ShippingRateService extends BaseService
         }
         return true;
     }
+
+    public function destroyBulkShippingRates(array $ids)
+    {
+        $shippingRates = ShippingRate::whereIn('id', $ids)->get();
+        foreach ($shippingRates as $shippingRate) {
+            if (!$this->deleteShippingRate($shippingRate)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

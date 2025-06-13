@@ -60,4 +60,15 @@ class ShippingZoneService extends BaseService
         $shippingZone->discounts()->sync($discountIds);
         return true;
     }
+
+    public function destroyBulkShippingZones(array $ids)
+    {
+        $shippingZones = ShippingZone::whereIn('id', $ids)->get();
+        foreach ($shippingZones as $shippingZone) {
+            if (!$this->deleteShippingZone($shippingZone)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

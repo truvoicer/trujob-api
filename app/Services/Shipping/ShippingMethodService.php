@@ -8,11 +8,12 @@ use Illuminate\Support\Str;
 
 class ShippingMethodService extends BaseService
 {
+
     public function createShippingMethod(array $data)
     {
         $rates = $data['rates'] ?? [];
         unset($data['rates']);
-        
+
         $data['name'] = Str::slug($data['carrier']);
         $shippingMethod = new ShippingMethod($data);
         if (!$shippingMethod->save()) {
@@ -61,6 +62,17 @@ class ShippingMethodService extends BaseService
             } else {
                 $rate['shipping_method_id'] = $shippingMethod->id;
                 $shippingMethod->rates()->create($rate);
+            }
+        }
+        return true;
+    }
+
+    public function destroyBulkShippingMethods(array $ids)
+    {
+        $shippingMethods = ShippingMethod::whereIn('id', $ids)->get();
+        foreach ($shippingMethods as $shippingMethod) {
+            if (!$shippingMethod->delete()) {
+                throw new \Exception("Error deleting shipping method with ID: {$shippingMethod->id}");
             }
         }
         return true;

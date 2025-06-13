@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Transaction\Transaction;
+namespace App\Http\Controllers\Api\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Transaction\StoreTransactionRequest;
@@ -53,7 +53,7 @@ class TransactionController extends Controller
     public function show(Transaction $transaction, Request $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
-        
+
         return new TransactionResource($transaction);
     }
 
@@ -71,7 +71,7 @@ class TransactionController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    
+
     public function update(Transaction $transaction, UpdateTransactionRequest $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
@@ -85,11 +85,11 @@ class TransactionController extends Controller
             'message' => 'Transaction updated',
         ], Response::HTTP_OK);
     }
-    
+
     public function destroy(Transaction $transaction, Request $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
-        
+
         if (!$this->transactionService->deleteTransaction($transaction)) {
             return response()->json([
                 'message' => 'Error deleting transaction',

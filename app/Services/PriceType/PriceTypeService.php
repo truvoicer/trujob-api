@@ -2,6 +2,7 @@
 namespace App\Services\PriceType;
 
 use App\Enums\Price\PriceType as PricePriceType;
+use App\Models\Price;
 use App\Models\PriceType;
 use App\Services\BaseService;
 
@@ -13,6 +14,18 @@ class PriceTypeService extends BaseService
     //     $finalPriceType = $discountedPriceType + ($discountedPriceType * ($this->tax / 100));
     //     return round($finalPriceType, 2);
     // }
+
+    public function attachBulkTypesToPrice(Price $price, array $types): bool
+    {
+        $result = $price->types()->createMany($types);
+        return true;
+    }
+
+    public function detachBulkTypesFromPrice(Price $price, array $typeIds): bool
+    {
+        $result = $price->types()->whereIn('id', $typeIds)->delete();
+        return true;
+    }
 
     public function createPriceType(array $data): bool
     {
@@ -59,6 +72,20 @@ class PriceTypeService extends BaseService
                 $atts
             );
         }
+    }
+
+    public function destroyBulkPriceTypes(array $ids): bool
+    {
+        $priceTypes = PriceType::whereIn('id', $ids)->get();
+        if ($priceTypes->isEmpty()) {
+            throw new \Exception('No price types found for the given IDs');
+        }
+        foreach ($priceTypes as $priceType) {
+            if (!$priceType->delete()) {
+                throw new \Exception('Error deleting price type with ID: ' . $priceType->id);
+            }
+        }
+        return true;
     }
 
 }

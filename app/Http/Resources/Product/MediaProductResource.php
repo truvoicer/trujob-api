@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
-use App\Services\Product\ProductsMediaService;
+use App\Services\Product\ProductMediaService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MediaProductResource extends JsonResource
@@ -16,7 +16,7 @@ class MediaProductResource extends JsonResource
     public function toArray($request)
     {
         $data = parent::toArray($request);
-        $data['uri'] = ProductsMediaService::getMediaProductUploadUrl($this->resource);
+        $data['uri'] = ProductMediaService::getMediaProductUploadUrl($this->resource);
         return $data;
     }
 }

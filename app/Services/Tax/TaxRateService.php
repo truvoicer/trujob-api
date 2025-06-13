@@ -57,4 +57,15 @@ class TaxRateService extends BaseService
         }
         return true;
     }
+
+    public function destroyBulkTaxRates(array $ids): bool
+    {
+        $taxRates = TaxRate::whereIn('id', $ids)->get();
+        foreach ($taxRates as $taxRate) {
+            if (!$this->deleteTaxRate($taxRate)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

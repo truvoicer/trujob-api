@@ -9,6 +9,10 @@ use App\Services\FetchService;
 
 class ProductBrandService extends BaseService
 {
+    public function attachBulkBrandsToProduct(Product $product, array $brands) {
+        $product->brands()->attach($brands);
+        return true;
+    }
 
     public function attachBrandToProduct(Product $product, Brand $brand) {
         $product->brands()->attach($brand->id);
@@ -21,6 +25,11 @@ class ProductBrandService extends BaseService
             throw new \Exception('Product brand not found');
         }
         return $productBrand->delete();
+    }
+
+    public function detachBulkBrandsFromProduct(Product $product, array $brands) {
+        $product->brands()->detach($brands);
+        return true;
     }
 
 }

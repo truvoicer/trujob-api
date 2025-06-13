@@ -8,6 +8,10 @@ use App\Services\BaseService;
 
 class ProductColorService extends BaseService
 {
+    public function attachBulkColorsToProduct(Product $product, array $colors) {
+        $product->colors()->attach($colors);
+        return true;
+    }
 
     public function attachColorToProduct(Product $product, Color $color) {
         $product->colors()->attach($color->id);
@@ -20,5 +24,10 @@ class ProductColorService extends BaseService
             throw new \Exception('Product color not found');
         }
         return $productColor->delete();
+    }
+
+    public function detachBulkColorsFromProduct(Product $product, array $colors) {
+        $product->colors()->detach($colors);
+        return true;
     }
 }

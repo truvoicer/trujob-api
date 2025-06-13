@@ -6,7 +6,7 @@ use App\Factories\Product\ProductFactory;
 use App\Helpers\ProductHelpers;
 use App\Models\Order;
 use App\Services\BaseService;
-use App\Services\Product\ProductsAdminService;
+use App\Services\Product\ProductAdminService;
 
 class OrderService extends BaseService
 {

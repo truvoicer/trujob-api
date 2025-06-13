@@ -9,6 +9,10 @@ use App\Services\BaseService;
 class ProductFeatureService extends BaseService
 {
 
+    public function attachBulkFeaturesToProduct(Product $product, array $features) {
+        $product->features()->attach($features);
+        return true;
+    }
     public function attachFeatureToProduct(Product $product, Feature $feature) {
         $product->features()->attach($feature->id);
         return true;
@@ -20,6 +24,11 @@ class ProductFeatureService extends BaseService
             throw new \Exception('Product feature not found');
         }
         return $productFeature->delete();
+    }
+
+    public function detachBulkFeaturesFromProduct(Product $product, array $features) {
+        $product->features()->detach($features);
+        return true;
     }
 
 }

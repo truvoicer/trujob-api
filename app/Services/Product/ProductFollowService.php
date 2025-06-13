@@ -40,4 +40,16 @@ class ProductFollowService extends BaseService
         return true;
     }
 
+    public function detachBulkFollowsFromProduct(Product $product, array $userIds) {
+        foreach ($userIds as $userId) {
+            $productFollow = $product->productFollow()->where('user_id', $userId)->first();
+            if (!$productFollow) {
+                throw new \Exception('Product follow not found for user id: ' . $userId);
+            }
+            if (!$productFollow->delete()) {
+                throw new \Exception('Error deleting product follow for user id: ' . $userId);
+            }
+        }
+        return true;
+    }
 }

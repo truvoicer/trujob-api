@@ -28,4 +28,15 @@ class ShippingRestrictionService extends BaseService
             ShippingRestrictionType::fromClassName($shippingRestriction->restrictionable_type)
         )->deleteShippingRestriction($shippingRestriction);
     }
+
+    public function destroyBulkShippingRestrictions(array $ids): bool
+    {
+        $shippingRestrictions = ShippingRestriction::whereIn('id', $ids)->get();
+        foreach ($shippingRestrictions as $shippingRestriction) {
+            if (!$this->deleteShippingRestriction($shippingRestriction)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

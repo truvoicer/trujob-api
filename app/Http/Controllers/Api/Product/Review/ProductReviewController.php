@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Product\Review;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\StoreProductReviewRequest;
-use App\Http\Requests\Product\UpdateProductReviewRequest;
+use App\Http\Requests\Product\Review\StoreProductReviewRequest;
+use App\Http\Requests\Product\Review\UpdateProductReviewRequest;
 use App\Http\Resources\Product\ProductReviewResource;
 use App\Models\Product;
 use App\Models\ProductReview;
@@ -65,7 +65,7 @@ class ProductReviewController extends Controller
             'message' => 'Product review created',
         ], Response::HTTP_CREATED);
     }
-    
+
     public function update(Product $product, ProductReview $productReview, UpdateProductReviewRequest $request) {
         $this->productReviewService->setUser($request->user()->user);
         $this->productReviewService->setSite($request->user()->site);

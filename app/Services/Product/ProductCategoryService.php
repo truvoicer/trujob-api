@@ -8,6 +8,10 @@ use App\Services\BaseService;
 
 class ProductCategoryService extends BaseService
 {
+    public function attachBulkCategoriesToProduct(Product $product, array $categories) {
+        $product->categories()->attach($categories);
+        return true;
+    }
 
     public function attachCategoryToProduct(Product $product, Category $category) {
         $product->categories()->attach($category->id);
@@ -20,6 +24,10 @@ class ProductCategoryService extends BaseService
             throw new \Exception('Product category not found');
         }
         return $productCategory->delete();
+    }
+    public function detachBulkCategoriesFromProduct(Product $product, array $categories) {
+        $product->categories()->detach($categories);
+        return true;
     }
 
 }

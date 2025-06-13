@@ -15,6 +15,17 @@ class PriceTaxRateService extends BaseService
     //     return round($finalPriceTaxRate, 2);
     // }
 
+    public function attachBulkTaxRatesToPrice(Price $price, array $taxRateIds): bool
+    {
+        $result = $price->taxRates()->syncWithoutDetaching($taxRateIds);
+        return true;
+    }
+    public function detachBulkTaxRatesFromPrice(Price $price, array $taxRateIds): bool
+    {
+        $result = $price->taxRates()->detach($taxRateIds);
+        return true;
+    }
+
     public function createPriceTaxRate(Price $price, array $taxRateIds): array
     {
         return $price->taxRates()->sync($taxRateIds);
