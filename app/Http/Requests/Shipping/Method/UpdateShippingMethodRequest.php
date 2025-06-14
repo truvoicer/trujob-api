@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Shipping\Method;
 
+use App\Enums\Order\Shipping\ShippingRateType;
 use App\Enums\Order\Shipping\ShippingUnit;
 use App\Enums\Order\Shipping\ShippingWeightUnit;
 use Illuminate\Foundation\Http\FormRequest;
@@ -48,7 +49,8 @@ class UpdateShippingMethodRequest extends FormRequest
             'is_active' => ['boolean'],
             'rates' => [
                 'array',
-                'nullable'
+                'nullable',
+                Rule::enum(ShippingRateType::class)
             ],
             'rates.*.shipping_zone_id' => [
                 'required',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Shipping\Method;
 
+use App\Enums\Order\Shipping\ShippingRateType;
 use App\Enums\Order\Shipping\ShippingUnit;
 use App\Enums\Order\Shipping\ShippingWeightUnit;
 use Illuminate\Foundation\Http\FormRequest;
@@ -57,22 +58,22 @@ class StoreShippingMethodRequest extends FormRequest
             'rates.*.type' => [
                 'required',
                 'string',
-                'in:flat_rate,free_shipping'
+                Rule::enum(ShippingRateType::class)
             ],
             'rates.*.weight_limit' => [
-                'required',
+                'sometimes',
                 'boolean'
             ],
             'rates.*.height_limit' => [
-                'required',
+                'sometimes',
                 'boolean'
             ],
             'rates.*.width_limit' => [
-                'required',
+                'sometimes',
                 'boolean'
             ],
             'rates.*.length_limit' => [
-                'required',
+                'sometimes',
                 'boolean'
             ],
             'rates.*.weight_unit' => [
