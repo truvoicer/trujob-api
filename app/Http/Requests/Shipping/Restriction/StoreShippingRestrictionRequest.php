@@ -27,11 +27,6 @@ class StoreShippingRestrictionRequest extends FormRequest
     public function rules()
     {
         return [
-            'shipping_method_id' => [
-                'required',
-                'integer',
-                'exists:shipping_methods,id'
-            ],
             'type' => [
                 'required',
                 Rule::enum(ShippingRestrictionType::class)

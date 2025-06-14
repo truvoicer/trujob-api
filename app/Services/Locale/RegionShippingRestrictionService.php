@@ -5,6 +5,7 @@ namespace App\Services\Locale;
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Http\Resources\Region\RegionResource;
 use App\Models\Region;
+use App\Models\ShippingMethod;
 use App\Repositories\RegionRepository;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,12 +21,12 @@ class RegionShippingRestrictionService implements ShippingRestriction
         request()->validate(['restriction_id' => 'exists:regions,id']);
         return true;
     }
-    public function storeShippingRestriction(array $data): ModelsShippingRestriction
+    public function storeShippingRestriction(ShippingMethod $shippingMethod, array $data): ModelsShippingRestriction
     {
         $data['restrictionable_type'] = Region::class;
         $data['restrictionable_id'] = $data['restriction_id'];
         $shippingRestriction = new ModelsShippingRestriction($data);
-        if (!$shippingRestriction->save()) {
+        if (!$shippingMethod->restrictions()->save($shippingRestriction)) {
             throw new \Exception('Error creating shipping restriction');
         }
         return $shippingRestriction;

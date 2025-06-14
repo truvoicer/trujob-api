@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Shipping;
+namespace App\Http\Controllers\Api\Shipping\Method\Restriction;
 
 use App\Enums\Order\Shipping\ShippingRestrictionType;
 use App\Factories\Shipping\ShippingRestrictionFactory;
@@ -9,13 +9,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Shipping\Restriction\StoreShippingRestrictionRequest;
 use App\Http\Requests\Shipping\Restriction\UpdateShippingRestrictionRequest;
 use App\Http\Resources\Shipping\ShippingRestrictionResource;
+use App\Models\ShippingMethod;
 use App\Models\ShippingRestriction;
 use App\Repositories\ShippingRestrictionRepository;
 use App\Services\Shipping\ShippingRestrictionService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ShippingRestrictionController extends Controller
+class ShippingMethodRestrictionController extends Controller
 {
 
     public function __construct(
@@ -23,8 +24,11 @@ class ShippingRestrictionController extends Controller
         private ShippingRestrictionRepository $shippingRestrictionRepository,
     ) {}
 
-    public function index(Request $request)
+    public function index(ShippingMethod $shippingMethod, Request $request)
     {
+        $this->shippingRestrictionRepository->setQuery(
+            $shippingMethod->restrictions()
+        );
         $this->shippingRestrictionRepository->setPagination(true);
         $this->shippingRestrictionRepository->setOrderByColumn(
             $request->get('sort', 'created_at')
@@ -48,17 +52,21 @@ class ShippingRestrictionController extends Controller
         );
     }
 
-    public function show(ShippingRestriction $shippingRestriction, Request $request)
+    public function show(ShippingMethod $shippingMethod, ShippingRestriction $shippingRestriction, Request $request)
     {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
-
+        if (!$shippingRestriction->shippingMethod->is($shippingMethod)) {
+            return response()->json([
+                'message' => 'Shipping restriction does not belong to this shipping method',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
         return new ShippingRestrictionResource(
             $shippingRestriction
         );
     }
 
-    public function store(StoreShippingRestrictionRequest $request)
+    public function store(ShippingMethod $shippingMethod, StoreShippingRestrictionRequest $request)
     {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
@@ -73,7 +81,7 @@ class ShippingRestrictionController extends Controller
                 'message' => 'Invalid restriction type or ID',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        if (!$this->shippingRestrictionService->createShippingRestriction($data)) {
+        if (!$this->shippingRestrictionService->createShippingRestriction($shippingMethod,$data)) {
             return response()->json([
                 'message' => 'Error creating shipping restriction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -83,11 +91,16 @@ class ShippingRestrictionController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function update(ShippingRestriction $shippingRestriction, UpdateShippingRestrictionRequest $request)
+    public function update(ShippingMethod $shippingMethod, ShippingRestriction $shippingRestriction, UpdateShippingRestrictionRequest $request)
     {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
 
+        if (!$shippingRestriction->shippingMethod->is($shippingMethod)) {
+            return response()->json([
+                'message' => 'Shipping restriction does not belong to this shipping method',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
         $data = $request->validated();
 
         if ($request->validated('restrictionable_type') && $request->validated('restrictionable_id')) {
@@ -110,10 +123,16 @@ class ShippingRestrictionController extends Controller
             'message' => 'Shipping restriction updated',
         ], Response::HTTP_OK);
     }
-    public function destroy(ShippingRestriction $shippingRestriction, Request $request)
+    public function destroy(ShippingMethod $shippingMethod, ShippingRestriction $shippingRestriction, Request $request)
     {
         $this->shippingRestrictionService->setUser($request->user()->user);
         $this->shippingRestrictionService->setSite($request->user()->site);
+
+        if (!$shippingRestriction->shippingMethod->is($shippingMethod)) {
+            return response()->json([
+                'message' => 'Shipping restriction does not belong to this shipping method',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         if (!$this->shippingRestrictionService->deleteShippingRestriction($shippingRestriction)) {
             return response()->json([

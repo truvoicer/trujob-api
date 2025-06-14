@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Shipping;
+namespace App\Http\Controllers\Api\Shipping\Method\Rate;
 
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Controllers\Controller;
@@ -9,7 +9,7 @@ use App\Services\Shipping\ShippingRateService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class BulkShippingRateController extends Controller
+class BulkShippingMethodRateController extends Controller
 {
 
     public function __construct(

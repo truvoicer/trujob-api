@@ -28,10 +28,6 @@ class StoreShippingRateRequest extends FormRequest
     public function rules()
     {
         return [
-            'shipping_method_id' => [
-                'required',
-                'exists:shipping_methods,id'
-            ],
             'shipping_zone_id' => [
                 'required',
                 'exists:shipping_zones,id'
@@ -39,11 +35,11 @@ class StoreShippingRateRequest extends FormRequest
             'type' => [
                 'required',
                 Rule::enum(ShippingRateType::class)
-            ], 
-            'weight_limit' => ['required', 'boolean'],
-            'height_limit' => ['required', 'boolean'],
-            'width_limit' => ['required', 'boolean'],
-            'length_limit' => ['required', 'boolean'],
+            ],
+            'weight_limit' => ['sometimes', 'boolean'],
+            'height_limit' => ['sometimes', 'boolean'],
+            'width_limit' => ['sometimes', 'boolean'],
+            'length_limit' => ['sometimes', 'boolean'],
             'weight_unit' => [
                 'required_if:weight_limit,true',
                 Rule::enum(ShippingWeightUnit::class)

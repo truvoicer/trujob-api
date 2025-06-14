@@ -28,10 +28,6 @@ class UpdateShippingRateRequest extends FormRequest
     public function rules()
     {
         return [
-            'shipping_method_id' => [
-                'sometimes',
-                'exists:shipping_methods,id'
-            ],
             'shipping_zone_id' => [
                 'sometimes',
                 'exists:shipping_zones,id'

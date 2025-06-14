@@ -101,10 +101,12 @@ use App\Http\Controllers\Api\Product\Type\BulkProductTypeController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\BulkShippingMethodDiscountController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\ShippingMethodDiscountController;
+use App\Http\Controllers\Api\Shipping\Method\Rate\ShippingMethodRateController;
+use App\Http\Controllers\Api\Shipping\Method\Restriction\ShippingMethodRestrictionController;
+use App\Http\Controllers\Api\Shipping\Method\Restriction\ShippingRestrictionActionController;
+use App\Http\Controllers\Api\Shipping\Method\Restriction\ShippingRestrictionTypeController;
 use App\Http\Controllers\Api\Shipping\Zone\Country\BulkShippingZoneCountryController;
 use App\Http\Controllers\Api\Shipping\Method\ShippingMethodController;
-use App\Http\Controllers\Api\Shipping\ShippingRateController;
-use App\Http\Controllers\Api\Shipping\ShippingRestrictionController;
 use App\Http\Controllers\Api\Shipping\Zone\ShippingZoneController;
 use App\Http\Controllers\Api\Shipping\Zone\Country\ShippingZoneCountryController;
 use App\Http\Controllers\Api\Shipping\Zone\Discount\BulkShippingZoneDiscountController;
@@ -471,7 +473,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/unit', [ShippingUnitController::class, 'index'])->name('unit.index');
         Route::get('/weight-unit', [ShippingWeightUnitController::class, 'index'])->name('weight-unit.index');
         Route::prefix('rate')->name('rate.')->group(function () {
-            Route::get('/type', [ShippingRateTypeController::class, 'index'])->name('index');
+            Route::get('/type', [ShippingRateTypeController::class, 'index'])->name('type.index');
+        });
+        Route::prefix('restriction')->name('restriction.')->group(function () {
+            Route::get('/action', [ShippingRestrictionActionController::class, 'index'])->name('action.index');
+            Route::get('/type', [ShippingRestrictionTypeController::class, 'index'])->name('type.index');
+
         });
         Route::prefix('method')->name('method.')->group(function () {
             Route::get('/', [ShippingMethodController::class, 'index'])->name('index');
@@ -492,21 +499,21 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
 
                 Route::prefix('rate')->name('rate.')->group(function () {
-                    Route::get('/', [ShippingRateController::class, 'index'])->name('index');
-                    Route::post('/store', [ShippingRateController::class, 'store'])->name('store');
+                    Route::get('/', [ShippingMethodRateController::class, 'index'])->name('index');
+                    Route::post('/store', [ShippingMethodRateController::class, 'store'])->name('store');
                     Route::prefix('{shippingRate}')->group(function () {
-                        Route::get('/', [ShippingRateController::class, 'show'])->name('show');
-                        Route::patch('/update', [ShippingRateController::class, 'update'])->name('update');
-                        Route::delete('/destroy', [ShippingRateController::class, 'destroy'])->name('destroy');
+                        Route::get('/', [ShippingMethodRateController::class, 'show'])->name('show');
+                        Route::patch('/update', [ShippingMethodRateController::class, 'update'])->name('update');
+                        Route::delete('/destroy', [ShippingMethodRateController::class, 'destroy'])->name('destroy');
                     });
                 });
                 Route::prefix('restriction')->name('restriction.')->group(function () {
-                    Route::get('/', [ShippingRestrictionController::class, 'index'])->name('index');
-                    Route::post('/store', [ShippingRestrictionController::class, 'store'])->name('store');
+                    Route::get('/', [ShippingMethodRestrictionController::class, 'index'])->name('index');
+                    Route::post('/store', [ShippingMethodRestrictionController::class, 'store'])->name('store');
                     Route::prefix('{shippingRestriction}')->group(function () {
-                        Route::get('/', [ShippingRestrictionController::class, 'show'])->name('show');
-                        Route::patch('/update', [ShippingRestrictionController::class, 'update'])->name('update');
-                        Route::delete('/destroy', [ShippingRestrictionController::class, 'destroy'])->name('destroy');
+                        Route::get('/', [ShippingMethodRestrictionController::class, 'show'])->name('show');
+                        Route::patch('/update', [ShippingMethodRestrictionController::class, 'update'])->name('update');
+                        Route::delete('/destroy', [ShippingMethodRestrictionController::class, 'destroy'])->name('destroy');
                     });
                 });
             });

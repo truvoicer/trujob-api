@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Shipping;
+namespace App\Http\Controllers\Api\Shipping\Method\Restriction;
 
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Controllers\Controller;
@@ -9,7 +9,7 @@ use App\Services\Shipping\ShippingRestrictionService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class BulkShippingRestrictionController extends Controller
+class BulkShippingMethodRestrictionController extends Controller
 {
 
     public function __construct(

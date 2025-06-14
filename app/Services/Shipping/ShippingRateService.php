@@ -2,12 +2,14 @@
 
 namespace App\Services\Shipping;
 
+use App\Models\ShippingMethod;
 use App\Models\ShippingRate;
 use App\Services\BaseService;
 
 class ShippingRateService extends BaseService
 {
-    public function createShippingRate(array $data)
+
+    public function createShippingRate(ShippingMethod $shippingMethod, array $data)
     {
         $countryIds = [];
         if (isset($data['country_ids']) && is_array($data['country_ids'])) {
@@ -15,7 +17,7 @@ class ShippingRateService extends BaseService
             unset($data['country_ids']);
         }
         $shippingRate = new ShippingRate($data);
-        if (!$shippingRate->save()) {
+        if (!$shippingMethod->rates()->save($shippingRate)) {
             throw new \Exception('Error creating shipping rate');
         }
         $shippingRate->refresh();

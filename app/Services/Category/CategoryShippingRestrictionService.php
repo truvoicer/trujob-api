@@ -5,6 +5,7 @@ namespace App\Services\Category;
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Http\Resources\Product\CategoryResource;
 use App\Models\Category;
+use App\Models\ShippingMethod;
 use App\Repositories\CategoryRepository;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,12 +20,12 @@ class CategoryShippingRestrictionService implements ShippingRestriction
         request()->validate(['restriction_id' => 'exists:categories,id']);
         return true;
     }
-    public function storeShippingRestriction(array $data): ModelsShippingRestriction
+    public function storeShippingRestriction(ShippingMethod $shippingMethod, array $data): ModelsShippingRestriction
     {
         $data['restrictionable_type'] = Category::class;
         $data['restrictionable_id'] = $data['restriction_id'];
         $shippingRestriction = new ModelsShippingRestriction($data);
-        if (!$shippingRestriction->save()) {
+        if (!$shippingMethod->restrictions()->save($shippingRestriction)) {
             throw new \Exception('Error creating shipping restriction');
         }
         return $shippingRestriction;
