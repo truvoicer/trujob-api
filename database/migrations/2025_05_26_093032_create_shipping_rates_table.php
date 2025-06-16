@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum(
                 'weight_unit',
                 array_map(fn(ShippingWeightUnit $unit) => $unit->value, ShippingWeightUnit::cases())
-            );
+            )->default(ShippingWeightUnit::KG->value);
             $table->decimal('min_weight', 10, 2)->nullable()->default(0);
             $table->decimal('max_weight', 10, 2)->nullable()->default(0);
 
@@ -32,7 +32,7 @@ return new class extends Migration
             $table->enum(
                 'height_unit',
                 array_map(fn(ShippingUnit $unit) => $unit->value, ShippingUnit::cases())
-            );
+            )->default(ShippingUnit::CM->value);
             $table->decimal('min_height', 10, 2)->nullable()->default(0);
             $table->decimal('max_height', 10, 2)->nullable()->default(0);
 
@@ -40,7 +40,7 @@ return new class extends Migration
             $table->enum(
                 'width_unit',
                 array_map(fn(ShippingUnit $unit) => $unit->value, ShippingUnit::cases())
-            );
+            )->default(ShippingUnit::CM->value);
             $table->decimal('min_width', 10, 2)->nullable()->default(0);
             $table->decimal('max_width', 10, 2)->nullable()->default(0);
 
@@ -48,7 +48,7 @@ return new class extends Migration
             $table->enum(
                 'length_unit',
                 array_map(fn(ShippingUnit $unit) => $unit->value, ShippingUnit::cases())
-            );
+            )->default(ShippingUnit::CM->value);
             $table->decimal('min_length', 10, 2)->nullable()->default(0);
             $table->decimal('max_length', 10, 2)->nullable()->default(0);
 

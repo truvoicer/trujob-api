@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SiteStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Laravel\Sanctum\HasApiTokens;
 
 class SiteUser extends Model
@@ -20,6 +21,11 @@ class SiteUser extends Model
         'status' => SiteStatus::class,
     ];
 
+    public function siteUserable(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
     public function site()
     {
         return $this->belongsTo(Site::class);
@@ -34,5 +40,5 @@ class SiteUser extends Model
     {
         return $this->belongsToMany(Role::class, 'role_site_user');
     }
-    
+
 }

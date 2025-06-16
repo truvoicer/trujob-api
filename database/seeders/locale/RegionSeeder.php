@@ -13,6 +13,9 @@ class RegionSeeder extends Seeder
 {
     public function run()
     {
+        // Increase memory limit for this seeder
+        ini_set('memory_limit', '512M'); // Or '1024M', '-1' for unlimited (use with caution!)
+
         $this->command->info('Starting region seeding process...');
         $path = storage_path('app/private/database/regions.sql');
         $lines = file($path);
@@ -40,6 +43,10 @@ class RegionSeeder extends Seeder
             // Try API first
             $this->fetchRegionsFromGeoNames($country);
         }
+
+        // It's good practice to reset the memory limit if you have subsequent seeders
+        // that don't require this high limit, though it will be reset after the script finishes.
+        ini_restore('memory_limit'); // Restores to the value from php.ini
 
         $this->command->info("\nRegion seeding completed!");
     }

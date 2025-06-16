@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class Site extends Model
 {
     use HasApiTokens, HasFactory;
-    
+
     protected $fillable = [
         'name',
         'label',
@@ -72,9 +73,14 @@ class Site extends Model
     {
         return $this->hasMany(Widget::class);
     }
-    
+
     public function settings()
     {
         return $this->hasMany(SiteSetting::class);
+    }
+
+    public function siteUsers(): MorphMany
+    {
+        return $this->morphMany(SiteUser::class, 'siteUserable');
     }
 }

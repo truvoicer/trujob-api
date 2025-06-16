@@ -3,6 +3,7 @@
 namespace App\Services\Product;
 
 use App\Contracts\Shipping\ShippingRestriction;
+use App\Enums\MorphEntity;
 use App\Http\Resources\Product\ProductListResource;
 use App\Models\Product;
 use App\Models\ShippingMethod;
@@ -22,7 +23,7 @@ class ProductShippingRestrictionService implements ShippingRestriction
     }
     public function storeShippingRestriction(ShippingMethod $shippingMethod, array $data): ModelsShippingRestriction
     {
-        $data['restrictionable_type'] = Product::class;
+        $data['restrictionable_type'] = MorphEntity::PRODUCT;
         $data['restrictionable_id'] = $data['restriction_id'];
         $shippingRestriction = new ModelsShippingRestriction($data);
         if (!$shippingMethod->restrictions()->save($shippingRestriction)) {
