@@ -5,6 +5,9 @@ namespace App\Http\Requests\Shipping\Method;
 use App\Enums\Order\Shipping\ShippingRateType;
 use App\Enums\Order\Shipping\ShippingUnit;
 use App\Enums\Order\Shipping\ShippingWeightUnit;
+use App\Helpers\Tools\ValidationHelpers;
+use App\Http\Requests\Shipping\Rate\StoreShippingRateRequest;
+use App\Http\Requests\Shipping\Restriction\StoreShippingRestrictionRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,6 +30,15 @@ class UpdateShippingMethodRequest extends FormRequest
      */
     public function rules()
     {
+
+        $restrictionRules = ValidationHelpers::nestedValidationRules(
+            (new StoreShippingRestrictionRequest())->rules(),
+            'restrictions.*'
+        );
+        $ratesRules = ValidationHelpers::nestedValidationRules(
+            (new StoreShippingRateRequest())->rules(),
+            'rates.*'
+        );
         return [
             'carrier' => [
                 'nullable',
@@ -156,6 +168,16 @@ class UpdateShippingMethodRequest extends FormRequest
             'rates.*.is_active' => [
                 'boolean'
             ],
+            'rates' => [
+                'sometimes',
+                'array',
+            ],
+            ...$ratesRules,
+            'restrictions' => [
+                'sometimes',
+                'array',
+            ],
+            ...$restrictionRules
         ];
     }
 }

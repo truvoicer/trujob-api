@@ -109,7 +109,8 @@ class StoreShippingRateRequest extends FormRequest
                 'required',
                 'exists:currencies,id'
             ],
-            'is_free_shipping_possible' => ['boolean'],
+            'is_free_shipping_possible' => ['sometimes', 'boolean'],
+            'is_active' => ['sometimes', 'boolean'],
         ];
     }
 }
