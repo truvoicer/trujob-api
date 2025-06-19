@@ -34,6 +34,7 @@ class PaymentGatewayService extends BaseService
         foreach (PaymentPaymentGateway::cases() as $gateway) {
             $paymentGateway = new PaymentGateway([
                 'name' => $gateway->value,
+                'label' => $gateway->label(),
             ]);
             if (!$paymentGateway->save()) {
                 throw new \Exception('Error seeding paymentGateway');

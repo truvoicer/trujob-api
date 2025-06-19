@@ -21,7 +21,7 @@ class ShippingMethodService extends BaseService
         $restrictions = $data['restrictions'] ?? null;
         unset($data['restrictions']);
 
-        $data['name'] = Str::slug($data['carrier']);
+        $data['name'] = Str::slug($data['name']);
         $shippingMethod = new ShippingMethod($data);
         if (!$shippingMethod->save()) {
             throw new \Exception('Error creating shipping method');
@@ -38,8 +38,8 @@ class ShippingMethodService extends BaseService
         unset($data['rates']);
         $restrictions = $data['restrictions'] ?? null;
         unset($data['restrictions']);
-        if (!empty($data['carrier'])) {
-            $data['name'] = Str::slug($data['carrier']);
+        if (!empty($data['name'])) {
+            $data['name'] = Str::slug($data['name']);
         }
         if (!$shippingMethod->update($data)) {
             throw new \Exception('Error updating shipping method');

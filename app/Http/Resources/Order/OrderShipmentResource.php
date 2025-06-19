@@ -21,7 +21,6 @@ class OrderShipmentResource extends JsonResource
                 return ProductListResource::make($this->shippingMethod);
             }),
             'tracking_number' => $this->tracking_number,
-            'carrier' => $this->carrier,
             'weight' => $this->weight,
             'dimensions' => $this->dimensions,
             'notes' => $this->notes,

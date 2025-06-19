@@ -13,7 +13,6 @@ class OrderShipment extends Model
         'order_id',
         'shipping_method_id',
         'tracking_number',
-        'carrier',
         'status',
         'shipping_cost',
         'estimated_delivery_date',
@@ -42,12 +41,11 @@ class OrderShipment extends Model
         return $this->belongsTo(ShippingMethod::class, 'shipping_method_id');
     }
 
-    public function markAsShipped(string $trackingNumber = null, string $carrier = null)
+    public function markAsShipped(string $trackingNumber = null)
     {
         $this->update([
             'status' => 'shipped',
             'tracking_number' => $trackingNumber ?? $this->tracking_number,
-            'carrier' => $carrier ?? $this->carrier,
             'ship_date' => now(),
         ]);
     }

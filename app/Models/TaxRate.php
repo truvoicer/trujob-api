@@ -81,4 +81,9 @@ class TaxRate extends Model
     {
         return $this->default()->exists();
     }
+
+    public function locales()
+    {
+        return $this->morphMany(TaxRateLocale::class, 'localeable');
+    }
 }

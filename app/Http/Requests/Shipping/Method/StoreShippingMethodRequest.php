@@ -39,7 +39,7 @@ class StoreShippingMethodRequest extends FormRequest
             'rates.*'
         );
         return [
-            'carrier' => [
+            'name' => [
                 'nullable',
                 'string',
                 'max:50'

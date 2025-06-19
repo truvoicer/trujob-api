@@ -14,7 +14,6 @@ return new class extends Migration
             $table->foreignId('shipping_method_id')->constrained();
             $table->foreignId('currency_id')->constrained('currencies')->cascadeOnDelete();
             $table->string('tracking_number')->nullable();
-            $table->string('carrier')->nullable();
             $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'failed'])->default('pending');
             $table->decimal('shipping_cost', 10, 2);
             $table->date('estimated_delivery_date')->nullable();
@@ -24,7 +23,7 @@ return new class extends Migration
             $table->string('dimensions')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
-            
+
             $table->index(['tracking_number']);
             $table->index(['order_id', 'status']);
         });

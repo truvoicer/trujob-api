@@ -16,17 +16,15 @@ return new class extends Migration
     {
         Schema::create('tax_rates', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50)->comment('E.g., "UK Standard VAT", "Alcohol Excise Duty"');
+            $table->string('name', 50)->unique()
+                ->comment('E.g., "UK Standard VAT", "Alcohol Excise Duty"');
+            $table->string('label')->unique();
 
             $table->enum('type', array_map(fn(TaxRateType $type) => $type->value, TaxRateType::cases()))
                 ->comment('Type of tax rate');
-                
+
             $table->enum('amount_type', array_map(fn(TaxRateAmountType $type) => $type->value, TaxRateAmountType::cases()))
                 ->comment('Amount type of tax rate');
-
-            $table->boolean('fixed_rate')
-                ->default(false)
-                ->comment('Indicates if the tax rate is a fixed amount rather than a percentage');
 
             $table->decimal('amount', 19, 4)->nullable()
                 ->comment('Fixed amount for the tax rate, applicable if fixed_rate is true');
@@ -35,23 +33,10 @@ return new class extends Migration
                 ->nullable()
                 ->comment('Percentage (e.g., 20.00 for 20%)');
 
-            $table->foreignId('country_id')
-                ->constrained('countries')
-                ->comment('Country');
-
             $table->foreignId('currency_id')
+                ->nullable()
                 ->constrained('currencies')
                 ->comment('Currency for the tax rate, used if fixed_rate is true');
-
-                $table->boolean('has_region')
-                ->default(false)
-                ->comment('Indicates if the tax rate applies to a specific region within the country');
-                
-            $table->foreignId('region_id')
-                ->nullable()
-                ->constrained('regions')
-                ->nullOnDelete()
-                ->comment('Region within the country, nullable if not applicable');
 
             $table->boolean('is_active')
                 ->default(true)
@@ -60,12 +45,12 @@ return new class extends Migration
             $table->enum('scope', array_map(fn(TaxScope $type) => $type->value, TaxScope::cases()))
                 ->comment('Tax scope');
 
-            $table->index(['country_id', 'is_active'], 'idx_active_rates')
+            $table->index(['type', 'is_active', 'amount_type', 'name'], 'idx_active_rates')
                 ->comment('Index for active tax rates by country code');
 
             $table->timestamps();
-            $table->unique(['country_id', 'type'], 'uq_country_type')
-                ->comment('Prevent duplicate tax types for the same country');
+            // $table->unique(['country_id', 'type'], 'uq_country_type')
+            //     ->comment('Prevent duplicate tax types for the same country');
         });
     }
 

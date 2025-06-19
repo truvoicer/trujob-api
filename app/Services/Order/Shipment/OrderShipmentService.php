@@ -27,7 +27,6 @@ class OrderShipmentService extends BaseService
         $orderShipment = $order->shipments()->create([
             'shipping_method_id' => $method->id,
             'tracking_number' => $data['tracking_number'],
-            'carrier' => $data['carrier'] ?? $method->carrier,
             'status' => 'processing',
             'shipping_cost' => $rate->calculateRate($order->total, $data['weight'] ?? 0),
             'currency_code' => $rate->currency_code,
@@ -78,5 +77,5 @@ class OrderShipmentService extends BaseService
         ]);
         return true;
     }
-    
+
 }

@@ -24,7 +24,7 @@ class UpdateOrderShipmentRequest extends FormRequest
      */
     public function rules()
     {
-       
+
         return [
             'shipping_method_id' => [
                 'sometimes',
@@ -36,7 +36,7 @@ class UpdateOrderShipmentRequest extends FormRequest
                 'string',
                 'max:100'
             ],
-            'carrier' => [
+            'name' => [
                 'sometimes',
                 'nullable',
                 'string',

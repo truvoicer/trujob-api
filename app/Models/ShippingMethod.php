@@ -11,7 +11,7 @@ class ShippingMethod extends Model
 
     protected $fillable = [
         'name',
-        'carrier',
+        'name',
         'description',
         'is_active',
         'processing_time_days',
@@ -63,7 +63,7 @@ class ShippingMethod extends Model
         // Check restrictions
         if ($method->restrictions->isNotEmpty()) {
             foreach ($method->restrictions as $restriction) {
-                if ($restriction->type === 'product' && 
+                if ($restriction->type === 'product' &&
                     in_array($restriction->restriction_id, $orderData['product_ids'] ?? []) &&
                     $restriction->action === 'deny') {
                     return false;

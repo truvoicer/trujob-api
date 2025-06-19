@@ -10,7 +10,8 @@ return new class extends Migration
     {
         Schema::create('shipping_zones', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
+            $table->string('label')->unique();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->boolean('all')->default(false);

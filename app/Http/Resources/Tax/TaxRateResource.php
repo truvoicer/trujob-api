@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Tax;
 
+use App\Enums\Order\Tax\TaxRateLocaleType;
+use App\Factories\Shipping\TaxRateLocaleFactory;
 use App\Http\Resources\Product\CountryResource;
 use App\Http\Resources\Product\CurrencyResource;
 use App\Http\Resources\Region\RegionResource;
@@ -31,7 +33,7 @@ class TaxRateResource extends JsonResource
             'is_default' => $this->isDefault(),
             'scope' => $this->scope,
             'is_active' => $this->is_active,
-            'fixed_rate' => $this->fixed_rate,
+            'locales' => $this->whenLoaded('locales', TaxRateLocaleResource::collection($this->locales)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

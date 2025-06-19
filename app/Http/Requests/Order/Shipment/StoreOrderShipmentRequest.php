@@ -34,7 +34,7 @@ class StoreOrderShipmentRequest extends FormRequest
                 'string',
                 'max:100'
             ],
-            'carrier' => [
+            'name' => [
                 'nullable',
                 'string',
                 'max:50'

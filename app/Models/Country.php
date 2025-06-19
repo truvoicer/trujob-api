@@ -35,7 +35,7 @@ class Country extends Model
     {
         return $this->belongsTo(ProductPrice::class);
     }
-    
+
     public function addresses()
     {
         return $this->hasMany(Address::class);
@@ -49,5 +49,10 @@ class Country extends Model
     public function regions()
     {
         return $this->hasMany(Region::class);
+    }
+
+    public function taxRateLocales()
+    {
+        return $this->morphMany(TaxRateLocale::class, 'localeable');
     }
 }

@@ -6,6 +6,7 @@ use App\Models\PriceTaxRate;
 use App\Models\ShippingRestriction;
 use App\Models\Site;
 use App\Models\SiteUser;
+use App\Models\TaxRate;
 use App\Models\Ticket;
 
 enum MorphEntity: string
@@ -21,10 +22,12 @@ enum MorphEntity: string
     case CURRENCY = 'currency';
     case REGION = 'region';
     case COUNTRY = 'country';
+    case TAX_RATE = 'tax_rate';
 
     public function getClass(): string
     {
         return match ($this) {
+            self::TAX_RATE => TaxRate::class,
             self::SITE => Site::class,
             self::SITE_USER => SiteUser::class,
             self::ORDER_ITEM => OrderItem::class,

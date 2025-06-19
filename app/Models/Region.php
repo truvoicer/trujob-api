@@ -36,4 +36,9 @@ class Region extends Model
     {
         return $query->where('country_id', $countryId);
     }
+
+    public function taxRateLocales()
+    {
+        return $this->morphMany(TaxRateLocale::class, 'localeable');
+    }
 }

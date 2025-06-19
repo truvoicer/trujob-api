@@ -36,5 +36,9 @@ class Currency extends Model
         return $this->belongsTo(ProductPrice::class);
     }
 
+    public function taxRateLocales()
+    {
+        return $this->morphMany(TaxRateLocale::class, 'localeable');
+    }
 
 }

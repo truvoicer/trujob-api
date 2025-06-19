@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
+            $table->string('label')->unique();
+
             $table->text('description')->nullable();
             $table->enum('type', array_map(fn(DiscountType $type) => $type->value, DiscountType::cases()));
-            
+
             $table->decimal('amount', 19, 4)->nullable();
 
             $table->decimal('rate', 5, 2)
@@ -44,7 +46,7 @@ return new class extends Migration
 
             // Applicability
             $table->enum(
-                'scope', 
+                'scope',
                 array_map(fn(DiscountScope $scope) => $scope->value, DiscountScope::cases())
             );
 
