@@ -12,24 +12,39 @@ $country = Country::where('iso2', 'GB')->first();
 if (!$country) {
     throw new Exception('Required country not found.');
 }
-$currency = Currency::where('code', 'GBP')->first();
+$currency = $country->currency()->where('code', 'GBP')->first();
 if (!$currency) {
     throw new Exception('Required currency not found.');
 }
 return [
     [
-        'label' => 'Tax Ratesa',
+        'label' => 'UK VAT Tax',
         'type' => TaxRateType::VAT->value,
         'amount_type' => TaxRateAmountType::PERCENTAGE->value,
         'rate' => 20.00,
         'currency_id' => $currency->id,
         'scope' => TaxScope::ORDER->value,
         'is_active' => true,
-        'locales' => [
+        'tax_rateables' => [
             [
-                'localeable_type' => MorphEntity::COUNTRY->value,
-                'localeable_id' => $country->id,
+                'tax_rateable_type' => MorphEntity::COUNTRY->value,
+                'tax_rateable_id' => $country->id,
             ],
         ]
-    ]
+    ],
+    [
+        'label' => 'GBP VAT Tax',
+        'type' => TaxRateType::VAT->value,
+        'amount_type' => TaxRateAmountType::PERCENTAGE->value,
+        'rate' => 20.00,
+        'currency_id' => $currency->id,
+        'scope' => TaxScope::ORDER->value,
+        'is_active' => true,
+        'tax_rateables' => [
+            [
+                'tax_rateable_type' => MorphEntity::CURRENCY->value,
+                'tax_rateable_id' => $currency->id,
+            ],
+        ]
+    ],
 ];

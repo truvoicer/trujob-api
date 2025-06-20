@@ -8,6 +8,7 @@ class PaymentGateway extends Model
 {
     protected $fillable = [
         'name',
+        'label',
         'description',
         'icon',
         'is_default',
@@ -25,7 +26,7 @@ class PaymentGateway extends Model
     {
         return $this->hasMany(Transaction::class);
     }
-    
+
     public function paymentMethods()
     {
         return $this->belongsToMany(PaymentMethod::class, 'payment_gateway_payment_methods');

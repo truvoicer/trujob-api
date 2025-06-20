@@ -4,6 +4,7 @@ namespace App\Enums;
 use App\Models\OrderItem;
 use App\Models\PriceTaxRate;
 use App\Models\ShippingRestriction;
+use App\Models\ShippingZone;
 use App\Models\Site;
 use App\Models\SiteUser;
 use App\Models\TaxRate;
@@ -16,6 +17,7 @@ enum MorphEntity: string
     case ORDER_ITEM = 'order_item';
     case PRICE_TAX_RATE = 'price_tax_rate';
     case SHIPPING_RESTRICTION = 'shipping_restriction';
+    case SHIPPING_ZONE = 'shipping_zone';
     CASE TICKET = 'ticket';
     case CATEGORY = 'category';
     case PRODUCT = 'product';
@@ -27,6 +29,7 @@ enum MorphEntity: string
     public function getClass(): string
     {
         return match ($this) {
+            self::SHIPPING_ZONE => ShippingZone::class,
             self::TAX_RATE => TaxRate::class,
             self::SITE => Site::class,
             self::SITE_USER => SiteUser::class,

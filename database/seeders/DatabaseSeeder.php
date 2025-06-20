@@ -18,6 +18,7 @@ use Database\Seeders\admin\SettingSeeder;
 use Database\Seeders\admin\SidebarSeeder;
 use Database\Seeders\admin\SiteSeeder;
 use Database\Seeders\admin\WidgetSeeder;
+use Database\Seeders\discount\DiscountSeeder;
 use Database\Seeders\firebase\FirebaseTopicSeeder;
 use Database\Seeders\locale\CountrySeeder;
 use Database\Seeders\product\BrandSeeder;
@@ -31,6 +32,9 @@ use Database\Seeders\locale\LocaleSeeder;
 use Database\Seeders\locale\RegionSeeder;
 use Database\Seeders\payment\PaymentGatewaySeeder;
 use Database\Seeders\price\PriceTypeSeeder;
+use Database\Seeders\shipping\ShippingMethodSeeder;
+use Database\Seeders\shipping\ShippingZoneSeeder;
+use Database\Seeders\tax\TaxRateSeeder;
 use Database\Seeders\user\RoleSeeder;
 use Database\Seeders\user\UserSeeder;
 use Illuminate\Database\Seeder;
@@ -49,6 +53,9 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             CurrencySeeder::class,
             RegionSeeder::class,
+            ShippingZoneSeeder::class,
+            ShippingMethodSeeder::class,
+            TaxRateSeeder::class,
             FirebaseTopicSeeder::class,
             ColorSeeder::class,
             BrandSeeder::class,
@@ -62,6 +69,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             SettingSeeder::class,
             SiteSeeder::class,
+            DiscountSeeder::class,
             PageSeeder::class,
             MenuSeeder::class,
             WidgetSeeder::class,

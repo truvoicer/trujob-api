@@ -4,6 +4,7 @@ namespace App\Services\Locale;
 
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Enums\MorphEntity;
+use App\Enums\Order\Shipping\ShippingRestrictionAction;
 use App\Http\Resources\Product\CurrencyResource;
 use App\Models\Currency;
 use App\Models\ShippingMethod;
@@ -24,13 +25,13 @@ class CurrencyShippingRestrictionService implements ShippingRestriction
     }
     public function storeShippingRestriction(ShippingMethod $shippingMethod, array $data): ModelsShippingRestriction
     {
-        $data['restrictionable_type'] = MorphEntity::CURRENCY;
-        $data['restrictionable_id'] = $data['restriction_id'];
-        $shippingRestriction = new ModelsShippingRestriction($data);
-        if (!$shippingMethod->restrictions()->save($shippingRestriction)) {
-            throw new \Exception('Error creating shipping restriction');
+        $currency = $this->currencyRepository->findById($data['restriction_id']);
+        if (!$currency) {
+            throw new \Exception('Currency not found');
         }
-        return $shippingRestriction;
+        return $currency->shippingRestrictions()->create([
+            'shipping_method_id' => $shippingMethod->id,
+        ]);
     }
     public function updateShippingRestriction(
         ModelsShippingRestriction $shippingRestriction,

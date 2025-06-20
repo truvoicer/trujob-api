@@ -14,7 +14,7 @@ class ProductHelpers
 
         $productType = EnumHelpers::getEnumCaseById(ProductType::class, $entityType);
         if (!$productType) {
-            throw new \Exception("Invalid $key provided");
+            throw new \Exception("Invalid $key provided | $entityType");
         }
         return $productType;
     }

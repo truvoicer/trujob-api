@@ -35,4 +35,14 @@ class Category extends Model
     {
         return $this->morphMany(ShippingRestriction::class, 'restrictionable');
     }
+
+    public function taxRateAbles()
+    {
+        return $this->morphMany(TaxRateAble::class, 'tax_rateable');
+    }
+
+    public function shippingZoneAbles()
+    {
+        return $this->morphMany(ShippingZoneAble::class, 'shipping_zoneable');
+    }
 }

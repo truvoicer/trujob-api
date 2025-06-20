@@ -5,6 +5,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Region extends Model
@@ -37,8 +38,18 @@ class Region extends Model
         return $query->where('country_id', $countryId);
     }
 
-    public function taxRateLocales()
+    public function shippingRestrictions(): MorphMany
     {
-        return $this->morphMany(TaxRateLocale::class, 'localeable');
+        return $this->morphMany(ShippingRestriction::class, 'restrictionable');
+    }
+
+    public function taxRateAbles()
+    {
+        return $this->morphMany(TaxRateAble::class, 'tax_rateable');
+    }
+
+    public function shippingZoneAbles()
+    {
+        return $this->morphMany(ShippingZoneAble::class, 'shipping_zoneable');
     }
 }

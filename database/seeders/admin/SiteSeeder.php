@@ -12,6 +12,7 @@ use App\Models\Feature;
 use App\Models\Media;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
+use App\Models\Price;
 use App\Models\Site;
 use App\Models\User;
 use App\Models\UserFollow;
@@ -85,6 +86,10 @@ class SiteSeeder extends Seeder
                                         })
                                 )
                                 ->has(Media::factory()->count(5))
+                                ->has(
+                                    Price::factory()
+                                        ->count(3)
+                                )
                         )
                         ->has(UserFollow::factory()->count(5))
                         ->has(UserProfile::factory()->count(1))

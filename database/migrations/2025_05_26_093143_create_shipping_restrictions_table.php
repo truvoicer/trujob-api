@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('restrictionable_id');
             $table->string('restrictionable_type');
             $table->enum(
-                'action', 
+                'action',
                 array_map(
                     fn(ShippingRestrictionAction $type) => $type->value,
                     ShippingRestrictionAction::cases()

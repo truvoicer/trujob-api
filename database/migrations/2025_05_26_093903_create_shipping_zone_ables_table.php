@@ -11,16 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shipping_zone_countries', function (Blueprint $table) {
+        Schema::create('shipping_zone_ables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('shipping_zone_id')
                 ->constrained('shipping_zones')
                 ->cascadeOnDelete();
-            $table->foreignId('country_id')
-                ->constrained('countries')
-                ->cascadeOnDelete();
+            $table->morphs('shipping_zoneable', 'shipping_zoneable_type_index');
 
-            $table->unique(['shipping_zone_id', 'country_id']);
+            $table->unique(
+                [
+                    'shipping_zone_id',
+                    'shipping_zoneable_id',
+                    'shipping_zoneable_type'
+                ],
+                'shipping_zone_ables_unique'
+            );
             $table->timestamps();
         });
     }
@@ -30,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('shipping_zone_countries');
+        Schema::dropIfExists('shipping_zone_ables');
     }
 };

@@ -2,10 +2,11 @@
 
 namespace App\Http\Resources\Shipping;
 
-use App\Http\Resources\Product\CountryResource;
+use App\Enums\Order\Shipping\ShippingZoneAbleType;
+use App\Factories\Shipping\ShippingZoneAbleFactory;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ShippingZoneResource extends JsonResource
+class ShippingZoneAbleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,14 +18,11 @@ class ShippingZoneResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'description' => $this->description,
-            'shipping_zoneables' => $this->whenLoaded(
-                'shippingZoneAbles',
-                ShippingZoneAbleResource::collection($this->shippingZoneAbles)
-        ),
-            'is_active' => $this->is_active,
-            'all' => $this->all,
+            'shipping_zoneable_id' => $this->shipping_zoneable_id,
+            'shipping_zoneable_type' => $this->shipping_zoneable_type,
+            ...ShippingZoneAbleFactory::create(
+                ShippingZoneAbleType::tryFrom($this->shipping_zoneable_type)
+            )->getShippingZoneAbleEntityResourceData($this),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

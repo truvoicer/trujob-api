@@ -24,7 +24,7 @@ class OrderItemResource extends JsonResource
             'entity' => ProductListResource::make($this->productable),
             'total_price' => $this->calculateTotalPrice(),
             'quantity' => $this->calculateQuantity(),
-            'tax_without_price' => $this->calculateTaxWithoutPrice(),
+            'tax_without_price' => $this->calculateTaxWithoutPrice($this->calculateTotalPrice()),
             'total_price_with_tax' => $this->calculateTotalPriceWithTax(),
             'discount' => $this->calculateDiscount(),
             'total_price_after_discount' => $this->calculateTotalPriceAfterDiscount(),

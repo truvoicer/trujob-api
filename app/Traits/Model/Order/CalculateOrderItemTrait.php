@@ -66,7 +66,7 @@ trait CalculateOrderItemTrait
         }
         return $this->quantity * $this->defaultPrice->amount;
     }
-    
+
     public function calculateTaxWithoutPrice(float $totalPrice): float
     {
         if ($totalPrice <= 0) {
@@ -120,8 +120,10 @@ trait CalculateOrderItemTrait
     {
 
         $this->init();
-        $priceDiscounts = $this->defaultPrice->discounts;
-
+        $priceDiscounts = $this->defaultPrice?->discounts;
+        if ($priceDiscounts === null) {
+            return 0.0; // No discounts available
+        }
         $totalPercentageRate = 0;
         $totalFixedAmount = 0.0;
         if ($this->defaultDiscounts->isNotEmpty()) {

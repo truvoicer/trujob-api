@@ -8,7 +8,7 @@ use App\Http\Requests\Region\UpdateRegionRequest;
 use App\Http\Resources\RegionResource;
 use App\Models\Region;
 use App\Repositories\RegionRepository;
-use App\Services\Locale\RegionService;
+use App\Services\Region\RegionService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,7 +36,7 @@ class RegionController extends Controller
         $this->regionRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         $search = $request->get('query', null);
         if ($search) {
             $this->regionRepository->addWhere(

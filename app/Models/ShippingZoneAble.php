@@ -6,22 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class TaxRateLocale extends Model
+class ShippingZoneAble extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'tax_rate_id',
-        'localeable_id',
-        'localeable_type',
+        'shipping_zone_id',
+        'shipping_zoneable_id',
+        'shipping_zoneable_type',
     ];
 
-    public function taxRate()
+    public function shippingZone()
     {
-        return $this->belongsTo(TaxRate::class);
+        return $this->belongsTo(ShippingZone::class);
     }
 
-    public function localeable(): MorphTo
+    public function shippingZoneable(): MorphTo
     {
         return $this->morphTo();
     }

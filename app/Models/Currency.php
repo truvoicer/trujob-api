@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Currency extends Model
 {
@@ -36,9 +37,19 @@ class Currency extends Model
         return $this->belongsTo(ProductPrice::class);
     }
 
-    public function taxRateLocales()
+    public function shippingRestrictions(): MorphMany
     {
-        return $this->morphMany(TaxRateLocale::class, 'localeable');
+        return $this->morphMany(ShippingRestriction::class, 'restrictionable');
+    }
+
+    public function taxRateAbles()
+    {
+        return $this->morphMany(TaxRateAble::class, 'tax_rateable');
+    }
+
+    public function shippingZoneAbles()
+    {
+        return $this->morphMany(ShippingZoneAble::class, 'shipping_zoneable');
     }
 
 }

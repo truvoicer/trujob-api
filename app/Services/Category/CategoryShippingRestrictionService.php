@@ -4,6 +4,7 @@ namespace App\Services\Category;
 
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Enums\MorphEntity;
+use App\Enums\Order\Shipping\ShippingRestrictionAction;
 use App\Http\Resources\Product\CategoryResource;
 use App\Models\Category;
 use App\Models\ShippingMethod;
@@ -23,13 +24,13 @@ class CategoryShippingRestrictionService implements ShippingRestriction
     }
     public function storeShippingRestriction(ShippingMethod $shippingMethod, array $data): ModelsShippingRestriction
     {
-        $data['restrictionable_type'] = MorphEntity::CATEGORY;
-        $data['restrictionable_id'] = $data['restriction_id'];
-        $shippingRestriction = new ModelsShippingRestriction($data);
-        if (!$shippingMethod->restrictions()->save($shippingRestriction)) {
-            throw new \Exception('Error creating shipping restriction');
+        $category = $this->categoryRepository->findById($data['restriction_id']);
+        if (!$category) {
+            throw new \Exception('Category not found');
         }
-        return $shippingRestriction;
+        return $category->shippingRestrictions()->create([
+            'shipping_method_id' => $shippingMethod->id,
+        ]);
     }
     public function updateShippingRestriction(
         ModelsShippingRestriction $shippingRestriction,

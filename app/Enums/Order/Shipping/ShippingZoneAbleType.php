@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Enums\Order\Tax;
+namespace App\Enums\Order\Shipping;
 
 use App\Models\Category;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Region;
 
-enum TaxRateLocaleType: string
+enum ShippingZoneAbleType: string
 {
     case CATEGORY = 'category';
     case COUNTRY = 'country';

@@ -7,21 +7,51 @@ use App\Helpers\ProductHelpers;
 use App\Models\Discount;
 use App\Models\Price;
 use App\Services\BaseService;
+use Illuminate\Support\Str;
 
 class DiscountService extends BaseService
 {
 
     public function createDiscount(array $data) {
+        $products = $data['products'] ?? null;
+        $prices = $data['prices'] ?? null;
+        $categoryIds = $data['category_ids'] ?? null;
+        unset($data['products'], $data['prices'], $data['category_ids']);
+        if (empty($data['name'])) {
+            $data['name'] = Str::slug($data['label']);
+        }
         $discount = new Discount($data);
         if (!$discount->save()) {
             throw new \Exception('Error creating discount');
+        }
+        if ($products && is_array($products)) {
+            $this->saveProducts($discount, $products);
+        }
+        if ($prices && is_array($prices)) {
+            $this->savePrices($discount, $prices);
+        }
+        if ($categoryIds && is_array($categoryIds)) {
+            $discount->categories()->sync($categoryIds);
         }
         $this->relatedData($discount, $data);
         return true;
     }
     public function updateDiscount(Discount $discount, array $data) {
+        $products = $data['products'] ?? null;
+        $prices = $data['prices'] ?? null;
+        $categoryIds = $data['category_ids'] ?? null;
+        unset($data['products'], $data['prices'], $data['category_ids']);
         if (!$discount->update($data)) {
             throw new \Exception('Error updating discount');
+        }
+        if ($products && is_array($products)) {
+            $this->saveProducts($discount, $products);
+        }
+        if ($prices && is_array($prices)) {
+            $this->savePrices($discount, $prices);
+        }
+        if ($categoryIds && is_array($categoryIds)) {
+            $discount->categories()->sync($categoryIds);
         }
         $this->relatedData($discount, $data);
         return true;
@@ -36,18 +66,6 @@ class DiscountService extends BaseService
         }
     }
     public function relatedData(Discount $discount, array $data) {
-
-        if (!empty($data['products']) && is_array($data['products'])) {
-            $this->saveProducts($discount, $data['products']);
-        }
-        
-        if (!empty($data['prices']) && is_array($data['prices'])) {
-            $this->savePrices($discount, $data['prices']);
-        }
-
-        if (!empty($data['category_ids']) && is_array($data['category_ids'])) {
-            $discount->categories()->sync($data['category_ids']);
-        }
         $this->updateDefaultTaxRate($discount, $data);
         return $discount;
     }
@@ -81,7 +99,7 @@ class DiscountService extends BaseService
                 }
             } else if ($data instanceof Price) {
                 $price = $data;
-            } 
+            }
             if (!$price instanceof Price) {
                 throw new \Exception('Price not provided');
             }

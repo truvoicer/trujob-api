@@ -122,7 +122,7 @@ use App\Http\Controllers\Api\Shipping\ShippingUnitController;
 use App\Http\Controllers\Api\Shipping\ShippingWeightUnitController;
 use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
-use App\Http\Controllers\Api\Tax\TaxRateScopeController;
+use App\Http\Controllers\Api\Tax\TaxRateAbleController;
 use App\Http\Controllers\Api\Tax\TaxRateTypeController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\Transaction\TransactionController;
@@ -218,7 +218,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [TaxRateTypeController::class, 'index'])->name('index');
         });
         Route::prefix('scope')->name('scope.')->group(function () {
-            Route::get('/', [TaxRateScopeController::class, 'index'])->name('index');
+            Route::get('/', [TaxRateAbleController::class, 'index'])->name('index');
         });
         Route::prefix('amount-type')->name('amount-type.')->group(function () {
             Route::get('/', [TaxRateAmountTypeController::class, 'index'])->name('index');

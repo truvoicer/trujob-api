@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Tax\TaxRate;
 
+use App\Enums\Order\Tax\TaxRateAbleType;
 use App\Enums\Order\Tax\TaxRateAmountType;
 use App\Enums\Order\Tax\TaxRateType;
 use App\Enums\Order\Tax\TaxScope;
@@ -42,7 +43,6 @@ class StoreTaxRateRequest extends FormRequest
                 'numeric',
                 'between:0,100'
             ],
-            'country_id' => ['required', 'integer', 'exists:countries,id'],
             'currency_id' => ['required', 'integer', 'exists:currencies,id'],
             'has_region' => ['required', 'boolean'],
             'region_id' => [
@@ -53,6 +53,18 @@ class StoreTaxRateRequest extends FormRequest
             'is_default' => ['required', 'boolean'],
             'scope' => ['required', Rule::enum(TaxScope::class)],
             'is_active' => ['required', 'boolean'],
+            'tax_rateables' => [
+                'sometimes',
+                'array'
+            ],
+            'tax_rateables.*.id' => [
+                'required',
+                'integer',
+            ],
+            'tax_rateables.*.type' => [
+                'required',
+                Rule::enum(TaxRateAbleType::class)
+            ],
         ];
     }
 }

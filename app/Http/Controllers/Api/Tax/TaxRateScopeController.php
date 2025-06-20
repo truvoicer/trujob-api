@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\TaxRateRepository;
 use App\Services\Tax\TaxRateService;
 
-class TaxRateScopeController extends Controller
+class TaxRateAbleController extends Controller
 {
 
     public function __construct(

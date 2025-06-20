@@ -14,10 +14,10 @@ class RegionSeeder extends Seeder
     public function run()
     {
         // Increase memory limit for this seeder
-        ini_set('memory_limit', '512M'); // Or '1024M', '-1' for unlimited (use with caution!)
+        ini_set('memory_limit', '1G'); // Or '1024M', '-1' for unlimited (use with caution!)
 
         $this->command->info('Starting region seeding process...');
-        $path = storage_path('app/private/database/regions.sql');
+        $path = storage_path('app/private/database/regions_all.sql');
         $lines = file($path);
         if (!$lines) {
             throw new \Exception('Error reading PageData.php file ' . $path);
@@ -31,6 +31,7 @@ class RegionSeeder extends Seeder
         } catch (\Exception $e) {
             var_dump($e->getMessage()); die;
         }
+
         // Get all countries from database
         $countries = Country::all();
         $totalCountries = count($countries);
@@ -137,12 +138,12 @@ class RegionSeeder extends Seeder
         if (array_key_exists('name', $apiRegion) && str_contains($apiRegion['name'], 'All Region')) {
             return null;
         }
-        if (array_key_exists('description', $apiRegion) && str_contains($apiRegion['description'], 'continent')) {
-            return null;
-        }
-        if (array_key_exists('category', $apiRegion) && str_contains($apiRegion['category'], 'country')) {
-            return null;
-        }
+        // if (array_key_exists('description', $apiRegion) && str_contains($apiRegion['description'], 'continent')) {
+        //     return null;
+        // }
+        // if (array_key_exists('category', $apiRegion) && str_contains($apiRegion['category'], 'country')) {
+        //     return null;
+        // }
         return [
             'admin_name' => $apiRegion['adminName1'] ?? null,
             'toponym_name' => $apiRegion['toponymName'] ?? null,

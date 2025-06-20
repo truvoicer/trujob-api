@@ -8,7 +8,7 @@ use App\Services\Category\CategoryShippingRestrictionService;
 use App\Services\Product\ProductShippingRestrictionService;
 use App\Services\Locale\CountryShippingRestrictionService;
 use App\Services\Locale\CurrencyShippingRestrictionService;
-use App\Services\Locale\RegionShippingRestrictionService;
+use App\Services\Region\RegionShippingRestrictionService;
 
 class ShippingRestrictionFactory
 {

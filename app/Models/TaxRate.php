@@ -14,6 +14,7 @@ class TaxRate extends Model
 
     protected $fillable = [
         'name',
+        'label',
         'type',
         'amount_type',
         'rate',
@@ -82,8 +83,8 @@ class TaxRate extends Model
         return $this->default()->exists();
     }
 
-    public function locales()
+    public function taxRateAbles()
     {
-        return $this->morphMany(TaxRateLocale::class, 'localeable');
+        return $this->morphMany(TaxRateAble::class, 'tax_rateable');
     }
 }

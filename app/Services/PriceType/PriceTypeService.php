@@ -59,6 +59,7 @@ class PriceTypeService extends BaseService
         foreach (PricePriceType::cases() as $priceType) {
             $atts = [
                 'name' => $priceType->value,
+                'label' => $priceType->label(),
             ];
             $findInData = array_search($priceType->value, array_column($data, 'name'));
             if ($findInData !== false) {

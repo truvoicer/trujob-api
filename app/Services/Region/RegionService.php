@@ -14,6 +14,13 @@ class RegionService extends BaseService
         parent::__construct();
     }
 
+    public function createRegionBatch(array $data) {
+        $createRegionBatch = Region::create($data['countries']);
+        if (!$createRegionBatch) {
+            throw new \Exception('Error creating region batch');
+        }
+        return true;
+    }
     public function createRegion(array $data) {
         $region = new Region($data);
         if (!$region->save()) {

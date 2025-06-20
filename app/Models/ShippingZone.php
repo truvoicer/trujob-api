@@ -11,6 +11,7 @@ class ShippingZone extends Model
 
     protected $fillable = [
         'name',
+        'label',
         'description',
         'is_active',
         'all',
@@ -27,10 +28,6 @@ class ShippingZone extends Model
             ->withTimestamps();
     }
 
-    public function countries()
-    {
-        return $this->belongsToMany(Country::class, 'shipping_zone_countries');
-    }
 
     public function rates()
     {
@@ -55,5 +52,10 @@ class ShippingZone extends Model
     public function getCountryCodesAttribute()
     {
         return $this->countries->pluck('iso_code')->toArray();
+    }
+
+    public function shippingZoneAbles()
+    {
+        return $this->morphMany(ShippingZoneAble::class, 'shipping_zoneable');
     }
 }

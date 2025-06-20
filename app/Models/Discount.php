@@ -12,6 +12,7 @@ class Discount extends Model
 
     protected $fillable = [
         'name',
+        'label',
         'description',
         'currency_id',
         'type',
@@ -69,13 +70,13 @@ class Discount extends Model
         return $this->belongsToMany(ShippingMethod::class, 'discount_shipping_methods')
             ->withTimestamps();
     }
-    
+
     public function shippingZones()
     {
         return $this->belongsToMany(ShippingZone::class, 'discount_shipping_zones')
             ->withTimestamps();
     }
-    
+
 
     public function usages()
     {
@@ -98,7 +99,7 @@ class Discount extends Model
 
     public function isValid(): bool
     {
-        return $this->is_active 
+        return $this->is_active
             && now()->between($this->starts_at, $this->ends_at)
             && ($this->usage_limit === null || $this->usage_count < $this->usage_limit);
     }

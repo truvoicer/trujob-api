@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Services\Locale;
+namespace App\Services\Region;
 
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Enums\MorphEntity;
-use App\Http\Resources\Region\RegionResource;
-use App\Models\Region;
+use App\Enums\Order\Shipping\ShippingRestrictionAction;
+use App\Http\Resources\Product\RegionResource;
+use App\Http\Resources\Region\RegionResource as RegionRegionResource;
 use App\Models\ShippingMethod;
 use App\Repositories\RegionRepository;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;
@@ -14,7 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class RegionShippingRestrictionService implements ShippingRestriction
 {
     public function __construct(
-        private RegionRepository $regionRepository,
+        protected RegionRepository $regionRepository,
     ) {
     }
     public function validateRequest(): bool
@@ -24,13 +25,13 @@ class RegionShippingRestrictionService implements ShippingRestriction
     }
     public function storeShippingRestriction(ShippingMethod $shippingMethod, array $data): ModelsShippingRestriction
     {
-        $data['restrictionable_type'] = MorphEntity::REGION;
-        $data['restrictionable_id'] = $data['restriction_id'];
-        $shippingRestriction = new ModelsShippingRestriction($data);
-        if (!$shippingMethod->restrictions()->save($shippingRestriction)) {
-            throw new \Exception('Error creating shipping restriction');
+        $region = $this->regionRepository->findById($data['restriction_id']);
+        if (!$region) {
+            throw new \Exception('Region not found');
         }
-        return $shippingRestriction;
+        return $region->shippingRestrictions()->create([
+            'shipping_method_id' => $shippingMethod->id,
+        ]);
     }
     public function updateShippingRestriction(
         ModelsShippingRestriction $shippingRestriction,
@@ -52,7 +53,7 @@ class RegionShippingRestrictionService implements ShippingRestriction
     public function getRestrictionableEntityResourceData(JsonResource $resource): array
     {
         return [
-            'region' => new RegionResource(
+            'region' => new RegionRegionResource(
                 $resource->restrictionable
             )
         ];

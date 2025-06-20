@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders\tax;
+namespace Database\Seeders\shipping;
 
 use App\Services\Shipping\ShippingMethodService;
 use Illuminate\Database\Seeder;

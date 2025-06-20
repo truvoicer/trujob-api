@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests\Shipping\Zone;
 
+use App\Enums\Order\Shipping\ShippingZoneAbleType;
+use App\Models\ShippingZoneAble;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreShippingZoneRequest extends FormRequest
 {
@@ -34,11 +37,17 @@ class StoreShippingZoneRequest extends FormRequest
                 'string',
                 'max:500'
             ],
-            'country_ids' => [
+            'shipping_zoneables' => [
                 'required',
                 'array'
             ],
-            'country_ids.*' => ['exists:countries,id'],
+            'shipping_zoneables.*.id' => [
+                'required',
+                'integer',
+            ],
+            'shipping_zoneables.*.type' => [
+                Rule::enum(ShippingZoneAbleType::class)
+            ],
             'is_active' => ['boolean'],
             'all' => [
                 'boolean',

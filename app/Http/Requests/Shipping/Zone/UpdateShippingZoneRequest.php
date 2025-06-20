@@ -35,14 +35,6 @@ class UpdateShippingZoneRequest extends FormRequest
                 'string',
                 'max:500'
             ],
-            'country_ids' => [
-                'sometimes',
-                'array'
-            ],
-            'country_ids.*' => [
-                'required',
-                'exists:countries,id'
-            ],
             'is_active' => [
                 'boolean'
             ],
