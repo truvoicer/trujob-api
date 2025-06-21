@@ -8,6 +8,7 @@ use App\Models\Color;
 use App\Models\Feature;
 use App\Models\Product;
 use App\Models\MediaProduct;
+use App\Models\Price;
 use App\Models\ProductReview;
 use App\Models\ProductType;
 use App\Models\User;
@@ -133,6 +134,12 @@ class ProductAdminService extends BaseService
                     return Category::where('id', $category)->first()?->id;
                 }, $data['categories']);
                 $saveCategories = $product->categories()->sync(array_filter($categoryIds));
+            }
+            if (isset($data['prices']) && is_array($data['prices'])) {
+                $priceIds = array_map(function ($price) {
+                    return Price::where('id', $price)->first()?->id;
+                }, $data['prices']);
+                $savePrices = $product->prices()->sync(array_filter($priceIds));
             }
             if (isset($data['reviews']) && is_array($data['reviews'])) {
                 foreach ($data['reviews'] as $review) {

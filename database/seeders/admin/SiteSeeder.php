@@ -13,6 +13,7 @@ use App\Models\Media;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\Price;
+use App\Models\PriceType;
 use App\Models\Site;
 use App\Models\User;
 use App\Models\UserFollow;
@@ -31,9 +32,34 @@ use App\Models\ProductFollow;
 use App\Models\ProductProductType;
 use App\Models\ProductReview;
 use App\Models\ProductType;
+use Exception;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class SiteSeeder extends Seeder
 {
+
+    public function sequence(Sequence $sequence) {
+        $priceTypeCount = PriceType::count();
+        if ($priceTypeCount < 1) {
+            throw new Exception('No price types found.');
+        }
+        $randomPriceType = PriceType::all()->random();
+        if (!$randomPriceType) {
+            throw new Exception('Required price type not found.');
+        }
+        $priceType = PriceType::where('name', 'one_time')->first();
+        // if ($sequence->index == 0) {
+
+        // dd($sequence->index == 0 ? $priceType->id : $randomPriceType->id);
+        // }
+        if (!$priceType) {
+            throw new Exception('Required price type not found.');
+        }
+        return [
+            'price_type_id' => $sequence->index === 0 ? $priceType->id : $randomPriceType->id,
+            'is_default' => $sequence->index === 0 ? true : false,
+        ];
+    }
 
     /**
      * Run the database seeds.
@@ -88,6 +114,9 @@ class SiteSeeder extends Seeder
                                 ->has(Media::factory()->count(5))
                                 ->has(
                                     Price::factory()
+                                        ->state(new Sequence(
+                                            fn (Sequence $sequence) => $this->sequence($sequence)
+                                        ))
                                         ->count(3)
                                 )
                         )

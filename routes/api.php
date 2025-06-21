@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Color\ColorController;
 use App\Http\Controllers\Api\Discount\DiscountController;
 use App\Http\Controllers\Api\Discount\DiscountScopeController;
+use App\Http\Controllers\Api\Discount\DiscountSetAsDefaultController;
 use App\Http\Controllers\Api\Discount\DiscountTypeController;
 use App\Http\Controllers\Api\Discount\UserDiscountUsageController;
 use App\Http\Controllers\Api\Product\InitialiseProductController;
@@ -123,6 +124,7 @@ use App\Http\Controllers\Api\Shipping\ShippingWeightUnitController;
 use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
 use App\Http\Controllers\Api\Tax\TaxRateAbleController;
+use App\Http\Controllers\Api\Tax\TaxRateSetAsDefaultController;
 use App\Http\Controllers\Api\Tax\TaxRateTypeController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\Transaction\TransactionController;
@@ -227,6 +229,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [TaxRateController::class, 'show'])->name('show');
             Route::patch('/update', [TaxRateController::class, 'update'])->name('update');
             Route::delete('/delete', [TaxRateController::class, 'destroy'])->name('delete');
+            Route::post('/set-default', [TaxRateSetAsDefaultController::class, 'store'])->name('set-default');
+            Route::delete('/unset-default', [TaxRateSetAsDefaultController::class, 'destroy'])->name('unset-default');
         });
     });
 });
@@ -264,6 +268,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [DiscountController::class, 'show'])->name('show');
             Route::patch('/update', [DiscountController::class, 'update'])->name('update');
             Route::delete('/destroy', [DiscountController::class, 'destroy'])->name('destroy');
+            Route::post('/set-default', [DiscountSetAsDefaultController::class, 'store'])->name('set-default');
+            Route::delete('/unset-default', [DiscountSetAsDefaultController::class, 'destroy'])->name('unset-default');
         });
     });
     Route::prefix('order')->name('order.')->group(function () {

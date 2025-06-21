@@ -27,6 +27,7 @@ class OrderItemResource extends JsonResource
             'tax_without_price' => $this->calculateTaxWithoutPrice($this->calculateTotalPrice()),
             'total_price_with_tax' => $this->calculateTotalPriceWithTax(),
             'discount' => $this->calculateDiscount(),
+            'total_tax' => $this->calculateTaxWithoutPrice($this->calculateTotalPrice()),
             'total_price_after_discount' => $this->calculateTotalPriceAfterDiscount(),
             'total_price_after_tax_and_discount' => $this->calculateTotalPriceAfterTaxAndDiscount(),
         ];

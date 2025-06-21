@@ -34,7 +34,7 @@ class PriceFactory extends Factory
         if (!$currency) {
             throw new Exception('Required currency not found.');
         }
-        $priceType = PriceType::find(1);
+        $priceType = PriceType::where('name', 'one_time')->first();
         if (!$priceType) {
             throw new Exception('Required price type not found.');
         }

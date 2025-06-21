@@ -77,12 +77,24 @@ class TaxRateService extends BaseService
     public function updateDefaultTaxRate(TaxRate $taxRate, array $data): void
     {
         if (array_key_exists('is_default', $data)  && $data['is_default']) {
-            $taxRate->default()->create();
+            $this->setAsDefault($taxRate);
         } else if (array_key_exists('is_default', $data) && !$data['is_default']) {
-            $taxRate->default()->delete();
+            $this->removeAsDefault($taxRate);
         }
     }
 
+    public function setAsDefault(TaxRate $taxRate): void
+    {
+        if (!$taxRate->default) {
+            $taxRate->default()->create();
+        }
+    }
+    public function removeAsDefault(TaxRate $taxRate): void
+    {
+        if ($taxRate->default) {
+            $taxRate->default()->delete();
+        }
+    }
     public function deleteTaxRate(TaxRate $taxRate)
     {
         if (!$taxRate->delete()) {

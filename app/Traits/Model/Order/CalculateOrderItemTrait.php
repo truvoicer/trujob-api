@@ -5,8 +5,10 @@ namespace App\Traits\Model\Order;
 use App\Enums\Order\Discount\DiscountType;
 use App\Enums\Order\Tax\TaxRateAmountType;
 use App\Enums\Price\PriceType;
+use App\Models\DefaultDiscount;
 use App\Models\DefaultTaxRate;
 use App\Models\Price;
+use App\Models\TaxRate;
 use Illuminate\Database\Eloquent\Collection;
 
 trait CalculateOrderItemTrait
@@ -44,6 +46,7 @@ trait CalculateOrderItemTrait
         }
         $this->defaultPrice = $this->productable->getDefaultPrice($this->priceType);
         $this->defaultTaxRates = DefaultTaxRate::all();
+        $this->defaultDiscounts = DefaultDiscount::all();
         return $this;
     }
 
@@ -74,12 +77,12 @@ trait CalculateOrderItemTrait
         }
         $this->init();
         $priceTaxRates = $this->defaultPrice->taxRates;
-
         $totalPercentageRate = 0;
         $totalFixedAmount = 0.0;
         if ($this->defaultTaxRates->isNotEmpty()) {
             foreach ($this->defaultTaxRates as $defaultTaxRate) {
-                switch ($defaultTaxRate->amount_type) {
+                dd($defaultTaxRate->taxRate->type);
+                switch ($defaultTaxRate->taxRate->type) {
                     case TaxRateAmountType::FIXED:
                         $totalFixedAmount += $defaultTaxRate->taxRate->amount ?? 0.0;
                         break;
@@ -124,11 +127,12 @@ trait CalculateOrderItemTrait
         if ($priceDiscounts === null) {
             return 0.0; // No discounts available
         }
+
         $totalPercentageRate = 0;
         $totalFixedAmount = 0.0;
         if ($this->defaultDiscounts->isNotEmpty()) {
             foreach ($this->defaultDiscounts as $defaultDiscount) {
-                switch ($defaultDiscount->amount_type) {
+                switch ($defaultDiscount->discount->type) {
                     case DiscountType::FIXED:
                         $totalFixedAmount += $defaultDiscount->discount->amount ?? 0.0;
                         break;
@@ -140,7 +144,7 @@ trait CalculateOrderItemTrait
         }
         if ($priceDiscounts->isNotEmpty()) {
             foreach ($priceDiscounts as $priceDiscount) {
-                switch ($priceDiscount->amount_type) {
+                switch ($priceDiscount->type) {
                     case DiscountType::FIXED:
                         $totalFixedAmount += $priceDiscount->amount ?? 0.0;
                         break;

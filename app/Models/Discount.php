@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Order\Discount\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -39,6 +40,7 @@ class Discount extends Model
         'amount' => 'decimal:2',
         'rate' => 'decimal:2',
         'min_order_amount' => 'decimal:2',
+        'type' => DiscountType::class,
     ];
 
     public function prices()

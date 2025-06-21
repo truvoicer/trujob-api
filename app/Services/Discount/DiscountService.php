@@ -12,7 +12,8 @@ use Illuminate\Support\Str;
 class DiscountService extends BaseService
 {
 
-    public function createDiscount(array $data) {
+    public function createDiscount(array $data)
+    {
         $products = $data['products'] ?? null;
         $prices = $data['prices'] ?? null;
         $categoryIds = $data['category_ids'] ?? null;
@@ -36,7 +37,8 @@ class DiscountService extends BaseService
         $this->relatedData($discount, $data);
         return true;
     }
-    public function updateDiscount(Discount $discount, array $data) {
+    public function updateDiscount(Discount $discount, array $data)
+    {
         $products = $data['products'] ?? null;
         $prices = $data['prices'] ?? null;
         $categoryIds = $data['category_ids'] ?? null;
@@ -60,26 +62,43 @@ class DiscountService extends BaseService
     public function updateDefaultTaxRate(Discount $discount, array $data): void
     {
         if (array_key_exists('is_default', $data)  && $data['is_default']) {
-            $discount->default()->create();
+            $this->setAsDefault($discount);
         } else if (array_key_exists('is_default', $data) && !$data['is_default']) {
+            $this->removeAsDefault($discount);
+        }
+    }
+
+    public function setAsDefault(Discount $discount): void
+    {
+        if (!$discount->default) {
+            $discount->default()->create();
+        }
+    }
+    public function removeAsDefault(Discount $discount): void
+    {
+        if ($discount->default) {
             $discount->default()->delete();
         }
     }
-    public function relatedData(Discount $discount, array $data) {
+    public function relatedData(Discount $discount, array $data)
+    {
         $this->updateDefaultTaxRate($discount, $data);
         return $discount;
     }
 
-    public function saveProducts(Discount $discount, array $productData) {
+
+
+    public function saveProducts(Discount $discount, array $productData)
+    {
         $products = [];
         foreach ($productData as $data) {
             $product = ProductFactory::create(
-            ProductHelpers::validateProductableByArray('product_type', $data)
-        )
-            ->attachDiscountRelations(
-                $discount,
-                $data
-            );
+                ProductHelpers::validateProductableByArray('product_type', $data)
+            )
+                ->attachDiscountRelations(
+                    $discount,
+                    $data
+                );
             if (!$product->save()) {
                 throw new \Exception('Error saving product');
             }
@@ -88,7 +107,8 @@ class DiscountService extends BaseService
         return $products;
     }
 
-    public function savePrices(Discount $discount, array $priceData) {
+    public function savePrices(Discount $discount, array $priceData)
+    {
         $products = [];
         foreach ($priceData as $data) {
             $price = null;
@@ -107,11 +127,11 @@ class DiscountService extends BaseService
         }
         return $products;
     }
-    public function deleteDiscount(Discount $discount) {
+    public function deleteDiscount(Discount $discount)
+    {
         if (!$discount->delete()) {
             throw new \Exception('Error deleting discount');
         }
         return true;
     }
-
 }

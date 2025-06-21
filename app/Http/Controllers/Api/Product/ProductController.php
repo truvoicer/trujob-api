@@ -19,7 +19,7 @@ class ProductController extends ProductBaseController
 
         $this->productRepository->setPagination(true);
         $this->productRepository->setOrderByColumn(
-            $request->get('sort', 'title')
+            $request->get('sort', 'id')
         );
         $this->productRepository->setOrderByDir(
             $request->get('order', 'asc')
