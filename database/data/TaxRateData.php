@@ -25,6 +25,7 @@ return [
         'currency_id' => $currency->id,
         'scope' => TaxScope::ORDER->value,
         'is_active' => true,
+        'is_default' => true,
         'tax_rateables' => [
             [
                 'tax_rateable_type' => MorphEntity::COUNTRY->value,
@@ -34,7 +35,7 @@ return [
     ],
     [
         'label' => 'GBP VAT Tax',
-        'type' => TaxRateType::VAT->value,
+        'type' => TaxRateType::SALES_TAX->value,
         'amount_type' => TaxRateAmountType::PERCENTAGE->value,
         'rate' => 20.00,
         'currency_id' => $currency->id,

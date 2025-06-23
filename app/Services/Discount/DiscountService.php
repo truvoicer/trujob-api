@@ -2,7 +2,9 @@
 
 namespace App\Services\Discount;
 
+use App\Enums\Order\Discount\DiscountableType;
 use App\Factories\Product\ProductFactory;
+use App\Factories\Discount\DiscountableFactory;
 use App\Helpers\ProductHelpers;
 use App\Models\Discount;
 use App\Models\Price;
@@ -14,10 +16,16 @@ class DiscountService extends BaseService
 
     public function createDiscount(array $data)
     {
-        $products = $data['products'] ?? null;
-        $prices = $data['prices'] ?? null;
-        $categoryIds = $data['category_ids'] ?? null;
-        unset($data['products'], $data['prices'], $data['category_ids']);
+        $discountables = $data['discountables'] ?? null;
+        if (isset($data['discountables'])) {
+            unset($data['discountables']);
+        }
+
+        $isDefault = $data['is_default'] ?? null;
+        if (isset($data['is_default'])) {
+            unset($data['is_default']);
+        }
+
         if (empty($data['name'])) {
             $data['name'] = Str::slug($data['label']);
         }
@@ -25,46 +33,62 @@ class DiscountService extends BaseService
         if (!$discount->save()) {
             throw new \Exception('Error creating discount');
         }
-        if ($products && is_array($products)) {
-            $this->saveProducts($discount, $products);
+
+        if (is_array($discountables) && count($discountables) > 0) {
+            $this->syncDiscountables($discount, $discountables);
         }
-        if ($prices && is_array($prices)) {
-            $this->savePrices($discount, $prices);
+        if ($isDefault !== null) {
+            if ($isDefault) {
+                $this->setAsDefault($discount);
+            } else {
+                $this->removeAsDefault($discount);
+            }
         }
-        if ($categoryIds && is_array($categoryIds)) {
-            $discount->categories()->sync($categoryIds);
-        }
-        $this->relatedData($discount, $data);
+
         return true;
     }
     public function updateDiscount(Discount $discount, array $data)
     {
-        $products = $data['products'] ?? null;
-        $prices = $data['prices'] ?? null;
-        $categoryIds = $data['category_ids'] ?? null;
-        unset($data['products'], $data['prices'], $data['category_ids']);
+        $discountables = $data['discountables'] ?? null;
+        if (isset($data['discountables'])) {
+            unset($data['discountables']);
+        }
+
+        $isDefault = $data['is_default'] ?? null;
+        if (isset($data['is_default'])) {
+            unset($data['is_default']);
+        }
+
         if (!$discount->update($data)) {
             throw new \Exception('Error updating discount');
         }
-        if ($products && is_array($products)) {
-            $this->saveProducts($discount, $products);
+
+        if (is_array($discountables) && count($discountables) > 0) {
+            $this->syncDiscountables($discount, $discountables);
         }
-        if ($prices && is_array($prices)) {
-            $this->savePrices($discount, $prices);
+
+        if ($isDefault !== null) {
+            if ($isDefault) {
+                $this->setAsDefault($discount);
+            } else {
+                $this->removeAsDefault($discount);
+            }
         }
-        if ($categoryIds && is_array($categoryIds)) {
-            $discount->categories()->sync($categoryIds);
-        }
-        $this->relatedData($discount, $data);
+
         return true;
     }
-
-    public function updateDefaultTaxRate(Discount $discount, array $data): void
+    public function syncDiscountables(Discount $discount, array $data): void
     {
-        if (array_key_exists('is_default', $data)  && $data['is_default']) {
-            $this->setAsDefault($discount);
-        } else if (array_key_exists('is_default', $data) && !$data['is_default']) {
-            $this->removeAsDefault($discount);
+        $groupedData = collect($data)->groupBy('discountable_type');
+        foreach ($groupedData as $discountableType => $discountables) {
+            $discountables = $discountables->toArray();
+            $discount->discountables()->where('discountable_type', $discountableType)
+                ->whereNotIn('discountable_id', array_column($discountables, 'discountable_id'))
+                ->delete();
+            foreach ($discountables as $locale) {
+                DiscountableFactory::create(DiscountableType::tryFrom($discountableType))
+                    ->attachDiscountable($discount, $locale);
+            }
         }
     }
 
@@ -80,53 +104,7 @@ class DiscountService extends BaseService
             $discount->default()->delete();
         }
     }
-    public function relatedData(Discount $discount, array $data)
-    {
-        $this->updateDefaultTaxRate($discount, $data);
-        return $discount;
-    }
 
-
-
-    public function saveProducts(Discount $discount, array $productData)
-    {
-        $products = [];
-        foreach ($productData as $data) {
-            $product = ProductFactory::create(
-                ProductHelpers::validateProductableByArray('product_type', $data)
-            )
-                ->attachDiscountRelations(
-                    $discount,
-                    $data
-                );
-            if (!$product->save()) {
-                throw new \Exception('Error saving product');
-            }
-            $products[] = $product;
-        }
-        return $products;
-    }
-
-    public function savePrices(Discount $discount, array $priceData)
-    {
-        $products = [];
-        foreach ($priceData as $data) {
-            $price = null;
-            if (is_int($data)) {
-                $price = Price::find($data);
-                if (!$price) {
-                    throw new \Exception('Price not found');
-                }
-            } else if ($data instanceof Price) {
-                $price = $data;
-            }
-            if (!$price instanceof Price) {
-                throw new \Exception('Price not provided');
-            }
-            $discount->prices()->attach($price->id);
-        }
-        return $products;
-    }
     public function deleteDiscount(Discount $discount)
     {
         if (!$discount->delete()) {

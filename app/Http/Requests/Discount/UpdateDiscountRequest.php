@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Discount;
 
+use App\Enums\Order\Discount\DiscountableType;
+use App\Enums\Order\Discount\DiscountAmountType;
 use App\Enums\Order\Discount\DiscountScope;
 use App\Enums\Order\Discount\DiscountType;
 use App\Enums\Product\ProductType;
@@ -36,6 +38,10 @@ class UpdateDiscountRequest extends FormRequest
             'description' => [
                 'nullable',
                 'string'
+            ],
+            'amount_type' => [
+                'sometimes',
+                Rule::enum(DiscountAmountType::class)
             ],
             'type' => [
                 'sometimes',
@@ -98,30 +104,20 @@ class UpdateDiscountRequest extends FormRequest
             ],
             'is_code_required' => ['boolean'],
             'is_default' => ['sometimes', 'boolean'],
-            'products' => [
-                'nullable',
+            'discountables' => [
+                'sometimes',
                 'array'
             ],
-            'products.*.product_id' => [
-                'sometimes',
+            'discountables.*.id' => [
+                'required',
                 'integer',
             ],
-            'products.*.product_type' => [
-                'sometimes',
-                Rule::enum(ProductType::class)
+            'discountables.*.type' => [
+                'required',
+                Rule::enum(DiscountableType::class)
             ],
-            'products.*.price_id' => [
-                'sometimes',
-                'integer',
-                'exists:prices,id'
-            ],
-            'category_ids' => [
-                'nullable',
-                'array'
-            ],
-            'category_ids.*' => ['exists:categories,id'],
         ];
-    
+
     }
-    
+
 }

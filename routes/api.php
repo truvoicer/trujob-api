@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\Firebase\FirebaseTopicController;
 use App\Http\Controllers\Api\Brand\BrandController;
 use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Color\ColorController;
+use App\Http\Controllers\Api\Discount\DiscountableTypeController;
+use App\Http\Controllers\Api\Discount\DiscountAmountTypeController;
 use App\Http\Controllers\Api\Discount\DiscountController;
 use App\Http\Controllers\Api\Discount\DiscountScopeController;
 use App\Http\Controllers\Api\Discount\DiscountSetAsDefaultController;
@@ -130,7 +132,9 @@ use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\User\UserCurrencyController;
 use App\Http\Controllers\Api\User\UserSellerController;
+use App\Http\Controllers\Api\User\UserSettingController;
 use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
 use App\Http\Controllers\Api\Widget\WidgetController;
 use App\Http\Controllers\Api\Widget\WidgetRoleController;
@@ -190,10 +194,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
     Route::prefix('discount')->name('discount.')->group(function () {
         Route::get('/type', DiscountTypeController::class)->name('type.index');
+        Route::get('/discountable/type', DiscountableTypeController::class)->name('discountable.type.index');
+        Route::get('/amount-type', DiscountAmountTypeController::class)->name('amount-type.index');
         Route::get('/scope', DiscountScopeController::class)->name('scope.index');
     });
     Route::prefix('locale')->name('locale.')->group(function () {
-        Route::get('/currency', [CurrencyController::class, 'index'])->name('currency.index');
+        Route::prefix('currency')->name('currency.')->group(function () {
+            Route::get('/', [CurrencyController::class, 'index'])->name('index');
+        });
         Route::get('/country', [CountryController::class, 'index'])->name('country.index');
         Route::get('/region', [RegionController::class, 'index'])->name('region.index');
         Route::prefix('address')->name('address.')->group(function () {
@@ -235,6 +243,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 });
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
+
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::prefix('setting')->name('setting.')->group(function () {
+            Route::get('/', [UserSettingController::class, 'show'])->name('show');
+            Route::patch('/update', [UserSettingController::class, 'update'])->name('update');
+        });
+    });
+
     Route::prefix('firebase')->name('firebase.')->group(function () {
         Route::prefix('device')->name('device.')->group(function () {
             Route::post('/register', [FirebaseDeviceController::class, 'registerFirebaseDevice'])->name('register');
@@ -484,7 +500,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('restriction')->name('restriction.')->group(function () {
             Route::get('/action', [ShippingRestrictionActionController::class, 'index'])->name('action.index');
             Route::get('/type', [ShippingRestrictionTypeController::class, 'index'])->name('type.index');
-
         });
         Route::prefix('method')->name('method.')->group(function () {
             Route::get('/', [ShippingMethodController::class, 'index'])->name('index');

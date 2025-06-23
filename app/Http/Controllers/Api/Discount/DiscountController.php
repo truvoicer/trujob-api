@@ -7,7 +7,6 @@ use App\Http\Requests\Discount\StoreDiscountRequest;
 use App\Http\Requests\Discount\UpdateDiscountRequest;
 use App\Http\Resources\Discount\DiscountResource;
 use App\Models\Discount;
-use App\Models\Price;
 use App\Repositories\DiscountRepository;
 use App\Services\Discount\DiscountService;
 use Illuminate\Http\Request;
@@ -88,7 +87,7 @@ class DiscountController extends Controller
     {
         $this->discountService->setUser($request->user()->user);
         $this->discountService->setSite($request->user()->site);
-        
+
         if (!$this->discountService->deleteDiscount($discount)) {
             return response()->json([
                 'message' => 'Error deleting discount',

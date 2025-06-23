@@ -17,6 +17,11 @@ class TaxRateService extends BaseService
             unset($data['tax_rateables']);
         }
 
+        $isDefault = $data['is_default'] ?? null;
+        if (isset($data['is_default'])) {
+            unset($data['is_default']);
+        }
+
         if (!empty($data['label'])) {
             $data['name'] = Str::slug($data['label']);
         }
@@ -28,7 +33,14 @@ class TaxRateService extends BaseService
             throw new \Exception('Error creating tax rate');
         }
 
-        $this->updateDefaultTaxRate($taxRate, $data);
+
+        if ($isDefault !== null) {
+            if ($isDefault) {
+                $this->setAsDefault($taxRate);
+            } else {
+                $this->removeAsDefault($taxRate);
+            }
+        }
 
         if (is_array($taxRateables) && count($taxRateables) > 0) {
             $this->syncTaxRateAble($taxRate, $taxRateables);
@@ -57,6 +69,10 @@ class TaxRateService extends BaseService
         if (isset($data['tax_rateables'])) {
             unset($data['tax_rateables']);
         }
+        $isDefault = $data['is_default'] ?? null;
+        if (isset($data['is_default'])) {
+            unset($data['is_default']);
+        }
         if (!empty($data['has_region']) && empty($data['region_id'])) {
             throw new \Exception('Region ID is required when has_region is true');
         }
@@ -65,22 +81,19 @@ class TaxRateService extends BaseService
             throw new \Exception('Error updating tax rate');
         }
 
-        $this->updateDefaultTaxRate($taxRate, $data);
+        if ($isDefault !== null) {
+            if ($isDefault) {
+                $this->setAsDefault($taxRate);
+            } else {
+                $this->removeAsDefault($taxRate);
+            }
+        }
 
         if (is_array($taxRateables) && count($taxRateables) > 0) {
             $this->syncTaxRateAble($taxRate, $taxRateables);
         }
 
         return $taxRate;
-    }
-
-    public function updateDefaultTaxRate(TaxRate $taxRate, array $data): void
-    {
-        if (array_key_exists('is_default', $data)  && $data['is_default']) {
-            $this->setAsDefault($taxRate);
-        } else if (array_key_exists('is_default', $data) && !$data['is_default']) {
-            $this->removeAsDefault($taxRate);
-        }
     }
 
     public function setAsDefault(TaxRate $taxRate): void

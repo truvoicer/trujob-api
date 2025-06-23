@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 class SiteSeeder extends Seeder
 {
 
-    public function sequence(Sequence $sequence) {
+    public function sequence(Sequence $sequence, bool $isDefault = false): array{
         $priceTypeCount = PriceType::count();
         if ($priceTypeCount < 1) {
             throw new Exception('No price types found.');
@@ -56,8 +56,8 @@ class SiteSeeder extends Seeder
             throw new Exception('Required price type not found.');
         }
         return [
-            'price_type_id' => $sequence->index === 0 ? $priceType->id : $randomPriceType->id,
-            'is_default' => $sequence->index === 0 ? true : false,
+            'price_type_id' => $isDefault ? $priceType->id : $randomPriceType->id,
+            'is_default' => $isDefault ? true : false,
         ];
     }
 
@@ -115,9 +115,16 @@ class SiteSeeder extends Seeder
                                 ->has(
                                     Price::factory()
                                         ->state(new Sequence(
+                                            fn (Sequence $sequence) => $this->sequence($sequence, true)
+                                        ))
+                                        ->count(1)
+                                )
+                                ->has(
+                                    Price::factory()
+                                        ->state(new Sequence(
                                             fn (Sequence $sequence) => $this->sequence($sequence)
                                         ))
-                                        ->count(3)
+                                        ->count(2)
                                 )
                         )
                         ->has(UserFollow::factory()->count(5))

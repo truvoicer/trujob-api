@@ -110,7 +110,12 @@ class User extends Authenticatable
     }
 
 
-    public function userSettings()
+    public function settings()
+    {
+        return $this->hasOne(UserSetting::class);
+    }
+
+    public function userSetting()
     {
         return $this->hasMany(UserSetting::class);
     }
@@ -145,6 +150,11 @@ class User extends Authenticatable
     public function siteUsers(): MorphMany
     {
         return $this->morphMany(SiteUser::class, 'siteUserable');
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     public function hasReachedDiscountLimit(Discount $discount): bool

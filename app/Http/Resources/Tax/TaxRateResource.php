@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Tax;
 
-use App\Enums\Order\Tax\TaxRateAbleType;
-use App\Factories\Shipping\TaxRateAbleFactory;
 use App\Http\Resources\Product\CountryResource;
 use App\Http\Resources\Product\CurrencyResource;
 use App\Http\Resources\Region\RegionResource;

@@ -21,6 +21,7 @@ class DiscountResource extends JsonResource
             'label' => $this->label,
             'description' => $this->description,
             'type' => $this->type,
+            'amount_type' => $this->amount_type,
             'amount' => $this->amount,
             'rate' => $this->rate,
             'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
@@ -35,8 +36,7 @@ class DiscountResource extends JsonResource
             'code' => $this->code,
             'is_code_required' => $this->is_code_required,
             'is_default' => $this->isDefault(),
-            // 'products' => $this->whenLoaded('products', ),
-            // 'category_ids' => $this->name,
+            'discountables' => $this->whenLoaded('discountables', DiscountableResource::collection($this->discountables)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

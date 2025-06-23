@@ -52,11 +52,6 @@ class Price extends Model
         return $this->belongsTo(Currency::class);
     }
 
-    public function discounts()
-    {
-        return $this->belongsToMany(Discount::class, 'discount_prices')
-            ->withTimestamps();
-    }
 
     public function taxRates()
     {
@@ -69,6 +64,11 @@ class Price extends Model
         return $this->taxRates()
             ->wherePivot('is_primary', true)
             ->first();
+    }
+
+    public function discountables()
+    {
+        return $this->morphMany(Discountable::class, 'discountable');
     }
 
     public function calculateTax(float $price, Country $country, ?string $region = null)

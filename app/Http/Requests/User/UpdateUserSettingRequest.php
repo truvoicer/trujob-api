@@ -13,7 +13,7 @@ class UpdateUserSettingRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class UpdateUserSettingRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'app_theme' => ['sometimes', 'string', 'in:light,dark'],
+            'push_notification' => ['sometimes', 'boolean'],
+            'currency_id' => ['sometimes', 'exists:currencies,id'],
         ];
     }
 }

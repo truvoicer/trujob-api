@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('discount_shipping_methods', function (Blueprint $table) {
+        Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('discount_id')
-                ->constrained('discounts')
-                ->cascadeOnDelete();
-            $table->foreignId('shipping_method_id')
-                ->constrained('shipping_methods')
-                ->cascadeOnDelete();
+            $table->string('name'); // e.g., English, Spanish
+            $table->string('iso639_1', 2)->unique()->nullable(); // e.g., en, es (ISO 639-1)
+            $table->string('iso639_2', 3)->unique()->nullable(); // e.g., eng, spa (ISO 639-2)
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('discount_shipping_methods');
+        Schema::dropIfExists('languages');
     }
 };

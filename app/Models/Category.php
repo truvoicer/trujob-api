@@ -45,4 +45,9 @@ class Category extends Model
     {
         return $this->morphMany(ShippingZoneAble::class, 'shipping_zoneable');
     }
+
+    public function discountables()
+    {
+        return $this->morphMany(Discountable::class, 'discountable');
+    }
 }

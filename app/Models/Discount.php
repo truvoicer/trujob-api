@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Order\Discount\DiscountAmountType;
 use App\Enums\Order\Discount\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,7 @@ class Discount extends Model
         'description',
         'currency_id',
         'type',
+        'amount_type',
         'amount',
         'rate',
         'starts_at',
@@ -41,19 +43,9 @@ class Discount extends Model
         'rate' => 'decimal:2',
         'min_order_amount' => 'decimal:2',
         'type' => DiscountType::class,
+        'amount_type' => DiscountAmountType::class,
     ];
 
-    public function prices()
-    {
-        return $this->belongsToMany(Price::class, 'discount_prices')
-            ->withTimestamps();
-    }
-
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class, 'discount_categories')
-            ->withTimestamps();
-    }
 
     public function currency()
     {
@@ -101,9 +93,16 @@ class Discount extends Model
 
     public function isValid(): bool
     {
-        return $this->is_active
-            && now()->between($this->starts_at, $this->ends_at)
-            && ($this->usage_limit === null || $this->usage_count < $this->usage_limit);
+        if (!$this->is_active) {
+            return false;
+        }
+        if (!now()->between($this->starts_at, $this->ends_at)) {
+            return false;
+        }
+        if ($this->usage_limit !== null && $this->usage_count >= $this->usage_limit) {
+            return false;
+        }
+        return true;
     }
 
     public function default() {
@@ -113,5 +112,10 @@ class Discount extends Model
     public function isDefault(): bool
     {
         return $this->default()->exists();
+    }
+
+    public function discountables()
+    {
+        return $this->hasMany(Discountable::class);
     }
 }

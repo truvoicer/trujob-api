@@ -3,62 +3,43 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\StoreUserSettingRequest;
 use App\Http\Requests\User\UpdateUserSettingRequest;
-use App\Models\UserSetting;
+use App\Http\Resources\User\UserSettingResource;
 use App\Services\User\UserSettingService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserSettingController extends Controller
 {
-    protected UserSettingService $userSettingService;
 
-    public function __construct(UserSettingService $userSettingService, Request $request)
-    {
-        $this->userSettingService = $userSettingService;
+    public function __construct(
+        private UserSettingService $userSettingService
+    ){}
+
+    public function show(Request $request) {
+        $this->userSettingService->setUser($request->user()->user);
+        $this->userSettingService->setSite($request->user()->site);
+        $userSetting = $request->user()->user->setting;
+        if (!$userSetting) {
+            return response()->json([
+                'message' => 'User setting not found',
+            ], Response::HTTP_NOT_FOUND);
+        }
+        return UserSettingResource::make($userSetting);
     }
 
-
-    public function createUserSetting(StoreUserSettingRequest $request) {
-        $this->userSettingService->setUser($request->user());
-        $createUserSetting = $this->userSettingService->createUserSetting($request->all());
+    public function update(UpdateUserSettingRequest $request) {
+        $this->userSettingService->setUser($request->user()->user);
+        $this->userSettingService->setSite($request->user()->site);
+        $createUserSetting = $this->userSettingService->updateUserSetting($request->validated());
         if (!$createUserSetting) {
-            return $this->sendErrorResponse(
-                'Error creating user setting',
-                [],
-                $this->userSettingService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error creating user setting for user',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('User setting created', [], $this->userSettingService->getErrors());
+        return response()->json([
+            'message' => 'User setting created',
+        ], Response::HTTP_OK);
     }
 
-    public function updateUserSetting(UserSetting $userSetting, Request $request) {
-        $this->userSettingService->setUser($request->user());
-        $this->userSettingService->setUserSetting($userSetting);
-        $createUserSetting = $this->userSettingService->updateUserSetting($request->all());
-        if (!$createUserSetting) {
-            return $this->sendErrorResponse(
-                'Error updating User setting',
-                [],
-                $this->userSettingService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('User setting updated', [], $this->userSettingService->getErrors());
-    }
-    public function deleteUserSetting(UserSetting $userSetting) {
-        $this->userSettingService->setUserSetting($userSetting);
-        $deleteUserSetting = $this->userSettingService->deleteUserSetting();
-        if (!$deleteUserSetting) {
-            return $this->sendErrorResponse(
-                'Error deleting user setting',
-                [],
-                $this->userSettingService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('User setting deleted', [], $this->userSettingService->getErrors());
-    }
 }

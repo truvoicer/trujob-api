@@ -22,6 +22,11 @@ class Currency extends Model
         'is_active' => 'boolean',
     ];
 
+    public function currencies()
+    {
+        return $this->hasMany(Currency::class);
+    }
+
     public function country()
     {
         return $this->belongsTo(Country::class);
@@ -50,6 +55,11 @@ class Currency extends Model
     public function shippingZoneAbles()
     {
         return $this->morphMany(ShippingZoneAble::class, 'shipping_zoneable');
+    }
+
+    public function discountables()
+    {
+        return $this->morphMany(Discountable::class, 'discountable');
     }
 
 }

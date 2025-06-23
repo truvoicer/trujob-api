@@ -17,6 +17,18 @@ return new class extends Migration
         Schema::create('user_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId( 'user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('currency_id')
+                ->nullable()
+                ->constrained('currencies')
+                ->nullOnDelete();
+            $table->foreignId('country_id')
+                ->nullable()
+                ->constrained('countries')
+                ->nullOnDelete();
+            $table->foreignId('language_id')
+                ->nullable()
+                ->constrained('languages')
+                ->nullOnDelete();
             $table->string('app_theme')->default('light');
             $table->boolean('push_notification')->default(true);
             $table->timestamps();

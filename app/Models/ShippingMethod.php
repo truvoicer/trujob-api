@@ -49,6 +49,11 @@ class ShippingMethod extends Model
         return $this->belongsToMany(ShippingZone::class, 'shipping_rates');
     }
 
+    public function discountables()
+    {
+        return $this->morphMany(Discountable::class, 'discountable');
+    }
+
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

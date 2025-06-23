@@ -53,6 +53,7 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             CurrencySeeder::class,
             RegionSeeder::class,
+            LanguageSeeder::class,
             ShippingZoneSeeder::class,
             ShippingMethodSeeder::class,
             TaxRateSeeder::class,

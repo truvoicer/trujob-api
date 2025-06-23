@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Database\Factories\user\UserRewardFactory;
 use Database\Factories\user\UserSettingFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +9,16 @@ use Illuminate\Database\Eloquent\Model;
 class UserSetting extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'user_id',
+        'currency_id',
+        'app_theme',
+        'push_notification'
+    ];
+
+    protected $casts = [
+        'push_notification' => 'boolean',
+    ];
 
 
     /**
@@ -25,5 +34,10 @@ class UserSetting extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 }
