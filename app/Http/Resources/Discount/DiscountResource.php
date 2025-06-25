@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\Discount;
 
-use App\Http\Resources\Product\CurrencyResource;
+use App\Http\Resources\Currency\CurrencyResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DiscountResource extends JsonResource

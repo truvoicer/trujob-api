@@ -5,7 +5,7 @@ namespace App\Services\Locale;
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Enums\MorphEntity;
 use App\Enums\Order\Shipping\ShippingRestrictionAction;
-use App\Http\Resources\Product\CurrencyResource;
+use App\Http\Resources\Currency\CurrencyResource;
 use App\Models\Currency;
 use App\Models\ShippingMethod;
 use App\Repositories\CurrencyRepository;

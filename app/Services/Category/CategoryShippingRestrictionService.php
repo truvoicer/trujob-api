@@ -5,7 +5,7 @@ namespace App\Services\Category;
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Enums\MorphEntity;
 use App\Enums\Order\Shipping\ShippingRestrictionAction;
-use App\Http\Resources\Product\CategoryResource;
+use App\Http\Resources\Category\CategoryResource;
 use App\Models\Category;
 use App\Models\ShippingMethod;
 use App\Repositories\CategoryRepository;

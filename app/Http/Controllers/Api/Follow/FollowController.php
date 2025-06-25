@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Follow;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\Follow\StoreProductFollowRequest;
 use App\Http\Requests\Product\Follow\UpdateProductFollowRequest;
-use App\Http\Resources\Product\ProductFollowResource;
+use App\Http\Resources\Follow\FollowResource;
 use App\Models\Product;
 use App\Models\ProductFollow;
 use App\Models\User;
@@ -47,7 +47,7 @@ class FollowController extends Controller
             $request->get('page', 1)
         );
 
-        return ProductFollowResource::collection(
+        return FollowResource::collection(
             $this->productRepository->findMany()
         );
     }

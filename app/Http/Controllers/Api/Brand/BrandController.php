@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Brand;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Brand\StoreBrandRequest;
 use App\Http\Requests\Brand\UpdateBrandRequest;
-use App\Http\Resources\Product\BrandResource;
+use App\Http\Resources\Brand\BrandResource;
 use App\Models\Brand;
 use App\Repositories\BrandRepository;
 use App\Services\Brand\BrandService;
@@ -36,7 +36,7 @@ class BrandController extends Controller
         $this->brandRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return BrandResource::collection(
             $this->brandRepository->findMany()
         );

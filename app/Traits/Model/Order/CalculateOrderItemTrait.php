@@ -5,10 +5,12 @@ namespace App\Traits\Model\Order;
 use App\Enums\Order\Discount\DiscountableType;
 use App\Enums\Order\Discount\DiscountAmountType;
 use App\Enums\Order\Discount\DiscountType;
+use App\Enums\Order\Tax\TaxRateAbleType;
 use App\Enums\Order\Tax\TaxRateAmountType;
 use App\Enums\Order\Tax\TaxRateType;
 use App\Enums\Price\PriceType;
 use App\Factories\Discount\DiscountableFactory;
+use App\Factories\Tax\TaxRateAbleFactory;
 use App\Models\DefaultDiscount;
 use App\Models\DefaultTaxRate;
 use App\Models\Discount;
@@ -21,8 +23,10 @@ trait CalculateOrderItemTrait
 
     private ?PriceType $priceType = null;
     private ?Price $defaultPrice = null;
-    private ?Collection $defaultTaxRates = null;
-    private ?Collection $defaultDiscounts = null;
+    private Collection $defaultTaxRates;
+    private Collection $defaultDiscounts;
+    private Collection $taxRates;
+    private Collection $discounts;
 
     public function setPriceType(PriceType $priceType): void
     {
@@ -50,29 +54,42 @@ trait CalculateOrderItemTrait
             return $this;
         }
         $this->defaultPrice = $this->productable->getDefaultPrice($this->priceType);
-        $this->defaultTaxRates = DefaultTaxRate::all();
-        $this->defaultDiscounts = DefaultDiscount::all();
+        $this->defaultTaxRates = $this->filterValidTaxRates(DefaultTaxRate::all(), true);
+        $this->defaultDiscounts = $this->filterValidDiscounts(DefaultDiscount::all(), true);
+
+        if ($this->defaultPrice->taxRates->isNotEmpty()) {
+            $this->taxRates = $this->filterValidTaxRates($this->defaultPrice->taxRates, false);
+        } else {
+            $this->taxRates = new Collection();
+        }
+
+        if (
+            $this->defaultPrice?->discounts instanceof Collection &&
+            $this->defaultPrice->discounts->isNotEmpty()
+        ) {
+            $this->discounts = $this->filterValidDiscounts($this->defaultPrice?->discounts, false);
+        } else {
+            $this->discounts = new Collection();
+        }
         return $this;
     }
 
-    public function calculateQuantity(): int
+    public function filterValidTaxRates(Collection $collection, bool $isDefault): Collection
     {
-        return $this->quantity;
+        return $collection->filter(function (DefaultTaxRate $defaultTaxRate) use ($isDefault) {
+            return $this->isTaxRateValid($defaultTaxRate->taxRate, $isDefault);
+        })->map(function (DefaultTaxRate $defaultTaxRate) {
+            return $defaultTaxRate->taxRate;
+        });
     }
 
-    /**
-     * Calculate the total price of an order item.
-     *
-     * @return float
-     */
-
-    public function calculateTotalPrice(): float
+    public function filterValidDiscounts(Collection $collection, bool $isDefault): Collection
     {
-        $this->init();
-        if (!$this->defaultPrice) {
-            return 0.0; // or throw an exception if a default price is required
-        }
-        return $this->quantity * $this->defaultPrice->amount;
+        return $collection->filter(function (DefaultDiscount $defaultDiscount) use ($isDefault) {
+            return $this->isDiscountValid($defaultDiscount->discount, $isDefault);
+        })->map(function (DefaultDiscount $defaultDiscount) {
+            return $defaultDiscount->discount;
+        });
     }
 
     private function getTaxByAmountType(TaxRateAmountType $amountType, TaxRate $taxRate): float
@@ -102,18 +119,18 @@ trait CalculateOrderItemTrait
         $totalFixedAmount = 0.0;
         if ($this->defaultTaxRates->isNotEmpty()) {
             foreach ($this->defaultTaxRates as $defaultTaxRate) {
-                switch ($defaultTaxRate->taxRate->amount_type) {
+                switch ($defaultTaxRate->amount_type) {
                     case TaxRateType::VAT:
-                        $totalPercentageRate += 0.2; // Example VAT rate
+                        $totalPercentageRate += 20; // Example VAT rate
                         break;
                     default:
                         $totalFixedAmount += $this->getTaxByAmountType(
                             TaxRateAmountType::FIXED,
-                            $defaultTaxRate->taxRate
+                            $defaultTaxRate
                         );
                         $totalPercentageRate += $this->getTaxByAmountType(
                             TaxRateAmountType::PERCENTAGE,
-                            $defaultTaxRate->taxRate
+                            $defaultTaxRate
                         );
                         break;
                 }
@@ -130,17 +147,15 @@ trait CalculateOrderItemTrait
             return 0.0; // No tax for zero or negative prices
         }
 
-        $this->init();
-
         list($totalFixedAmount, $totalPercentageRate) = $this->calculateDefaultTaxWithoutPrice();
 
         $priceTaxRates = $this->defaultPrice->taxRates;
 
         if ($priceTaxRates->isNotEmpty()) {
-            foreach ($priceTaxRates as $priceTaxRate) {
+            foreach ($this->taxRates as $priceTaxRate) {
                 switch ($priceTaxRate->amount_type) {
                     case TaxRateType::VAT:
-                        $totalPercentageRate += 0.2; // Example VAT rate
+                        $totalPercentageRate += 20; // Example VAT rate
                         break;
                     default:
                         $totalFixedAmount += $this->getTaxByAmountType(
@@ -187,6 +202,25 @@ trait CalculateOrderItemTrait
                 return 0.0; // No valid amount type
         }
     }
+    private function isTaxRateValid(TaxRate $taxRate, bool $isDefault): bool
+    {
+        if (!$taxRate->isValid()) {
+            return false; // Tax rate is not valid
+        }
+
+        if ($isDefault && $taxRate->taxRateAbles()->count() === 0) {
+            return true; // No taxrateables associated with the discount
+        }
+        foreach ($taxRate->taxRateAbles as $taxRateAble) {
+            $isValid = TaxRateAbleFactory::create(
+                TaxRateAbleType::tryFrom($taxRateAble->tax_rateable_type)
+            )->isTaxRateValidForOrderItem($taxRateAble, $this);
+            if (!$isValid) {
+                return false; // Tax rate is not valid for this discountable
+            }
+        }
+        return true; // Discount is valid
+    }
     private function isDiscountValid(Discount $discount, bool $isDefault): bool
     {
         if (!$discount->isValid()) {
@@ -224,10 +258,7 @@ trait CalculateOrderItemTrait
         $totalPercentageRate = 0;
         $totalFixedAmount = 0.0;
         foreach ($this->defaultDiscounts as $defaultDiscount) {
-            if (!$this->isDiscountValid($defaultDiscount->discount, true)) {
-                continue; // Skip invalid default discounts
-            }
-            switch ($defaultDiscount->discount->type) {
+            switch ($defaultDiscount->type) {
                 case DiscountType::BUY_X_GET_Y:
                 case DiscountType::FREE_SHIPPING:
                 case DiscountType::BULK_PURCHASE:
@@ -237,11 +268,11 @@ trait CalculateOrderItemTrait
                 default:
                     $totalPercentageRate += $this->getDiscountByAmountType(
                         DiscountAmountType::PERCENTAGE,
-                        $defaultDiscount->discount
+                        $defaultDiscount
                     );
                     $totalFixedAmount += $this->getDiscountByAmountType(
                         DiscountAmountType::FIXED,
-                        $defaultDiscount->discount
+                        $defaultDiscount
                     );
                     break;
             }
@@ -255,16 +286,10 @@ trait CalculateOrderItemTrait
 
     public function calculateDiscount(): float
     {
-
-        $this->init();
         list($totalFixedAmount, $totalPercentageRate) = $this->calculateDefaultDiscounts();
-
         $priceDiscounts = $this->defaultPrice?->discounts;
         if ($priceDiscounts instanceof Collection && $priceDiscounts->isNotEmpty()) {
-            foreach ($priceDiscounts as $priceDiscount) {
-                if (!$this->isDiscountValid(discount: $priceDiscount, isDefault: false)) {
-                    continue; // Skip invalid default discounts
-                }
+            foreach ($this->discounts as $priceDiscount) {
                 switch ($priceDiscount->type) {
                     case DiscountType::BUY_X_GET_Y:
                     case DiscountType::FREE_SHIPPING:
@@ -291,6 +316,26 @@ trait CalculateOrderItemTrait
         );
     }
 
+
+    public function calculateQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    /**
+     * Calculate the total price of an order item.
+     *
+     * @return float
+     */
+
+    public function calculateTotalPrice(): float
+    {
+        if (!$this->defaultPrice) {
+            return 0.0; // or throw an exception if a default price is required
+        }
+        return $this->quantity * $this->defaultPrice->amount;
+    }
+
     /**
      * Calculate the total price of an order item after applying discounts.
      *
@@ -315,5 +360,25 @@ trait CalculateOrderItemTrait
         $calculateTax = $this->calculateTaxWithoutPrice($totalPrice);
 
         return ($totalPrice + $calculateTax) - $discount;
+    }
+
+    public function getDefaultDiscounts(): Collection
+    {
+        return $this->defaultDiscounts;
+    }
+
+    public function getDefaultTaxRates(): Collection
+    {
+        return $this->defaultTaxRates;
+    }
+
+    public function getTaxRates(): Collection
+    {
+        return $this->taxRates;
+    }
+
+    public function getDiscounts(): Collection
+    {
+        return $this->discounts;
     }
 }

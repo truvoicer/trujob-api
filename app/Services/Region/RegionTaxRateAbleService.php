@@ -5,7 +5,10 @@ namespace App\Services\Region;
 use App\Contracts\Tax\TaxRateAbleInterface;
 use App\Enums\MorphEntity;
 use App\Http\Resources\Region\RegionResource;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\TaxRate;
+use App\Models\TaxRateAble;
 use App\Repositories\RegionRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -53,5 +56,19 @@ class RegionTaxRateAbleService implements TaxRateAbleInterface
                 $resource->tax_rateable
             )
         ];
+    }
+
+    public function isTaxRateValidForOrderItem(TaxRateAble $taxRateAble, OrderItem $orderItem): bool
+    {
+        return true;
+    }
+
+    public function isTaxRateValidForOrder(TaxRateAble $taxRateAble, Order $order): bool
+    {
+        $region = $this->regionRepository->findById($taxRateAble->tax_rateable_id);
+        if (!$region) {
+            return false;
+        }
+        return true;
     }
 }

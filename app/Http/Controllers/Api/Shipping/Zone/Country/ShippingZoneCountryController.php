@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Shipping\Zone\Country;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\CountryResource;
+use App\Http\Resources\Country\CountryResource;
 use App\Http\Resources\Shipping\ShippingZoneResource;
 use App\Models\Country;
 use App\Models\ShippingZone;
@@ -38,7 +38,7 @@ class ShippingZoneCountryController extends Controller
         $this->shippingZoneRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return CountryResource::collection(
             $this->shippingZoneRepository->findMany()
         );
@@ -63,7 +63,7 @@ class ShippingZoneCountryController extends Controller
     public function destroy(ShippingZone $shippingZone, Country $country, Request $request) {
         $this->shippingZoneService->setUser($request->user()->user);
         $this->shippingZoneService->setSite($request->user()->site);
-        
+
         $shippingZone->countries()->detach(
             $country->id
         );

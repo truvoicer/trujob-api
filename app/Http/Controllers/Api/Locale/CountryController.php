@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Locale;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Country\StoreCountryRequest;
 use App\Http\Requests\Country\UpdateCountryRequest;
-use App\Http\Resources\Product\CountryResource;
+use App\Http\Resources\Country\CountryResource;
 use App\Models\Country;
 use App\Repositories\CountryRepository;
 use App\Services\Locale\CountryService;

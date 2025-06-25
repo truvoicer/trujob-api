@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Product\Feature;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\FeatureResource;
+use App\Http\Resources\Feature\FeatureResource;
 use App\Models\Feature;
 use App\Models\Product;
 use App\Repositories\ProductFeatureRepository;
@@ -44,7 +44,7 @@ class ProductFeatureController extends Controller
         $this->productFeatureRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return FeatureResource::collection(
             $this->productFeatureRepository->findMany()
         );
@@ -68,7 +68,7 @@ class ProductFeatureController extends Controller
             'message' => 'Product feature created',
         ], Response::HTTP_CREATED);
     }
-    
+
     public function destroy(Product $product, Feature $feature, Request $request) {
         $this->productFeatureService->setUser($request->user()->user);
         $this->productFeatureService->setSite($request->user()->site);

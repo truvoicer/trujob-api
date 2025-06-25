@@ -2,7 +2,12 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Http\Resources\Brand\BrandResource;
+use App\Http\Resources\Category\CategoryResource;
+use App\Http\Resources\Color\ColorResource;
+use App\Http\Resources\Feature\FeatureResource;
 use App\Http\Resources\MediaResource;
+use App\Http\Resources\Price\PriceResource as PricePriceResource;
 use App\Http\Resources\PriceResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -26,7 +31,7 @@ class ProductSingleResource extends JsonResource
             'allow_offers' => $this->allow_offers,
             'type' => $this->whenLoaded('types', ProductTypeResource::collection($this->types)),
             'user' => $this->whenLoaded('user', UserResource::make($this->user)),
-            'follow' => $this->whenLoaded('productFollow', ProductFollowResource::collection($this->productFollow)),
+            'follow' => $this->whenLoaded('productFollow', FollowResource::collection($this->productFollow)),
             'feature' => $this->whenLoaded('features', FeatureResource::collection($this->features)),
             'review' => $this->whenLoaded('productReview', ProductReviewResource::collection($this->productReview)),
             'category' => $this->whenLoaded('categories', CategoryResource::collection($this->categories)),
@@ -34,7 +39,7 @@ class ProductSingleResource extends JsonResource
             'color' => $this->whenLoaded('colors', ColorResource::collection($this->colors)),
             'product_type' => $this->whenLoaded('productTypes', ProductTypeResource::collection($this->productTypes)),
             'media' => $this->whenLoaded('media', MediaResource::collection($this->media)),
-            'prices' => $this->whenLoaded('prices', PriceResource::collection($this->prices)),
+            'prices' => $this->whenLoaded('prices', PricePriceResource::collection($this->prices)),
         ];
     }
 }

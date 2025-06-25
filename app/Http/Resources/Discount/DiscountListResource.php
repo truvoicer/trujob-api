@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\User;
+namespace App\Http\Resources\Discount;
 
 use App\Http\Resources\Currency\CurrencyResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserSettingResource extends JsonResource
+class DiscountListResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,8 +16,14 @@ class UserSettingResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'app_theme' => $this->app_theme,
-            'push_notification' => $this->push_notification,
+            'id' => $this->id,
+            'name' => $this->name,
+            'label' => $this->label,
+            'description' => $this->description,
+            'type' => $this->type,
+            'amount_type' => $this->amount_type,
+            'amount' => $this->amount,
+            'rate' => $this->rate,
             'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),
         ];
     }

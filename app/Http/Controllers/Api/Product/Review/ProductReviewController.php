@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Product\Review;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\Review\StoreProductReviewRequest;
 use App\Http\Requests\Product\Review\UpdateProductReviewRequest;
-use App\Http\Resources\Product\ProductReviewResource;
+use App\Http\Resources\Review\ReviewResource;
 use App\Models\Product;
 use App\Models\ProductReview;
 use App\Repositories\ProductRepository;

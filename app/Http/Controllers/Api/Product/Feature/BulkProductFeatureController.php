@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Product\Feature;
 
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\FeatureResource;
+use App\Http\Resources\Feature\FeatureResource;
 use App\Models\Feature;
 use App\Models\Product;
 use App\Repositories\ProductFeatureRepository;

@@ -87,4 +87,12 @@ class TaxRate extends Model
     {
         return $this->morphMany(TaxRateAble::class, 'tax_rateable');
     }
+
+    public function isValid(): bool
+    {
+        if (!$this->is_active) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources\Feature;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CurrencyResource extends JsonResource
+class FeatureResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,15 +14,10 @@ class CurrencyResource extends JsonResource
      */
     public function toArray($request)
     {
-
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'name_plural' => $this->name_plural,
-            'code' => $this->code,
-            'symbol' => $this->symbol,
-            'is_active' => $this->is_active,
-            'country' => $this->whenLoaded('country', CountryResource::make($this->country)),
+            'label' => $this->label,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

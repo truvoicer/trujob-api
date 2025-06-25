@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources\Follow;
 
-use App\Services\Product\ProductMediaService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MediaProductResource extends JsonResource
+class FollowResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,8 +14,6 @@ class MediaProductResource extends JsonResource
      */
     public function toArray($request)
     {
-        $data = parent::toArray($request);
-        $data['uri'] = ProductMediaService::getMediaProductUploadUrl($this->resource);
-        return $data;
+        return parent::toArray($request);
     }
 }

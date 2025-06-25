@@ -28,7 +28,7 @@ class ProductListResource extends JsonResource
             'quantity' => $this->quantity,
             'type' => $this->whenLoaded('types', ProductTypeResource::collection($this->types)),
             'user' => $this->whenLoaded('user', UserResource::make($this->user)),
-            'follows' => $this->whenLoaded('productFollow', ProductFollowResource::collection($this->productFollow)),
+            'follows' => $this->whenLoaded('productFollow', FollowResource::collection($this->productFollow)),
             'features' => $this->whenLoaded('features', FeatureResource::collection($this->features)),
             'reviews' => $this->whenLoaded('productReview', ProductReviewResource::collection($this->productReview)),
             'categories' => $this->whenLoaded('categories', CategoryResource::collection($this->categories)),

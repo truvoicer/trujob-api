@@ -4,10 +4,11 @@ namespace App\Services\Category;
 
 use App\Contracts\Discount\DiscountableInterface;
 use App\Enums\MorphEntity;
-use App\Http\Resources\Product\CategoryResource;
+use App\Http\Resources\Category\CategoryResource;
 use App\Models\Category;
 use App\Models\Discount;
 use App\Models\Discountable;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -72,6 +73,15 @@ class CategoryDiscountableService implements DiscountableInterface
         if (!$productable->categories()->where('id', $productable->id)->exists()) {
             return false;
         }
+        return true; // Placeholder return value
+    }
+    public function isDiscountValidForOrder(Discountable $discountable, Order $order): bool
+    {
+        $category = Category::find($discountable->discountable_id);
+        if (!$category) {
+            return false;
+        }
+
         return true; // Placeholder return value
     }
 }

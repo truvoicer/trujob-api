@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Api\Product\Category;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\ProductCategoryResource;
-use App\Http\Resources\Product\ProductListResource;
+use App\Http\Resources\Category\CategoryResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
@@ -40,7 +39,7 @@ class ProductCategoryController extends Controller
             $request->get('page', 1)
         );
 
-        return ProductCategoryResource::collection(
+        return CategoryResource::collection(
             $this->productRepository->findMany()
         );
     }

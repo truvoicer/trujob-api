@@ -4,10 +4,11 @@ namespace App\Services\Locale;
 
 use App\Contracts\Discount\DiscountableInterface;
 use App\Enums\MorphEntity;
-use App\Http\Resources\Product\CountryResource;
+use App\Http\Resources\Country\CountryResource;
 use App\Models\Country;
 use App\Models\Discount;
 use App\Models\Discountable;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Repositories\CountryRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -70,6 +71,15 @@ class CountryDiscountableService implements DiscountableInterface
         }
 
         if (!request()->user()->settings()->whereRelation('country', 'id', $country->id)->exists()) {
+            return false;
+        }
+        return true; // Placeholder return value
+    }
+
+    public function isDiscountValidForOrder(Discountable $discountable, Order $order): bool
+    {
+        $country = Country::find($discountable->discountable_id);
+        if (!$country) {
             return false;
         }
         return true; // Placeholder return value

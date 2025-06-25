@@ -3,7 +3,7 @@
 
 namespace App\Http\Resources\Region;
 
-use App\Http\Resources\Product\CountryResource;
+use App\Http\Resources\Country\CountryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use PHPUnit\Framework\Constraint\Count;
 

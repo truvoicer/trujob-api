@@ -4,8 +4,12 @@ namespace App\Services\Category;
 
 use App\Contracts\Tax\TaxRateAbleInterface;
 use App\Enums\MorphEntity;
-use App\Http\Resources\Product\CategoryResource;
+use App\Http\Resources\Category\CategoryResource;
+use App\Models\Category;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\TaxRate;
+use App\Models\TaxRateAble;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -53,5 +57,31 @@ class CategoryTaxRateAbleService implements TaxRateAbleInterface
                 $resource->tax_rateable
             )
         ];
+    }
+
+    public function isTaxRateValidForOrderItem(TaxRateAble $taxRateAble, OrderItem $orderItem): bool
+    {
+        $price = Category::find($taxRateAble->tax_rateable_id);
+        if (!$price) {
+            return false;
+        }
+        $productable = $orderItem->productable;
+        if (!$productable) {
+            return false;
+        }
+
+        if (!$productable->categories()->where('id', $productable->id)->exists()) {
+            return false;
+        }
+        return true; // Placeholder return value
+    }
+
+    public function isTaxRateValidForOrder(TaxRateAble $taxRateAble, Order $order): bool
+    {
+        $category = Category::find($taxRateAble->tax_rateable_id);
+        if (!$category) {
+            return false;
+        }
+        return true; // Placeholder return value
     }
 }

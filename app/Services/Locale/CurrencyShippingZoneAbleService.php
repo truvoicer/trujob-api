@@ -4,7 +4,7 @@ namespace App\Services\Locale;
 
 use App\Contracts\Shipping\ShippingZoneAbleInterface;
 use App\Enums\MorphEntity;
-use App\Http\Resources\Product\CurrencyResource;
+use App\Http\Resources\Currency\CurrencyResource;
 use App\Models\ShippingZone;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Resources\Json\JsonResource;

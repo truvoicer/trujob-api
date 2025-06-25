@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Feature;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Feature\StoreFeatureRequest;
 use App\Http\Requests\Feature\UpdateFeatureRequest;
-use App\Http\Resources\Product\FeatureResource;
+use App\Http\Resources\Feature\FeatureResource;
 use App\Models\Feature;
 use App\Repositories\FeatureRepository;
 use App\Services\Feature\FeatureService;
@@ -42,7 +42,7 @@ class FeatureController extends Controller
         $this->featureRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return FeatureResource::collection(
             $this->featureRepository->findMany()
         );
@@ -78,7 +78,7 @@ class FeatureController extends Controller
     public function destroy(Feature $feature, Request $request) {
         $this->featureService->setUser($request->user()->user);
         $this->featureService->setSite($request->user()->site);
-        
+
         if (!$this->featureService->deleteFeature($feature)) {
             return response()->json([
                 'message' => 'Error deleting product feature',

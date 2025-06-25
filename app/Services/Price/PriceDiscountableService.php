@@ -7,6 +7,7 @@ use App\Enums\MorphEntity;
 use App\Http\Resources\Price\PriceResource;
 use App\Models\Discount;
 use App\Models\Discountable;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Price;
 use App\Repositories\PriceRepository;
@@ -73,6 +74,15 @@ class PriceDiscountableService implements DiscountableInterface
         ->where('id', $productable->id);
         if (!$product) {
             return false; // Product not found in the price's products
+        }
+        return true; // Placeholder return value
+    }
+
+    public function isDiscountValidForOrder(Discountable $discountable, Order $order): bool
+    {
+        $price = Price::find($discountable->discountable_id);
+        if (!$price) {
+            return false; // Price not found, discount is not valid
         }
         return true; // Placeholder return value
     }

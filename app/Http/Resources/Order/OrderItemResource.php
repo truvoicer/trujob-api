@@ -3,9 +3,17 @@
 namespace App\Http\Resources\Order;
 
 use App\Enums\Price\PriceType;
+use App\Http\Resources\Discount\DiscountListResource;
+use App\Http\Resources\Discount\DiscountResource;
 use App\Http\Resources\Product\ProductListResource;
+use App\Http\Resources\Tax\TaxRateResource;
+use App\Models\Discount;
+use App\Models\TaxRate;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\OrderItem
+ */
 class OrderItemResource extends JsonResource
 {
     /**
@@ -17,11 +25,25 @@ class OrderItemResource extends JsonResource
     public function toArray($request)
     {
         $this->setPriceType(PriceType::ONE_TIME);
+        $this->init();
+
         return [
             'id' => $this->id,
             'productable_id' => $this->productable_id,
             'productable_type' => $this->productable_type,
             'entity' => ProductListResource::make($this->productable),
+            'default_discounts' => DiscountListResource::collection(
+                $this->getDefaultDiscounts()
+            ),
+            'default_tax_rates' => TaxRateResource::collection(
+                 $this->getDefaultTaxRates()
+            ),
+            'discounts' => DiscountResource::collection(
+                $this->getDiscounts()
+            ),
+            'tax_rates' => TaxRateResource::collection(
+                $this->getTaxRates()
+            ),
             'total_price' => $this->calculateTotalPrice(),
             'quantity' => $this->calculateQuantity(),
             'tax_without_price' => $this->calculateTaxWithoutPrice($this->calculateTotalPrice()),

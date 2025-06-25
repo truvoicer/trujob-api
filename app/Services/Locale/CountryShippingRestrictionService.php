@@ -5,7 +5,7 @@ namespace App\Services\Locale;
 use App\Contracts\Shipping\ShippingRestriction;
 use App\Enums\MorphEntity;
 use App\Enums\Order\Shipping\ShippingRestrictionAction;
-use App\Http\Resources\Product\CountryResource;
+use App\Http\Resources\Country\CountryResource;
 use App\Models\Country;
 use App\Models\ShippingMethod;
 use App\Models\ShippingRestriction as ModelsShippingRestriction;

@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class Order extends Model
 {
     use CalculateOrderTrait;
-    
+
     public function items()
     {
         return $this->hasMany(OrderItem::class, 'order_id');
     }
-    
+
     public function orderTransactions() {
         return $this->hasMany(OrderTransaction::class);
     }
@@ -27,6 +27,7 @@ class Order extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
     public function shipments()
     {
         return $this->hasMany(OrderShipment::class);

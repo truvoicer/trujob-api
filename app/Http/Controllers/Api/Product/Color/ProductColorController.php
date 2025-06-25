@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Api\Product\Color;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Product\Color\StoreProductColorRequest;
-use App\Http\Requests\Product\Color\UpdateProductColorRequest;
-use App\Http\Resources\Product\ProductColorResource;
+use App\Http\Resources\Color\ColorResource;
 use App\Models\Color;
 use App\Models\Product;
-use App\Models\ProductColor;
 use App\Repositories\ProductRepository;
 use App\Services\Product\ProductColorService;
 use Illuminate\Http\Request;
@@ -41,7 +38,7 @@ class ProductColorController extends Controller
             $request->get('page', 1)
         );
 
-        return ProductColorResource::collection(
+        return ColorResource::collection(
             $this->productRepository->findMany()
         );
     }

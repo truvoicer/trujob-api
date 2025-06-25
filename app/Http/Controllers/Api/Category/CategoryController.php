@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Category;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
-use App\Http\Resources\Product\CategoryResource;
+use App\Http\Resources\Category\CategoryResource;
 use App\Models\Category;
 use App\Repositories\CategoryRepository;
 use App\Services\Category\CategoryService;
@@ -37,7 +37,7 @@ class CategoryController extends Controller
         $this->categoryRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return CategoryResource::collection(
             $this->categoryRepository->findMany()
         );
@@ -61,7 +61,7 @@ class CategoryController extends Controller
     public function update(Category $category, UpdateCategoryRequest $request) {
         $this->categoryService->setUser($request->user()->user);
         $this->categoryService->setSite($request->user()->site);
-        
+
         $update = $this->categoryService->updateCategory($category, $request->validated());
         if (!$update) {
             return response()->json([

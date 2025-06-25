@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Color;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Color\StoreColorRequest;
 use App\Http\Requests\Color\UpdateColorRequest;
-use App\Http\Resources\Product\ColorResource;
+use App\Http\Resources\Color\ColorResource;
 use App\Models\Color;
 use App\Repositories\ColorRepository;
 use App\Services\Color\ColorService;
@@ -36,7 +36,7 @@ class ColorController extends Controller
         $this->colorRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return ColorResource::collection(
             $this->colorRepository->findMany()
         );
@@ -45,7 +45,7 @@ class ColorController extends Controller
     public function store(StoreColorRequest $request) {
         $this->colorService->setUser($request->user()->user);
         $this->colorService->setSite($request->user()->site);
-        
+
         if (!$this->colorService->createColor($request->validated())) {
             return response()->json([
                 'message' => 'Error creating color',
@@ -59,7 +59,7 @@ class ColorController extends Controller
     public function update(Color $color, UpdateColorRequest $request) {
         $this->colorService->setUser($request->user()->user);
         $this->colorService->setSite($request->user()->site);
-        
+
         if (!$this->colorService->updateColor($color, $request->validated())) {
             return response()->json([
                 'message' => 'Error updating color',

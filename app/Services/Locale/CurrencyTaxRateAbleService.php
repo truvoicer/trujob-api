@@ -4,8 +4,12 @@ namespace App\Services\Locale;
 
 use App\Contracts\Tax\TaxRateAbleInterface;
 use App\Enums\MorphEntity;
-use App\Http\Resources\Product\CurrencyResource;
+use App\Http\Resources\Currency\CurrencyResource;
+use App\Models\Currency;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\TaxRate;
+use App\Models\TaxRateAble;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -53,5 +57,30 @@ class CurrencyTaxRateAbleService implements TaxRateAbleInterface
                 $resource->tax_rateable
             )
         ];
+    }
+
+    public function isTaxRateValidForOrderItem(TaxRateAble $taxRateAble, OrderItem $orderItem): bool
+    {
+        $currency = Currency::find($taxRateAble->tax_rateable_id);
+        if (!$currency) {
+            return false;
+        }
+        $productable = $orderItem->productable;
+        if (!$productable) {
+            return false;
+        }
+        if (!request()->user()->settings()->whereRelation('currency', 'id', $currency->id)->exists()) {
+            return false;
+        }
+        return true; // Placeholder return value
+    }
+
+    public function isTaxRateValidForOrder(TaxRateAble $taxRateAble, Order $order): bool
+    {
+        $currency = Currency::find($taxRateAble->tax_rateable_id);
+        if (!$currency) {
+            return false;
+        }
+        return true; // Placeholder return value
     }
 }

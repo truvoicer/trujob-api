@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Locale;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Currency\StoreCurrencyRequest as CurrencyStoreCurrencyRequest;
 use App\Http\Requests\Currency\UpdateCurrencyRequest as CurrencyUpdateCurrencyRequest;
-use App\Http\Resources\Product\CurrencyResource;
+use App\Http\Resources\Currency\CurrencyResource;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Repositories\CurrencyRepository;
@@ -48,7 +48,7 @@ class CurrencyController extends Controller
                 'like',
             );
         }
-        
+
         return CurrencyResource::collection(
             $this->currencyRepository->findMany()
         );
@@ -79,7 +79,7 @@ class CurrencyController extends Controller
     public function update(Currency $currency, CurrencyUpdateCurrencyRequest $request) {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
-        
+
         $update = $this->currencyService->updateCurrency($currency, $request->validated());
         if (!$update) {
             return response()->json([

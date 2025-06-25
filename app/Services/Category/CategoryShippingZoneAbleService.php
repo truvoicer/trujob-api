@@ -4,7 +4,7 @@ namespace App\Services\Category;
 
 use App\Contracts\Shipping\ShippingZoneAbleInterface;
 use App\Enums\MorphEntity;
-use App\Http\Resources\Product\CategoryResource;
+use App\Http\Resources\Category\CategoryResource;
 use App\Models\ShippingZone;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Resources\Json\JsonResource;

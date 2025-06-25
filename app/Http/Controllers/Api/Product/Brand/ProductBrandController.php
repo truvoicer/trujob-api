@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Product\Brand;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\ProductBrandResource;
+use App\Http\Resources\Brand\BrandResource;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
@@ -37,7 +37,7 @@ class ProductBrandController extends Controller
             $request->get('page', 1)
         );
 
-        return ProductBrandResource::collection(
+        return BrandResource::collection(
             $this->productRepository->findMany()
         );
     }

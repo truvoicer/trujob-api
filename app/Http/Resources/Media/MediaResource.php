@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Product;
+namespace App\Http\Resources\Media;
 
+use App\Services\Product\ProductMediaService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductColorResource extends JsonResource
+class MediaResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +15,8 @@ class ProductColorResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        $data = parent::toArray($request);
+
+        return $data;
     }
 }

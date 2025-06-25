@@ -7,6 +7,7 @@ use App\Enums\MorphEntity;
 use App\Http\Resources\Region\RegionResource;
 use App\Models\Discount;
 use App\Models\Discountable;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Region;
 use App\Repositories\RegionRepository;
@@ -73,5 +74,15 @@ class RegionDiscountableService implements DiscountableInterface
             return false;
         }
         return true; // Placeholder return value
+    }
+
+    public function isDiscountValidForOrder(Discountable $discountable, Order $order): bool
+    {
+        $region = Region::find($discountable->discountable_id);
+        if (!$region) {
+            return false;
+        }
+
+        return true;
     }
 }
