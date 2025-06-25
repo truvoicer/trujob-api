@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Product\ProductType;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\ProductProductTypeResource;
+use App\Http\Resources\Product\Type\ProductTypeResource;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Repositories\ProductRepository;
@@ -38,7 +38,7 @@ class ProductProductTypeController extends Controller
             $request->get('page', 1)
         );
 
-        return ProductProductTypeResource::collection(
+        return ProductTypeResource::collection(
             $this->productRepository->findMany()
         );
     }
@@ -62,7 +62,7 @@ class ProductProductTypeController extends Controller
             'message' => 'Added product product type',
         ], Response::HTTP_CREATED);
     }
-    
+
     public function destroy(Product $product, ProductType $productType, Request $request) {
         $this->productProductTypeService->setUser($request->user()->user);
         $this->productProductTypeService->setSite($request->user()->site);

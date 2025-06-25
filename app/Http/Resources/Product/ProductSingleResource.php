@@ -6,12 +6,17 @@ use App\Http\Resources\Brand\BrandResource;
 use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Color\ColorResource;
 use App\Http\Resources\Feature\FeatureResource;
+use App\Http\Resources\Follow\FollowResource;
 use App\Http\Resources\MediaResource;
 use App\Http\Resources\Price\PriceResource as PricePriceResource;
-use App\Http\Resources\PriceResource;
+use App\Http\Resources\Product\Type\ProductTypeResource;
+use App\Http\Resources\Review\ReviewResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\Product
+ */
 class ProductSingleResource extends JsonResource
 {
     /**
@@ -33,7 +38,7 @@ class ProductSingleResource extends JsonResource
             'user' => $this->whenLoaded('user', UserResource::make($this->user)),
             'follow' => $this->whenLoaded('productFollow', FollowResource::collection($this->productFollow)),
             'feature' => $this->whenLoaded('features', FeatureResource::collection($this->features)),
-            'review' => $this->whenLoaded('productReview', ProductReviewResource::collection($this->productReview)),
+            'review' => $this->whenLoaded('productReview', ReviewResource::collection($this->productReview)),
             'category' => $this->whenLoaded('categories', CategoryResource::collection($this->categories)),
             'brand' => $this->whenLoaded('brands', BrandResource::collection($this->brands)),
             'color' => $this->whenLoaded('colors', ColorResource::collection($this->colors)),

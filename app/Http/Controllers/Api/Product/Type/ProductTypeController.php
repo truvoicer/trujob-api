@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Product\Type;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductType\CreateProductTypeRequest;
 use App\Http\Requests\Product\ProductType\EditProductTypeRequest;
-use App\Http\Resources\Product\ProductTypeResource;
+use App\Http\Resources\Product\Type\ProductTypeResource;
 use App\Models\ProductType;
 use App\Repositories\ProductTypeRepository;
 use App\Services\Product\ProductTypeService;
@@ -43,7 +43,7 @@ class ProductTypeController extends Controller
         $this->productTypeRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return ProductTypeResource::collection(
             $this->productTypeRepository->findMany()
         );
@@ -52,7 +52,7 @@ class ProductTypeController extends Controller
     public function store(CreateProductTypeRequest $request) {
         $this->productTypeService->setUser($request->user()->user);
         $this->productTypeService->setSite($request->user()->site);
-        
+
         if (!$this->productTypeService->createProductType($request->validated())) {
             return response()->json([
                 'message' => 'Error creating product type',
@@ -66,7 +66,7 @@ class ProductTypeController extends Controller
     public function update(ProductType $productType, EditProductTypeRequest $request) {
         $this->productTypeService->setUser($request->user()->user);
         $this->productTypeService->setSite($request->user()->site);
-        
+
         if (!$this->productTypeService->updateProductType($productType, $request->validated())) {
             return response()->json([
                 'message' => 'Error updating product type',
@@ -79,7 +79,7 @@ class ProductTypeController extends Controller
     public function destroy(ProductType $productType, Request $request) {
         $this->productTypeService->setUser($request->user()->user);
         $this->productTypeService->setSite($request->user()->site);
-        
+
         if (!$this->productTypeService->deleteProductType($productType)) {
             return response()->json([
                 'message' => 'Error deleting product type',

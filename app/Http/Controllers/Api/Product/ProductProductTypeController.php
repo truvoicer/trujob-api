@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Product;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\ProductTypeResource;
+use App\Http\Resources\Product\Type\ProductTypeResource;
 use App\Models\Product;
 use App\Models\ProductType;
 use App\Repositories\ProductRepository;
@@ -39,7 +39,7 @@ class ProductProductTypeController extends Controller
         $this->productRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return ProductTypeResource::collection(
             $this->productRepository->findMany()
         );
