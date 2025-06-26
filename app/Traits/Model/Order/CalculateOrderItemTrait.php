@@ -171,7 +171,7 @@ trait CalculateOrderItemTrait
             }
         }
         $calculatePercentage = ($totalPrice * ($totalPercentageRate / 100));
-        return $calculatePercentage + $totalFixedAmount;
+        return round($calculatePercentage + $totalFixedAmount, 2);
     }
 
     /**
@@ -333,7 +333,7 @@ trait CalculateOrderItemTrait
         if (!$this->defaultPrice) {
             return 0.0; // or throw an exception if a default price is required
         }
-        return $this->quantity * $this->defaultPrice->amount;
+        return round($this->quantity * $this->defaultPrice->amount, 2);
     }
 
     /**

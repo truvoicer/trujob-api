@@ -270,7 +270,10 @@ trait CalculateOrderTrait
     public function calculateTotalTax(): float
     {
         list($totalFixedAmount, $totalPercentageRate) = $this->calculateDefaultTaxWithoutPrice();
-        return ($this->calculateTotalPrice() * ($totalPercentageRate / 100)) + $totalFixedAmount;
+        return round(
+            ($this->calculateTotalPrice() * ($totalPercentageRate / 100)) + $totalFixedAmount,
+            2
+        );
     }
 
     /**

@@ -7,8 +7,6 @@ use App\Http\Resources\Discount\DiscountListResource;
 use App\Http\Resources\Discount\DiscountResource;
 use App\Http\Resources\Product\ProductListResource;
 use App\Http\Resources\Tax\TaxRateResource;
-use App\Models\Discount;
-use App\Models\TaxRate;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

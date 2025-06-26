@@ -6,7 +6,6 @@ use App\Enums\Order\Discount\DiscountableType;
 use App\Enums\Order\Discount\DiscountAmountType;
 use App\Enums\Order\Discount\DiscountScope;
 use App\Enums\Order\Discount\DiscountType;
-use App\Enums\Product\ProductType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

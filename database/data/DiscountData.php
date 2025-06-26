@@ -5,7 +5,6 @@ use App\Enums\Order\Discount\DiscountAmountType;
 use App\Enums\Order\Discount\DiscountScope;
 use App\Enums\Order\Discount\DiscountType;
 use App\Enums\Price\PriceType;
-use App\Enums\Product\ProductType;
 use App\Models\Country;
 use App\Models\Product;
 
