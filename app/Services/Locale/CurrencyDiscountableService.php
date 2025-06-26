@@ -66,8 +66,8 @@ class CurrencyDiscountableService extends BaseService implements DiscountableInt
         if (!$currency) {
             return false;
         }
-        $productable = $orderItem->productable;
-        if (!$productable) {
+        $orderItemable = $orderItem->orderItemable;
+        if (!$orderItemable) {
             return false;
         }
 

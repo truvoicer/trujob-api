@@ -11,7 +11,6 @@ use App\Models\ProductCategory;
 use App\Models\ProductColor;
 use App\Models\ProductFeature;
 use App\Models\ProductFollow;
-use App\Models\ProductProductType;
 use App\Models\ProductReview;
 use App\Models\Media;
 use Illuminate\Database\Seeder;
@@ -48,7 +47,6 @@ class ProductSeeder extends Seeder
                     })
             )
             ->has(Media::factory()->count(5))
-            ->has(ProductCategory::factory()->count(5))
-            ->has(ProductProductType::factory()->count(5));
+            ->has(ProductCategory::factory()->count(5));
     }
 }

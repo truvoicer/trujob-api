@@ -1,15 +1,15 @@
-
 <?php
 
 namespace App\Http\Requests\Product;
 
 use App\Enums\Product\ProductFetchProperty;
-use App\Helpers\Tools\UtilHelpers;
+use App\Enums\Product\ProductType;
 use App\Models\Category;
-use App\Models\ProductType;
+use App\Models\ProductCategory;
 use App\Models\User;
 use App\Rules\StringArrayExists;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProductFetchRequest extends FormRequest
 {
@@ -50,8 +50,12 @@ class ProductFetchRequest extends FormRequest
             ],
             ProductFetchProperty::TYPE->value => [
                 'sometimes',
+                Rule::enum(ProductType::class),
+            ],
+            ProductFetchProperty::PRODUCT_CATEGORIES->value => [
+                'sometimes',
                 new StringArrayExists(
-                    new ProductType(),
+                    new ProductCategory(),
                     [
                         ['name' => 'id', 'type' => 'integer'],
                         ['name' => 'name']

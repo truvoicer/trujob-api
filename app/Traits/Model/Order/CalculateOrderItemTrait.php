@@ -11,6 +11,7 @@ use App\Enums\Order\Tax\TaxRateType;
 use App\Enums\Price\PriceType;
 use App\Factories\Discount\DiscountableFactory;
 use App\Factories\Tax\TaxRateAbleFactory;
+use App\Helpers\MathHelpers;
 use App\Models\DefaultDiscount;
 use App\Models\DefaultTaxRate;
 use App\Models\Discount;
@@ -53,7 +54,7 @@ trait CalculateOrderItemTrait
         if ($this->defaultPrice) {
             return $this;
         }
-        $this->defaultPrice = $this->productable->getDefaultPrice($this->priceType);
+        $this->defaultPrice = $this->orderItemable->getDefaultPrice($this->priceType);
         $this->defaultTaxRates = $this->filterValidTaxRates(DefaultTaxRate::all(), true);
         $this->defaultDiscounts = $this->filterValidDiscounts(DefaultDiscount::all(), true);
 
@@ -171,7 +172,9 @@ trait CalculateOrderItemTrait
             }
         }
         $calculatePercentage = ($totalPrice * ($totalPercentageRate / 100));
-        return round($calculatePercentage + $totalFixedAmount, 2);
+        return MathHelpers::toDecimalPlaces(
+            $calculatePercentage + $totalFixedAmount
+        );
     }
 
     /**
@@ -182,7 +185,9 @@ trait CalculateOrderItemTrait
     public function calculateTotalPriceWithTax(): float
     {
         $totalPrice = $this->calculateTotalPrice();
-        return $totalPrice + $this->calculateTaxWithoutPrice($totalPrice);
+        return MathHelpers::toDecimalPlaces(
+            $totalPrice + $this->calculateTaxWithoutPrice($totalPrice)
+        );
     }
 
     private function getDiscountByAmountType(DiscountAmountType $amountType, Discount $discount): float
@@ -311,7 +316,7 @@ trait CalculateOrderItemTrait
             }
         }
 
-        return round(
+        return MathHelpers::toDecimalPlaces(
             ($this->calculateTotalPrice() * ($totalPercentageRate / 100)) + $totalFixedAmount
         );
     }
@@ -333,7 +338,9 @@ trait CalculateOrderItemTrait
         if (!$this->defaultPrice) {
             return 0.0; // or throw an exception if a default price is required
         }
-        return round($this->quantity * $this->defaultPrice->amount, 2);
+        return MathHelpers::toDecimalPlaces(
+            $this->quantity * $this->defaultPrice->amount
+        );
     }
 
     /**
@@ -345,7 +352,9 @@ trait CalculateOrderItemTrait
     {
         $totalPrice = $this->calculateTotalPrice();
         $discount = $this->calculateDiscount();
-        return $totalPrice - $discount;
+        return MathHelpers::toDecimalPlaces(
+            $totalPrice - $discount
+        );
     }
 
     /**
@@ -359,7 +368,9 @@ trait CalculateOrderItemTrait
         $discount = $this->calculateDiscount();
         $calculateTax = $this->calculateTaxWithoutPrice($totalPrice);
 
-        return ($totalPrice + $calculateTax) - $discount;
+        return MathHelpers::toDecimalPlaces(
+            ($totalPrice + $calculateTax) - $discount
+        );
     }
 
     public function getDefaultDiscounts(): Collection

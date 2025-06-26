@@ -2,8 +2,8 @@
 
 namespace App\Services\Order\Item;
 
-use App\Enums\Product\ProductType;
-use App\Factories\Product\ProductFactory;
+use App\Enums\Order\OrderItemable;
+use App\Factories\Order\OrderItemFactory;
 use App\Helpers\ProductHelpers;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -24,7 +24,7 @@ class OrderItemService extends BaseService
 
     public function createOrderItem(Order $order, array $data)
     {
-        return ProductFactory::create(
+        return OrderItemFactory::create(
             ProductHelpers::validateProductableByArray('entity_type', $data)
         )
             ->createOrderItem(
@@ -35,8 +35,8 @@ class OrderItemService extends BaseService
 
     public function updateOrderItem(Order $order, OrderItem $orderItem, array $data)
     {
-        return ProductFactory::create(
-            ProductType::tryFrom($orderItem->productable_type)
+        return OrderItemFactory::create(
+            OrderItemable::tryFrom($orderItem->order_itemable_type)
         )
             ->updateOrderItem(
                 $order,

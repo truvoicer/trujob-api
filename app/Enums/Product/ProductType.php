@@ -1,16 +1,21 @@
 <?php
 namespace App\Enums\Product;
 
-use App\Models\Product;
 
 enum ProductType: string
 {
-    case PRODUCT = 'product';
+    case DIGITAL = 'digital';
+    case PHYSICAL = 'physical';
+    case SUBSCRIPTION = 'subscription';
+    case SERVICE = 'service';
 
-    public function id(): string
+    public function label(): string
     {
         return match ($this) {
-            self::PRODUCT => 'product',
+            self::DIGITAL => 'Digital',
+            self::PHYSICAL => 'Physical',
+            self::SUBSCRIPTION => 'Subscription',
+            self::SERVICE => 'Service',
         };
     }
 }

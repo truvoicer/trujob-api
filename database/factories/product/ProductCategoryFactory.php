@@ -19,11 +19,19 @@ class ProductCategoryFactory extends Factory
      */
     public function definition()
     {
-        $ids = array_map(function ($item) {
-            return $item['id'];
-        }, Category::all()->toArray());
+        $data = [
+            ['name' => 't-shirts', 'label' => 'T-Shirts'],
+            ['name' => 'jumper', 'label' => 'Jumper'],
+            ['name' => 'shorts', 'label' => 'Shorts'],
+            ['name' => 'cardigans', 'label' => 'Cardigans'],
+            ['name' => 'coats', 'label' => 'Coats'],
+            ['name' => 'jackets', 'label' => 'Jackets'],
+            ['name' => 'jeans', 'label' => 'Jeans'],
+        ];
+        $dataKey = fake()->randomKey($data);
         return [
-            'category_id' => fake()->randomElement($ids),
+            'name' => $data[$dataKey]['name'],
+            'label' => $data[$dataKey]['label']
         ];
     }
 }

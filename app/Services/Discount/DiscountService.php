@@ -3,7 +3,7 @@
 namespace App\Services\Discount;
 
 use App\Enums\Order\Discount\DiscountableType;
-use App\Factories\Product\ProductFactory;
+use App\Factories\Order\OrderItemFactory;
 use App\Factories\Discount\DiscountableFactory;
 use App\Helpers\ProductHelpers;
 use App\Models\Discount;

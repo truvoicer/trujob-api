@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Api\Product\ProductType;
+namespace App\Http\Controllers\Api\Product\ProductCategory;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Product\Type\ProductTypeResource;
+use App\Http\Resources\Product\Category\ProductCategoryResource;
 use App\Models\Product;
-use App\Models\ProductType;
+use App\Models\ProductCategory;
 use App\Repositories\ProductRepository;
-use App\Services\Product\ProductProductTypeService;
+use App\Services\Product\ProductCategoryService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductProductTypeController extends Controller
+class ProductProductCategoryController extends Controller
 {
     public function __construct(
-        private ProductProductTypeService $productProductTypeService,
+        private ProductCategoryService $productCategoryService,
         private ProductRepository $productRepository,
     )
     {
@@ -22,7 +22,7 @@ class ProductProductTypeController extends Controller
 
     public function index(Product $product, Request $request) {
         $this->productRepository->setQuery(
-            $product->productTypes()
+            $product->productCategories()
         );
         $this->productRepository->setPagination(true);
         $this->productRepository->setOrderByColumn(
@@ -38,47 +38,47 @@ class ProductProductTypeController extends Controller
             $request->get('page', 1)
         );
 
-        return ProductTypeResource::collection(
+        return ProductCategoryResource::collection(
             $this->productRepository->findMany()
         );
     }
 
-    public function store(Product $product, ProductType $productType, Request $request)
+    public function store(Product $product, ProductCategory $productCategory, Request $request)
     {
-        $this->productProductTypeService->setUser($request->user()->user);
-        $this->productProductTypeService->setSite($request->user()->site);
+        $this->productCategoryService->setUser($request->user()->user);
+        $this->productCategoryService->setSite($request->user()->site);
 
         if (
-            !$this->productProductTypeService->attachProductTypeToProduct(
+            !$this->productCategoryService->attachCategoryToProduct(
                 $product,
-                $productType,
+                $productCategory,
             )
         ) {
             return response()->json([
-                'message' => 'Error attaching product type to product',
+                'message' => 'Error attaching product category to product',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Added product product type',
+            'message' => 'Added product product category',
         ], Response::HTTP_CREATED);
     }
 
-    public function destroy(Product $product, ProductType $productType, Request $request) {
-        $this->productProductTypeService->setUser($request->user()->user);
-        $this->productProductTypeService->setSite($request->user()->site);
+    public function destroy(Product $product, ProductCategory $productCategory, Request $request) {
+        $this->productCategoryService->setUser($request->user()->user);
+        $this->productCategoryService->setSite($request->user()->site);
 
         if (
-            !$this->productProductTypeService->detachProductTypeFromProduct(
+            !$this->productCategoryService->detachCategoryFromProduct(
                 $product,
-                $productType,
+                $productCategory,
             )
         ) {
             return response()->json([
-                'message' => 'Error removing product product type',
+                'message' => 'Error removing product category from product',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         return response()->json([
-            'message' => 'Removed product product type',
+            'message' => 'Removed product product category',
         ], Response::HTTP_OK);
     }
 

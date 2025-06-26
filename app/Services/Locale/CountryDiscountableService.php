@@ -65,8 +65,8 @@ class CountryDiscountableService implements DiscountableInterface
         if (!$country) {
             return false;
         }
-        $productable = $orderItem->productable;
-        if (!$productable) {
+        $orderItemable = $orderItem->orderItemable;
+        if (!$orderItemable) {
             return false;
         }
 

@@ -12,12 +12,20 @@ class ProductCategory extends Model
     protected static function newFactory() {
         return ProductCategoryFactory::new();
     }
-    public function product()
+
+    protected $fillable = [
+        'name',
+        'label',
+        'description',
+        'active',
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
+    ];
+
+    public function products()
     {
-        return $this->belongsTo(Product::class);
-    }
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Product::class, 'product_product_categories');
     }
 }

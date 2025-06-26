@@ -24,14 +24,9 @@ use App\Models\UserReward;
 use App\Models\UserSetting;
 use Illuminate\Database\Seeder;
 use App\Models\Product;
-use App\Models\ProductBrand;
 use App\Models\ProductCategory;
-use App\Models\ProductColor;
-use App\Models\ProductFeature;
 use App\Models\ProductFollow;
-use App\Models\ProductProductType;
 use App\Models\ProductReview;
-use App\Models\ProductType;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
@@ -162,8 +157,8 @@ class SiteSeeder extends Seeder
                     Feature::all()->random(1)
                         ->pluck('id')
                 );
-                $product->productTypes()->attach(
-                    ProductType::all()->random(1)
+                $product->productCategories()->attach(
+                    ProductCategory::all()->random(1)
                         ->pluck('id')
                 );
             }

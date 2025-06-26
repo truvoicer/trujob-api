@@ -65,12 +65,12 @@ class CategoryTaxRateAbleService implements TaxRateAbleInterface
         if (!$price) {
             return false;
         }
-        $productable = $orderItem->productable;
-        if (!$productable) {
+        $orderItemable = $orderItem->orderItemable;
+        if (!$orderItemable) {
             return false;
         }
 
-        if (!$productable->categories()->where('id', $productable->id)->exists()) {
+        if (!$orderItemable->categories()->where('id', $orderItemable->id)->exists()) {
             return false;
         }
         return true; // Placeholder return value

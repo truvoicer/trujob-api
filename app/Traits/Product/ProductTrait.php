@@ -41,7 +41,7 @@ trait ProductTrait
             case ProductFetchProperty::UPDATED_AT:
                 return $query->where('updated_at', $data);
             case ProductFetchProperty::TYPE:
-                return $query->whereHas('productType', function ($query) use ($data) {
+                return $query->whereHas('productCategories', function ($query) use ($data) {
                     if (is_array($data)) {
                         if (count(array_filter($data, 'is_numeric')) === count($data)) {
                             $query->whereIn('id', $data);

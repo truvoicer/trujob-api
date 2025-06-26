@@ -65,13 +65,13 @@ class PriceDiscountableService implements DiscountableInterface
         if (!$price) {
             return false; // Price not found, discount is not valid
         }
-        $productable = $orderItem->productable;
-        if (!$productable) {
-            return false; // No productable associated with the order item
+        $orderItemable = $orderItem->orderItemable;
+        if (!$orderItemable) {
+            return false; // No orderItemable associated with the order item
         }
 
         $product = $price->products()
-        ->where('id', $productable->id);
+        ->where('id', $orderItemable->id);
         if (!$product) {
             return false; // Product not found in the price's products
         }

@@ -25,13 +25,11 @@ use Database\Seeders\product\BrandSeeder;
 use Database\Seeders\product\CategorySeeder;
 use Database\Seeders\product\ColorSeeder;
 use Database\Seeders\product\FeatureSeeder;
-use Database\Seeders\product\ProductTypeSeeder;
 use Database\Seeders\locale\CurrencySeeder;
-use Database\Seeders\locale\GeoDataSeeder;
-use Database\Seeders\locale\LocaleSeeder;
 use Database\Seeders\locale\RegionSeeder;
 use Database\Seeders\payment\PaymentGatewaySeeder;
 use Database\Seeders\price\PriceTypeSeeder;
+use Database\Seeders\product\ProductCategorySeeder;
 use Database\Seeders\shipping\ShippingMethodSeeder;
 use Database\Seeders\shipping\ShippingZoneSeeder;
 use Database\Seeders\tax\TaxRateSeeder;
@@ -62,8 +60,7 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,
             CategorySeeder::class,
             FeatureSeeder::class,
-            ProductTypeSeeder::class,
-            ProductTypeSeeder::class,
+            ProductCategorySeeder::class,
             PriceTypeSeeder::class,
             PaymentGatewaySeeder::class,
             BlockSeeder::class,

@@ -60,7 +60,7 @@ class ProductProductService implements ProductContract
         OrderItem $orderItem,
         array $data = []
     ): OrderItem {
-        $product = $this->productRepository->findById($orderItem->productable_id);
+        $product = $this->productRepository->findById($orderItem->order_itemable_id);
         if (!$product) {
             throw new \Exception('Product does not exist');
         }
@@ -89,12 +89,12 @@ class ProductProductService implements ProductContract
         if (!$product) {
             throw new \Exception('Product does not exist');
         }
-        
+
         $price = $product->prices()->find($data['price_id']);
         if (!$price) {
             throw new \Exception('Price does not exist for the product');
         }
-        
+
         $price->discounts()->attach($discount->id);
         return $discount;
     }

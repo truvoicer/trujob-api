@@ -65,8 +65,8 @@ class CountryTaxRateAbleService implements TaxRateAbleInterface
         if (!$country) {
             return false;
         }
-        $productable = $orderItem->productable;
-        if (!$productable) {
+        $orderItemable = $orderItem->orderItemable;
+        if (!$orderItemable) {
             return false;
         }
 

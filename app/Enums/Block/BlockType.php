@@ -20,7 +20,7 @@ enum BlockType: string
     case MANAGE_COLORS = 'manage-colors-block';
     case MANAGE_BRANDS = 'manage-brands-block';
     case MANAGE_CATEGORIES = 'manage-categories-block';
-    case MANAGE_PRODUCT_TYPES = 'manage-product-types-block';
+    case MANAGE_PRODUCT_CATEGORIES = 'manage-product-categories-block';
     case MANAGE_FEATURES = 'manage-features-block';
     case MANAGE_REVIEWS = 'manage-reviews-block';
     case MANAGE_SITE_SETTINGS = 'manage-site-settings-block';
@@ -30,7 +30,7 @@ enum BlockType: string
     case MANAGE_DISCOUNTS = 'manage-discounts-block';
     case MANAGE_SHIPPING_METHODS = 'manage-shipping-methods-block';
     case MANAGE_SHIPPING_ZONES = 'manage-shipping-zones-block';
-    
+
     case MANAGE_ADDRESSES = 'manage-addresses-block';
 
     public function isAdminBlock(): bool
@@ -44,9 +44,8 @@ enum BlockType: string
             BlockType::MANAGE_COLORS,
             BlockType::MANAGE_BRANDS,
             BlockType::MANAGE_CATEGORIES,
-            BlockType::MANAGE_PRODUCT_TYPES,
             BlockType::MANAGE_FEATURES,
-            BlockType::MANAGE_PRODUCT_TYPES,
+            BlockType::MANAGE_PRODUCT_CATEGORIES,
             BlockType::MANAGE_REVIEWS,
             BlockType::MANAGE_SITE_SETTINGS,
             BlockType::MANAGE_PAYMENT_METHODS,

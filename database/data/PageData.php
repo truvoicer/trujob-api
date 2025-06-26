@@ -311,7 +311,7 @@ return [
                 'default' => false,
             ],
             [
-                'type' => BlockType::MANAGE_PRODUCT_TYPES,
+                'type' => BlockType::MANAGE_PRODUCT_CATEGORIES,
                 'order' => 0,
                 'title' => 'Manage Product Types',
                 'nav_title' => 'Product Types',
@@ -319,7 +319,7 @@ return [
                 'default' => false,
             ],
             [
-                'type' => BlockType::MANAGE_PRODUCT_TYPES,
+                'type' => BlockType::MANAGE_PRODUCT_CATEGORIES,
                 'order' => 0,
                 'title' => 'Manage Product Types',
                 'nav_title' => 'Product Types',

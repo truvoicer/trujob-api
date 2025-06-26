@@ -12,7 +12,7 @@ class EnumHelpers {
      * @param mixed $value
      * @return mixed
      */
-    public static function getEnumCaseById(string $enumClass, string $id): BackedEnum | UnitEnum | null 
+    public static function getEnumCaseById(string $enumClass, string $id): BackedEnum | UnitEnum | null
     {
         if (!is_subclass_of($enumClass, BackedEnum::class) && !is_subclass_of($enumClass, UnitEnum::class)) {
             throw new \InvalidArgumentException("The class $enumClass must be a backed enum or unit enum.");
@@ -38,18 +38,18 @@ class EnumHelpers {
             throw new \Exception("$key is required to create an order item");
         }
 
-        $productType = EnumHelpers::getEnumCaseById($enum, $entityType);
-        if (!$productType) {
+        $enum = EnumHelpers::getEnumCaseById($enum, $entityType);
+        if (!$enum) {
             throw new \Exception("Invalid $key provided");
         }
-        return $productType;
+        return $enum;
     }
     public static function validateMorphEnumByType(string $enum, string $type): BackedEnum|UnitEnum
     {
-        $productType = EnumHelpers::getEnumCaseById($enum, $type);
-        if (!$productType) {
+        $enumInstance = EnumHelpers::getEnumCaseById($enum, $type);
+        if (!$enumInstance) {
             throw new \Exception("Invalid $type provided");
         }
-        return $productType;
+        return $enumInstance;
     }
 }

@@ -28,7 +28,6 @@ use App\Http\Controllers\Api\Product\Brand\ProductBrandController;
 use App\Http\Controllers\Api\Product\Category\ProductCategoryController;
 use App\Http\Controllers\Api\Product\Color\ProductColorController;
 use App\Http\Controllers\Api\Product\ProductController;
-use App\Http\Controllers\Api\Product\ProductType\ProductProductTypeController;
 use App\Http\Controllers\Api\Product\ProductPublicController;
 use App\Http\Controllers\Api\Product\UserProductController;
 use App\Http\Controllers\Api\Locale\CountryController;
@@ -99,8 +98,8 @@ use App\Http\Controllers\Api\Product\Feature\BulkProductFeatureController;
 use App\Http\Controllers\Api\Product\Follow\BulkProductFollowController;
 use App\Http\Controllers\Api\Product\Media\ProductMediaController;
 use App\Http\Controllers\Api\Product\Price\BulkProductPriceController;
+use App\Http\Controllers\Api\Product\ProductCategory\ProductProductCategoryController;
 use App\Http\Controllers\Api\Product\Review\BulkProductReviewController;
-use App\Http\Controllers\Api\Product\Type\BulkProductTypeController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\BulkShippingMethodDiscountController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\ShippingMethodDiscountController;
@@ -187,7 +186,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
     Route::get('/brand', [BrandController::class, 'index'])->name('brand.index');
     Route::get('/color', [ColorController::class, 'index'])->name('color.index');
-    Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product_type.index');
     Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product-type.index');
     Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
@@ -429,14 +427,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::post('/{color}/store', [ProductColorController::class, 'store'])->name('store');
                 Route::delete('/{color}/delete', [ProductColorController::class, 'destroy'])->name('delete');
             });
-            Route::prefix('product-type')->name('product-type.')->group(function () {
-                Route::get('/', [ProductProductTypeController::class, 'index'])->name('index');
+            Route::prefix('product-category')->name('product-type.')->group(function () {
+                Route::get('/', [ProductProductCategoryController::class, 'index'])->name('index');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::post('/store', [BulkProductTypeController::class, 'store'])->name('store');
-                    Route::delete('/destroy', [BulkProductTypeController::class, 'destroy'])->name('destroy');
+                    Route::post('/store', [BulkProductCategoryController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductCategoryController::class, 'destroy'])->name('destroy');
                 });
-                Route::post('/{productType}/store', [ProductProductTypeController::class, 'store'])->name('store');
-                Route::delete('/{productType}/delete', [ProductProductTypeController::class, 'destroy'])->name('delete');
+                Route::post('/{productCategory}/store', [ProductProductCategoryController::class, 'store'])->name('store');
+                Route::delete('/{productCategory}/delete', [ProductProductCategoryController::class, 'destroy'])->name('delete');
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/store', [MessagingGroupController::class, 'storeMessageGroup'])->name('store');
@@ -651,11 +649,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/store', [ColorController::class, 'store'])->name('store');
         Route::patch('/{color}/update', [ColorController::class, 'update'])->name('update');
         Route::delete('/{color}/delete', [ColorController::class, 'destroy'])->name('delete');
-    });
-    Route::prefix('product-type')->name('product_type.')->group(function () {
-        Route::post('/store', [ProductTypeController::class, 'store'])->name('store');
-        Route::patch('/{productType}/update', [ProductTypeController::class, 'update'])->name('update');
-        Route::delete('/{productType}/delete', [ProductTypeController::class, 'destroy'])->name('delete');
     });
     Route::prefix('feature')->name('feature.')->group(function () {
         Route::post('/store', [FeatureController::class, 'store'])->name('store');

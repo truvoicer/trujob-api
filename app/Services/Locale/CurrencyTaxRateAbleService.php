@@ -65,8 +65,8 @@ class CurrencyTaxRateAbleService implements TaxRateAbleInterface
         if (!$currency) {
             return false;
         }
-        $productable = $orderItem->productable;
-        if (!$productable) {
+        $orderItemable = $orderItem->orderItemable;
+        if (!$orderItemable) {
             return false;
         }
         if (!request()->user()->settings()->whereRelation('currency', 'id', $currency->id)->exists()) {

@@ -2,7 +2,7 @@
 
 namespace App\Services\Order;
 
-use App\Factories\Product\ProductFactory;
+use App\Factories\Order\OrderItemFactory;
 use App\Helpers\ProductHelpers;
 use App\Models\Order;
 use App\Services\BaseService;
@@ -56,7 +56,7 @@ class OrderService extends BaseService
     }
     public function createOrderItem(Order $order, array $data)
     {
-        return ProductFactory::create(
+        return OrderItemFactory::create(
             ProductHelpers::validateProductableByArray('entity_type', $data)
         )
             ->createOrderItem(

@@ -2,6 +2,8 @@
 
 namespace Database\Factories\product;
 
+use App\Enums\Product\ProductCategory;
+use App\Enums\Product\ProductType;
 use App\Models\Product;
 use App\Services\HelperService;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
  */
-class ProductFactory extends Factory
+class OrderItemFactory extends Factory
 {
     protected $model = Product::class;
     /**
@@ -19,15 +21,12 @@ class ProductFactory extends Factory
      */
     public function definition()
     {
-        $data = include(database_path('data/ProductTypeData.php'));
-        if (!$data) {
-            throw new \Exception('Error reading ProductTypeData.php file ' . database_path('data/ProductTypeData.php'));
-        }
-
         $fake = fake();
         $title = $fake->text(20);
         return [
-            'product_type_id' => $this->faker->numberBetween(1, count($data)),
+            'type' => $this->faker->randomElement(
+                array_map(fn($type) => $type->value, ProductType::cases())
+            ),
             "name" => HelperService::toSlug($title),
             "title" => $title,
             "description" => $fake->text(100),

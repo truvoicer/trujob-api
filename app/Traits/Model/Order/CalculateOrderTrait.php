@@ -10,6 +10,7 @@ use App\Enums\Order\Tax\TaxRateType;
 use App\Enums\Price\PriceType;
 use App\Factories\Discount\DiscountableFactory;
 use App\Factories\Tax\TaxRateAbleFactory;
+use App\Helpers\MathHelpers;
 use App\Models\DefaultDiscount;
 use App\Models\DefaultTaxRate;
 use App\Models\Discount;
@@ -241,7 +242,9 @@ trait CalculateOrderTrait
             $total += $item->calculateTotalPrice();
         }
 
-        return $total;
+        return MathHelpers::toDecimalPlaces(
+            $total
+        );
     }
 
     /**
@@ -270,9 +273,8 @@ trait CalculateOrderTrait
     public function calculateTotalTax(): float
     {
         list($totalFixedAmount, $totalPercentageRate) = $this->calculateDefaultTaxWithoutPrice();
-        return round(
-            ($this->calculateTotalPrice() * ($totalPercentageRate / 100)) + $totalFixedAmount,
-            2
+        return MathHelpers::toDecimalPlaces(
+            ($this->calculateTotalPrice() * ($totalPercentageRate / 100)) + $totalFixedAmount
         );
     }
 
@@ -287,7 +289,7 @@ trait CalculateOrderTrait
         list($totalFixedAmount, $totalPercentageRate) = $this->calculateDefaultDiscounts();
 
 
-        return round(
+        return MathHelpers::toDecimalPlaces(
             ($this->calculateTotalPrice() * ($totalPercentageRate / 100)) + $totalFixedAmount
         );
     }
@@ -302,7 +304,9 @@ trait CalculateOrderTrait
         $totalTax = $this->calculateTotalTax();
         $totalDiscount = $this->calculateTotalDiscount();
 
-        return ($totalPrice + $totalTax) - $totalDiscount;
+        return MathHelpers::toDecimalPlaces(
+            ($totalPrice + $totalTax) - $totalDiscount
+        );
     }
     /**
      * Calculate the total number of items in an order.
@@ -333,7 +337,9 @@ trait CalculateOrderTrait
             return 0.0; // Avoid division by zero
         }
 
-        return $totalPrice / $totalItems;
+        return MathHelpers::toDecimalPlaces(
+            $totalPrice / $totalItems
+        );
     }
     /**
      * Calculate the total shipping cost for an order.
@@ -347,7 +353,7 @@ trait CalculateOrderTrait
         foreach ($this->items as $item) {
             $item->setPriceType($this->getPriceType());
             $item->init(); // Ensure the item is initialized with the correct price type
-            $shippingCost = $item->productable->shipping_cost ?? 0.0; // Assuming shipping_cost is a property of the itemable entity
+            $shippingCost = $item->orderItemable->shipping_cost ?? 0.0; // Assuming shipping_cost is a property of the itemable entity
             $totalShippingCost += ($item->quantity * $shippingCost);
         }
 
@@ -375,7 +381,9 @@ trait CalculateOrderTrait
         $totalPrice = $this->calculateTotalPrice();
         $totalDiscount = $this->calculateTotalDiscount();
 
-        return $totalPrice - $totalDiscount;
+        return MathHelpers::toDecimalPlaces(
+            $totalPrice - $totalDiscount
+        );
     }
     /**
      * Calculate the total price after applying tax.
@@ -387,7 +395,9 @@ trait CalculateOrderTrait
         $totalPrice = $this->calculateTotalPrice();
         $totalTax = $this->calculateTotalTax();
 
-        return $totalPrice + $totalTax;
+        return MathHelpers::toDecimalPlaces(
+            $totalPrice + $totalTax
+        );
     }
     /**
      * Calculate the total price after applying tax and discounts.
@@ -400,7 +410,9 @@ trait CalculateOrderTrait
         $totalTax = $this->calculateTotalTax();
         $totalDiscount = $this->calculateTotalDiscount();
 
-        return $totalPrice + $totalTax - $totalDiscount;
+        return MathHelpers::toDecimalPlaces(
+            $totalPrice + $totalTax - $totalDiscount
+        );
     }
 
     /**

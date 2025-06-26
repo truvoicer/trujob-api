@@ -13,6 +13,7 @@ enum ProductFetchProperty : string
     case UPDATED_AT = 'updated_at';
     case TYPE = 'type';
     case CATEGORIES = 'categories';
+    case PRODUCT_CATEGORIES = 'product_categories';
     case USER = 'user';
     case IMAGES = 'images';
     case VIEWS = 'views';

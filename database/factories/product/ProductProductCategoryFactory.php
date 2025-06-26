@@ -2,16 +2,16 @@
 
 namespace Database\Factories\product;
 
-use App\Models\ProductProductType;
-use App\Models\ProductType;
+use App\Models\ProductCategory;
+use App\Models\ProductProductCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductProductType>
  */
-class ProductProductTypeFactory extends Factory
+class ProductProductCategoryFactory extends Factory
 {
-    protected $model = ProductProductType::class;
+    protected $model = ProductProductCategory::class;
     /**
      * Define the model's default state.
      *
@@ -21,9 +21,9 @@ class ProductProductTypeFactory extends Factory
     {
         $ids = array_map(function ($item) {
             return $item['id'];
-        }, ProductType::all()->toArray());
+        }, ProductCategory::all()->toArray());
         return [
-            'product_type_id' => fake()->randomElement($ids),
+            'product_category_id' => fake()->randomElement($ids),
         ];
     }
 }

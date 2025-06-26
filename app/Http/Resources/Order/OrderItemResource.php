@@ -27,9 +27,9 @@ class OrderItemResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'productable_id' => $this->productable_id,
-            'productable_type' => $this->productable_type,
-            'entity' => ProductListResource::make($this->productable),
+            'order_itemable_id' => $this->order_itemable_id,
+            'order_itemable_type' => $this->order_itemable_type,
+            'entity' => ProductListResource::make($this->orderItemable),
             'default_discounts' => DiscountListResource::collection(
                 $this->getDefaultDiscounts()
             ),

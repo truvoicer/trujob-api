@@ -2,16 +2,16 @@
 
 namespace App\Repositories;
 
-use App\Models\ProductProductType;
+use App\Models\ProductProductCategory;
 
-class ProductProductTypeRepository extends BaseRepository
+class ProductProductCategoryRepository extends BaseRepository
 {
     public function __construct()
     {
-        parent::__construct(ProductProductType::class);
+        parent::__construct(ProductProductCategory::class);
     }
 
-    public function getModel(): ProductProductType
+    public function getModel(): ProductProductCategory
     {
         return parent::getModel();
     }

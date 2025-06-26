@@ -9,8 +9,8 @@ use App\Models\Feature;
 use App\Models\Product;
 use App\Models\MediaProduct;
 use App\Models\Price;
+use App\Models\ProductCategory;
 use App\Models\ProductReview;
-use App\Models\ProductType;
 use App\Models\User;
 use App\Repositories\ProductRepository;
 use App\Services\BaseService;
@@ -90,13 +90,6 @@ class ProductAdminService extends BaseService
     public function saveProductRelations(Product $product, array $data)
     {
         try {
-            if (!empty($data['type']) && is_int($data['type'])) {
-                $type = ProductType::where('id', $data['type'])->first();
-                if (!$type) {
-                    throw new \Exception('Error saving product type');
-                }
-                $product->types()->attach($type);
-            }
             if (isset($data['features']) && is_array($data['features'])) {
                 $featureIds = array_map(function ($feature) {
                     return Feature::where('id', $feature)->first()?->id;
@@ -123,11 +116,11 @@ class ProductAdminService extends BaseService
                 }, $data['colors']);
                 $saveColors = $product->colors()->sync(array_filter($colorIds));
             }
-            if (isset($data['product_types']) && is_array($data['product_types'])) {
-                $productTypeIds = array_map(function ($productType) {
-                    return ProductType::where('id', $productType)->first()?->id;
-                }, $data['product_types']);
-                $saveProductTypes = $product->productTypes()->sync(array_filter($productTypeIds));
+            if (isset($data['product_categories']) && is_array($data['product_categories'])) {
+                $productCategoryIds = array_map(function ($productCategory) {
+                    return ProductCategory::where('id', $productCategory)->first()?->id;
+                }, $data['product_categories']);
+                $saveProductCategories = $product->productCategories()->sync(array_filter($productCategoryIds));
             }
             if (isset($data['categories']) && is_array($data['categories'])) {
                 $categoryIds = array_map(function ($category) {

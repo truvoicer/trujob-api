@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Price\PriceType;
-use Database\Factories\product\ProductFactory;
+use Database\Factories\product\OrderItemFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +30,7 @@ class Product extends Model
 
     protected static function newFactory()
     {
-        return ProductFactory::new();
+        return OrderItemFactory::new();
     }
 
     protected function active(): Attribute
@@ -77,7 +77,7 @@ class Product extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'product_categories');
+        return $this->belongsToMany(Category::class, 'category_products');
     }
     public function brands()
     {
@@ -88,15 +88,11 @@ class Product extends Model
         return $this->belongsToMany(Color::class, 'product_colors');
     }
 
-    public function productTypes()
+    public function productCategories()
     {
-        return $this->belongsToMany(ProductType::class, 'product_product_types');
+        return $this->belongsToMany(ProductCategory::class, 'product_product_categories');
     }
 
-    public function types()
-    {
-        return $this->belongsToMany(ProductType::class, 'product_product_types');
-    }
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -113,7 +109,7 @@ class Product extends Model
 
     public function orderItems(): MorphMany
     {
-        return $this->morphMany(OrderItem::class, 'productable');
+        return $this->morphMany(OrderItem::class, 'order_itemable');
     }
 
     public function shippingRestrictions(): MorphMany

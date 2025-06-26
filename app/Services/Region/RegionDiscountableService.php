@@ -65,8 +65,8 @@ class RegionDiscountableService implements DiscountableInterface
         if (!$region) {
             return false;
         }
-        $productable = $orderItem->productable;
-        if (!$productable) {
+        $orderItemable = $orderItem->orderItemable;
+        if (!$orderItemable) {
             return false;
         }
 
