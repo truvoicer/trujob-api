@@ -132,6 +132,7 @@ use App\Http\Controllers\Api\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\User\UserCurrencyController;
+use App\Http\Controllers\Api\User\UserProfileController;
 use App\Http\Controllers\Api\User\UserSellerController;
 use App\Http\Controllers\Api\User\UserSettingController;
 use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
@@ -242,20 +243,29 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 });
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
 
+
+    Route::prefix('session')->name('session.')->group(function () {
+        Route::prefix('user')->name('user.')->group(function () {
+            Route::get('/show', [SessionUserController::class, 'show'])->name('show');
+            Route::patch('/update', [SessionUserController::class, 'update'])->name('update');
+            Route::prefix('api-token')->name('api-token.')->group(function () {
+                Route::get('/', [SessionApiTokenController::class, 'index'])->name('index');
+                Route::get('/show', [SessionApiTokenController::class, 'show'])->name('show');
+                Route::get('/store', [SessionApiTokenController::class, 'store'])->name('store');
+                Route::delete('/delete', [SessionApiTokenController::class, 'destroy'])->name('delete');
+            });
+        });
+    });
+
     Route::prefix('user')->name('user.')->group(function () {
+        Route::prefix('profile')->name('profile.')->group(function () {
+            Route::patch('/update', [UserProfileController::class, 'update'])->name('update');
+        });
+
         Route::prefix('setting')->name('setting.')->group(function () {
             Route::get('/', [UserSettingController::class, 'show'])->name('show');
             Route::patch('/update', [UserSettingController::class, 'update'])->name('update');
         });
-    });
-
-    Route::prefix('firebase')->name('firebase.')->group(function () {
-        Route::prefix('device')->name('device.')->group(function () {
-            Route::post('/register', [FirebaseDeviceController::class, 'registerFirebaseDevice'])->name('register');
-        });
-    });
-
-    Route::prefix('user')->name('user.')->group(function () {
         Route::prefix('product')->name('product.')->group(function () {
             Route::get('/', [UserProductController::class, 'index'])->name('index');
             Route::get('/{product?}', [UserProductController::class, 'show'])->name('edit');
@@ -272,6 +282,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     });
                 });
             });
+        });
+    });
+
+    Route::prefix('firebase')->name('firebase.')->group(function () {
+        Route::prefix('device')->name('device.')->group(function () {
+            Route::post('/register', [FirebaseDeviceController::class, 'registerFirebaseDevice'])->name('register');
         });
     });
 
@@ -475,18 +491,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::delete('/delete-all', [NotificationController::class, 'deleteAll'])->name('delete-all');
     });
 
-    Route::prefix('session')->name('session.')->group(function () {
-        Route::prefix('user')->name('user.')->group(function () {
-            Route::get('/show', [SessionUserController::class, 'show'])->name('show');
-            Route::patch('/update', [SessionUserController::class, 'update'])->name('update');
-            Route::prefix('api-token')->name('api-token.')->group(function () {
-                Route::get('/', [SessionApiTokenController::class, 'index'])->name('index');
-                Route::get('/show', [SessionApiTokenController::class, 'show'])->name('show');
-                Route::get('/store', [SessionApiTokenController::class, 'store'])->name('store');
-                Route::delete('/delete', [SessionApiTokenController::class, 'destroy'])->name('delete');
-            });
-        });
-    });
 
 
     Route::prefix('shipping')->name('shipping.')->group(function () {

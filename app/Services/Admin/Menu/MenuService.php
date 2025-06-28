@@ -308,6 +308,13 @@ class MenuService extends BaseService
         if (!$data) {
             throw new \Exception('Error reading MenuData.php file ' . database_path('data/MenuData.php'));
         }
+        $newNames = array_column($data, 'name');
+        $existingNames = Menu::all()->pluck('name')->toArray();
+        //Delete existing menus that are not in the new data
+        $menusToDelete = array_diff($existingNames, $newNames);
+        if (count($menusToDelete) > 0) {
+            Menu::whereIn('name', $menusToDelete)->delete();
+        }
         foreach ($data as $index => $menu) {
             $site = Site::where('name', $menu['site'])->first();
             if (!$site) {
@@ -336,10 +343,14 @@ class MenuService extends BaseService
                 }
                 continue;
             }
+            $existingMenuItems = [];
+            $newMenuItems = [];
+
             if (!empty($menu['menu_items']) && is_array($menu['menu_items'])) {
-                $menu['menu_items'] = array_filter(
+                // Filter out menu items that already exist in the menu
+                $newMenuItems = array_filter(
                     $menu['menu_items'],
-                    function ($item) use ($getMenu) {
+                    function ($item) use ($getMenu, &$existingMenuItems) {
                         $query = $getMenu->menuItems();
                         if (array_key_exists('url', $item)) {
                             $query->where('url', $item['url']);
@@ -350,7 +361,12 @@ class MenuService extends BaseService
                         if (array_key_exists('page_id', $item)) {
                             $query->where('page_id', $item['page_id']);
                         }
-                        if ($query->exists()) {
+                        $getMenuItem = $query->first();
+                        if ($getMenuItem) {
+                            $existingMenuItems[] = [
+                                'id' => $getMenuItem->id,
+                                ...$item
+                            ];
                             return false;
                         }
                         return true;
@@ -358,8 +374,31 @@ class MenuService extends BaseService
                     ARRAY_FILTER_USE_BOTH
                 );
             }
+
+            $deletableMenuItems = $getMenu->menuItems()
+            ->whereNotIn('menu_items.id', array_column($existingMenuItems, 'id'))
+            ->get();
+
+            foreach ($deletableMenuItems as $menuItem) {
+                $this->deleteMenuItem($menuItem);
+            }
+            $menu['menu_items'] = $newMenuItems;
             if (!$this->updateMenu($getMenu, $menu)) {
                 throw new \Exception('Error updating menu: ' . $index);
+            }
+
+            foreach ($existingMenuItems as $item) {
+                if (array_key_exists('id', $item) && !empty($item['id'])) {
+                    $menuItem = $getMenu->menuItems()->find($item['id']);
+                    if (!$menuItem) {
+                        throw new \Exception('Menu item not found: ' . $item['id']);
+                    }
+                    if (!$this->updateMenuItem($menuItem, $item)) {
+                        throw new \Exception('Error updating menu item: ' . $item['id']);
+                    }
+                } else {
+                    throw new \Exception('Menu item ID is required for existing menu items: ' . json_encode($item));
+                }
             }
         }
     }

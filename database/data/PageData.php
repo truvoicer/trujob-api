@@ -188,8 +188,40 @@ return [
         'title' => 'Profile',
         'content' => 'Welcome to your profile page',
         'view' => ViewType::AdminPage,
-        'blocks' => [],
+        'blocks' => [
+            [
+                'type' => BlockType::EDIT_PROFILE,
+                'order' => 0,
+                'title' => 'Edit Profile',
+                'nav_title' => 'Edit Profile',
+                'subtitle' => 'Edit your profile here',
+                'default' => true,
+            ],
+        ],
         'roles' => [
+            ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/profile',
+        'name' => 'admin_profile',
+        'title' => 'Profile',
+        'content' => 'Welcome to your profile page',
+        'view' => ViewType::AdminPage,
+        'blocks' => [
+            [
+                'type' => BlockType::EDIT_PROFILE,
+                'order' => 0,
+                'title' => 'Edit Profile',
+                'nav_title' => 'Edit Profile',
+                'subtitle' => 'Edit your profile here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
             ApiAbility::USER->value,
         ]
     ],
@@ -200,8 +232,42 @@ return [
         'title' => 'Account Settings',
         'content' => 'Welcome to your account settings page',
         'view' => ViewType::AdminPage,
-        'blocks' => [],
+        'blocks' => [
+            [
+                'type' => BlockType::EDIT_ACCOUNT_SETTINGS,
+                'order' => 0,
+                'title' => 'Edit Account Settings',
+                'nav_title' => 'Edit Account Settings',
+                'subtitle' => 'Edit your account settings here',
+                'default' => true,
+            ],
+        ],
         'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+            ApiAbility::USER->value,
+        ]
+    ],
+    [
+        'site_id' => 1,
+        'permalink' => '/admin/account/settings',
+        'name' => 'admin_account_settings',
+        'title' => 'Account Settings',
+        'content' => 'Welcome to your account settings page',
+        'view' => ViewType::AdminPage,
+        'blocks' => [
+            [
+                'type' => BlockType::EDIT_ACCOUNT_SETTINGS,
+                'order' => 0,
+                'title' => 'Edit Account Settings',
+                'nav_title' => 'Edit Account Settings',
+                'subtitle' => 'Edit your account settings here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
             ApiAbility::USER->value,
         ]
     ],

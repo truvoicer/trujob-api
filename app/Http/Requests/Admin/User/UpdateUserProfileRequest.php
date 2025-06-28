@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Admin\User;
 
 use App\Models\Role;
-use Illuminate\Contracts\Database\Query\Builder;
+use App\Rules\IdOrNameExists;
+use App\Rules\StringOrIntger;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -12,10 +14,8 @@ class UpdateUserProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -23,9 +23,9 @@ class UpdateUserProfileRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, mixed>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'first_name' => [
@@ -42,7 +42,7 @@ class UpdateUserProfileRequest extends FormRequest
                 'sometimes',
                 'email',
                 'max:255',
-                Rule::unique('users')->ignore(request()->user()->user->id)->where(function (Builder $query) {
+                Rule::unique('users')->ignore($this->user()->id)->where(function (Builder $query) {
                     return $query->whereNull('deleted_at');
                 }),
             ],
@@ -50,7 +50,7 @@ class UpdateUserProfileRequest extends FormRequest
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('users')->ignore(request()->user()->id)->where(function (Builder $query) {
+                Rule::unique('users')->ignore($this->user()->id)->where(function (Builder $query) {
                     return $query->whereNull('deleted_at');
                 }),
             ],
@@ -76,14 +76,15 @@ class UpdateUserProfileRequest extends FormRequest
                 'sometimes',
                 'exists:languages,id',
             ],
-            'change_password' => [
+            'password' => ['confirmed', Password::min(8)],
+            'roles' => [
                 'sometimes',
-                'boolean',
+                'array',
             ],
-            'password' => [
-                'required_if:change_password,true',
-                'confirmed',
-                Password::min(8)
+            'roles.*' => [
+                'required',
+                new StringOrIntger,
+                new IdOrNameExists(new Role())
             ],
         ];
     }

@@ -209,7 +209,20 @@ return [
         'menu_items' => [
             [
 
-                'page_name' => 'account_settings',
+                'page_name' => 'admin_profile',
+                'label' => 'Profile',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+                'roles' => [
+                    ApiAbility::SUPERUSER->value,
+                    ApiAbility::ADMIN->value,
+                    ApiAbility::USER->value,
+                ],
+            ],
+            [
+
+                'page_name' => 'admin_account_settings',
                 'label' => 'Account Settings',
                 'active' => true,
                 'type' => MenuItemType::PAGE->value,

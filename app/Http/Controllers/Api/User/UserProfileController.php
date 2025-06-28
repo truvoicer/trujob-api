@@ -3,62 +3,53 @@
 namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\StoreUserProfileRequest;
 use App\Http\Requests\User\UpdateUserProfileRequest;
-use App\Models\UserProfile;
 use App\Services\User\UserProfileService;
+use App\Services\User\UserSettingService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserProfileController extends Controller
 {
-    protected UserProfileService $userProfileService;
 
-    public function __construct(UserProfileService $userProfileService, Request $request)
+    public function __construct(
+        private UserProfileService $userProfileService,
+        private UserSettingService $userSettingService
+    ) {}
+
+    public function update(UpdateUserProfileRequest $request)
     {
-        $this->userProfileService = $userProfileService;
-    }
+        $this->userProfileService->setUser($request->user()->user);
+        $this->userProfileService->setSite($request->user()->site);
 
+        $this->userSettingService->setUser($request->user()->user);
+        $this->userSettingService->setSite($request->user()->site);
 
-    public function createUserProfile(StoreUserProfileRequest $request) {
-        $this->userProfileService->setUser($request->user());
-        $createUserProfile = $this->userProfileService->createUserProfile($request->all());
+        $createUserProfile = $this->userProfileService->updateUserProfile($request->validated());
         if (!$createUserProfile) {
-            return $this->sendErrorResponse(
-                'Error creating user profile',
-                [],
-                $this->userProfileService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error updating user profile',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        return $this->sendSuccessResponse('User profile created', [], $this->userProfileService->getErrors());
-    }
 
-    public function updateUserProfile(UserProfile $userProfile, Request $request) {
-        $this->userProfileService->setUser($request->user());
-        $this->userProfileService->setUserProfile($userProfile);
-        $createUserProfile = $this->userProfileService->updateUserProfile($request->all());
+        $userSettings = [];
+        if ($request->has('country_id')) {
+            $userSettings['country_id'] = $request->validated('country_id');
+        }
+        if ($request->has('language_id')) {
+            $userSettings['language_id'] = $request->validated('language_id');
+        }
+        if ($request->has('currency_id')) {
+            $userSettings['currency_id'] = $request->validated('currency_id');
+        }
+        $createUserProfile = $this->userSettingService->updateUserSetting($userSettings);
         if (!$createUserProfile) {
-            return $this->sendErrorResponse(
-                'Error updating User profile',
-                [],
-                $this->userProfileService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error updating user profile',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        return $this->sendSuccessResponse('User profile updated', [], $this->userProfileService->getErrors());
-    }
-    public function deleteUserProfile(UserProfile $userProfile) {
-        $this->userProfileService->setUserProfile($userProfile);
-        $deleteUserProfile = $this->userProfileService->deleteUserProfile();
-        if (!$deleteUserProfile) {
-            return $this->sendErrorResponse(
-                'Error deleting user profile',
-                [],
-                $this->userProfileService->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-        return $this->sendSuccessResponse('User profile deleted', [], $this->userProfileService->getErrors());
+        return response()->json([
+            'message' => 'User profile updated successfully',
+        ], Response::HTTP_OK);
     }
 }
