@@ -20,8 +20,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('country_id')->nullable()->constrained('countries')->onDelete('cascade');
             $table->foreignId( 'currency_id')->nullable()->constrained('currencies')->onDelete('cascade');
+            $table->foreignId('language_id')->nullable()->constrained('languages')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->dateTimeTz('dob')->nullable();
+            $table->dateTime('dob')->nullable();
             $table->string('phone')->nullable();
             $table->timestamps();
         });
