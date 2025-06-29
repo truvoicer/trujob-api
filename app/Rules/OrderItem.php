@@ -24,10 +24,10 @@ class OrderItem implements ValidationRule
             $fail("The $attribute.price_id must be an integer.");
             return;
         }
-        if (!isset($value['payment_gateway_id']) || !is_int($value['payment_gateway_id'])) {
-            $fail("The $attribute.payment_gateway_id must be an integer.");
-            return;
-        }
+        // if (!isset($value['payment_gateway_id']) || !is_int($value['payment_gateway_id'])) {
+        //     $fail("The $attribute.payment_gateway_id must be an integer.");
+        //     return;
+        // }
         if (!isset($value['quantity']) || !is_int($value['quantity']) || $value['quantity'] < 1) {
             $fail("The $attribute.quantity must be an integer and at least 1.");
             return;
@@ -38,7 +38,7 @@ class OrderItem implements ValidationRule
         }
         if (!isset($value['entity_id']) || !is_int($value['entity_id'])) {
             $fail("The $attribute.entity_id must be an integer.");
-            return; 
+            return;
         }
         switch ($value['entity_type']) {
             case OrderItemType::PRODUCT->value:
