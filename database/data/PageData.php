@@ -544,4 +544,27 @@ return [
             ApiAbility::USER->value,
         ]
     ],
+    [
+        'site_id' => 1,
+        'permalink' => '/reset-password',
+        'name' => 'reset-password',
+        'title' => 'Reset Password',
+        'content' => 'Welcome to the reset password page',
+        'view' => ViewType::Page,
+        'blocks' => [
+            [
+                'type' => BlockType::RESET_PASSWORD,
+                'order' => 0,
+                'title' => 'Reset Password',
+                'nav_title' => 'Reset Password',
+                'subtitle' => 'Reset your password here',
+                'default' => true,
+            ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+            ApiAbility::USER->value,
+        ]
+    ],
 ];

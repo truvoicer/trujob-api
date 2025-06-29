@@ -12,6 +12,9 @@ class UserSetting extends Model
     protected $fillable = [
         'user_id',
         'currency_id',
+        'country_id',
+        'language_id',
+        'timezone',
         'app_theme',
         'push_notification'
     ];
@@ -39,5 +42,13 @@ class UserSetting extends Model
     public function currency()
     {
         return $this->belongsTo(Currency::class);
+    }
+    public function country()
+    {
+        return $this->belongsTo(Country::class);
+    }
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
     }
 }

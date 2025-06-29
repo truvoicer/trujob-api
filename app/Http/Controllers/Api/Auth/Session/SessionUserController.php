@@ -25,7 +25,7 @@ class SessionUserController extends Controller
     public function update(UpdateUserRequest $request)
     {
         $this->accessControlService->setUser($request->user()->user);
-        
+
         if (!$this->userAdminService->updateUser(
             $request->user()->user,
             $request->validated(),

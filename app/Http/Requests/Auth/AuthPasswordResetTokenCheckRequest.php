@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Site\Setting;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class CreateSiteSettingRequest extends FormRequest
+class AuthPasswordResetTokenCheckRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,15 +22,9 @@ class CreateSiteSettingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'currency_id' => [
-                'sometimes',
-                'integer',
-                'exists:currencies,id',
-            ],
-            'country_id' => [
-                'sometimes',
-                'integer',
-                'exists:countries,id',
+            'token' => [
+                'required',
+                'string',
             ],
         ];
     }

@@ -15,10 +15,12 @@ class SiteUser extends Model
 
     protected $fillable = [
         'status', // active, inactive, banned
+        'password_reset',
     ];
 
     protected $casts = [
         'status' => SiteStatus::class,
+        'password_reset' => 'boolean',
     ];
 
     public function siteUserable(): MorphTo

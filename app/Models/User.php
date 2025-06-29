@@ -76,6 +76,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserProfile::class);
     }
+
     public function userReward()
     {
         return $this->hasMany(UserReward::class);
@@ -109,15 +110,9 @@ class User extends Authenticatable
         return $this->hasMany(MessagingGroup::class);
     }
 
-
-    public function settings()
-    {
-        return $this->hasOne(UserSetting::class);
-    }
-
     public function userSetting()
     {
-        return $this->hasMany(UserSetting::class);
+        return $this->hasOne(UserSetting::class);
     }
 
     public function userMedia()

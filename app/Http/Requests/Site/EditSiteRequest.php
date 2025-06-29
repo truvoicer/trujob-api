@@ -132,11 +132,6 @@ class EditSiteRequest extends FormRequest
                 'string',
                 'max:255',
             ],
-            'timezone' => [
-                'sometimes',
-                'string',
-                'max:255',
-            ],
         ];
     }
 }

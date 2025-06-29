@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Site\Setting;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Site\Setting\CreateSiteSettingRequest;
 use App\Http\Requests\Site\Setting\EditSiteSettingRequest;
 use App\Http\Resources\Site\Setting\SiteSettingResource;
 use App\Models\Site;

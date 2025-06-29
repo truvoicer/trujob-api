@@ -70,7 +70,7 @@ class RegionDiscountableService implements DiscountableInterface
             return false;
         }
 
-        if (!request()->user()->settings()->whereRelation('region', 'id', $region->id)->exists()) {
+        if (!request()->user()->userSetting()->whereRelation('region', 'id', $region->id)->exists()) {
             return false;
         }
         return true; // Placeholder return value

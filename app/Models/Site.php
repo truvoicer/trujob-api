@@ -76,7 +76,7 @@ class Site extends Model
 
     public function settings()
     {
-        return $this->hasMany(SiteSetting::class);
+        return $this->hasOne(SiteSetting::class);
     }
 
     public function siteUsers(): MorphMany

@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Price\PriceType;
-use Database\Factories\product\OrderItemFactory;
+use Database\Factories\product\ProductFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +30,7 @@ class Product extends Model
 
     protected static function newFactory()
     {
-        return OrderItemFactory::new();
+        return ProductFactory::new();
     }
 
     protected function active(): Attribute

@@ -29,6 +29,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('languages')
                 ->nullOnDelete();
+            $table->string('timezone')->default('UTC');
             $table->string('app_theme')->default('light');
             $table->boolean('push_notification')->default(true);
             $table->timestamps();

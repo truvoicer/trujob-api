@@ -32,6 +32,7 @@ enum BlockType: string
     case MANAGE_SHIPPING_ZONES = 'manage-shipping-zones-block';
     case EDIT_PROFILE = 'edit-profile-block';
     case EDIT_ACCOUNT_SETTINGS = 'edit-account-settings-block';
+    case RESET_PASSWORD = 'reset-password-block';
 
     case MANAGE_ADDRESSES = 'manage-addresses-block';
 

@@ -10,6 +10,8 @@ use App\Models\Role;
 use App\Models\Site;
 use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\UserProfile;
+use App\Models\UserSetting;
 use App\Repositories\PersonalAccessTokenRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
@@ -27,7 +29,9 @@ class UserAdminService extends BaseService
     private RoleRepository $roleRepository;
 
     public function __construct(
-        private AuthService $authService
+        private AuthService $authService,
+        private UserProfileService $userProfileService,
+        private UserSettingService $userSettingService,
     ) {
         parent::__construct();
         $this->setUserRepository(new UserRepository());
@@ -145,7 +149,7 @@ class UserAdminService extends BaseService
         if (!$siteUser instanceof SiteUser) {
             throw new BadRequestHttpException("Error creating site user");
         }
-        
+
         $siteUser->roles()->sync(
             $siteUser->user->roles()->get()
         );
@@ -214,8 +218,53 @@ class UserAdminService extends BaseService
 
     public function updateUser(User $user, array $data, ?array $roles = [])
     {
-        $roleIds = $this->authService->getRoleIds($roles);
-        return $this->userRepository->updateUser($user, $data, $roleIds);
+        $this->userProfileService->setUser($user);
+        $this->userProfileService->setSite($this->getSite());
+
+        $this->userSettingService->setUser($user);
+        $this->userSettingService->setSite($this->getSite());
+
+        $roleIds = [];
+        if (count($roles)) {
+            $roleIds = $this->authService->getRoleIds($roles);
+        }
+
+        $userFields = (new User())->getFillable();
+        $userProfileFields = (new UserProfile())->getFillable();
+        $userSettingsFields = (new UserSetting())->getFillable();
+
+        $userProfile = array_filter($data, function ($key) use ($userProfileFields) {
+            return in_array($key, $userProfileFields);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $userSettings = array_filter($data, function ($key) use ($userSettingsFields) {
+            return in_array($key, $userSettingsFields);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $userData = array_filter($data, function ($key) use ($userFields) {
+            return in_array($key, $userFields);
+        }, ARRAY_FILTER_USE_KEY);
+
+        if (count($userProfile)) {
+            if (!$this->userProfileService->updateUserProfile($userProfile)) {
+                throw new \Exception('Error updating user profile');
+            }
+        }
+
+        if (count($userSettings)) {
+            if (!$this->userSettingService->updateUserSetting($userSettings)) {
+                throw new \Exception('Error updating user settings');
+            }
+        }
+        if (count($userData)) {
+            if (count($roles) && !$this->userRepository->updateUser($user, $data, $roleIds)) {
+                throw new \Exception('Error updating user');
+            } else if (!count($roles) && !$this->userRepository->updateUser($user, $userData)) {
+                throw new \Exception('Error updating user');
+            }
+        }
+        
+        return true;
     }
 
     public function deleteUser(User $user)

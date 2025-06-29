@@ -18,9 +18,6 @@ return new class extends Migration
     {
         Schema::create('user_profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('country_id')->nullable()->constrained('countries')->onDelete('cascade');
-            $table->foreignId( 'currency_id')->nullable()->constrained('currencies')->onDelete('cascade');
-            $table->foreignId('language_id')->nullable()->constrained('languages')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->dateTime('dob')->nullable();
             $table->string('phone')->nullable();

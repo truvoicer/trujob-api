@@ -20,13 +20,9 @@ class UserProfileFactory extends Factory
      */
     public function definition()
     {
-        $country = Country::where('iso2', 'GB')->first();
-        $currency = Currency::where('code', 'GBP')->first();
         return [
-            'country_id' => $country->id,
-            'currency_id' => $currency->id,
-            'rating' => fake()->randomElement([1, 2, 3, 4, 5]),
             'dob' => fake()->date('Y-m-d H:i:s'),
+            'phone' => fake()->phoneNumber(),
         ];
     }
 }

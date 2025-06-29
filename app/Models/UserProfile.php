@@ -11,12 +11,13 @@ class UserProfile extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'dob',
         'phone',
-        'country_id',
-        'currency_id',
-        'user_id',
-        'language_id',
+    ];
+
+    protected $casts = [
+        'dob' => 'date',
     ];
 
 
@@ -35,18 +36,4 @@ class UserProfile extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function country()
-    {
-        return $this->hasOne(Country::class);
-    }
-
-    public function currency()
-    {
-        return $this->hasOne(Country::class);
-    }
-
-    public function language()
-    {
-        return $this->hasOne(Language::class);
-    }
 }

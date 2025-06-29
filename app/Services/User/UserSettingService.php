@@ -9,7 +9,7 @@ class UserSettingService extends BaseService
 {
 
     public function updateUserSetting(array $data) {
-        $createUserSetting = $this->user->settings()->updateOrCreate([
+        $createUserSetting = $this->user->userSetting()->updateOrCreate([
             'user_id' => $this->user->id,
         ], $data);
         if (!$createUserSetting) {

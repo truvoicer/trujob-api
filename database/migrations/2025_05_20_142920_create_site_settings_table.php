@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('site_settings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('site_id')->constrained()->cascadeOnDelete();
+            $table->string('frontend_url')->nullable();
             $table->foreignId('currency_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('country_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('language_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('timezone')->default('UTC');
             $table->timestamps();
         });
     }

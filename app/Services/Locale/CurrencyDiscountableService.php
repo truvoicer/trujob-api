@@ -71,7 +71,7 @@ class CurrencyDiscountableService extends BaseService implements DiscountableInt
             return false;
         }
 
-        if (!request()->user()->settings()->whereRelation('currency', 'id', $currency->id)->exists()) {
+        if (!request()->user()->userSetting()->whereRelation('currency', 'id', $currency->id)->exists()) {
             return false;
         }
         return true; // Placeholder return value

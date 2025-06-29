@@ -4,6 +4,9 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\Auth\ApiTokenController;
 use App\Http\Controllers\Api\Auth\Session\SessionApiTokenController;
 use App\Http\Controllers\Api\Auth\AuthLoginController;
+use App\Http\Controllers\Api\Auth\AuthPasswordResetConfirmationController;
+use App\Http\Controllers\Api\Auth\AuthPasswordResetController;
+use App\Http\Controllers\Api\Auth\AuthPasswordResetTokenCheckController;
 use App\Http\Controllers\Api\Auth\AuthRegisterController;
 use App\Http\Controllers\Api\Auth\AuthUserController;
 use App\Http\Controllers\Api\Auth\Session\SessionUserController;
@@ -131,7 +134,6 @@ use App\Http\Controllers\Api\Tools\FileSystemController;
 use App\Http\Controllers\Api\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserController;
-use App\Http\Controllers\Api\User\UserCurrencyController;
 use App\Http\Controllers\Api\User\UserProfileController;
 use App\Http\Controllers\Api\User\UserSellerController;
 use App\Http\Controllers\Api\User\UserSettingController;
@@ -145,7 +147,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(AppPublic::class)->group(function () {});
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
-
+    Route::get('/reset-password/{token}', [AuthPasswordResetController::class, 'show'])->name('password.reset');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
     Route::prefix('auth')->name('auth.')->group(function () {
@@ -184,6 +186,16 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 });
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site,api:user,api:app_user'])->group(function () {
+
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::prefix('password')->name('password.')->group(function () {
+            Route::prefix('reset')->name('reset.')->group(function () {
+                Route::post('/token-check', AuthPasswordResetTokenCheckController::class)->name('token-check');
+                Route::post('/request', [AuthPasswordResetController::class, 'store'])->name('request');
+                Route::post('/confirmation', AuthPasswordResetConfirmationController::class)->name('confirmation');
+            });
+        });
+    });
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
     Route::get('/brand', [BrandController::class, 'index'])->name('brand.index');
     Route::get('/color', [ColorController::class, 'index'])->name('color.index');

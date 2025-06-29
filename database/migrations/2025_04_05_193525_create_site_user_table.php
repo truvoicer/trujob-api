@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('site_id')->constrained('sites')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('status')->default(SiteStatus::ACTIVE);
+            $table->boolean('password_reset')->default(false);
             $table->timestamps();
         });
     }

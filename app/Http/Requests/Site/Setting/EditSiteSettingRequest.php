@@ -32,6 +32,22 @@ class EditSiteSettingRequest extends FormRequest
                 'integer',
                 'exists:countries,id',
             ],
+            'language_id' => [
+                'sometimes',
+                'integer',
+                'exists:languages,id',
+            ],
+            'timezone' => [
+                'sometimes',
+                'string',
+                'timezone',
+            ],
+            'frontend_url' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'max:255',
+            ],
         ];
     }
 }

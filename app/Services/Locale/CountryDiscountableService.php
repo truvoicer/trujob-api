@@ -70,7 +70,7 @@ class CountryDiscountableService implements DiscountableInterface
             return false;
         }
 
-        if (!request()->user()->settings()->whereRelation('country', 'id', $country->id)->exists()) {
+        if (!request()->user()->userSetting()->whereRelation('country', 'id', $country->id)->exists()) {
             return false;
         }
         return true; // Placeholder return value
