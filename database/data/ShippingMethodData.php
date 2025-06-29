@@ -47,7 +47,6 @@ return [
                 'max_length' => null,
                 'amount' => 5.00, // Flat rate amount
                 'currency_id' => $currency->id,
-                'is_free_shipping_possible' => false,
                 'is_active' => true
             ]
         ],

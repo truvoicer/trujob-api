@@ -28,7 +28,7 @@ use App\Http\Controllers\Api\Discount\DiscountTypeController;
 use App\Http\Controllers\Api\Discount\UserDiscountUsageController;
 use App\Http\Controllers\Api\Product\InitialiseProductController;
 use App\Http\Controllers\Api\Product\Brand\ProductBrandController;
-use App\Http\Controllers\Api\Product\Category\ProductCategoryController;
+use App\Http\Controllers\Api\Product\Category\CategoryProductController;
 use App\Http\Controllers\Api\Product\Color\ProductColorController;
 use App\Http\Controllers\Api\Product\ProductController;
 use App\Http\Controllers\Api\Product\ProductPublicController;
@@ -95,13 +95,18 @@ use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\BulkPriceTaxRateController;
 use App\Http\Controllers\Api\Price\Type\BulkPriceTypeController;
 use App\Http\Controllers\Api\Product\Brand\BulkProductBrandController;
-use App\Http\Controllers\Api\Product\Category\BulkProductCategoryController;
+use App\Http\Controllers\Api\Product\Category\BulkCategoryProductController;
 use App\Http\Controllers\Api\Product\Color\BulkProductColorController;
 use App\Http\Controllers\Api\Product\Feature\BulkProductFeatureController;
 use App\Http\Controllers\Api\Product\Follow\BulkProductFollowController;
 use App\Http\Controllers\Api\Product\Media\ProductMediaController;
 use App\Http\Controllers\Api\Product\Price\BulkProductPriceController;
-use App\Http\Controllers\Api\Product\ProductCategory\ProductProductCategoryController;
+use App\Http\Controllers\Api\Product\ProductCategory\BulkProductCategoryController;
+use App\Http\Controllers\Api\Product\ProductCategory\ProductCategoryController;
+use App\Http\Controllers\Api\Product\ProductProductCategory\BulkProductProductCategoryController;
+use App\Http\Controllers\Api\Product\ProductProductCategory\ProductProductCategoryController;
+use App\Http\Controllers\Api\Product\ProductUnitController;
+use App\Http\Controllers\Api\Product\ProductWeightUnitController;
 use App\Http\Controllers\Api\Product\Review\BulkProductReviewController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\BulkShippingMethodDiscountController;
@@ -127,7 +132,7 @@ use App\Http\Controllers\Api\Shipping\ShippingUnitController;
 use App\Http\Controllers\Api\Shipping\ShippingWeightUnitController;
 use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
-use App\Http\Controllers\Api\Tax\TaxRateAbleController;
+use App\Http\Controllers\Api\Tax\TaxRateScopeController;
 use App\Http\Controllers\Api\Tax\TaxRateSetAsDefaultController;
 use App\Http\Controllers\Api\Tax\TaxRateTypeController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
@@ -166,10 +171,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 
 
-    Route::prefix('product')->name('product.')->group(function () {
-        Route::get('/', [ProductPublicController::class, 'index'])->name('index');
-        Route::prefix('{product}')->name('item.')->group(function () {
-            Route::get('/', [ProductController::class, 'show'])->name('fetch');
+    Route::prefix('public')->name('public.')->group(function () {
+        Route::prefix('product')->name('product.')->group(function () {
+            Route::get('/', [ProductPublicController::class, 'index'])->name('index');
+            Route::prefix('{product}')->name('item.')->group(function () {
+                Route::get('/', [ProductController::class, 'show'])->name('fetch');
+            });
         });
     });
 
@@ -239,7 +246,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [TaxRateTypeController::class, 'index'])->name('index');
         });
         Route::prefix('scope')->name('scope.')->group(function () {
-            Route::get('/', [TaxRateAbleController::class, 'index'])->name('index');
+            Route::get('/', [TaxRateScopeController::class, 'index'])->name('index');
         });
         Route::prefix('amount-type')->name('amount-type.')->group(function () {
             Route::get('/', [TaxRateAmountTypeController::class, 'index'])->name('index');
@@ -379,13 +386,34 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             });
         });
     });
+    Route::prefix('product-category')->name('product-category.')->group(function () {
+        Route::get('/', [ProductCategoryController::class, 'index'])->name('index');
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::post('/store', [BulkProductCategoryController::class, 'store'])->name('store');
+            Route::delete('/destroy', [BulkProductCategoryController::class, 'destroy'])->name('destroy');
+        });
+        Route::post('/{productCategory}/store', [ProductCategoryController::class, 'store'])->name('store');
+        Route::delete('/{productCategory}/delete', [ProductCategoryController::class, 'destroy'])->name('delete');
+    });
     Route::prefix('product')->name('product.')->group(function () {
         Route::post('/store', [ProductController::class, 'store'])->name('store');
         Route::get('/initialize', InitialiseProductController::class)->name('initialize');
+        Route::get('/unit', [ProductUnitController::class, 'index'])->name('unit.index');
+        Route::get('/weight-unit', [ProductWeightUnitController::class, 'index'])->name('weight-unit.index');
 
-        Route::prefix('{product?}')->group(function () {
+        Route::prefix('{product}')->group(function () {
             Route::patch('/update', [ProductController::class, 'update'])->name('update');
             Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
+
+            Route::prefix('product-category')->name('product-type.')->group(function () {
+                Route::get('/', [ProductProductCategoryController::class, 'index'])->name('index');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::post('/store', [BulkProductProductCategoryController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkProductProductCategoryController::class, 'destroy'])->name('destroy');
+                });
+                Route::post('/{productCategory}/store', [ProductProductCategoryController::class, 'store'])->name('store');
+                Route::delete('/{productCategory}/delete', [ProductProductCategoryController::class, 'destroy'])->name('delete');
+            });
             Route::prefix('price')->name('price.')->group(function () {
                 Route::get('/', [ProductPriceController::class, 'index'])->name('index');
                 Route::post('/store', [ProductPriceController::class, 'store'])->name('store');
@@ -429,13 +457,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::delete('/{productReview}/delete', [ProductReviewController::class, 'destroy'])->name('delete');
             });
             Route::prefix('category')->name('category.')->group(function () {
-                Route::get('/', [ProductCategoryController::class, 'index'])->name('index');
+                Route::get('/', [CategoryProductController::class, 'index'])->name('index');
                 Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::post('/store', [BulkProductCategoryController::class, 'store'])->name('store');
-                    Route::delete('/destroy', [BulkProductCategoryController::class, 'destroy'])->name('destroy');
+                    Route::post('/store', [BulkCategoryProductController::class, 'store'])->name('store');
+                    Route::delete('/destroy', [BulkCategoryProductController::class, 'destroy'])->name('destroy');
                 });
-                Route::post('/{category}/store', [ProductCategoryController::class, 'store'])->name('store');
-                Route::delete('/{category}/delete', [ProductCategoryController::class, 'destroy'])->name('delete');
+                Route::post('/{category}/store', [CategoryProductController::class, 'store'])->name('store');
+                Route::delete('/{category}/delete', [CategoryProductController::class, 'destroy'])->name('delete');
             });
             Route::prefix('brand')->name('brand.')->group(function () {
                 Route::get('/', [ProductBrandController::class, 'index'])->name('index');
@@ -454,15 +482,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
                 Route::post('/{color}/store', [ProductColorController::class, 'store'])->name('store');
                 Route::delete('/{color}/delete', [ProductColorController::class, 'destroy'])->name('delete');
-            });
-            Route::prefix('product-category')->name('product-type.')->group(function () {
-                Route::get('/', [ProductProductCategoryController::class, 'index'])->name('index');
-                Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::post('/store', [BulkProductCategoryController::class, 'store'])->name('store');
-                    Route::delete('/destroy', [BulkProductCategoryController::class, 'destroy'])->name('destroy');
-                });
-                Route::post('/{productCategory}/store', [ProductProductCategoryController::class, 'store'])->name('store');
-                Route::delete('/{productCategory}/delete', [ProductProductCategoryController::class, 'destroy'])->name('delete');
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/store', [MessagingGroupController::class, 'storeMessageGroup'])->name('store');

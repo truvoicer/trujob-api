@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Order\Shipping\OrderShipmentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,11 @@ return new class extends Migration
             $table->foreignId('shipping_method_id')->constrained();
             $table->foreignId('currency_id')->constrained('currencies')->cascadeOnDelete();
             $table->string('tracking_number')->nullable();
-            $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'failed'])->default('pending');
+
+            $table->enum(
+                'status',
+                array_map(fn(OrderShipmentStatus $orderShipmentStatus) => $orderShipmentStatus->value, OrderShipmentStatus::cases())
+            )->nullable()->default(OrderShipmentStatus::PENDING->value);
             $table->decimal('shipping_cost', 10, 2);
             $table->date('estimated_delivery_date')->nullable();
             $table->date('actual_delivery_date')->nullable();

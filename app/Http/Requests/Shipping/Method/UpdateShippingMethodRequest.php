@@ -162,9 +162,6 @@ class UpdateShippingMethodRequest extends FormRequest
                 'required',
                 'exists:currencies,id'
             ],
-            'rates.*.is_free_shipping_possible' => [
-                'boolean'
-            ],
             'rates.*.is_active' => [
                 'boolean'
             ],

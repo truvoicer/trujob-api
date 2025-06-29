@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Order\Discount\DiscountAmountType;
+use App\Enums\Order\Discount\DiscountScope;
 use App\Enums\Order\Discount\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,7 @@ class Discount extends Model
         'apply_to',
         'code',
         'is_code_required',
+        'scope',
     ];
 
     protected $casts = [
@@ -44,6 +46,7 @@ class Discount extends Model
         'min_order_amount' => 'decimal:2',
         'type' => DiscountType::class,
         'amount_type' => DiscountAmountType::class,
+        'scope' => DiscountScope::class,
     ];
 
 

@@ -6,6 +6,9 @@ use App\Http\Resources\Country\CountryResource;
 use App\Http\Resources\Currency\CurrencyResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\ShippingRate
+ */
 class ShippingRateResource extends JsonResource
 {
     /**
@@ -49,7 +52,6 @@ class ShippingRateResource extends JsonResource
             'currency' => $this->whenLoaded('currency', CurrencyResource::make(
                 $this->currency
             )),
-            'is_free_shipping_possible' => $this->is_free_shipping_possible,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

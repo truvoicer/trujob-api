@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Order\OrderStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,14 +17,10 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
-            $table->enum('status', [
-                'pending',
-                'processing',
-                'completed',
-                'cancelled',
-                'refunded',
-            ])->default('pending');
-            
+            $table->enum(
+                'status',
+                array_map(fn(OrderStatus $orderStatus) => $orderStatus->value, OrderStatus::cases())
+            )->nullable()->default(OrderStatus::PENDING->value);
             $table->timestamps();
         });
     }

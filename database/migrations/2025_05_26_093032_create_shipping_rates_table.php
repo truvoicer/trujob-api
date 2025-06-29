@@ -52,8 +52,7 @@ return new class extends Migration
             $table->decimal('min_length', 10, 2)->nullable()->default(0);
             $table->decimal('max_length', 10, 2)->nullable()->default(0);
 
-            $table->decimal('amount', 10, 2);
-            $table->boolean('is_free_shipping_possible')->default(false);
+            $table->decimal('amount', 10, 2)->nullable()->default(0);
             $table->boolean('is_active')->default(false);
             $table->timestamps();
 

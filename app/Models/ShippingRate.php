@@ -34,7 +34,6 @@ class ShippingRate extends Model
         'max_length',
         'amount',
         'currency_id',
-        'is_free_shipping_possible'
     ];
 
     protected $casts = [
@@ -48,7 +47,6 @@ class ShippingRate extends Model
         'max_width' => 'decimal:2',
         'min_length' => 'decimal:2',
         'max_length' => 'decimal:2',
-        'is_free_shipping_possible' => 'boolean',
         'weight_limit' => 'boolean',
         'height_limit' => 'boolean',
         'width_limit' => 'boolean',
@@ -67,6 +65,10 @@ class ShippingRate extends Model
     public function shippingZone()
     {
         return $this->belongsTo(ShippingZone::class);
+    }
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class);
     }
 
     public function calculateRate(float $orderValue = 0, float $weight = 0): float

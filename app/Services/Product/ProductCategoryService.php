@@ -8,25 +8,25 @@ use App\Services\BaseService;
 
 class ProductCategoryService extends BaseService
 {
-    public function attachBulkCategoriesToProduct(Product $product, array $categories) {
-        $product->categories()->attach($categories);
+    public function attachBulkProductCategoriesToProduct(Product $product, array $productCategories) {
+        $product->productCategories()->attach($productCategories);
         return true;
     }
 
-    public function attachCategoryToProduct(Product $product, ProductCategory $category) {
-        $product->categories()->attach($category->id);
+    public function attachProductCategoryToProduct(Product $product, ProductCategory $productCategory) {
+        $product->productCategories()->attach($productCategory->id);
         return true;
     }
 
-    public function detachCategoryFromProduct(Product $product, ProductCategory $category) {
-        $productCategory = $product->categories()->where('category_id', $category->id)->first();
+    public function detachProductCategoryFromProduct(Product $product, ProductCategory $productCategory) {
+        $productCategory = $product->productCategories()->where('category_id', $productCategory->id)->first();
         if (!$productCategory) {
             throw new \Exception('Product category not found');
         }
         return $productCategory->delete();
     }
-    public function detachBulkCategoriesFromProduct(Product $product, array $categories) {
-        $product->categories()->detach($categories);
+    public function detachBulkProductCategoriesFromProduct(Product $product, array $productCategories) {
+        $product->productCategories()->detach($productCategories);
         return true;
     }
 

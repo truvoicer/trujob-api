@@ -102,15 +102,14 @@ class UpdateShippingRateRequest extends FormRequest
                 'gte:min_length'
             ],
             'amount' => [
-                'sometimes',
+                Rule::requiredIf(fn() => request()->input('type') !== ShippingRateType::FREE->value),
                 'numeric',
                 'min:0'
             ],
             'currency_id' => [
-                'sometimes',
+                Rule::requiredIf(fn() => request()->input('type') !== ShippingRateType::FREE->value),
                 'exists:currencies,id'
             ],
-            'is_free_shipping_possible' => ['boolean'],
         ];
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Product\Category;
+namespace App\Http\Controllers\Api\Product\ProductCategory;
 
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Controllers\Controller;

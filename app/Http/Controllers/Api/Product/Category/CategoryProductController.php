@@ -7,15 +7,15 @@ use App\Http\Resources\Category\CategoryResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
-use App\Services\Product\ProductCategoryService;
+use App\Services\Product\CategoryProductService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductCategoryController extends Controller
+class CategoryProductController extends Controller
 {
 
     public function __construct(
-        private ProductCategoryService $productCategoryService,
+        private CategoryProductService $categoryProductService,
         private ProductRepository $productRepository,
     )
     {
@@ -45,11 +45,11 @@ class ProductCategoryController extends Controller
     }
 
     public function store(Product $product, Category $category, Request $request) {
-        $this->productCategoryService->setUser($request->user()->user);
-        $this->productCategoryService->setSite($request->user()->site);
+        $this->categoryProductService->setUser($request->user()->user);
+        $this->categoryProductService->setSite($request->user()->site);
 
         if (
-            $this->productCategoryService->attachCategoryToProduct(
+            $this->categoryProductService->attachCategoryToProduct(
                 $product,
                 $category,
             )
@@ -64,11 +64,11 @@ class ProductCategoryController extends Controller
     }
 
     public function destroy(Product $product, Category $category, Request $request) {
-        $this->productCategoryService->setUser($request->user()->user);
-        $this->productCategoryService->setSite($request->user()->site);
+        $this->categoryProductService->setUser($request->user()->user);
+        $this->categoryProductService->setSite($request->user()->site);
 
         if (
-            $this->productCategoryService->detachCategoryFromProduct(
+            $this->categoryProductService->detachCategoryFromProduct(
                 $product,
                 $category,
             )

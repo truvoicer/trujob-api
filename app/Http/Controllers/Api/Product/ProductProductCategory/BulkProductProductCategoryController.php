@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Product\ProductCategory;
+namespace App\Http\Controllers\Api\Product\ProductProductCategory;
 
 use App\Helpers\Tools\ValidationHelpers;
 use App\Http\Controllers\Controller;
@@ -22,7 +22,7 @@ class BulkProductProductCategoryController extends Controller
         $this->productCategoryService->setSite($request->user()->site);
         ValidationHelpers::validateBulkIdExists('product_categories')->validate();
         if (
-            !$this->productCategoryService->attachBulkCategoriesToProduct(
+            !$this->productCategoryService->attachBulkProductCategoriesToProduct(
                 $product,
                 $request->get('ids', [])
             )
@@ -43,7 +43,7 @@ class BulkProductProductCategoryController extends Controller
         ValidationHelpers::validateBulkIdExists('product_categories')->validate();
 
         if (
-            !$this->productCategoryService->detachBulkCategoriesFromProduct(
+            !$this->productCategoryService->detachBulkProductCategoriesFromProduct(
                 $product,
                 $request->get('ids', [])
             )

@@ -67,7 +67,7 @@ class ProductController extends ProductBaseController
         $this->productsAdminService->setUser($request->user()->user);
         $this->productsAdminService->setSite($request->user()->site);
 
-        if (!$this->productsAdminService->updateProduct($product, $request->all())) {
+        if (!$this->productsAdminService->updateProduct($product, $request->validated())) {
             return response()->json([
                 'message' => 'Error updating product',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);

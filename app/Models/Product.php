@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Price\PriceType;
+use App\Enums\Product\ProductType;
 use Database\Factories\product\ProductFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,16 +17,42 @@ class Product extends Model
     protected $fillable = [
         'name',
         'title',
+        'type',
         'description',
         'active',
         'allow_offers',
         'quantity',
+        'has_weight',
+        'has_height',
+        'has_length',
+        'has_width',
+        'weight_unit',
+        'height_unit',
+        'length_unit',
+        'width_unit',
+        'weight',
+        'height',
+        'length',
+        'width',
     ];
 
     protected $casts = [
         'active' => 'boolean',
         'allow_offers' => 'boolean',
         'quantity' => 'integer',
+        'type' => ProductType::class,
+        'has_weight' => 'boolean',
+        'has_height' => 'boolean',
+        'has_length' => 'boolean',
+        'has_width' => 'boolean',
+        'weight_unit' => 'string',
+        'height_unit' => 'string',
+        'length_unit' => 'string',
+        'width_unit' => 'string',
+        'weight' => 'float',
+        'height' => 'float',
+        'length' => 'float',
+        'width' => 'float',
     ];
 
     protected static function newFactory()
