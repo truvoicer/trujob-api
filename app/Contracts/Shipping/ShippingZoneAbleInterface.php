@@ -9,6 +9,7 @@ interface ShippingZoneAbleInterface
 {
     public function validateRequest(): bool;
     public function attachShippingZoneAble(ShippingZone $shippingZone, array $data): void;
+    public function syncShippingZoneAble(ShippingZone $shippingZone, array $data): void;
     public function detachShippingZoneAble(ShippingZone $shippingZone, array $data): void;
     public function getShippingZoneableEntityResourceData(JsonResource $resource): array;
 

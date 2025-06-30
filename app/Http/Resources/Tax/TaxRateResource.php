@@ -7,6 +7,9 @@ use App\Http\Resources\Currency\CurrencyResource;
 use App\Http\Resources\Region\RegionResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\TaxRate
+ */
 class TaxRateResource extends JsonResource
 {
     /**

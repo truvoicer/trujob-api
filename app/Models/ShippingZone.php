@@ -56,8 +56,9 @@ class ShippingZone extends Model
 
     public function shippingZoneAbles()
     {
-        return $this->morphMany(ShippingZoneAble::class, 'shipping_zoneable');
+        return $this->hasMany(ShippingZoneAble::class);
     }
+
 
     public function discountables()
     {

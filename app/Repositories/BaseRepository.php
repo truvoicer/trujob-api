@@ -260,7 +260,7 @@ class BaseRepository
         $query->with($this->getWith());
         return $query;
     }
-    
+
     protected function addLoadToQuery(EloquentBuilder|Relation $query): EloquentBuilder|Relation
     {
         $load = $this->getLoad();
@@ -314,7 +314,7 @@ class BaseRepository
         return $this->findOne();
     }
 
-    public function findByName(string $name = null)
+    public function findByName(string $name)
     {
         $this->addWhere('name', $name);
         return $this->findOne();
@@ -376,6 +376,12 @@ class BaseRepository
         $this->orderByDir = self::DEFAULT_ORDER_BY_DIR;
         $this->limit = self::DEFAULT_LIMIT;
         $this->offset = self::DEFAULT_OFFSET;
+        $this->fixedRows = [];
+        $this->whereDoesntHave = [];
+        $this->whereHas = [];
+        $this->with = [];
+        $this->load = [];
+        $this->query = null;
     }
 
     public function setFixedRows(array $fixedRows): self
@@ -452,8 +458,8 @@ class BaseRepository
         }
 
         $query = $this->addOrderToQuery($query);
-        
-        
+
+
         if (!$this->paginate && $this->limit > -1) {
             $query->limit($this->limit);
         }
@@ -464,13 +470,13 @@ class BaseRepository
         return $query;
     }
 
-    private function addOrderToQuery(EloquentBuilder|Relation $query): EloquentBuilder|Relation 
+    private function addOrderToQuery(EloquentBuilder|Relation $query): EloquentBuilder|Relation
     {
         $orderByArray = $this->buildOrderByArray();
         $fixedRowsArray = $this->buildFixedRowsQuery();
-        
+
         $orderBy = array_merge($fixedRowsArray, $orderByArray);
-        
+
         foreach ($orderBy as $order) {
             if (isset($order['column']) && isset($order['dir'])) {
                 $query->orderByRaw("{$order['column']} {$order['dir']}");
@@ -486,8 +492,8 @@ class BaseRepository
                 'column' => $this->orderByColumn,
                 'dir' => $this->orderByDir,
             ]];
-        } 
-        
+        }
+
         return $this->orderBy;
     }
 
@@ -497,11 +503,11 @@ class BaseRepository
             fn($row) => is_array($row) && isset($row['column']) && isset($row['value']),
             ARRAY_FILTER_USE_BOTH
         );
-        
+
         if (!count($fixedRowConfig)) {
             return [];
         }
-        
+
         return array_map(
             function ($row) {
                 return [

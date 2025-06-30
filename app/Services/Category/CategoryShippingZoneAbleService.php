@@ -20,13 +20,22 @@ class CategoryShippingZoneAbleService implements ShippingZoneAbleInterface
         request()->validate(['shipping_zoneable_id' => 'exists:categories,id']);
         return true;
     }
-    // public function syncShippingZoneAble(ShippingZone $shippingZone, array $data): void
-    // {
-    //     $shippingZone->shippingZoneAbles()->where('shipping_zoneable_type', MorphEntity::CATEGORY->value)
-    //         ->whereNotIn('shipping_zoneable_id', array_column($data, 'shipping_zoneable_id'))
-    //         ->delete();
-    //     $this->attachShippingZoneAble($shippingZone, $data);
-    // }
+
+    public function syncShippingZoneAble(ShippingZone $shippingZone, array $data): void
+    {
+        $shippingZone->shippingZoneAbles()->where('shipping_zoneable_type', MorphEntity::CATEGORY->value)
+            ->whereNotIn('shipping_zoneable_id', array_column($data, 'shipping_zoneable_id'))
+            ->delete();
+        $doesntExist = array_filter($data, function ($item) use ($shippingZone) {
+            return !$shippingZone->shippingZoneAbles()
+                ->where('shipping_zoneable_type', MorphEntity::CATEGORY->value)
+                ->where('shipping_zoneable_id', $item['shipping_zoneable_id'])
+                ->exists();
+        });
+        foreach ($doesntExist as $doesntExistItem) {
+            $this->attachShippingZoneAble($shippingZone, $doesntExistItem);
+        }
+    }
 
     public function attachShippingZoneAble(ShippingZone $shippingZone, array $data): void
     {
@@ -34,7 +43,7 @@ class CategoryShippingZoneAbleService implements ShippingZoneAbleInterface
         if (!$category) {
             throw new \Exception('Category not found');
         }
-        $category->shippingZoneable()->create([
+        $category->shippingZoneAbles()->create([
             'shipping_zone_id' => $shippingZone->id,
         ]);
     }
@@ -50,7 +59,7 @@ class CategoryShippingZoneAbleService implements ShippingZoneAbleInterface
     {
         return [
             'category' => new CategoryResource(
-                $resource->shipping_zoneable
+                $resource->shippingZoneAble
             )
         ];
     }

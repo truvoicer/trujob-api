@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Shipping\Zone;
 
+use App\Enums\Order\Shipping\ShippingZoneAbleType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateShippingZoneRequest extends FormRequest
 {
@@ -24,7 +26,7 @@ class UpdateShippingZoneRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
+            'label' => [
                 'sometimes',
                 'string',
                 'max:100'
@@ -35,8 +37,20 @@ class UpdateShippingZoneRequest extends FormRequest
                 'string',
                 'max:500'
             ],
-            'is_active' => [
-                'boolean'
+            'shipping_zoneables' => [
+                'sometimes',
+                'array'
+            ],
+            'shipping_zoneables.*.shipping_zoneable_id' => [
+                'required',
+                'integer',
+            ],
+            'shipping_zoneables.*.shipping_zoneable_type' => [
+                Rule::enum(ShippingZoneAbleType::class)
+            ],
+            'all' => [
+                'boolean',
+                'nullable'
             ],
             'all' => [
                 'boolean',

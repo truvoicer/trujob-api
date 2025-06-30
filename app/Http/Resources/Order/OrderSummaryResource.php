@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin \App\Models\Order
  */
-class OrderResource extends JsonResource
+class OrderSummaryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -34,6 +34,8 @@ class OrderResource extends JsonResource
             'final_total' => $this->calculateFinalTotal(),
             'total_items' => $this->calculateTotalItems(),
             'average_price_per_item' => $this->calculateAveragePricePerItem(),
+            'total_shipping_cost' => $this->calculateTotalShippingCost(),
+            'total_price_with_shipping' => $this->calculateTotalPriceWithShipping(),
             'total_price_after_discounts' => $this->calculateTotalPriceAfterDiscounts(),
             'total_price_after_tax' => $this->calculateTotalPriceAfterTax(),
             'total_price_after_tax_and_discounts' => $this->calculateTotalPriceAfterTaxAndDiscounts(),

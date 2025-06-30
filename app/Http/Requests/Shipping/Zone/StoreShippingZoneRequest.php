@@ -41,11 +41,11 @@ class StoreShippingZoneRequest extends FormRequest
                 'required',
                 'array'
             ],
-            'shipping_zoneables.*.id' => [
+            'shipping_zoneables.*.shipping_zoneable_id' => [
                 'required',
                 'integer',
             ],
-            'shipping_zoneables.*.type' => [
+            'shipping_zoneables.*.shipping_zoneable_type' => [
                 Rule::enum(ShippingZoneAbleType::class)
             ],
             'is_active' => ['boolean'],

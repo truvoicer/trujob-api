@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources\Shipping;
 
-use App\Http\Resources\Country\CountryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\ShippingZone
+ */
 class ShippingZoneResource extends JsonResource
 {
     /**
@@ -17,6 +19,7 @@ class ShippingZoneResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'label' => $this->label,
             'name' => $this->name,
             'description' => $this->description,
             'shipping_zoneables' => $this->whenLoaded(

@@ -36,7 +36,7 @@ class ShippingZoneController extends Controller
         $this->shippingZoneRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return ShippingZoneResource::collection(
             $this->shippingZoneRepository->findMany()
         );
@@ -45,16 +45,16 @@ class ShippingZoneController extends Controller
     public function show(ShippingZone $shippingZone, Request $request) {
         $this->shippingZoneService->setUser($request->user()->user);
         $this->shippingZoneService->setSite($request->user()->site);
-        
+
         return new ShippingZoneResource(
-            $shippingZone->load('countries')
+            $shippingZone
         );
     }
 
     public function store(StoreShippingZoneRequest $request) {
         $this->shippingZoneService->setUser($request->user()->user);
         $this->shippingZoneService->setSite($request->user()->site);
-        
+
         if (!$this->shippingZoneService->createShippingZone($request->validated())) {
             return response()->json([
                 'message' => 'Error creating shipping zone',
@@ -81,7 +81,7 @@ class ShippingZoneController extends Controller
     public function destroy(ShippingZone $shippingZone, Request $request) {
         $this->shippingZoneService->setUser($request->user()->user);
         $this->shippingZoneService->setSite($request->user()->site);
-        
+
         if (!$this->shippingZoneService->deleteShippingZone($shippingZone)) {
             return response()->json([
                 'message' => 'Error deleting shipping zone',

@@ -21,8 +21,10 @@ class ShippingZoneAble extends Model
         return $this->belongsTo(ShippingZone::class);
     }
 
-    public function shippingZoneable(): MorphTo
+    public function shippingZoneAble(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo('shipping_zoneable', 'shipping_zoneable_type', 'shipping_zoneable_id');
     }
+
+
 }

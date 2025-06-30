@@ -27,6 +27,18 @@ class ProductListResource extends JsonResource
             'active' => $this->active,
             'allow_offers' => $this->allow_offers,
             'quantity' => $this->quantity,
+            'has_height' => $this->has_height,
+            'has_length' => $this->has_length,
+            'has_width' => $this->has_width,
+            'has_weight' => $this->has_weight,
+            'weight_unit' => $this->weight_unit,
+            'height_unit' => $this->height_unit,
+            'length_unit' => $this->length_unit,
+            'width_unit' => $this->width_unit,
+            'height' => $this->height,
+            'length' => $this->length,
+            'width' => $this->width,
+            'weight' => $this->weight,
         ];
     }
 }

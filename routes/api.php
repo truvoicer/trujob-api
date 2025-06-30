@@ -130,6 +130,7 @@ use App\Http\Controllers\Api\Site\Setting\SiteSettingController;
 use App\Http\Controllers\Api\Shipping\ShippingRateTypeController;
 use App\Http\Controllers\Api\Shipping\ShippingUnitController;
 use App\Http\Controllers\Api\Shipping\ShippingWeightUnitController;
+use App\Http\Controllers\Api\Shipping\Zone\ShippingZoneableTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
 use App\Http\Controllers\Api\Tax\TaxRateScopeController;
@@ -326,6 +327,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/store', [OrderController::class, 'store'])->name('store');
         Route::get('/{order}', [OrderController::class, 'show'])->name('show');
         Route::prefix('{order}')->group(function () {
+            Route::get('/summary', [OrderSummaryController::class, 'show'])->name('show');
             Route::patch('/update', [OrderController::class, 'update'])->name('update');
             Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
             Route::prefix('item')->name('item.')->group(function () {
@@ -402,6 +404,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/weight-unit', [ProductWeightUnitController::class, 'index'])->name('weight-unit.index');
 
         Route::prefix('{product}')->group(function () {
+            Route::get('/', [ProductController::class, 'show'])->name('show');
             Route::patch('/update', [ProductController::class, 'update'])->name('update');
             Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
 
@@ -575,6 +578,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('zone')->name('zone.')->group(function () {
             Route::get('/', [ShippingZoneController::class, 'index'])->name('index');
             Route::post('/store', [ShippingZoneController::class, 'store'])->name('store');
+
+            Route::get('/type', [ShippingZoneableTypeController::class, 'index'])->name('type.index');
+
             Route::prefix('{shippingZone}')->group(function () {
                 Route::get('/', [ShippingZoneController::class, 'show'])->name('show');
                 Route::patch('/update', [ShippingZoneController::class, 'update'])->name('update');
