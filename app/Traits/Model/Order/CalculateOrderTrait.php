@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 trait CalculateOrderTrait
 {
+    use CalculateOrderShippingTrait;
 
     private ?PriceType $priceType = null;
     private Collection $defaultTaxRates;
@@ -341,36 +342,7 @@ trait CalculateOrderTrait
             $totalPrice / $totalItems
         );
     }
-    /**
-     * Calculate the total shipping cost for an order.
-     *
-     * @return float
-     */
-    public function calculateTotalShippingCost(): float
-    {
-        $totalShippingCost = 0.0;
 
-        foreach ($this->items as $item) {
-            $item->setPriceType($this->getPriceType());
-            $item->init(); // Ensure the item is initialized with the correct price type
-            $shippingCost = $item->orderItemable->shipping_cost ?? 0.0; // Assuming shipping_cost is a property of the itemable entity
-            $totalShippingCost += ($item->quantity * $shippingCost);
-        }
-
-        return $totalShippingCost;
-    }
-    /**
-     * Calculate the total price including shipping.
-     *
-     * @return float
-     */
-    public function calculateTotalPriceWithShipping(): float
-    {
-        $totalPrice = $this->calculateTotalPrice();
-        $totalShippingCost = $this->calculateTotalShippingCost();
-
-        return $totalPrice + $totalShippingCost;
-    }
     /**
      * Calculate the total price after applying any discounts.
      *

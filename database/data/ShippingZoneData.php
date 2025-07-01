@@ -9,9 +9,20 @@ $country = Country::where('iso2', 'GB')->first();
 if (!$country) {
     throw new Exception('Required country not found.');
 }
-$currency = $country->currency()->where('code', 'GBP')->first();
-if (!$currency) {
-    throw new Exception('Required currency not found.');
+$internationalCountries = Country::whereIn('iso2', [
+    'US',
+    'CA',
+    'AU',
+    'NZ',
+    'SG',
+    'MY',
+    'PH',
+    'IN',
+    'JP',
+    'CN',
+])->get();
+if ($internationalCountries->isEmpty()) {
+    throw new Exception('Required international countries not found.');
 }
 $region = Region::where('name', 'Asia')->first();
 if (!$region) {
@@ -38,12 +49,12 @@ return [
         'description' => 'Shipping zone for international orders',
         'is_active' => true,
         'all' => false,
-        'shipping_zoneables' => [
-            [
+        'shipping_zoneables' => $internationalCountries->map(function ($country) {
+            return [
                 'shipping_zoneable_type' => ShippingZoneAbleType::COUNTRY->value,
                 'shipping_zoneable_id' => $country->id,
-            ]
-        ],
+            ];
+        })->toArray(),
     ],
     [
         'name' => 'Asia Shipping',

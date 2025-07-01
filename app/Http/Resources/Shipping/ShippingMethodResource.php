@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Shipping;
 
+use App\Http\Resources\Shipping\Tier\ShippingMethodTierResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ShippingMethodResource extends JsonResource
@@ -28,6 +29,10 @@ class ShippingMethodResource extends JsonResource
             'restrictions' => $this->whenLoaded(
                 'restrictions',
                 ShippingRestrictionResource::collection($this->restrictions)
+            ),
+            'tiers' => $this->whenLoaded(
+                'tiers',
+                ShippingMethodTierResource::collection($this->tiers)
             ),
         ];
     }

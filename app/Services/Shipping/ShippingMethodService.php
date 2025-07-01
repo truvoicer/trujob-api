@@ -38,7 +38,7 @@ class ShippingMethodService extends BaseService
         unset($data['rates']);
         $restrictions = $data['restrictions'] ?? null;
         unset($data['restrictions']);
-        if (!empty($data['name'])) {
+        if (!empty($data['label'])) {
             $data['name'] = Str::slug($data['label']);
         }
         if (!$shippingMethod->update($data)) {

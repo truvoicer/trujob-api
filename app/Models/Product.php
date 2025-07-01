@@ -144,6 +144,15 @@ class Product extends Model
         return $this->morphMany(ShippingRestriction::class, 'restrictionable');
     }
 
+    public function productableShippingMethods(): MorphMany
+    {
+        return $this->morphMany(ProductableShippingMethod::class, 'productable');
+    }
+
+    public function shippingMethods() {
+        return $this->morphToMany(ShippingMethod::class, 'productable', 'productable_shipping_methods');
+    }
+
     public function getDefaultPrice(?PriceType $priceType): ?Price
     {
         if ($priceType) {

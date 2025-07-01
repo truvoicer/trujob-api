@@ -90,6 +90,7 @@ use App\Http\Controllers\Api\Price\Discount\PriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\PriceTaxRateController;
 use App\Http\Controllers\Api\Price\Type\PriceTypeController;
 use App\Http\Controllers\Api\Locale\RegionController;
+use App\Http\Controllers\Api\Order\OrderSummaryController;
 use App\Http\Controllers\Api\Price\BulkPriceController;
 use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\BulkPriceTaxRateController;
@@ -108,6 +109,8 @@ use App\Http\Controllers\Api\Product\ProductProductCategory\ProductProductCatego
 use App\Http\Controllers\Api\Product\ProductUnitController;
 use App\Http\Controllers\Api\Product\ProductWeightUnitController;
 use App\Http\Controllers\Api\Product\Review\BulkProductReviewController;
+use App\Http\Controllers\Api\Product\Shipping\Method\BulkProductShippingMethodController;
+use App\Http\Controllers\Api\Product\Shipping\Method\ProductShippingMethodController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\BulkShippingMethodDiscountController;
 use App\Http\Controllers\Api\Shipping\Method\Discount\ShippingMethodDiscountController;
@@ -117,6 +120,8 @@ use App\Http\Controllers\Api\Shipping\Method\Restriction\ShippingRestrictionActi
 use App\Http\Controllers\Api\Shipping\Method\Restriction\ShippingRestrictionTypeController;
 use App\Http\Controllers\Api\Shipping\Zone\Country\BulkShippingZoneCountryController;
 use App\Http\Controllers\Api\Shipping\Method\ShippingMethodController;
+use App\Http\Controllers\Api\Shipping\Method\Tier\BulkShippingMethodTierController;
+use App\Http\Controllers\Api\Shipping\Method\Tier\ShippingMethodTierController;
 use App\Http\Controllers\Api\Shipping\Zone\ShippingZoneController;
 use App\Http\Controllers\Api\Shipping\Zone\Country\ShippingZoneCountryController;
 use App\Http\Controllers\Api\Shipping\Zone\Discount\BulkShippingZoneDiscountController;
@@ -327,7 +332,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/store', [OrderController::class, 'store'])->name('store');
         Route::get('/{order}', [OrderController::class, 'show'])->name('show');
         Route::prefix('{order}')->group(function () {
-            Route::get('/summary', [OrderSummaryController::class, 'show'])->name('show');
+            Route::get('/summary', [OrderSummaryController::class, 'show'])->name('summary.show');
             Route::patch('/update', [OrderController::class, 'update'])->name('update');
             Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
             Route::prefix('item')->name('item.')->group(function () {
@@ -407,6 +412,21 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [ProductController::class, 'show'])->name('show');
             Route::patch('/update', [ProductController::class, 'update'])->name('update');
             Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
+
+            Route::prefix('shipping')->name('shipping.')->group(function () {
+                Route::prefix('method')->name('method.')->group(function () {
+                    Route::prefix('bulk')->name('bulk.')->group(function () {
+                        Route::post('/store', [BulkProductShippingMethodController::class, 'store'])->name('store');
+                        Route::delete('/destroy', [BulkProductShippingMethodController::class, 'destroy'])->name('destroy');
+                    });
+                    Route::get('/', [ProductShippingMethodController::class, 'index'])->name('index');
+                    Route::prefix('{shippingMethod}')->group(function () {
+                        Route::get('/', [ProductShippingMethodController::class, 'show'])->name('show');
+                        Route::post('/store', [ProductShippingMethodController::class, 'store'])->name('store');
+                        Route::delete('/destroy', [ProductShippingMethodController::class, 'destroy'])->name('destroy');
+                    });
+                });
+            });
 
             Route::prefix('product-category')->name('product-type.')->group(function () {
                 Route::get('/', [ProductProductCategoryController::class, 'index'])->name('index');
@@ -555,6 +575,18 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     });
                 });
 
+                Route::prefix('tier')->name('tier.')->group(function () {
+                    Route::prefix('bulk')->name('bulk.')->group(function () {
+                        Route::delete('/destroy', [BulkShippingMethodTierController::class, 'destroy'])->name('destroy');
+                    });
+                    Route::get('/', [ShippingMethodTierController::class, 'index'])->name('index');
+                    Route::post('/store', [ShippingMethodTierController::class, 'store'])->name('store');
+                    Route::prefix('{shippingMethodTier}')->group(function () {
+                        Route::get('/', [ShippingMethodTierController::class, 'show'])->name('show');
+                        Route::patch('/update', [ShippingMethodTierController::class, 'update'])->name('update');
+                        Route::delete('/destroy', [ShippingMethodTierController::class, 'destroy'])->name('destroy');
+                    });
+                });
                 Route::prefix('rate')->name('rate.')->group(function () {
                     Route::get('/', [ShippingMethodRateController::class, 'index'])->name('index');
                     Route::post('/store', [ShippingMethodRateController::class, 'store'])->name('store');

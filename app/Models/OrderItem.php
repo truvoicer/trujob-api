@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Order\OrderItemable;
 use App\Traits\Model\Order\CalculateOrderItemTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -15,6 +16,10 @@ class OrderItem extends Model
         'order_itemable_id',
         'order_itemable_type',
         'quantity',
+    ];
+
+    protected $casts = [
+        'order_itemable_type' => OrderItemable::class,
     ];
 
     public function orderItemable(): MorphTo

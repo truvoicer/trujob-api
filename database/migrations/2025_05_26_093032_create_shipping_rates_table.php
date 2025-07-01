@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('shipping_method_id')->constrained()->cascadeOnDelete();
             $table->foreignId('shipping_zone_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('currency_id')->constrained('currencies')->cascadeOnDelete();
+            $table->foreignId('currency_id')->nullable()->constrained('currencies')->cascadeOnDelete();
             $table->enum(
                 'type',
                 array_map(fn(ShippingRateType $rate) => $rate->value, ShippingRateType::cases())
