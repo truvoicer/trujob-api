@@ -91,6 +91,7 @@ use App\Http\Controllers\Api\Price\TaxRate\PriceTaxRateController;
 use App\Http\Controllers\Api\Price\Type\PriceTypeController;
 use App\Http\Controllers\Api\Locale\RegionController;
 use App\Http\Controllers\Api\Order\OrderSummaryController;
+use App\Http\Controllers\Api\Order\Shipping\Method\OrderShippingMethodController;
 use App\Http\Controllers\Api\Price\BulkPriceController;
 use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\BulkPriceTaxRateController;
@@ -335,6 +336,16 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/summary', [OrderSummaryController::class, 'show'])->name('summary.show');
             Route::patch('/update', [OrderController::class, 'update'])->name('update');
             Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
+
+            Route::prefix('shipping')->name('shipping.')->group(function () {
+                Route::prefix('method')->name('method.')->group(function () {
+                    Route::get('/', [OrderShippingMethodController::class, 'index'])->name('index');
+                    Route::prefix('{shippingMethod}')->group(function () {
+                        Route::get('/', [OrderShippingMethodController::class, 'show'])->name('show');
+                    });
+                });
+            });
+
             Route::prefix('item')->name('item.')->group(function () {
                 Route::get('/', [OrderItemController::class, 'index'])->name('index');
                 Route::post('/store', [OrderItemController::class, 'store'])->name('store');

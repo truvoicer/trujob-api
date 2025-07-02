@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\Price\PriceType;
 use App\Enums\Product\ProductType;
+use App\Enums\Product\ProductUnit;
+use App\Enums\Product\ProductWeightUnit;
 use Database\Factories\product\ProductFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -45,10 +47,10 @@ class Product extends Model
         'has_height' => 'boolean',
         'has_length' => 'boolean',
         'has_width' => 'boolean',
-        'weight_unit' => 'string',
-        'height_unit' => 'string',
-        'length_unit' => 'string',
-        'width_unit' => 'string',
+        'weight_unit' => ProductWeightUnit::class,
+        'height_unit' => ProductUnit::class,
+        'length_unit' => ProductUnit::class,
+        'width_unit' => ProductUnit::class,
         'weight' => 'float',
         'height' => 'float',
         'length' => 'float',
