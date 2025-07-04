@@ -132,8 +132,7 @@ trait CalculateOrderShippingTrait
      */
     public function calculateTotalShippingCost(): float
     {
-        $this->initializeShippingMethodProducts();();
-        $this->processShippingMethodProductCalculations
+        $this->initializeShippingMethodProducts();
         dd($this->shippingMethodProducts);
         $totalShippingCost = 0.0;
 
