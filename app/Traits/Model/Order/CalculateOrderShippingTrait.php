@@ -3,19 +3,16 @@
 namespace App\Traits\Model\Order;
 
 use App\Enums\Order\OrderItemable;
-use App\Enums\Order\Shipping\ShippingUnit;
 use App\Enums\Product\ProductUnit;
 use App\Enums\Product\ProductWeightUnit;
-use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ShippingMethod;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 
 trait CalculateOrderShippingTrait
 {
 
+    private Collection $availableShippingMethods;
     private Collection $shippingMethodProducts;
     private ?ShippingMethod $shippingMethod = null;
 
@@ -29,16 +26,103 @@ trait CalculateOrderShippingTrait
         return $this->shippingMethod;
     }
 
+    public function setAvailableShippingMethods(Collection $availableShippingMethods): void
+    {
+        $this->availableShippingMethods = $availableShippingMethods;
+    }
+
+    public function getAvailableShippingMethods(): Collection
+    {
+        return $this->availableShippingMethods ?? new Collection();
+    }
+
     public function availableShippingMethods(): Collection
     {
-        $this->initializeShippingMethodProducts();
+        $data = $this->initializeShippingMethodProducts();
+        $shippingMethodIds = [];
 
-        $this->shippingMethodProducts = $this->shippingMethodProducts->filter(function ($shippingMethodProduct) {
-            return $shippingMethodProduct['items']->isNotEmpty();
-        })->map(function ($shippingMethodProduct) {
-            return $shippingMethodProduct['shipping_method'];
-        });
-        return $this->shippingMethodProducts;
+        foreach ($this->items as $item) {
+            $shippingMethodIds = array_merge(
+                $shippingMethodIds,
+                $item->orderItemable->shippingMethods()->get()->pluck('id')->toArray()
+            );
+        }
+
+        $shippingMethodQuery = ShippingMethod::query();
+
+        foreach ($data as $shippingMethodId => $shippingMethodData) {
+            $totalDimensionalWeight = $shippingMethodData['total_dimensional_weight'] ?? 0.0;
+            if ($shippingMethodId === array_key_first($data)) {
+                $shippingMethodQuery->where(function ($query) use ($shippingMethodId, $totalDimensionalWeight) {
+                    $query = $this->whereQuery($query, $shippingMethodId, $totalDimensionalWeight);
+                });
+                continue;
+            }
+
+            $shippingMethodQuery->orWhere(function ($query) use ($shippingMethodId, $totalDimensionalWeight) {
+                $query = $this->whereQuery($query, $shippingMethodId, $totalDimensionalWeight);
+            })
+                ->with(['tiers' => function ($query) use ($totalDimensionalWeight) {
+                    $query = $this->tiersQuery($query, $totalDimensionalWeight);
+                    $query->orderByRaw("{$this->calculateDimensionalWeightDivisorCase()} ASC");
+                }]);
+        }
+
+        if (isset($this->shippingMethod) && $this->shippingMethod instanceof ShippingMethod) {
+            $shippingMethodQuery->where('id', $this->shippingMethod->id);
+        }
+
+        return $shippingMethodQuery->get();
+    }
+
+    private function whereQuery($query, int $shippingMethodId, int $totalDimensionalWeight)
+    {
+        $query->where('id', $shippingMethodId)
+            ->whereHas('tiers', function ($query) use ($totalDimensionalWeight) {
+                $query = $this->tiersQuery($query, $totalDimensionalWeight);
+            });
+        return $query;
+    }
+
+    private function calculateDimensionalWeightDivisorCase() {
+        return "
+        (
+            CASE weight_unit
+                WHEN 'G' THEN max_weight
+                WHEN 'KG' THEN max_weight * 1000
+                WHEN 'LB' THEN max_weight * 0.453592 * 1000
+                -- WHEN 'OZ' THEN max_weight * 0.0283495 * 1000
+                ELSE 0.0
+            END
+            +
+            CASE height_unit
+                WHEN 'M' THEN max_height
+                WHEN 'CM' THEN max_height / 100
+                WHEN 'MM' THEN max_height / 1000
+                WHEN 'IN' THEN max_height * 0.0254
+                WHEN 'FT' THEN max_height * 0.3048
+                ELSE 0.0
+            END
+            +
+            CASE length_unit
+                WHEN 'M' THEN max_length
+                WHEN 'CM' THEN max_length / 100
+                WHEN 'MM' THEN max_length / 1000
+                WHEN 'IN' THEN max_length * 0.0254
+                WHEN 'FT' THEN max_length * 0.3048
+                ELSE 0.0
+            END
+        ) / dimensional_weight_divisor
+    ";
+    }
+
+    private function tiersQuery($query, int $totalDimensionalWeight)
+    {
+        $query->whereRaw(
+            "{$this->calculateDimensionalWeightDivisorCase()} >= ?",
+            [$totalDimensionalWeight]
+        );
+        return $query;
     }
 
     /**
@@ -48,8 +132,8 @@ trait CalculateOrderShippingTrait
      */
     public function calculateTotalShippingCost(): float
     {
-        $this->initializeShippingMethodProducts();
-        $this->processShippingMethodProductCalculations();
+        $this->initializeShippingMethodProducts();();
+        $this->processShippingMethodProductCalculations
         dd($this->shippingMethodProducts);
         $totalShippingCost = 0.0;
 
@@ -88,19 +172,6 @@ trait CalculateOrderShippingTrait
         }
     }
 
-    public function getShippingDimensionInCmByUnit(ShippingUnit $shippingUnit, float $value): float
-    {
-        switch ($shippingUnit) {
-            case ShippingUnit::CM:
-                return $value; // Already in centimeters
-            case ShippingUnit::FEET:
-                return $value * 30.48;
-            case ShippingUnit::INCH:
-                return $value * 2.54;
-            default:
-                return 0.0; // Default case if no weight unit is set
-        }
-    }
 
 
     public function getDimensionalWeightForProduct(Product $product): float
@@ -126,10 +197,7 @@ trait CalculateOrderShippingTrait
                 $product->length ?? 0.0
             );
         }
-        var_dump("Width: $width");
-        var_dump("Height: $height");
-        var_dump("Length: $length");
-        var_dump("Dimensional Weight: " . ($width * $height * $length) / 50);
+
         return ($width * $height * $length) / 50;
     }
     public function getProductWeightInGrams(Product $product): float
@@ -164,100 +232,9 @@ trait CalculateOrderShippingTrait
         return $totalWeight;
     }
 
-    public function processShippingMethodProductCalculations(): void
-    {
-        $this->shippingMethodProducts = $this->shippingMethodProducts->map(function ($shippingMethodProduct, $index) {
-            $items = $shippingMethodProduct['items'];
-
-            $weight = $items->reduce(function ($carry, $item) {
-                switch ($item->order_itemable_type) {
-                    case OrderItemable::PRODUCT:
-                        $productWeight = $this->getProductWeightInGrams($item->orderItemable);
-                        return $carry + ($productWeight * $item->quantity);
-                }
-            });
-
-            $totalDimensionalWeight = $items->reduce(function ($carry, $item) {
-                switch ($item->order_itemable_type) {
-                    case OrderItemable::PRODUCT:
-                        $product = $item->orderItemable;
-                        return $carry + ($this->getDimensionalWeightForProduct($product) * $item->quantity);
-                }
-                return $carry;
-            });
-
-            $shippingMethod = $shippingMethodProduct['shipping_method'];
-
-            $shippingMethod->tiers()->each(function ($tier) {
-
-                $width = 0.0;
-                $height = 0.0;
-                $length = 0.0;
-                if ($tier->has_width) {
-                    $width = $this->getShippingDimensionInCmByUnit(
-                        $tier->width_unit,
-                        $tier->max_width ?? 0.0
-                    );
-                }
-                if ($tier->has_height) {
-                    $height = $this->getShippingDimensionInCmByUnit(
-                        $tier->height_unit,
-                        $tier->max_height ?? 0.0
-                    );
-                }
-                if ($tier->has_length) {
-                    $length = $this->getShippingDimensionInCmByUnit(
-                        $tier->length_unit,
-                        $tier->max_length ?? 0.0
-                    );
-                }
-                $total = ($width * $height * $length) / 50;
-
-                var_dump("Width: $width");
-                var_dump("Height: $height");
-                var_dump("Length: $length");
-                var_dump("Dimensional Weight: " . ($width * $height * $length) / 50);
-                dd($total);
-            });
-            $shippingMethodProduct['total_weight'] = $weight;
-            $shippingMethodProduct['dimensional_weight'] = $totalDimensionalWeight;
-
-            return $shippingMethodProduct;
-        });
-    }
-
-    public function processShippingMethodProduct(ShippingMethod $shippingMethod, OrderItem $item): void
-    {
-        $findShippingMethod = $this->shippingMethodProducts->where('shipping_method.id', $shippingMethod->id)->first();
-
-        if (!$findShippingMethod) {
-            $this->shippingMethodProducts->add([
-                'shipping_method' => $shippingMethod,
-                'items' => (new Collection()),
-                'total_weight' => 0.0,
-                'total_cost' => 0.0,
-                'total_quantity' => 0,
-                'dimensional_weight' => 0.0,
-                'shipping_method_dimensional_weight' => 0.0,
-            ]);
-            $findShippingMethod = $this->shippingMethodProducts->where('shipping_method.id', $shippingMethod->id)->first();
-        }
-
-        $findShippingMethod['items'][] = $item;
-    }
-
-    public function shippingMethodProductIterator(
-        Collection|EloquentCollection|MorphToMany $shippingMethodProducts,
-        OrderItem $item
-    ): void {
-        $shippingMethodProducts->each(function ($shippingMethod) use ($item) {
-            $this->processShippingMethodProduct($shippingMethod, $item);
-        });
-    }
-
     public function initializeShippingMethodProducts()
     {
-        $this->shippingMethodProducts = new Collection();
+        $data = [];
         foreach ($this->items as $item) {
             switch ($item->order_itemable_type) {
                 case OrderItemable::PRODUCT:
@@ -265,13 +242,32 @@ trait CalculateOrderShippingTrait
                     if (!$product) {
                         continue;
                     }
-                    if (!$product->shippingMethods()->count()) {
-                        $this->shippingMethodProductIterator(ShippingMethod::all(), $item);
-                        continue;
+                    foreach ($product->shippingMethods as $shippingMethod) {
+                        if (!isset($data[$shippingMethod->id])) {
+                            $itemsCollection = new Collection();
+                            $itemsCollection->add($item);
+                            $data[$shippingMethod->id] = [
+                                'items' => $itemsCollection,
+                            ];
+                        }
+                        $data[$shippingMethod->id]['items']->add($item);
                     }
-                    $this->shippingMethodProductIterator($product->shippingMethods(), $item);
                     break;
             }
         }
+        foreach ($data as $shippingMethodId => $shippingMethodData) {
+            $totalDimensionalWeight = $shippingMethodData['items']->reduce(function ($carry, $item) {
+                switch ($item->order_itemable_type) {
+                    case OrderItemable::PRODUCT:
+                        $product = $item->orderItemable;
+                        return $carry + ($this->getDimensionalWeightForProduct($product) * $item->quantity);
+                }
+                return $carry;
+            });
+            $data[$shippingMethodId]['total_dimensional_weight'] = $totalDimensionalWeight;
+            unset($data[$shippingMethodId]['items']);
+        }
+
+        return $data;
     }
 }

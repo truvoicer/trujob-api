@@ -39,10 +39,8 @@ class OrderShippingMethodController extends Controller
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
 
-        return new OrderShippingMethodResource(
-            $order->load([
-                'items',
-            ])
+        return new ShippingMethodResource(
+            $order->availableShippingMethods()->first()
         )->additional([
             'shipping_method' => $shippingMethod,
         ]);
