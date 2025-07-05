@@ -44,7 +44,7 @@ class SiteResource extends JsonResource
             'x_follow_url' => $this->x_follow_url,
             'timezone' => $this->timezone,
             'media' => $this->whenLoaded('media', MediaResource::collection($this->media)),
-            'settings' => $this->whenLoaded('settings', SiteSettingResource::make($this->settings->first())),
+            'settings' => $this->whenLoaded('settings', SiteSettingResource::make($this->settings?->first())),
         ];
     }
 }

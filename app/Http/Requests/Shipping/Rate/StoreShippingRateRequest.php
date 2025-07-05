@@ -36,81 +36,88 @@ class StoreShippingRateRequest extends FormRequest
                 'required',
                 Rule::enum(ShippingRateType::class)
             ],
-            'weight_limit' => ['sometimes', 'boolean'],
-            'height_limit' => ['sometimes', 'boolean'],
-            'width_limit' => ['sometimes', 'boolean'],
-            'length_limit' => ['sometimes', 'boolean'],
-            'weight_unit' => [
-                'required_if:weight_limit,true',
-                Rule::enum(ShippingWeightUnit::class)
-            ],
-            'height_unit' => [
-                'required_if:height_limit,true',
-                Rule::enum(ShippingUnit::class)
-            ],
-            'width_unit' => [
-                'required_if:width_limit,true',
-                Rule::enum(ShippingUnit::class)
-            ],
-            'length_unit' => [
-                'required_if:length_limit,true',
-                Rule::enum(ShippingUnit::class)
-            ],
-            'min_weight' => [
-                'required_if:weight_limit,true',
-                'numeric',
-                'min:0'
-            ],
-            'max_weight' => [
-                'required_if:weight_limit,true',
-                'numeric',
-                'min:0',
-                'gte:min_weight'
-            ],
-            'min_height' => [
-                'required_if:height_limit,true',
-                'numeric',
-                'min:0'
-            ],
-            'max_height' => [
-                'required_if:height_limit,true',
-                'numeric',
-                'min:0',
-                'gte:min_height'
-            ],
-            'min_width' => [
-                'required_if:width_limit,true',
-                'numeric',
-                'min:0'
-            ],
-            'max_width' => [
-                'required_if:width_limit,true',
-                'numeric',
-                'min:0',
-                'gte:min_width'
-            ],
-            'min_length' => [
-                'required_if:length_limit,true',
-                'numeric',
-                'min:0'
-            ],
-            'max_length' => [
-                'required_if:length_limit,true',
-                'numeric',
-                'min:0',
-                'gte:min_length'
-            ],
-            'amount' => [
-                Rule::requiredIf(fn() => request()->input('type') !== ShippingRateType::FREE->value),
-                'numeric',
-                'min:0'
-            ],
+
+
             'currency_id' => [
-                Rule::requiredIf(fn() => request()->input('type') !== ShippingRateType::FREE->value),
                 'required',
                 'exists:currencies,id'
             ],
-            'is_active' => ['sometimes', 'boolean'],
+            'label' => [
+                'required',
+                'string',
+                'max:50'
+            ],
+            'description' => [
+                'required',
+                'string'
+            ],
+            'is_active' => [
+                'required',
+                'boolean'
+            ],
+            'has_max_dimension' => ['sometimes', 'boolean'],
+            'max_dimension' => ['required_if:has_max_dimension,true', 'numeric', 'min:0'],
+            'max_dimension_unit' => [
+                'required_if:has_max_dimension,true',
+                'string',
+                Rule::enum(ShippingUnit::class)
+            ],
+
+            'has_weight' => ['sometimes', 'boolean'],
+            'has_height' => ['sometimes', 'boolean'],
+            'has_width' => ['sometimes', 'boolean'],
+            'has_depth' => ['sometimes', 'boolean'],
+
+            'weight_unit' => [
+                'required_if:has_weight,true',
+                'string',
+                Rule::enum(ShippingWeightUnit::class)
+            ],
+            'max_weight' => [
+                'required_if:has_weight,true',
+                'numeric',
+                'min:0'
+            ],
+            'height_unit' => [
+                'required_if:has_height,true',
+                'string',
+                Rule::enum(ShippingUnit::class)
+            ],
+            'max_height' => [
+                'required_if:has_height,true',
+                'numeric',
+                'min:0'
+            ],
+            'width_unit' => [
+                'required_if:has_width,true',
+                'string',
+                Rule::enum(ShippingUnit::class)
+            ],
+            'max_width' => [
+                'required_if:has_width,true',
+                'numeric',
+                'min:0'
+            ],
+            'depth_unit' => [
+                'required_if:has_depth,true',
+                'string',
+                Rule::enum(ShippingUnit::class)
+            ],
+            'max_depth' => [
+                'required_if:has_depth,true',
+                'numeric',
+                'min:0'
+            ],
+            'amount' => [
+                'required',
+                'numeric',
+                'min:0'
+            ],
+            'dimensional_weight_divisor' => [
+                'required',
+                'numeric',
+                'min:0'
+            ],
         ];
     }
 }

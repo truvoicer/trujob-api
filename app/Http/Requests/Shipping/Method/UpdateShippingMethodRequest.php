@@ -85,7 +85,7 @@ class UpdateShippingMethodRequest extends FormRequest
                 'sometimes',
                 'boolean'
             ],
-            'rates.*.length_limit' => [
+            'rates.*.depth_limit' => [
                 'sometimes',
                 'boolean'
             ],
@@ -104,8 +104,8 @@ class UpdateShippingMethodRequest extends FormRequest
                 'string',
                 Rule::enum(ShippingUnit::class)
             ],
-            'rates.*.length_unit' => [
-                'required_if:rates.*.length_limit,true',
+            'rates.*.depth_unit' => [
+                'required_if:rates.*.depth_limit,true',
                 'string',
                 Rule::enum(ShippingUnit::class)
             ],
@@ -142,16 +142,16 @@ class UpdateShippingMethodRequest extends FormRequest
                 'min:0',
                 'gt:rates.*.min_width'
             ],
-            'rates.*.min_length' => [
-                'required_if:rates.*.length_limit,true',
+            'rates.*.min_depth' => [
+                'required_if:rates.*.depth_limit,true',
                 'numeric',
                 'min:0'
             ],
-            'rates.*.max_length' => [
-                'required_if:rates.*.length_limit,true',
+            'rates.*.max_depth' => [
+                'required_if:rates.*.depth_limit,true',
                 'numeric',
                 'min:0',
-                'gt:rates.*.min_length'
+                'gt:rates.*.min_depth'
             ],
             'rates.*.amount' => [
                 'required',

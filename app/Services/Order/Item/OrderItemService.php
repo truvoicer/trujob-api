@@ -36,7 +36,7 @@ class OrderItemService extends BaseService
     public function updateOrderItem(Order $order, OrderItem $orderItem, array $data)
     {
         return OrderItemFactory::create(
-            OrderItemable::tryFrom($orderItem->order_itemable_type)
+            $orderItem->order_itemable_type
         )
             ->updateOrderItem(
                 $order,

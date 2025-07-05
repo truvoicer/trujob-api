@@ -59,11 +59,6 @@ class ShippingMethod extends Model
         return $this->morphMany(ProductableShippingMethod::class, 'productable');
     }
 
-    public function tiers()
-    {
-        return $this->hasMany(ShippingMethodTier::class);
-    }
-
     public function scopeActive($query)
     {
         return $query->where('is_active', true);

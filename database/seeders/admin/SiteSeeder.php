@@ -33,7 +33,8 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 class SiteSeeder extends Seeder
 {
 
-    public function sequence(Sequence $sequence, bool $isDefault = false): array{
+    public function sequence(Sequence $sequence, bool $isDefault = false): array
+    {
         $priceTypeCount = PriceType::count();
         if ($priceTypeCount < 1) {
             throw new Exception('No price types found.');
@@ -43,10 +44,7 @@ class SiteSeeder extends Seeder
             throw new Exception('Required price type not found.');
         }
         $priceType = PriceType::where('name', 'one_time')->first();
-        // if ($sequence->index == 0) {
 
-        // dd($sequence->index == 0 ? $priceType->id : $randomPriceType->id);
-        // }
         if (!$priceType) {
             throw new Exception('Required price type not found.');
         }
@@ -68,6 +66,9 @@ class SiteSeeder extends Seeder
         }
 
         foreach ($siteData as $item) {
+            $settings = $item['settings'] ?? null;
+            unset($item['settings']);
+
             Site::factory()
                 ->count(1)
                 ->has(
@@ -110,14 +111,14 @@ class SiteSeeder extends Seeder
                                 ->has(
                                     Price::factory()
                                         ->state(new Sequence(
-                                            fn (Sequence $sequence) => $this->sequence($sequence, true)
+                                            fn(Sequence $sequence) => $this->sequence($sequence, true)
                                         ))
                                         ->count(1)
                                 )
                                 ->has(
                                     Price::factory()
                                         ->state(new Sequence(
-                                            fn (Sequence $sequence) => $this->sequence($sequence)
+                                            fn(Sequence $sequence) => $this->sequence($sequence)
                                         ))
                                         ->count(2)
                                 )
@@ -135,6 +136,9 @@ class SiteSeeder extends Seeder
                         )
                 )
                 ->create($item);
+            if (is_array($settings) && count($settings) > 0) {
+                Site::first()->settings()->create($settings);
+            }
         }
         foreach (User::all() as $user) {
             if ($user->products->count() == 0) {

@@ -51,12 +51,12 @@ return new class extends Migration
             )->nullable()->default(ProductUnit::CM->value);
             $table->decimal('width', 10, 2)->nullable()->default(0);
 
-            $table->boolean('has_length')->default(false);
+            $table->boolean('has_depth')->default(false);
             $table->enum(
-                'length_unit',
+                'depth_unit',
                 array_map(fn(ProductUnit $unit) => $unit->value, ProductUnit::cases())
             )->nullable()->default(ProductUnit::CM->value);
-            $table->decimal('length', 10, 2)->nullable()->default(0);
+            $table->decimal('depth', 10, 2)->nullable()->default(0);
             $table->timestamps();
         });
     }

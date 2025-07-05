@@ -94,7 +94,7 @@ enum DatabaseEnum: string
                 Product::class => ['weight_unit']
             ],
             self::PRODUCT_UNIT => [
-                Product::class => ['height_unit', 'width_unit', 'length_unit']
+                Product::class => ['height_unit', 'width_unit', 'depth_unit']
             ],
             self::ORDER_STATUS => [
                 Order::class => ['status']
@@ -121,7 +121,7 @@ enum DatabaseEnum: string
                 ShippingRate::class => ['type']
             ],
             self::SHIPPING_UNIT => [
-                ShippingRate::class => ['height_unit', 'width_unit', 'length_unit']
+                ShippingRate::class => ['height_unit', 'width_unit', 'depth_unit']
             ],
             self::SHIPPING_WEIGHT_UNIT => [
                 ShippingRate::class => ['weight_unit']

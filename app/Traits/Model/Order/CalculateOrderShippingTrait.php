@@ -62,8 +62,8 @@ trait CalculateOrderShippingTrait
             $shippingMethodQuery->orWhere(function ($query) use ($shippingMethodId, $totalDimensionalWeight) {
                 $query = $this->whereQuery($query, $shippingMethodId, $totalDimensionalWeight);
             })
-                ->with(['tiers' => function ($query) use ($totalDimensionalWeight) {
-                    $query = $this->tiersQuery($query, $totalDimensionalWeight);
+                ->with(['rates' => function ($query) use ($totalDimensionalWeight) {
+                    $query = $this->ratesQuery($query, $totalDimensionalWeight);
                     $query->orderByRaw("{$this->calculateDimensionalWeightDivisorCase()} ASC");
                 }]);
         }
@@ -78,8 +78,8 @@ trait CalculateOrderShippingTrait
     private function whereQuery($query, int $shippingMethodId, int $totalDimensionalWeight)
     {
         $query->where('id', $shippingMethodId)
-            ->whereHas('tiers', function ($query) use ($totalDimensionalWeight) {
-                $query = $this->tiersQuery($query, $totalDimensionalWeight);
+            ->whereHas('rates', function ($query) use ($totalDimensionalWeight) {
+                $query = $this->ratesQuery($query, $totalDimensionalWeight);
             });
         return $query;
     }
@@ -104,19 +104,19 @@ trait CalculateOrderShippingTrait
                 ELSE 0.0
             END
             +
-            CASE length_unit
-                WHEN 'M' THEN max_length
-                WHEN 'CM' THEN max_length / 100
-                WHEN 'MM' THEN max_length / 1000
-                WHEN 'IN' THEN max_length * 0.0254
-                WHEN 'FT' THEN max_length * 0.3048
+            CASE depth_unit
+                WHEN 'M' THEN max_depth
+                WHEN 'CM' THEN max_depth / 100
+                WHEN 'MM' THEN max_depth / 1000
+                WHEN 'IN' THEN max_depth * 0.0254
+                WHEN 'FT' THEN max_depth * 0.3048
                 ELSE 0.0
             END
         ) / dimensional_weight_divisor
     ";
     }
 
-    private function tiersQuery($query, int $totalDimensionalWeight)
+    private function ratesQuery($query, int $totalDimensionalWeight)
     {
         $query->whereRaw(
             "{$this->calculateDimensionalWeightDivisorCase()} >= ?",
@@ -190,10 +190,10 @@ trait CalculateOrderShippingTrait
                 $product->height ?? 0.0
             );
         }
-        if ($product->has_length) {
+        if ($product->has_depth) {
             $length = $this->getProductDimensionInCmByUnit(
-                $product->length_unit,
-                $product->length ?? 0.0
+                $product->depth_unit,
+                $product->depth ?? 0.0
             );
         }
 
@@ -239,7 +239,7 @@ trait CalculateOrderShippingTrait
                 case OrderItemable::PRODUCT:
                     $product = $item->orderItemable;
                     if (!$product) {
-                        continue;
+                        break;
                     }
                     foreach ($product->shippingMethods as $shippingMethod) {
                         if (!isset($data[$shippingMethod->id])) {

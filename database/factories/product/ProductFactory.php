@@ -4,6 +4,8 @@ namespace Database\Factories\product;
 
 use App\Enums\Product\ProductCategory;
 use App\Enums\Product\ProductType;
+use App\Enums\Product\ProductUnit;
+use App\Enums\Product\ProductWeightUnit;
 use App\Models\Product;
 use App\Services\HelperService;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -32,6 +34,26 @@ class ProductFactory extends Factory
             "description" => $fake->text(100),
             "active" => $fake->boolean(),
             "allow_offers" => $fake->boolean(),
+            "has_weight" => $fake->boolean(),
+            "has_height" => $fake->boolean(),
+            "has_width" => $fake->boolean(),
+            "has_depth" => $fake->boolean(),
+            "weight_unit" => $this->faker->randomElement(
+                array_map(fn($unit) => $unit->value, ProductWeightUnit::cases())
+            ),
+            "height_unit" => $this->faker->randomElement(
+                array_map(fn($unit) => $unit->value, ProductUnit::cases())
+            ),
+            "width_unit" => $this->faker->randomElement(
+                array_map(fn($unit) => $unit->value, ProductUnit::cases())
+            ),
+            "depth_unit" => $this->faker->randomElement(
+                array_map(fn($unit) => $unit->value, ProductUnit::cases())
+            ),
+            "weight" => $fake->randomFloat(2, 0, 100),
+            "height" => $fake->randomFloat(2, 0, 100),
+            "width" => $fake->randomFloat(2, 0, 100),
+            "depth" => $fake->randomFloat(2, 0, 100),
         ];
     }
 }

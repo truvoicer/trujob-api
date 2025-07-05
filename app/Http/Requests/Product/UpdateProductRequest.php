@@ -38,40 +38,40 @@ class UpdateProductRequest extends FormRequest
             'has_weight' => ['sometimes', 'boolean'],
             'has_height' => ['sometimes', 'boolean'],
             'has_width' => ['sometimes', 'boolean'],
-            'has_length' => ['sometimes', 'boolean'],
+            'has_depth' => ['sometimes', 'boolean'],
             'weight_unit' => [
-                'required_if:has_weight,true',
+                'sometimes',
                 Rule::enum(ProductWeightUnit::class)
             ],
             'height_unit' => [
-                'required_if:has_height,true',
+                'sometimes',
                 Rule::enum(ProductUnit::class)
             ],
             'width_unit' => [
-                'required_if:has_width,true',
+                'sometimes',
                 Rule::enum(ProductUnit::class)
             ],
-            'length_unit' => [
-                'required_if:has_length,true',
+            'depth_unit' => [
+                'sometimes',
                 Rule::enum(ProductUnit::class)
             ],
             'weight' => [
-                'required_if:has_weight,true',
+                'sometimes',
                 'numeric',
                 'min:0'
             ],
             'height' => [
-                'required_if:has_height,true',
+                'sometimes',
                 'numeric',
                 'min:0'
             ],
             'width' => [
-                'required_if:has_width,true',
+                'sometimes',
                 'numeric',
                 'min:0'
             ],
-            'length' => [
-                'required_if:has_length,true',
+            'depth' => [
+                'sometimes',
                 'numeric',
                 'min:0'
             ],

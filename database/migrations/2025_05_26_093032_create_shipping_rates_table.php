@@ -14,49 +14,78 @@ return new class extends Migration
         Schema::create('shipping_rates', function (Blueprint $table) {
             $table->id();
             $table->foreignId('shipping_method_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('shipping_zone_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('shipping_zone_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('currency_id')->nullable()->constrained('currencies')->cascadeOnDelete();
             $table->enum(
                 'type',
                 array_map(fn(ShippingRateType $rate) => $rate->value, ShippingRateType::cases())
             );
-            $table->boolean('weight_limit')->default(false);
+
+            $table->string('name')->unique();
+            $table->string('label');
+            $table->string('description')->nullable();
+            $table->boolean('is_active')->default(true);
+
+            $table->boolean('has_weight')->default(false);
+            $table->boolean('has_height')->default(false);
+            $table->boolean('has_width')->default(false);
+            $table->boolean('has_depth')->default(false);
+
+            $table->boolean('has_max_dimension')->default(false);
+            $table->decimal('max_dimension', 10, 2)->nullable();
+            $table->enum(
+                'max_dimension_unit',
+                array_map(fn(ShippingUnit $unit) => $unit->value, ShippingUnit::cases())
+            )->nullable()->default(ShippingUnit::CM->value);
+
             $table->enum(
                 'weight_unit',
                 array_map(fn(ShippingWeightUnit $unit) => $unit->value, ShippingWeightUnit::cases())
             )->nullable()->default(ShippingWeightUnit::KG->value);
-            $table->decimal('min_weight', 10, 2)->nullable()->default(0);
-            $table->decimal('max_weight', 10, 2)->nullable()->default(0);
+            $table->decimal('max_weight', 10, 2)->nullable();
 
-            $table->boolean('height_limit')->default(false);
             $table->enum(
                 'height_unit',
                 array_map(fn(ShippingUnit $unit) => $unit->value, ShippingUnit::cases())
             )->nullable()->default(ShippingUnit::CM->value);
-            $table->decimal('min_height', 10, 2)->nullable()->default(0);
-            $table->decimal('max_height', 10, 2)->nullable()->default(0);
+            $table->decimal('max_height', 10, 2)->nullable();
 
-            $table->boolean('width_limit')->default(false);
             $table->enum(
                 'width_unit',
                 array_map(fn(ShippingUnit $unit) => $unit->value, ShippingUnit::cases())
             )->nullable()->default(ShippingUnit::CM->value);
-            $table->decimal('min_width', 10, 2)->nullable()->default(0);
-            $table->decimal('max_width', 10, 2)->nullable()->default(0);
+            $table->decimal('max_width', 10, 2)->nullable();
 
-            $table->boolean('length_limit')->default(false);
             $table->enum(
-                'length_unit',
+                'depth_unit',
                 array_map(fn(ShippingUnit $unit) => $unit->value, ShippingUnit::cases())
             )->nullable()->default(ShippingUnit::CM->value);
-            $table->decimal('min_length', 10, 2)->nullable()->default(0);
-            $table->decimal('max_length', 10, 2)->nullable()->default(0);
+            $table->decimal('max_depth', 10, 2)->nullable();
 
             $table->decimal('amount', 10, 2)->nullable()->default(0);
-            $table->boolean('is_active')->default(false);
+
+            $table->decimal('dimensional_weight_divisor', 10, 2)->nullable();
+
             $table->timestamps();
 
-            $table->index(['shipping_zone_id', 'type', 'min_weight', 'max_weight', 'min_height', 'max_height', 'min_width', 'max_width', 'min_length', 'max_length'], 'idx_shipping_zone_weight_type');
+            $table->index([
+                'shipping_method_id',
+                'shipping_zone_id',
+                'currency_id',
+                'is_active',
+                'max_dimension',
+                'max_dimension_unit',
+                'max_weight',
+                'weight_unit',
+                'max_height',
+                'height_unit',
+                'max_width',
+                'width_unit',
+                'max_depth',
+                'depth_unit',
+                'amount',
+                'dimensional_weight_divisor',
+            ], 'idx_shipping_method_shipping_rates');
         });
     }
 

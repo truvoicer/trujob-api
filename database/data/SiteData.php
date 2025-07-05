@@ -1,4 +1,19 @@
 <?php
+
+use App\Models\Country;
+
+$country = Country::where('iso2', 'GB')->first();
+if (!$country) {
+    throw new Exception('Required country not found.');
+}
+$currency = $country->currency()->where('code', 'GBP')->first();
+if (!$currency) {
+    throw new Exception('Required currency not found.');
+}
+$language = $country->languages()->where('iso639_2', 'eng')->first();
+if (!$language) {
+    throw new Exception('Required language not found.');
+}
 return [
     [
         'name' => 'tru-job',
@@ -25,5 +40,12 @@ return [
         'pinterest_follow_url' => null,
         'x_follow_url' => null,
         'timezone' => 'UTC',
+        'settings' => [
+            'timezone' => 'UTC',
+            'currency_id' => $currency->id,
+            'country_id' => $country->id,
+            'language_id' => $language->id,
+            'frontend_url' => 'http://localhost:3000',
+        ],
     ]
 ];

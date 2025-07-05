@@ -37,78 +37,89 @@ class UpdateShippingRateRequest extends FormRequest
                 Rule::enum(ShippingRateType::class)
             ],
 
-            'weight_limit' => ['sometimes', 'boolean'],
-            'height_limit' => ['sometimes', 'boolean'],
-            'width_limit' => ['sometimes', 'boolean'],
-            'length_limit' => ['sometimes', 'boolean'],
+            'currency_id' => [
+                'sometimes',
+                'exists:currencies,id'
+            ],
+            'label' => [
+                'sometimes',
+                'string',
+                'max:50'
+            ],
+            'description' => [
+                'sometimes',
+                'string',
+                'max:1000'
+            ],
+            'is_active' => [
+                'boolean'
+            ],
+
+            'has_max_dimension' => ['sometimes', 'boolean'],
+            'max_dimension' => [
+                'sometimes',
+                'numeric',
+                'min:0'
+            ],
+            'max_dimension_unit' => [
+                'sometimes',
+                'string',
+                Rule::enum(ShippingUnit::class)
+            ],
+
+            'has_weight' => ['sometimes', 'boolean'],
+            'has_height' => ['sometimes', 'boolean'],
+            'has_width' => ['sometimes', 'boolean'],
+            'has_depth' => ['sometimes', 'boolean'],
             'weight_unit' => [
-                'required_if:weight_limit,true',
+                'sometimes',
+                'string',
                 Rule::enum(ShippingWeightUnit::class)
             ],
-            'height_unit' => [
-                'required_if:height_limit,true',
-                Rule::enum(ShippingUnit::class)
-            ],
-            'width_unit' => [
-                'required_if:width_limit,true',
-                Rule::enum(ShippingUnit::class)
-            ],
-            'length_unit' => [
-                'required_if:length_limit,true',
-                Rule::enum(ShippingUnit::class)
-            ],
-            'min_weight' => [
-                'required_if:weight_limit,true',
-                'numeric',
-                'min:0'
-            ],
             'max_weight' => [
-                'required_if:weight_limit,true',
-                'numeric',
-                'min:0',
-                'gte:min_weight'
-            ],
-            'min_height' => [
-                'required_if:height_limit,true',
+                'sometimes',
                 'numeric',
                 'min:0'
+            ],
+            'height_unit' => [
+                'sometimes',
+                'string',
+                Rule::enum(ShippingUnit::class)
             ],
             'max_height' => [
-                'required_if:height_limit,true',
-                'numeric',
-                'min:0',
-                'gte:min_height'
-            ],
-            'min_width' => [
-                'required_if:width_limit,true',
+                'sometimes',
                 'numeric',
                 'min:0'
+            ],
+            'width_unit' => [
+                'sometimes',
+                'string',
+                Rule::enum(ShippingUnit::class)
             ],
             'max_width' => [
-                'required_if:width_limit,true',
-                'numeric',
-                'min:0',
-                'gte:min_width'
-            ],
-            'min_length' => [
-                'required_if:length_limit,true',
+                'sometimes',
                 'numeric',
                 'min:0'
             ],
-            'max_length' => [
-                'required_if:length_limit,true',
+            'depth_unit' => [
+                'sometimes',
+                'string',
+                Rule::enum(ShippingUnit::class)
+            ],
+            'max_depth' => [
+                'sometimes',
                 'numeric',
-                'min:0',
-                'gte:min_length'
+                'min:0'
             ],
             'amount' => [
                 'sometimes',
                 'numeric',
                 'min:0'
             ],
-            'currency_id' => [
+            'dimensional_weight_divisor' => [
                 'sometimes',
-                'exists:currencies,id'
+                'numeric',
+                'min:0'
             ],
         ];
     }

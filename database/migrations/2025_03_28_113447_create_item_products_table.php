@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string(ItemProperty::SIZE->value)->nullable();
             $table->string(ItemProperty::WEIGHT->value)->nullable();
             $table->string(ItemProperty::DIMENSIONS->value)->nullable();
-            $table->string(ItemProperty::LENGTH->value)->nullable();
+            $table->string(ItemProperty::DEPTH->value)->nullable();
             $table->string(ItemProperty::WIDTH->value)->nullable();
             $table->string(ItemProperty::HEIGHT->value)->nullable();
             $table->string(ItemProperty::DIAMETER->value)->nullable();

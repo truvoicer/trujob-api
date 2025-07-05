@@ -50,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
             ];
             $query = http_build_query($queryArray);
             $encodedQuery = base64_encode($query);
-            return $site->settings->frontend_url.'/reset-password?token='.$encodedQuery;
+            return $site->settings->frontend_url.'/password/reset/confirmation?token='.$encodedQuery;
         });
     }
 }

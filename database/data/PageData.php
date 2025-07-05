@@ -114,10 +114,6 @@ return [
                 'background_image' => 'https://via.placeholder.com/1920x1080',
             ],
         ],
-        'roles' => [
-            ApiAbility::USER->value,
-            ApiAbility::SITE->value,
-        ]
     ],
     [
         'site_id' => 1,
@@ -133,10 +129,6 @@ return [
                 'title' => 'Log into your account',
             ],
         ],
-        'roles' => [
-            ApiAbility::USER->value,
-            ApiAbility::SITE->value,
-        ]
     ],
     [
         'site_id' => 1,
@@ -152,10 +144,6 @@ return [
                 'title' => 'Register for an account',
             ],
         ],
-        'roles' => [
-            ApiAbility::USER->value,
-            ApiAbility::SITE->value,
-        ]
     ],
     [
         'site_id' => 1,
@@ -546,14 +534,14 @@ return [
     ],
     [
         'site_id' => 1,
-        'permalink' => '/reset-password',
-        'name' => 'reset-password',
+        'permalink' => '/password/reset',
+        'name' => 'password-reset',
         'title' => 'Reset Password',
-        'content' => 'Welcome to the reset password page',
+        'content' => 'Welcome to the password reset page',
         'view' => ViewType::Page,
         'blocks' => [
             [
-                'type' => BlockType::RESET_PASSWORD,
+                'type' => BlockType::PASSWORD_RESET,
                 'order' => 0,
                 'title' => 'Reset Password',
                 'nav_title' => 'Reset Password',
@@ -561,10 +549,23 @@ return [
                 'default' => true,
             ],
         ],
-        'roles' => [
-            ApiAbility::SUPERUSER->value,
-            ApiAbility::ADMIN->value,
-            ApiAbility::USER->value,
-        ]
+    ],
+    [
+        'site_id' => 1,
+        'permalink' => '/password/reset/confirmation',
+        'name' => 'password-reset-confirmation',
+        'title' => 'Reset Password Confirmation',
+        'content' => 'Welcome to the password reset confirmation page',
+        'view' => ViewType::Page,
+        'blocks' => [
+            [
+                'type' => BlockType::PASSWORD_RESET_CONFIRMATION,
+                'order' => 0,
+                'title' => 'Reset Password Confirmation',
+                'nav_title' => 'Reset Password Confirmation',
+                'subtitle' => 'Your password has been reset successfully.',
+                'default' => true,
+            ],
+        ],
     ],
 ];

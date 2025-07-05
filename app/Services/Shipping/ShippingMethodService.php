@@ -75,6 +75,12 @@ class ShippingMethodService extends BaseService
                 }
                 $shippingRate->update($rate);
             } else {
+                if (empty($rate['label'])) {
+                    throw new \Exception('Shipping rate label is required');
+                }
+                if (empty($rate['name'])) {
+                    $rate['name'] = Str::slug("{$shippingMethod->name}- {$rate['label']}", '-');
+                }
                 $rate['shipping_method_id'] = $shippingMethod->id;
                 $shippingMethod->rates()->create($rate);
             }

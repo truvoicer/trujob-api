@@ -65,7 +65,7 @@ class CreateProductRequest extends FormRequest
             'has_weight' => ['sometimes', 'boolean'],
             'has_height' => ['sometimes', 'boolean'],
             'has_width' => ['sometimes', 'boolean'],
-            'has_length' => ['sometimes', 'boolean'],
+            'has_depth' => ['sometimes', 'boolean'],
             'weight_unit' => [
                 'required_if:has_weight,true',
                 Rule::enum(ProductWeightUnit::class)
@@ -78,8 +78,8 @@ class CreateProductRequest extends FormRequest
                 'required_if:has_width,true',
                 Rule::enum(ProductUnit::class)
             ],
-            'length_unit' => [
-                'required_if:has_length,true',
+            'depth_unit' => [
+                'required_if:has_depth,true',
                 Rule::enum(ProductUnit::class)
             ],
             'weight' => [
@@ -97,8 +97,8 @@ class CreateProductRequest extends FormRequest
                 'numeric',
                 'min:0'
             ],
-            'length' => [
-                'required_if:has_length,true',
+            'depth' => [
+                'required_if:has_depth,true',
                 'numeric',
                 'min:0'
             ],

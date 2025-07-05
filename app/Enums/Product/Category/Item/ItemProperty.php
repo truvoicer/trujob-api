@@ -11,7 +11,7 @@ enum ItemProperty: string
     case SIZE = 'size';
     case DIMENSIONS = 'dimensions';
     case WEIGHT = 'weight';
-    case LENGTH = 'length';
+    case DEPTH = 'depth';
     case WIDTH = 'width';
     case HEIGHT = 'height';
     case DIAMETER = 'diameter';

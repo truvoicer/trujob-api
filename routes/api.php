@@ -121,8 +121,6 @@ use App\Http\Controllers\Api\Shipping\Method\Restriction\ShippingRestrictionActi
 use App\Http\Controllers\Api\Shipping\Method\Restriction\ShippingRestrictionTypeController;
 use App\Http\Controllers\Api\Shipping\Zone\Country\BulkShippingZoneCountryController;
 use App\Http\Controllers\Api\Shipping\Method\ShippingMethodController;
-use App\Http\Controllers\Api\Shipping\Method\Tier\BulkShippingMethodTierController;
-use App\Http\Controllers\Api\Shipping\Method\Tier\ShippingMethodTierController;
 use App\Http\Controllers\Api\Shipping\Zone\ShippingZoneController;
 use App\Http\Controllers\Api\Shipping\Zone\Country\ShippingZoneCountryController;
 use App\Http\Controllers\Api\Shipping\Zone\Discount\BulkShippingZoneDiscountController;
@@ -586,18 +584,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     });
                 });
 
-                Route::prefix('tier')->name('tier.')->group(function () {
-                    Route::prefix('bulk')->name('bulk.')->group(function () {
-                        Route::delete('/destroy', [BulkShippingMethodTierController::class, 'destroy'])->name('destroy');
-                    });
-                    Route::get('/', [ShippingMethodTierController::class, 'index'])->name('index');
-                    Route::post('/store', [ShippingMethodTierController::class, 'store'])->name('store');
-                    Route::prefix('{shippingMethodTier}')->group(function () {
-                        Route::get('/', [ShippingMethodTierController::class, 'show'])->name('show');
-                        Route::patch('/update', [ShippingMethodTierController::class, 'update'])->name('update');
-                        Route::delete('/destroy', [ShippingMethodTierController::class, 'destroy'])->name('destroy');
-                    });
-                });
                 Route::prefix('rate')->name('rate.')->group(function () {
                     Route::get('/', [ShippingMethodRateController::class, 'index'])->name('index');
                     Route::post('/store', [ShippingMethodRateController::class, 'store'])->name('store');
