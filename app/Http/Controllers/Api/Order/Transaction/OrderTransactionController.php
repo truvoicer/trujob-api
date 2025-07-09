@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\Order\Transaction;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Transaction\StoreTransactionRequest;
-use App\Http\Requests\Transaction\UpdateTransactionRequest;
+use App\Http\Requests\Order\Transaction\StoreOrderTransactionRequest;
+use App\Http\Requests\Order\Transaction\UpdateOrderTransactionRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Repositories\TransactionRepository;
-use App\Services\Transaction\TransactionService;
+use App\Services\Order\Transaction\OrderTransactionService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,10 +17,9 @@ class OrderTransactionController extends Controller
 {
 
     public function __construct(
-        private TransactionService $transactionService,
+        private OrderTransactionService $orderTransactionService,
         private TransactionRepository $transactionRepository,
-    )
-    {}
+    ) {}
 
 
     /**
@@ -28,7 +27,8 @@ class OrderTransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Order $order, Request $request) {
+    public function index(Order $order, Request $request)
+    {
         $this->transactionRepository->setQuery(
             $order->transactions()
         );
@@ -51,18 +51,23 @@ class OrderTransactionController extends Controller
         );
     }
 
-    public function show(Order $order, Transaction $transaction, Request $request) {
-        $this->transactionService->setUser($request->user()->user);
-        $this->transactionService->setSite($request->user()->site);
+    public function show(Order $order, Transaction $transaction, Request $request)
+    {
+        $this->orderTransactionService->setUser($request->user()->user);
+        $this->orderTransactionService->setSite($request->user()->site);
 
         return new TransactionResource($transaction);
     }
 
-    public function store(Order $order, StoreTransactionRequest $request) {
-        $this->transactionService->setUser($request->user()->user);
-        $this->transactionService->setSite($request->user()->site);
+    public function store(Order $order, StoreOrderTransactionRequest $request)
+    {
+        $this->orderTransactionService->setUser($request->user()->user);
+        $this->orderTransactionService->setSite($request->user()->site);
 
-        if (!$this->transactionService->createTransaction($request->validated())) {
+        if (!$this->orderTransactionService->createTransaction(
+            $order,
+            $request->validated()
+        )) {
             return response()->json([
                 'message' => 'Error creating transaction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -73,11 +78,16 @@ class OrderTransactionController extends Controller
     }
 
 
-    public function update(Order $order, Transaction $transaction, UpdateTransactionRequest $request) {
-        $this->transactionService->setUser($request->user()->user);
-        $this->transactionService->setSite($request->user()->site);
+    public function update(Order $order, Transaction $transaction, UpdateOrderTransactionRequest $request)
+    {
+        $this->orderTransactionService->setUser($request->user()->user);
+        $this->orderTransactionService->setSite($request->user()->site);
 
-        if (!$this->transactionService->updateTransaction($transaction, $request->validated())) {
+        if (!$this->orderTransactionService->updateTransaction(
+            $order,
+            $transaction,
+            $request->validated()
+        )) {
             return response()->json([
                 'message' => 'Error updating transaction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -87,11 +97,15 @@ class OrderTransactionController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function destroy(Order $order, Transaction $transaction, Request $request) {
-        $this->transactionService->setUser($request->user()->user);
-        $this->transactionService->setSite($request->user()->site);
+    public function destroy(Order $order, Transaction $transaction, Request $request)
+    {
+        $this->orderTransactionService->setUser($request->user()->user);
+        $this->orderTransactionService->setSite($request->user()->site);
 
-        if (!$this->transactionService->deleteTransaction($transaction)) {
+        if (!$this->orderTransactionService->deleteTransaction(
+            $order,
+            $transaction
+        )) {
             return response()->json([
                 'message' => 'Error deleting transaction',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);

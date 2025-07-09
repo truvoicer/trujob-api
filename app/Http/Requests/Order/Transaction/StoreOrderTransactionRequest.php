@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Transaction;
+namespace App\Http\Requests\Order\Transaction;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTransactionRequest extends FormRequest
+class StoreOrderTransactionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,11 @@ class UpdateTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            'price_id' => ['sometimes', 'integer', 'exists:prices,id'],
-            'payment_gateway_id' => ['sometimes', 'integer', 'exists:payment_gateways,id'],
+            'payment_gateway_id' => [
+                'required',
+                'integer',
+                'exists:payment_gateways,id'
+            ],
         ];
     }
 }
