@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api\Transaction;
+namespace App\Http\Controllers\Api\Order\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Transaction\StoreTransactionRequest;
 use App\Http\Requests\Transaction\UpdateTransactionRequest;
 use App\Http\Resources\TransactionResource;
+use App\Models\Order;
 use App\Models\Transaction;
 use App\Repositories\TransactionRepository;
 use App\Services\Transaction\TransactionService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class TransactionController extends Controller
+class OrderTransactionController extends Controller
 {
 
     public function __construct(
@@ -27,9 +28,9 @@ class TransactionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Transaction $transaction, Request $request) {
+    public function index(Order $order, Request $request) {
         $this->transactionRepository->setQuery(
-            $transaction->transactions()
+            $order->transactions()
         );
         $this->transactionRepository->setPagination(true);
         $this->transactionRepository->setOrderByColumn(
@@ -50,14 +51,14 @@ class TransactionController extends Controller
         );
     }
 
-    public function show(Transaction $transaction, Request $request) {
+    public function show(Order $order, Transaction $transaction, Request $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
 
         return new TransactionResource($transaction);
     }
 
-    public function store(StoreTransactionRequest $request) {
+    public function store(Order $order, StoreTransactionRequest $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
 
@@ -72,7 +73,7 @@ class TransactionController extends Controller
     }
 
 
-    public function update(Transaction $transaction, UpdateTransactionRequest $request) {
+    public function update(Order $order, Transaction $transaction, UpdateTransactionRequest $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
 
@@ -86,7 +87,7 @@ class TransactionController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function destroy(Transaction $transaction, Request $request) {
+    public function destroy(Order $order, Transaction $transaction, Request $request) {
         $this->transactionService->setUser($request->user()->user);
         $this->transactionService->setSite($request->user()->site);
 

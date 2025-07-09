@@ -92,6 +92,10 @@ use App\Http\Controllers\Api\Price\Type\PriceTypeController;
 use App\Http\Controllers\Api\Locale\RegionController;
 use App\Http\Controllers\Api\Order\OrderSummaryController;
 use App\Http\Controllers\Api\Order\Shipping\Method\OrderShippingMethodController;
+use App\Http\Controllers\Api\Order\Transaction\OrderTransactionController;
+use App\Http\Controllers\Api\PaymentGateway\AvailableSitePaymentGatewayController;
+use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayEnvironmentController;
+use App\Http\Controllers\Api\PaymentGateway\SitePaymentGatewayController;
 use App\Http\Controllers\Api\Price\BulkPriceController;
 use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\BulkPriceTaxRateController;
@@ -141,7 +145,6 @@ use App\Http\Controllers\Api\Tax\TaxRateScopeController;
 use App\Http\Controllers\Api\Tax\TaxRateSetAsDefaultController;
 use App\Http\Controllers\Api\Tax\TaxRateTypeController;
 use App\Http\Controllers\Api\Tools\FileSystemController;
-use App\Http\Controllers\Api\Transaction\TransactionController;
 use App\Http\Controllers\Api\User\RoleController;
 use App\Http\Controllers\Api\User\UserController;
 use App\Http\Controllers\Api\User\UserProfileController;
@@ -151,123 +154,27 @@ use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
 use App\Http\Controllers\Api\Widget\WidgetController;
 use App\Http\Controllers\Api\Widget\WidgetRoleController;
 use App\Http\Middleware\AppPublic;
+use App\Models\Site;
 use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(AppPublic::class)->group(function () {});
 
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
-    Route::get('/reset-password/{token}', [AuthPasswordResetController::class, 'show'])->name('password.reset');
-    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
-    Route::prefix('auth')->name('auth.')->group(function () {
-        Route::get('/show', [AuthUserController::class, 'show'])->name('show');
-        Route::post('/login', AuthLoginController::class)->name('login');
-        Route::post('/register', AuthRegisterController::class)->name('register');
-    });
-    Route::prefix('site')->name('site.')->group(function () {
-        Route::get('/page', [SitePageController::class, 'show'])->name('page.view');
-        Route::prefix('{site:name}')->group(function () {
-            Route::get('/', [SiteController::class, 'show'])->name('show');
-            Route::prefix('settings')->name('settings.')->group(function () {
-                Route::get('/', [SiteSettingController::class, 'show'])->name('show');
-            });
-        });
-    });
-
-
-    Route::prefix('public')->name('public.')->group(function () {
-        Route::prefix('product')->name('product.')->group(function () {
-            Route::get('/', [ProductPublicController::class, 'index'])->name('index');
-            Route::prefix('{product}')->name('item.')->group(function () {
-                Route::get('/', [ProductController::class, 'show'])->name('fetch');
-            });
-        });
-    });
-
-    Route::prefix('app-menu')->name('app_menu.')->group(function () {
-        Route::prefix('{appMenu}')->group(function () {
-            Route::get('/', [AppMenuController::class, 'show'])->name('show');
-        });
-    });
-    Route::prefix('menu')->name('menu.')->group(function () {
-        Route::prefix('{menu}')->group(function () {
-            Route::get('/', [MenuController::class, 'show'])->name('show');
-        });
-    });
-});
-
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site,api:user,api:app_user'])->group(function () {
-
-    Route::prefix('auth')->name('auth.')->group(function () {
-        Route::prefix('password')->name('password.')->group(function () {
-            Route::prefix('reset')->name('reset.')->group(function () {
-                Route::post('/token-check', AuthPasswordResetTokenCheckController::class)->name('token-check');
-                Route::post('/request', [AuthPasswordResetController::class, 'store'])->name('request');
-                Route::post('/confirmation', AuthPasswordResetConfirmationController::class)->name('confirmation');
-            });
-        });
-    });
-    Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
-    Route::get('/brand', [BrandController::class, 'index'])->name('brand.index');
-    Route::get('/color', [ColorController::class, 'index'])->name('color.index');
-    Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product-type.index');
-    Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
-    Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
-    Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
-    Route::prefix('discount')->name('discount.')->group(function () {
-        Route::get('/type', DiscountTypeController::class)->name('type.index');
-        Route::get('/discountable/type', DiscountableTypeController::class)->name('discountable.type.index');
-        Route::get('/amount-type', DiscountAmountTypeController::class)->name('amount-type.index');
-        Route::get('/scope', DiscountScopeController::class)->name('scope.index');
-    });
-    Route::prefix('locale')->name('locale.')->group(function () {
-        Route::prefix('currency')->name('currency.')->group(function () {
-            Route::get('/', [CurrencyController::class, 'index'])->name('index');
-        });
-        Route::get('/country', [CountryController::class, 'index'])->name('country.index');
-        Route::get('/region', [RegionController::class, 'index'])->name('region.index');
-        Route::prefix('address')->name('address.')->group(function () {
-            Route::get('/', [AddressController::class, 'index'])->name('index');
-            Route::post('/store', [AddressController::class, 'store'])->name('store');
-            Route::get('/{address}', [AddressController::class, 'show'])->name('show');
-            Route::patch('/{address}/update', [AddressController::class, 'update'])->name('update');
-            Route::delete('/{address}/delete', [AddressController::class, 'destroy'])->name('delete');
-        });
-
-        Route::prefix('region')->name('region.')->group(function () {
-            Route::get('/', [RegionController::class, 'index'])->name('index');
-            Route::post('/store', [RegionController::class, 'store'])->name('store');
-            Route::get('/{region}', [RegionController::class, 'show'])->name('show');
-            Route::patch('/{region}/update', [RegionController::class, 'update'])->name('update');
-            Route::delete('/{region}/delete', [RegionController::class, 'destroy'])->name('delete');
-        });
-    });
-
-    Route::prefix('tax-rate')->name('tax-rate.')->group(function () {
-        Route::get('/', [TaxRateController::class, 'index'])->name('index');
-        Route::post('/store', [TaxRateController::class, 'store'])->name('store');
-        Route::prefix('type')->name('type.')->group(function () {
-            Route::get('/', [TaxRateTypeController::class, 'index'])->name('index');
-        });
-        Route::prefix('scope')->name('scope.')->group(function () {
-            Route::get('/', [TaxRateScopeController::class, 'index'])->name('index');
-        });
-        Route::prefix('amount-type')->name('amount-type.')->group(function () {
-            Route::get('/', [TaxRateAmountTypeController::class, 'index'])->name('index');
-        });
-        Route::prefix('{taxRate}')->group(function () {
-            Route::get('/', [TaxRateController::class, 'show'])->name('show');
-            Route::patch('/update', [TaxRateController::class, 'update'])->name('update');
-            Route::delete('/delete', [TaxRateController::class, 'destroy'])->name('delete');
-            Route::post('/set-default', [TaxRateSetAsDefaultController::class, 'store'])->name('set-default');
-            Route::delete('/unset-default', [TaxRateSetAsDefaultController::class, 'destroy'])->name('unset-default');
-        });
-    });
-});
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
 
 
+    Route::prefix('site')->name('site.')->group(function () {
+        Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
+            Route::get('/', [SitePaymentGatewayController::class, 'index'])->name('index');
+            Route::get('/available', [AvailableSitePaymentGatewayController::class, 'index'])->name('available.index');
+            Route::prefix('{paymentGateway}')->group(function () {
+                Route::get('/', [SitePaymentGatewayController::class, 'show'])->name('show');
+                Route::patch('/update', [SitePaymentGatewayController::class, 'update'])->name('update');
+                Route::delete('/destroy', [SitePaymentGatewayController::class, 'destroy'])->name('destroy');
+            });
+        });
+    });
     Route::prefix('session')->name('session.')->group(function () {
         Route::prefix('user')->name('user.')->group(function () {
             Route::get('/show', [SessionUserController::class, 'show'])->name('show');
@@ -335,6 +242,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::patch('/update', [OrderController::class, 'update'])->name('update');
             Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
 
+            Route::prefix('transaction')->name('transaction.')->group(function () {
+                Route::get('/', [OrderTransactionController::class, 'index'])->name('index');
+                Route::post('/store', [OrderTransactionController::class, 'store'])->name('store');
+                Route::get('/{transaction}', [OrderTransactionController::class, 'show'])->name('show');
+                Route::patch('/{transaction}/update', [OrderTransactionController::class, 'update'])->name('update');
+                Route::delete('/{transaction}/delete', [OrderTransactionController::class, 'destroy'])->name('delete');
+            });
+
             Route::prefix('shipping')->name('shipping.')->group(function () {
                 Route::prefix('method')->name('method.')->group(function () {
                     Route::get('/', [OrderShippingMethodController::class, 'index'])->name('index');
@@ -364,13 +279,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
             });
         });
-    });
-    Route::prefix('transaction')->name('transaction.')->group(function () {
-        Route::get('/', [TransactionController::class, 'index'])->name('index');
-        Route::post('/store', [TransactionController::class, 'store'])->name('store');
-        Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
-        Route::patch('/{transaction}/update', [TransactionController::class, 'update'])->name('update');
-        Route::delete('/{transaction}/delete', [TransactionController::class, 'destroy'])->name('delete');
     });
     Route::prefix('price')->name('price.')->group(function () {
         Route::prefix('{price}')->group(function () {
@@ -639,6 +547,117 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 });
 
+Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
+    Route::get('/reset-password/{token}', [AuthPasswordResetController::class, 'show'])->name('password.reset');
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::get('/show', [AuthUserController::class, 'show'])->name('show');
+        Route::post('/login', AuthLoginController::class)->name('login');
+        Route::post('/register', AuthRegisterController::class)->name('register');
+    });
+    Route::prefix('site')->name('site.')->group(function () {
+        Route::get('/page', [SitePageController::class, 'show'])->name('page.view');
+        Route::prefix('{site:name}')->group(function () {
+            Route::get('/', [SiteController::class, 'show'])->name('show');
+            Route::prefix('settings')->name('settings.')->group(function () {
+                Route::get('/', [SiteSettingController::class, 'show'])->name('show');
+            });
+        });
+    });
+
+
+    Route::prefix('public')->name('public.')->group(function () {
+        Route::prefix('product')->name('product.')->group(function () {
+            Route::get('/', [ProductPublicController::class, 'index'])->name('index');
+            Route::prefix('{product}')->name('item.')->group(function () {
+                Route::get('/', [ProductController::class, 'show'])->name('fetch');
+            });
+        });
+    });
+
+    Route::prefix('app-menu')->name('app_menu.')->group(function () {
+        Route::prefix('{appMenu}')->group(function () {
+            Route::get('/', [AppMenuController::class, 'show'])->name('show');
+        });
+    });
+    Route::prefix('menu')->name('menu.')->group(function () {
+        Route::prefix('{menu}')->group(function () {
+            Route::get('/', [MenuController::class, 'show'])->name('show');
+        });
+    });
+});
+
+Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site,api:user,api:app_user'])->group(function () {
+    Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
+        Route::get('/environment', [PaymentGatewayEnvironmentController::class, 'index'])->name('environment.index');
+    });
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::prefix('password')->name('password.')->group(function () {
+            Route::prefix('reset')->name('reset.')->group(function () {
+                Route::post('/token-check', AuthPasswordResetTokenCheckController::class)->name('token-check');
+                Route::post('/request', [AuthPasswordResetController::class, 'store'])->name('request');
+                Route::post('/confirmation', AuthPasswordResetConfirmationController::class)->name('confirmation');
+            });
+        });
+    });
+    Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
+    Route::get('/brand', [BrandController::class, 'index'])->name('brand.index');
+    Route::get('/color', [ColorController::class, 'index'])->name('color.index');
+    Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product-type.index');
+    Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
+    Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
+    Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
+    Route::prefix('discount')->name('discount.')->group(function () {
+        Route::get('/type', DiscountTypeController::class)->name('type.index');
+        Route::get('/discountable/type', DiscountableTypeController::class)->name('discountable.type.index');
+        Route::get('/amount-type', DiscountAmountTypeController::class)->name('amount-type.index');
+        Route::get('/scope', DiscountScopeController::class)->name('scope.index');
+    });
+    Route::prefix('locale')->name('locale.')->group(function () {
+        Route::prefix('currency')->name('currency.')->group(function () {
+            Route::get('/', [CurrencyController::class, 'index'])->name('index');
+        });
+        Route::get('/country', [CountryController::class, 'index'])->name('country.index');
+        Route::get('/region', [RegionController::class, 'index'])->name('region.index');
+        Route::prefix('address')->name('address.')->group(function () {
+            Route::get('/', [AddressController::class, 'index'])->name('index');
+            Route::post('/store', [AddressController::class, 'store'])->name('store');
+            Route::get('/{address}', [AddressController::class, 'show'])->name('show');
+            Route::patch('/{address}/update', [AddressController::class, 'update'])->name('update');
+            Route::delete('/{address}/delete', [AddressController::class, 'destroy'])->name('delete');
+        });
+
+        Route::prefix('region')->name('region.')->group(function () {
+            Route::get('/', [RegionController::class, 'index'])->name('index');
+            Route::post('/store', [RegionController::class, 'store'])->name('store');
+            Route::get('/{region}', [RegionController::class, 'show'])->name('show');
+            Route::patch('/{region}/update', [RegionController::class, 'update'])->name('update');
+            Route::delete('/{region}/delete', [RegionController::class, 'destroy'])->name('delete');
+        });
+    });
+
+    Route::prefix('tax-rate')->name('tax-rate.')->group(function () {
+        Route::get('/', [TaxRateController::class, 'index'])->name('index');
+        Route::post('/store', [TaxRateController::class, 'store'])->name('store');
+        Route::prefix('type')->name('type.')->group(function () {
+            Route::get('/', [TaxRateTypeController::class, 'index'])->name('index');
+        });
+        Route::prefix('scope')->name('scope.')->group(function () {
+            Route::get('/', [TaxRateScopeController::class, 'index'])->name('index');
+        });
+        Route::prefix('amount-type')->name('amount-type.')->group(function () {
+            Route::get('/', [TaxRateAmountTypeController::class, 'index'])->name('index');
+        });
+        Route::prefix('{taxRate}')->group(function () {
+            Route::get('/', [TaxRateController::class, 'show'])->name('show');
+            Route::patch('/update', [TaxRateController::class, 'update'])->name('update');
+            Route::delete('/delete', [TaxRateController::class, 'destroy'])->name('delete');
+            Route::post('/set-default', [TaxRateSetAsDefaultController::class, 'store'])->name('set-default');
+            Route::delete('/unset-default', [TaxRateSetAsDefaultController::class, 'destroy'])->name('unset-default');
+        });
+    });
+});
 
 Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user'])->group(function () {
     Route::prefix('tools')->name('tools.')->group(function () {

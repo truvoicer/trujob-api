@@ -83,4 +83,12 @@ class Site extends Model
     {
         return $this->morphMany(SiteUser::class, 'siteUserable');
     }
+
+    public function paymentGateways()
+    {
+        return $this->belongsToMany(PaymentGateway::class, 'payment_gateway_sites')
+        ->using(PaymentGatewaySite::class)
+        ->withPivot('settings', 'is_active', 'is_default', 'environment')
+            ->withTimestamps();
+    }
 }

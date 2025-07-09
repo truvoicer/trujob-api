@@ -19,7 +19,7 @@ class ProductsBlockType extends BlockTypeBase
         // if (!empty($data['properties']) && is_array($data['properties'])) {
         //     $data['properties'] = array_merge($existingProperties, $data['properties']);
         // }
-        
+
         return $data;
     }
 

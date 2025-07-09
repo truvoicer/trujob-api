@@ -51,6 +51,31 @@ class StorePaymentGatewayRequest extends FormRequest
                 'sometimes',
                 'array'
             ],
+            'required_fields' => [
+                'sometimes',
+                'array'
+            ],
+            'required_fields.*.name' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'required_fields.*.label' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'required_fields.*.description' => [
+                'sometimes',
+                'string',
+                'nullable',
+                'max:255'
+            ],
+            'required_fields.*.type' => [
+                'required',
+                'string',
+                'in:string,number,boolean'
+            ],
         ];
     }
 }

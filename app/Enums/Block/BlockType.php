@@ -26,6 +26,7 @@ enum BlockType: string
     case MANAGE_SITE_SETTINGS = 'manage-site-settings-block';
     case MANAGE_PAYMENT_METHODS = 'manage-payment-methods-block';
     case MANAGE_PAYMENT_GATEWAYS = 'manage-payment-gateways-block';
+    case MANAGE_SITE_PAYMENT_GATEWAYS = 'manage-site-payment-gateways-block';
     case MANAGE_TAX_RATES = 'manage-tax-rates-block';
     case MANAGE_DISCOUNTS = 'manage-discounts-block';
     case MANAGE_SHIPPING_METHODS = 'manage-shipping-methods-block';
@@ -54,6 +55,7 @@ enum BlockType: string
             BlockType::MANAGE_SITE_SETTINGS,
             BlockType::MANAGE_PAYMENT_METHODS,
             BlockType::MANAGE_PAYMENT_GATEWAYS,
+            BlockType::MANAGE_SITE_PAYMENT_GATEWAYS,
             BlockType::MANAGE_MENUS => true,
             default => false,
         };

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Order;
 
 use App\Enums\Price\PriceType;
+use App\Http\Resources\Shipping\ShippingMethodWithProductablesResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
@@ -22,11 +23,12 @@ class OrderShippingMethodResource extends JsonResource
         $this->init();
         $this->setShippingMethod($this->additional['shipping_method'] ?? null);
         return [
-            'total_shipping_cost' => $this->calculateTotalShippingCost(),
-            'total_price_with_shipping' => $this->calculateTotalPriceWithShipping(),
-            'total_price_after_discounts' => $this->calculateTotalPriceAfterDiscounts(),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'shipping_methods' => ShippingMethodWithProductablesResource::collection(
+                $this->availableShippingMethods()
+            ),
+            // 'total_shipping_cost' => $this->calculateTotalShippingCost(),
+            // 'total_price_with_shipping' => $this->calculateTotalPriceWithShipping(),
+            // 'total_price_after_discounts' => $this->calculateTotalPriceAfterDiscounts(),
         ];
     }
 }

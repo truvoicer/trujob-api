@@ -14,12 +14,14 @@ class PaymentGateway extends Model
         'is_default',
         'is_active',
         'settings',
+        'required_fields',
     ];
 
     protected $casts = [
         'is_default' => 'boolean',
         'is_active' => 'boolean',
         'settings' => 'array',
+        'required_fields' => 'array',
     ];
 
     public function transactions()
@@ -31,4 +33,13 @@ class PaymentGateway extends Model
     {
         return $this->belongsToMany(PaymentMethod::class, 'payment_gateway_payment_methods');
     }
+
+    public function sites()
+    {
+        return $this->belongsToMany(Site::class, 'payment_gateway_sites')
+        ->using(PaymentGatewaySite::class)
+            ->withPivot('settings', 'is_active', 'is_default', 'environment')
+            ->withTimestamps();
+    }
+
 }

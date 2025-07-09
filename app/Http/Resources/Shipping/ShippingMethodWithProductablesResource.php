@@ -2,12 +2,13 @@
 
 namespace App\Http\Resources\Shipping;
 
+use App\Http\Resources\Product\ProductListResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin \App\Models\ShippingMethod
  */
-class ShippingMethodResource extends JsonResource
+class ShippingMethodWithProductablesResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -27,6 +28,7 @@ class ShippingMethodResource extends JsonResource
             'display_order' => $this->display_order,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'products' => ProductListResource::collection($this->products),
             'rates' => $this->whenLoaded('rates', ShippingRateResource::collection($this->rates)),
             'restrictions' => $this->whenLoaded(
                 'restrictions',

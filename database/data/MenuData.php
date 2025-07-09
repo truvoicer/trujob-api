@@ -137,16 +137,8 @@ return [
     ],
     [
         'site' => 'tru-job',
-        'name' => 'admin-header-menu',
+        'name' => 'admin-menu',
         'menu_items' => [
-            [
-                'page_name' => 'admin',
-                'label' => 'Admin',
-                'url' => '/admin',
-                'active' => true,
-                'type' => MenuItemType::PAGE->value,
-                'order' => 0,
-            ],
             [
                 'page_name' => 'admin_finance',
                 'label' => 'Finance',
@@ -197,6 +189,67 @@ return [
                 'type' => MenuItemType::PAGE->value,
                 'order' => 0,
             ],
+        ],
+        'roles' => [
+            ApiAbility::SUPERUSER->value,
+            ApiAbility::ADMIN->value,
+        ],
+    ],
+    [
+        'site' => 'tru-job',
+        'name' => 'admin-header-menu',
+        'menu_items' => [
+            [
+                'page_name' => 'admin',
+                'label' => 'Admin',
+                'url' => '/admin',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+                'roles' => [
+                    ApiAbility::SUPERUSER->value,
+                    ApiAbility::ADMIN->value,
+                ],
+                'menus' => [
+                    'name' => 'admin-menu',
+                ]
+            ],
+            [
+                'page_name' => 'admin_site_finance',
+                'label' => 'Finance',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
+                'page_name' => 'admin_site_product',
+                'label' => 'Product',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
+                'page_name' => 'admin_site_settings',
+                'label' => 'Settings',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
+                'page_name' => 'admin_site_shipping',
+                'label' => 'Shipping',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+            [
+                'page_name' => 'admin_site_users',
+                'label' => 'Users',
+                'active' => true,
+                'type' => MenuItemType::PAGE->value,
+                'order' => 0,
+            ],
+
         ],
         'roles' => [
             ApiAbility::SUPERUSER->value,

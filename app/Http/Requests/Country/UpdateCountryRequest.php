@@ -31,5 +31,4 @@ class UpdateCountryRequest extends FormRequest
             'is_active' => ['sometimes', 'boolean'],
         ];
     }
-    
 }

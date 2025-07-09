@@ -29,8 +29,8 @@ class OrderShippingMethodController extends Controller
      */
     public function index(Order $order, Request $request)
     {
-        return ShippingMethodResource::collection(
-            $order->availableShippingMethods()
+        return OrderShippingMethodResource::make(
+            $order
         );
     }
 
