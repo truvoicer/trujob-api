@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Response\ResponseHelpers;
 use App\Models\User;
 use App\Services\Permission\AccessControlService;
 use App\Services\User\UserAdminService;
@@ -13,6 +14,7 @@ abstract class Controller
 {
     use AuthorizesRequests, ValidatesRequests;
 
+    protected ResponseHelpers $responseHelpers;
     protected AccessControlService $accessControlService;
     protected UserAdminService $userAdminService;
 
@@ -20,6 +22,7 @@ abstract class Controller
     {
         $this->accessControlService = app(AccessControlService::class);
         $this->userAdminService = app(UserAdminService::class);
+        $this->responseHelpers = app(ResponseHelpers::class);
     }
 
     protected function setAccessControlUser(?User $user = null) {

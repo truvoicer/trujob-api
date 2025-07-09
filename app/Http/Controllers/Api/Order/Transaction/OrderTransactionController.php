@@ -19,7 +19,9 @@ class OrderTransactionController extends Controller
     public function __construct(
         private OrderTransactionService $orderTransactionService,
         private TransactionRepository $transactionRepository,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
 
     /**
@@ -68,13 +70,15 @@ class OrderTransactionController extends Controller
             $order,
             $request->validated()
         )) {
-            return response()->json([
-                'message' => 'Error creating transaction',
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            return response()->json(
+                $this->responseHelpers->encryptedResponse([
+                    'message' => 'Error creating transaction'
+                ]), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return response()->json([
-            'message' => 'Transaction created',
-        ], Response::HTTP_CREATED);
+        return response()->json(
+            $this->responseHelpers->encryptedResponse([
+                'message' => 'Transaction created'
+            ]), Response::HTTP_CREATED);
     }
 
 

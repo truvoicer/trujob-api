@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\PaymentGateway;
 
+use App\Enums\JWT\EncryptedResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaymentGateway\StoreSitePaymentGatewayRequest;
 use App\Http\Requests\PaymentGateway\UpdateSitePaymentGatewayRequest;
@@ -20,7 +21,9 @@ class SitePaymentGatewayController extends Controller
     public function __construct(
         private SitePaymentGatewayService $sitePaymentGatewayService,
         private PaymentGatewayRepository $paymentGatewayRepository,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
     public function index(
         Request $request
@@ -62,7 +65,9 @@ class SitePaymentGatewayController extends Controller
                 'message' => 'Payment gateway not found for this site',
             ], Response::HTTP_NOT_FOUND);
         }
-        return new SitePaymentGatewayResource($findPaymentGateway);
+        return new SitePaymentGatewayResource($findPaymentGateway)->additional([
+            EncryptedResponse::ENCRYPTED_RESPONSE->value => true,
+        ]);
     }
 
 

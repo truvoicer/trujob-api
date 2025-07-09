@@ -39,4 +39,9 @@ return [
         'username' => env('GEONAMES_USERNAME'),
     ],
 
+    'jwt' => [
+        'payload' => [
+            'secret' => env('ENCRYPTED_PAYLOAD_SECRET'),
+        ],
+    ],
 ];

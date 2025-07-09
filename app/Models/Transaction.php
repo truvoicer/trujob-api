@@ -7,15 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     protected $fillable = [
-        'price_id',
         'payment_gateway_id',
         'user_id',
     ];
-    
+
     public function products() {
         return $this->belongsToMany(Product::class, 'product_transactions');
     }
-    
+
     public function product() {
         return $this->belongsTo(Product::class);
     }
@@ -23,11 +22,7 @@ class Transaction extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
-    
-    public function price() {
-        return $this->belongsTo(Price::class);
-    }
-    
+
     public function currency() {
         return $this->belongsTo(Currency::class);
     }
@@ -42,5 +37,8 @@ class Transaction extends Model
     public function orders() {
         return $this->belongsToMany(Order::class, 'order_transactions');
     }
-    
+
+    public function transactionAmounts() {
+        return $this->hasMany(TransactionAmount::class);
+    }
 }

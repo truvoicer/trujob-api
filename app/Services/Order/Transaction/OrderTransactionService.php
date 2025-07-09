@@ -9,6 +9,7 @@ use App\Services\BaseService;
 class OrderTransactionService extends BaseService
 {
     public function createTransaction(Order $order, array $data) {
+        $data['user_id'] = $this->user->id;
         $transaction = new Transaction($data);
         $order->transactions()->save($transaction);
         return $transaction;
