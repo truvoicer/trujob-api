@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Order;
 
 use App\Enums\Order\OrderItemType;
+use App\Enums\Order\OrderStatus;
 use App\Rules\OrderItem;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -29,6 +30,23 @@ class StoreOrderRequest extends FormRequest
         return [
             'items' => ['required', 'array'],
             'items.*' => [new OrderItem],
+            'billing_address_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'exists:addresses,id'
+            ],
+            'shipping_address_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'exists:addresses,id'
+            ],
+            'status' => [
+                'sometimes',
+                'string',
+                Rule::enum(OrderStatus::class),
+            ],
         ];
     }
 }

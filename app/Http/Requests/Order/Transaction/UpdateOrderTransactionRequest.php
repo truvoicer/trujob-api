@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Order\Transaction;
 
+use App\Enums\Order\OrderStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateOrderTransactionRequest extends FormRequest
 {

@@ -2,13 +2,36 @@
 
 namespace App\Models;
 
+use App\Enums\Order\OrderStatus;
 use App\Traits\Model\Order\CalculateOrderTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Order extends Model
 {
     use CalculateOrderTrait;
+
+    protected $fillable = [
+        'user_id',
+        'billing_address_id',
+        'shipping_address_id',
+        'status',
+    ];
+
+    protected $casts = [
+        'status' => OrderStatus::class,
+    ];
+
+    public function billingAddress(): BelongsTo
+    {
+        return $this->belongsTo(Address::class, 'billing_address_id');
+    }
+
+    public function shippingAddress(): BelongsTo
+    {
+        return $this->belongsTo(Address::class, 'shipping_address_id');
+    }
 
     public function items()
     {
@@ -21,7 +44,8 @@ class Order extends Model
 
     public function transactions()
     {
-        return $this->belongsToMany(Transaction::class);
+        return $this->belongsToMany(Transaction::class, 'order_transactions')
+            ->withTimestamps();
     }
 
     public function user() {

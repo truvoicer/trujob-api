@@ -4,6 +4,7 @@ namespace App\Http\Resources\Order;
 
 use App\Enums\Price\PriceType;
 use App\Http\Resources\Discount\DiscountListResource;
+use App\Http\Resources\Locale\AddressResource;
 use App\Http\Resources\Tax\TaxRateResource;
 use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -43,6 +44,8 @@ class OrderResource extends JsonResource
             'default_tax_rates' => TaxRateResource::collection(
                  $this->getDefaultTaxRates()
             ),
+            'billing_address' => $this->whenLoaded('billingAddress', AddressResource::make($this->billingAddress)),
+            'shipping_address' => $this->whenLoaded('shippingAddress', AddressResource::make($this->shippingAddress)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

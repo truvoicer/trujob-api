@@ -6,7 +6,6 @@ use App\Factories\Order\OrderItemFactory;
 use App\Helpers\ProductHelpers;
 use App\Models\Order;
 use App\Services\BaseService;
-use App\Services\Product\ProductAdminService;
 
 class OrderService extends BaseService
 {
@@ -31,18 +30,18 @@ class OrderService extends BaseService
         }
         return $order;
     }
-    public function updateOrder(Order $transaction, array $data)
+    public function updateOrder(Order $order, array $data)
     {
-        if (!$transaction->update($data)) {
-            throw new \Exception('Error updating product transaction');
+        if (!$order->update($data)) {
+            throw new \Exception('Error updating product order');
         }
-        return $transaction;
+        return $order;
     }
 
-    public function deleteOrder(Order $transaction)
+    public function deleteOrder(Order $order)
     {
-        if (!$transaction->delete()) {
-            throw new \Exception('Error deleting product transaction');
+        if (!$order->delete()) {
+            throw new \Exception('Error deleting product order');
         }
         return true;
     }

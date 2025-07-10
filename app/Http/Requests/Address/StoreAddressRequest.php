@@ -36,7 +36,6 @@ class StoreAddressRequest extends FormRequest
             'country_id' => ['required', 'exists:countries,id'],
             'type' => ['required', Rule::enum(AddressType::class)],
             'is_default' => ['sometimes', 'boolean'],
-            'is_active' => ['sometimes', 'boolean'],
         ];
     }
 }

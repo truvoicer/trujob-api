@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Enums\Order\OrderStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateOrderRequest extends FormRequest
 {
@@ -24,8 +26,23 @@ class UpdateOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'price_id' => ['sometimes', 'integer', 'exists:prices,id'],
-            'payment_gateway_id' => ['sometimes', 'integer', 'exists:payment_gateways,id'],
+            'billing_address_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'exists:addresses,id'
+            ],
+            'shipping_address_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'exists:addresses,id'
+            ],
+            'status' => [
+                'sometimes',
+                'string',
+                Rule::enum(OrderStatus::class),
+            ],
         ];
     }
 }

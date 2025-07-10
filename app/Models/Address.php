@@ -12,7 +12,6 @@ class Address extends Model
         'country_id',
         'label',
         'is_default',
-        'is_active',
         'type',
         'address_line_1',
         'address_line_2',
@@ -24,7 +23,6 @@ class Address extends Model
 
     protected $casts = [
         'is_default' => 'boolean',
-        'is_active' => 'boolean',
         'type' => AddressType::class,
     ];
 

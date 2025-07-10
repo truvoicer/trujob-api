@@ -19,10 +19,6 @@ return new class extends Migration
             $table->foreignId('payment_gateway_id')
                 ->constrained('payment_gateways')
                 ->cascadeOnDelete();
-            $table->foreignId('billing_address_id')
-                ->constrained('addresses');
-            $table->foreignId('shipping_address_id')
-                ->constrained('addresses');
             $table->timestamps();
         });
     }

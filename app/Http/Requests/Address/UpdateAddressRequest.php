@@ -36,8 +36,7 @@ class UpdateAddressRequest extends FormRequest
             'country_id' => ['sometimes', 'exists:countries,id'],
             'type' => [Rule::enum(AddressType::class), 'sometimes'],
             'is_default' => ['sometimes', 'boolean'],
-            'is_active' => ['sometimes', 'boolean'],
         ];
     }
-    
+
 }

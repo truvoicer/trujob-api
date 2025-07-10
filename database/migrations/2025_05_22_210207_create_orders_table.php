@@ -17,6 +17,12 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
+            $table->foreignId('billing_address_id')
+                ->nullable()
+                ->constrained('addresses');
+            $table->foreignId('shipping_address_id')
+                ->nullable()
+                ->constrained('addresses');
             $table->enum(
                 'status',
                 array_map(fn(OrderStatus $orderStatus) => $orderStatus->value, OrderStatus::cases())

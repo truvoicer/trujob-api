@@ -20,7 +20,6 @@ class AddressResource extends JsonResource
             'id' => $this->id,
             'label' => $this->label,
             'is_default' => $this->is_default,
-            'is_active' => $this->is_active,
             'type' => $this->type,
             'address_line_1' => $this->address_line_1,
             'address_line_2' => $this->address_line_2,

@@ -19,4 +19,20 @@ enum PaymentGateway: string
             self::CRYPTOCURRENCY => 'Cryptocurrency',
         };
     }
+
+    public function description(): string
+    {
+        return match ($this) {
+            self::STRIPE => 'Online payment processing for internet businesses.',
+            self::PAYPAL => 'A fast and secure way to pay online.',
+            self::CASH => 'Physical cash payment method.',
+            self::BANK_TRANSFER => 'Direct transfer from one bank account to another.',
+            self::CRYPTOCURRENCY => 'Digital or virtual currency that uses cryptography for security.',
+        };
+    }
+
+    public function isDefault(): bool
+    {
+        return $this === self::STRIPE; // Assuming Stripe is the default payment gateway
+    }
 }

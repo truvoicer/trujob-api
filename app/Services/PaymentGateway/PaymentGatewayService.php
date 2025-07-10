@@ -32,9 +32,22 @@ class PaymentGatewayService extends BaseService
 
     public function seed() {
         foreach (PaymentPaymentGateway::cases() as $gateway) {
+            $requiredFieldsPath = storage_path('app/private/payment-gateway/' . $gateway->value . '/required-fields.json');
+            if (file_exists($requiredFieldsPath)) {
+                $requiredFields = json_decode(file_get_contents($requiredFieldsPath), true);
+                if (!$requiredFields) {
+                    throw new \Exception('Invalid required fields for payment gateway: ' . $gateway->value);
+                }
+            } else {
+                $requiredFields = [];
+            }
             $paymentGateway = new PaymentGateway([
                 'name' => $gateway->value,
                 'label' => $gateway->label(),
+                'description' => $gateway->description(),
+                'is_active' => true,
+                'is_default' => $gateway->isDefault(),
+                'required_fields' => $requiredFields,
             ]);
             if (!$paymentGateway->save()) {
                 throw new \Exception('Error seeding paymentGateway');
