@@ -6,7 +6,6 @@ use App\Enums\Price\PriceType;
 use App\Http\Resources\Discount\DiscountListResource;
 use App\Http\Resources\Locale\AddressResource;
 use App\Http\Resources\Tax\TaxRateResource;
-use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**

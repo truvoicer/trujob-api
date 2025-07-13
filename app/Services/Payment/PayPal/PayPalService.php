@@ -28,7 +28,27 @@ class PayPalService
     private string $clientSecret;
     private PaymentGatewayEnvironment $environment;
     private array $items = [];
+    private ?string $currencyCode = null;
+    private ?string $value = null;
 
+    public function setCurrencyCode(string $currencyCode): self
+    {
+        $this->currencyCode = $currencyCode;
+        return $this;
+    }
+    public function getCurrencyCode(): ?string
+    {
+        return $this->currencyCode;
+    }
+    public function setValue(string $value): self
+    {
+        $this->value = $value;
+        return $this;
+    }
+    public function getValue(): ?string
+    {
+        return $this->value;
+    }
     public function setItems(array $items): self
     {
         $this->items = $items;
@@ -132,7 +152,7 @@ class PayPalService
         return $this;
     }
 
-    public function createOrder(array $data): ApiResponse
+    public function createOrder(): ApiResponse
     {
         $collect = [
             'body' => OrderRequestBuilder::init(
@@ -140,14 +160,16 @@ class PayPalService
                 [
                     PurchaseUnitRequestBuilder::init(
                         AmountWithBreakdownBuilder::init(
-                            'currency_code6',
-                            'value0'
+                            $this->getCurrencyCode(),
+                            $this->getValue() ?? '0.00'
                         )->build()
                     )->items(
-                        $data['items'] ?? []
-                    )->shipping(
-                        $data['shipping'] ?? null
-                    )->build()
+                        $this->getItems()
+                    )
+                    // ->shipping(
+                    //     $data['shipping'] ?? null
+                    // )
+                    ->build()
                 ]
             )->build(),
             'prefer' => 'return=minimal'

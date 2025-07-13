@@ -22,6 +22,11 @@ class OrderItem extends Model
         'order_itemable_type' => OrderItemable::class,
     ];
 
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
+
     public function orderItemable(): MorphTo
     {
         return $this->morphTo();

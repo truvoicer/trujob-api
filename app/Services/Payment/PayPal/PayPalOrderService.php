@@ -4,8 +4,10 @@ namespace App\Services\Payment\PayPal;
 
 use App\Enums\Order\OrderItemable;
 use App\Enums\Price\PriceType;
+use App\Exceptions\Product\ProductHealthException;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Services\BaseService;
 use App\Services\Payment\PayPal\PayPalService;
 use PaypalServerSdkLib\Models\Item;
@@ -25,9 +27,18 @@ class PayPalOrderService extends BaseService
     public function createProductOrderItem(OrderItem $item): Item
     {
         $product = $item->orderItemable;
-        if (!$product) {
+        if (!$product instanceof Product) {
             throw new \Exception('Product not found for order item');
         }
+
+        $healthCheckData = $product->healthCheck();
+        if ($healthCheckData['unhealthy']['count'] > 0) {
+            throw new ProductHealthException(
+                $product,
+                $healthCheckData
+            );
+        }
+
         $price = $item->getOrderItemPrice();
         $itemAmount = new Money(
             $price->currency->code,
@@ -42,7 +53,7 @@ class PayPalOrderService extends BaseService
         $item->setTax($itemTax);
         $item->setName($product->title);
         $item->setQuantity($item->quantity);
-        $item->setSku($product->generateSku());
+        $item->setSku($product->sku);
         $item->setCategory($product->productCategories->first()->name ?? 'General');
         return $item;
     }
@@ -61,21 +72,32 @@ class PayPalOrderService extends BaseService
     {
 
         $order->setPriceType(PriceType::ONE_TIME);
-        $order->init($this->user);
+        $order->init();
 
         foreach ($order->items as $item) {
 
             $item->setPriceType(PriceType::ONE_TIME);
-            $item->init($this->user);
+            $item->init();
             $orderItem = $this->createOrderItem($item);
             if (!$orderItem) {
                 throw new \Exception('Error creating PayPal order item');
             }
             $this->payPalService->addItem($orderItem);
         }
-
-        // $createOrder = $this->payPalService->createOrder($data);
-        // dd($createOrder);
+        // 'total_price' => $this->calculateTotalPrice(),
+        //     'total_quantity' => $this->calculateTotalQuantity(),
+        //     'total_tax' => $this->calculateTotalTax(),
+        //     'total_discount' => $this->calculateTotalDiscount(),
+        //     'final_total' => $this->calculateFinalTotal(),
+        //     'total_items' => $this->calculateTotalItems(),
+        //     'average_price_per_item' => $this->calculateAveragePricePerItem(),
+        //     'total_price_after_discounts' => $this->calculateTotalPriceAfterDiscounts(),
+        //     'total_price_after_tax' => $this->calculateTotalPriceAfterTax(),
+        //     'total_price_after_tax_and_discounts' => $this->calculateTotalPriceAfterTaxAndDiscounts(),
+        $this->payPalService->setCurrencyCode($order->currency_code);
+        $this->payPalService->setValue($order->calculateFinalTotal());
+        $createOrder = $this->payPalService->createOrder();
+        dd($createOrder);
         // if (!$createOrder) {
         //     throw new \Exception('Error creating PayPal order');
         // }

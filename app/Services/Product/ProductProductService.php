@@ -3,6 +3,7 @@
 namespace App\Services\Product;
 
 use App\Contracts\Product\Product as ProductContract;
+use App\Exceptions\Product\ProductHealthException;
 use App\Models\Discount;
 use App\Models\Product;
 use App\Models\Order;
@@ -38,6 +39,26 @@ class ProductProductService implements ProductContract
             );
         }
         return $this->productRepository->findMany();
+    }
+
+    public function validateOrderItem(
+        array $data = []
+    ): bool {
+        if (empty($data['entity_id'])) {
+            throw new \Exception('Entity ID is required to create an order item');
+        }
+        $product = $this->productRepository->findById($data['entity_id'] ?? null);
+        if (!$product) {
+            throw new \Exception('Product does not exist');
+        }
+        $healthCheckData = $product->healthCheck();
+        if ($healthCheckData['unhealthy']['count'] > 0) {
+            throw new ProductHealthException(
+                $product,
+                $healthCheckData
+            );
+        }
+        return true;
     }
 
     public function createOrderItem(

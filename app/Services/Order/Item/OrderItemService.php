@@ -13,6 +13,26 @@ use App\Services\Product\ProductAdminService;
 class OrderItemService extends BaseService
 {
 
+    public function validateBulkOrderItems(array $items)
+    {
+        $createdItems = [];
+        foreach ($items as $itemData) {
+            $createdItems[] = $this->validateOrderItem($itemData);
+        }
+        return $createdItems;
+    }
+
+
+    public function validateOrderItem(array $data)
+    {
+        return OrderItemFactory::create(
+            ProductHelpers::validateProductableByArray('entity_type', $data)
+        )
+            ->validateOrderItem(
+                $data
+            );
+    }
+
     public function createBulkOrderItems(Order $order, array $items)
     {
         $createdItems = [];

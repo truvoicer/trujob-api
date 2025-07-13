@@ -50,10 +50,14 @@ trait CalculateOrderItemTrait
         return $this->orderItemPrice;
     }
 
-    public function init(User $user): self
+    public function init(): self
     {
         if ($this->orderItemPrice) {
             return $this;
+        }
+        $user = $this->order?->user;
+        if (!$user instanceof User) {
+            throw new \Exception('User not found for order item initialization');
         }
         $this->orderItemPrice = $this->orderItemable->getPriceByUserLocaleAndPriceType(
             $user,

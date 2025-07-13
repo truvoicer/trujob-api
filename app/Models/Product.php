@@ -6,6 +6,7 @@ use App\Enums\Price\PriceType;
 use App\Enums\Product\ProductType;
 use App\Enums\Product\ProductUnit;
 use App\Enums\Product\ProductWeightUnit;
+use App\Traits\Product\ProductableHealthTrait;
 use App\Traits\Product\ProductableTrait;
 use Database\Factories\product\ProductFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Product extends Model
 {
-    use HasFactory, ProductableTrait;
+    use HasFactory, ProductableTrait, ProductableHealthTrait;
 
     protected $fillable = [
         'name',

@@ -2,13 +2,18 @@
 
 namespace App\Services\Order;
 
-use App\Factories\Order\OrderItemFactory;
-use App\Helpers\ProductHelpers;
 use App\Models\Order;
 use App\Services\BaseService;
+use App\Services\Order\Item\OrderItemService;
 
 class OrderService extends BaseService
 {
+    public function __construct(
+        private OrderItemService $orderItemService,
+    ){
+        parent::__construct();
+    }
+
     public function createOrder(array $data)
     {
         $orderItems = [];
@@ -16,14 +21,18 @@ class OrderService extends BaseService
             $orderItems = $data['items'];
             unset($data['items']);
         }
+
+        $this->orderItemService->validateBulkOrderItems($orderItems);
+
         $order = $this->user->orders()->create($data);
 
         if (!$order->exists()) {
             throw new \Exception('Error creating product order');
         }
+
         $createdItems = [];
         if (count($orderItems)) {
-            $createdItems = $this->createBulkOrderItems($order, $orderItems);
+            $createdItems = $this->orderItemService->createBulkOrderItems($order, $orderItems);
             if (empty($createdItems)) {
                 throw new \Exception('Error creating order items');
             }
@@ -44,24 +53,6 @@ class OrderService extends BaseService
             throw new \Exception('Error deleting product order');
         }
         return true;
-    }
-    public function createBulkOrderItems(Order $order, array $items)
-    {
-        $createdItems = [];
-        foreach ($items as $itemData) {
-            $createdItems[] = $this->createOrderItem($order, $itemData);
-        }
-        return $createdItems;
-    }
-    public function createOrderItem(Order $order, array $data)
-    {
-        return OrderItemFactory::create(
-            ProductHelpers::validateProductableByArray('entity_type', $data)
-        )
-            ->createOrderItem(
-                $order,
-                $data
-            );
     }
 
     public function syncDiscounts(Order $order, array $discountIds)

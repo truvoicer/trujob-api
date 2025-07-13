@@ -58,7 +58,7 @@ trait CalculateOrderTrait
         return $this->discounts;
     }
 
-    public function init(User $user): self
+    public function init(): self
     {
         $this->defaultTaxRates = $this->filterValidTaxRates(DefaultTaxRate::all(), true);
         $this->defaultDiscounts = $this->filterValidDiscounts(DefaultDiscount::all(), true);

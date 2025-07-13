@@ -14,6 +14,9 @@ interface Product
         Order $order,
         array $data = []
     ): OrderItem;
+    public function validateOrderItem(
+        array $data = []
+    ): bool;
     public function updateOrderItem(
         Order $order,
         OrderItem $orderItem,

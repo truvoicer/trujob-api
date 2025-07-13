@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Product;
 
-use App\Contracts\Product\Product;
 use App\Enums\Product\ProductType;
 use App\Enums\Product\ProductUnit;
 use App\Enums\Product\ProductWeightUnit;
