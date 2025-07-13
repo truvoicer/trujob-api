@@ -22,8 +22,6 @@ class ProductPriceService extends BaseService
         }
         $product->prices()->attach($productPrice->id);
 
-        $this->updateDefaults($product, $productPrice, $data);
-
         if (is_array($taxRateIds)) {
             $this->syncTaxRateIds($productPrice, $taxRateIds);
         }
@@ -50,7 +48,6 @@ class ProductPriceService extends BaseService
             throw new \Exception('Error updating product price');
         }
 
-        $this->updateDefaults($product, $price, $data);
         if (is_array($taxRateIds)) {
             $this->syncTaxRateIds($productPrice, $taxRateIds);
         }
@@ -58,14 +55,6 @@ class ProductPriceService extends BaseService
             $this->syncDiscounts($productPrice, $discountIds);
         }
         return true;
-    }
-
-
-    public function updateDefaults(Product $product, Price $price, array $data)
-    {
-        if (!empty($data['is_default'])) {
-            $product->prices()->where('prices.id', '!=', $price->id)->update(['is_default' => false]);
-        }
     }
 
     public function syncTaxRateIds(Price $price, array $ids): void

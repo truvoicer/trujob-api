@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Order\Transaction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\Transaction\StoreOrderTransactionRequest;
 use App\Http\Requests\Order\Transaction\UpdateOrderTransactionRequest;
-use App\Http\Resources\TransactionResource;
+use App\Http\Resources\Transaction\TransactionResource;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Repositories\TransactionRepository;
@@ -65,20 +65,23 @@ class OrderTransactionController extends Controller
     {
         $this->orderTransactionService->setUser($request->user()->user);
         $this->orderTransactionService->setSite($request->user()->site);
-
-        if (!$this->orderTransactionService->createTransaction(
+        $transaction = $this->orderTransactionService->createTransaction(
             $order,
             $request->validated()
-        )) {
-            return response()->json(
-                $this->responseHelpers->encryptedResponse([
-                    'message' => 'Error creating transaction'
-                ]), Response::HTTP_UNPROCESSABLE_ENTITY);
+        );
+        if (!$transaction->exists()) {
+            return $this->sendJsonResponse(
+                true,
+                'Error creating transaction',
+                [],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
         }
-        return response()->json(
-            $this->responseHelpers->encryptedResponse([
-                'message' => 'Transaction created'
-            ]), Response::HTTP_CREATED);
+        return $this->sendResourceResponse(
+            true,
+            new TransactionResource($transaction),
+            Response::HTTP_CREATED
+        );
     }
 
 

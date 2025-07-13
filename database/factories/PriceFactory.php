@@ -53,7 +53,6 @@ class PriceFactory extends Factory
             'price_type_id' => $priceType->id,
             'valid_from' => now(),
             'valid_to' => now()->addDays(30),
-            'is_default' => false,
             'is_active' => true,
             'amount' => fake()->randomFloat(2, 10, 1000),
         ];

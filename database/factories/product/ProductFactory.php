@@ -34,6 +34,7 @@ class ProductFactory extends Factory
             "description" => $fake->text(100),
             "active" => $fake->boolean(),
             "allow_offers" => $fake->boolean(),
+            "sku" => $fake->unique()->word() . '-' . $fake->numberBetween(1000, 9999),
             "has_weight" => $fake->boolean(),
             "has_height" => $fake->boolean(),
             "has_width" => $fake->boolean(),

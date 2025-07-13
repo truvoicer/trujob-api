@@ -15,6 +15,7 @@ use App\Models\DefaultDiscount;
 use App\Models\DefaultTaxRate;
 use App\Models\Discount;
 use App\Models\TaxRate;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
 trait CalculateOrderTrait
@@ -57,7 +58,7 @@ trait CalculateOrderTrait
         return $this->discounts;
     }
 
-    public function init(): self
+    public function init(User $user): self
     {
         $this->defaultTaxRates = $this->filterValidTaxRates(DefaultTaxRate::all(), true);
         $this->defaultDiscounts = $this->filterValidDiscounts(DefaultDiscount::all(), true);

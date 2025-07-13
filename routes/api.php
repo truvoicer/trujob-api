@@ -95,6 +95,7 @@ use App\Http\Controllers\Api\Order\Shipping\Method\OrderShippingMethodController
 use App\Http\Controllers\Api\Order\Transaction\OrderTransactionController;
 use App\Http\Controllers\Api\PaymentGateway\AvailableSitePaymentGatewayController;
 use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayEnvironmentController;
+use App\Http\Controllers\Api\PaymentGateway\PayPal\PayPalOrderController;
 use App\Http\Controllers\Api\PaymentGateway\SitePaymentGatewayController;
 use App\Http\Controllers\Api\Price\BulkPriceController;
 use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
@@ -111,6 +112,7 @@ use App\Http\Controllers\Api\Product\ProductCategory\BulkProductCategoryControll
 use App\Http\Controllers\Api\Product\ProductCategory\ProductCategoryController;
 use App\Http\Controllers\Api\Product\ProductProductCategory\BulkProductProductCategoryController;
 use App\Http\Controllers\Api\Product\ProductProductCategory\ProductProductCategoryController;
+use App\Http\Controllers\Api\Product\ProductSkuController;
 use App\Http\Controllers\Api\Product\ProductUnitController;
 use App\Http\Controllers\Api\Product\ProductWeightUnitController;
 use App\Http\Controllers\Api\Product\Review\BulkProductReviewController;
@@ -242,6 +244,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::patch('/update', [OrderController::class, 'update'])->name('update');
             Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
 
+            Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
+                Route::prefix('paypal')->name('paypal.')->group(function () {
+                    Route::get('/', [PayPalOrderController::class, 'index'])->name('index');
+                    Route::post('/store', [PayPalOrderController::class, 'store'])->name('store');
+                    Route::get('/{paypalOrderId}', [PayPalOrderController::class, 'show'])->name('show');
+                });
+            });
+
             Route::prefix('transaction')->name('transaction.')->group(function () {
                 Route::get('/', [OrderTransactionController::class, 'index'])->name('index');
                 Route::post('/store', [OrderTransactionController::class, 'store'])->name('store');
@@ -330,6 +340,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::patch('/update', [ProductController::class, 'update'])->name('update');
             Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
 
+            Route::patch('/sku/update', [ProductSkuController::class, 'update'])->name('sku.update');
             Route::prefix('shipping')->name('shipping.')->group(function () {
                 Route::prefix('method')->name('method.')->group(function () {
                     Route::prefix('bulk')->name('bulk.')->group(function () {

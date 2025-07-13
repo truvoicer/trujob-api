@@ -17,13 +17,14 @@ use App\Models\DefaultTaxRate;
 use App\Models\Discount;
 use App\Models\Price;
 use App\Models\TaxRate;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
 trait CalculateOrderItemTrait
 {
 
     private ?PriceType $priceType = null;
-    private ?Price $defaultPrice = null;
+    private ?Price $orderItemPrice = null;
     private Collection $defaultTaxRates;
     private Collection $defaultDiscounts;
     private Collection $taxRates;
@@ -39,36 +40,42 @@ trait CalculateOrderItemTrait
         return $this->priceType;
     }
 
-    public function setDefaultPrice(Price $defaultPrice): void
+    public function setOrderItemPrice(Price $orderItemPrice): void
     {
-        $this->defaultPrice = $defaultPrice;
+        $this->orderItemPrice = $orderItemPrice;
     }
 
-    public function getDefaultPrice(): Price
+    public function getOrderItemPrice(): ?Price
     {
-        return $this->defaultPrice;
+        return $this->orderItemPrice;
     }
 
-    public function init(): self
+    public function init(User $user): self
     {
-        if ($this->defaultPrice) {
+        if ($this->orderItemPrice) {
             return $this;
         }
-        $this->defaultPrice = $this->orderItemable->getDefaultPrice($this->priceType);
+        $this->orderItemPrice = $this->orderItemable->getPriceByUserLocaleAndPriceType(
+            $user,
+            $this->priceType
+        );
+        if (!$this->orderItemPrice) {
+            throw new \Exception('Order item price not found for user locale and price type');
+        }
         $this->defaultTaxRates = $this->filterValidTaxRates(DefaultTaxRate::all(), true);
         $this->defaultDiscounts = $this->filterValidDiscounts(DefaultDiscount::all(), true);
 
-        if ($this->defaultPrice->taxRates->isNotEmpty()) {
-            $this->taxRates = $this->filterValidTaxRates($this->defaultPrice->taxRates, false);
+        if ($this->orderItemPrice->taxRates->isNotEmpty()) {
+            $this->taxRates = $this->filterValidTaxRates($this->orderItemPrice->taxRates, false);
         } else {
             $this->taxRates = new Collection();
         }
 
         if (
-            $this->defaultPrice?->discounts instanceof Collection &&
-            $this->defaultPrice->discounts->isNotEmpty()
+            $this->orderItemPrice?->discounts instanceof Collection &&
+            $this->orderItemPrice->discounts->isNotEmpty()
         ) {
-            $this->discounts = $this->filterValidDiscounts($this->defaultPrice?->discounts, false);
+            $this->discounts = $this->filterValidDiscounts($this->orderItemPrice?->discounts, false);
         } else {
             $this->discounts = new Collection();
         }
@@ -150,7 +157,7 @@ trait CalculateOrderItemTrait
 
         list($totalFixedAmount, $totalPercentageRate) = $this->calculateDefaultTaxWithoutPrice();
 
-        $priceTaxRates = $this->defaultPrice->taxRates;
+        $priceTaxRates = $this->orderItemPrice->taxRates;
 
         if ($priceTaxRates->isNotEmpty()) {
             foreach ($this->taxRates as $priceTaxRate) {
@@ -292,7 +299,7 @@ trait CalculateOrderItemTrait
     public function calculateDiscount(): float
     {
         list($totalFixedAmount, $totalPercentageRate) = $this->calculateDefaultDiscounts();
-        $priceDiscounts = $this->defaultPrice?->discounts;
+        $priceDiscounts = $this->orderItemPrice?->discounts;
         if ($priceDiscounts instanceof Collection && $priceDiscounts->isNotEmpty()) {
             foreach ($this->discounts as $priceDiscount) {
                 switch ($priceDiscount->type) {
@@ -335,11 +342,11 @@ trait CalculateOrderItemTrait
 
     public function calculateTotalPrice(): float
     {
-        if (!$this->defaultPrice) {
+        if (!$this->orderItemPrice) {
             return 0.0; // or throw an exception if a default price is required
         }
         return MathHelpers::toDecimalPlaces(
-            $this->quantity * $this->defaultPrice->amount
+            $this->quantity * $this->orderItemPrice->amount
         );
     }
 

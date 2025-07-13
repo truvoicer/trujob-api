@@ -17,14 +17,12 @@ class Price extends Model
         'amount',
         'valid_from',
         'valid_to',
-        'is_default',
         'is_active',
     ];
     protected $casts = [
         'amount' => 'decimal:2',
         'valid_from' => 'datetime',
         'valid_to' => 'datetime',
-        'is_default' => 'boolean',
         'is_active' => 'boolean',
     ];
     public function createdByUser()

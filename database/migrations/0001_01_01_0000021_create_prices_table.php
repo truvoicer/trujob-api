@@ -21,7 +21,6 @@ return new class extends Migration
             $table->foreignId('price_type_id')->nullable()->constrained('price_types')->nullOnDelete();
             $table->dateTime('valid_from')->nullable();
             $table->dateTime('valid_to')->nullable();
-            $table->boolean('is_default')->default(false);
             $table->boolean('is_active')->default(false);
             $table->decimal('amount', 19, 4);
             $table->timestamps();

@@ -48,6 +48,12 @@ class CreateProductRequest extends FormRequest
                 'required',
                 'boolean',
             ],
+            'sku' => [
+                'sometimes',
+                'string',
+                'max:255',
+                'unique:products,sku',
+            ],
             'allow_offers' => [
                 'required',
                 'boolean',

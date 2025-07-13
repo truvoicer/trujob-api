@@ -30,7 +30,6 @@ class PriceResource extends JsonResource
             'valid_to' => $this->valid_to,
             // 'valid_from_timestamp' => $this->valid_from->timestamp,
             // 'valid_to_timestamp' => $this->valid_to->timestamp,
-            'is_default' => $this->is_default,
             'is_active' => $this->is_active,
             'tax_rates' => $this->whenLoaded('taxRates', TaxRateResource::collection($this->taxRates)),
             'discountables' => $this->whenLoaded('discountables', DiscountableWithoutEntityResource::collection($this->discountables)),

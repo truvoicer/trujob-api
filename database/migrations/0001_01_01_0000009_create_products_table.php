@@ -29,7 +29,7 @@ return new class extends Migration
             $table->boolean('active')->default(false);
             $table->boolean('allow_offers')->default(false);
             $table->integer('quantity')->default(1);
-
+            $table->string('sku')->nullable();
             $table->boolean('has_weight')->default(false);
             $table->enum(
                 'weight_unit',

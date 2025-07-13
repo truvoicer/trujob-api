@@ -29,7 +29,6 @@ class CreateProductPriceRequest extends FormRequest
             'amount' => ['required', 'numeric'],
             'currency_id' => ['required', 'integer', 'exists:currencies,id'],
             'country_id' => ['required', 'integer', 'exists:countries,id'],
-            'is_default' => ['required', 'boolean'],
             'is_active' => ['required', 'boolean'],
             'valid_from' => ['sometimes', 'date', 'nullable'],
             'valid_to' => ['sometimes', 'date', 'nullable', 'after:valid_from'],

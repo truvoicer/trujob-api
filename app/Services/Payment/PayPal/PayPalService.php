@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Payment\PayPal;
 
 use App\Enums\Payment\PaymentGatewayEnvironment;
 use PaypalServerSdkLib\Authentication\ClientCredentialsAuthCredentialsBuilder;
@@ -13,6 +13,7 @@ use PaypalServerSdkLib\Models\Builders\AmountWithBreakdownBuilder;
 use PaypalServerSdkLib\Models\Builders\OrderRequestBuilder;
 use PaypalServerSdkLib\Models\Builders\PurchaseUnitRequestBuilder;
 use PaypalServerSdkLib\Models\CheckoutPaymentIntent;
+use PaypalServerSdkLib\Models\Item;
 use PaypalServerSdkLib\Models\OAuthToken;
 use PaypalServerSdkLib\PaypalServerSdkClient;
 use PaypalServerSdkLib\PaypalServerSdkClientBuilder;
@@ -26,6 +27,24 @@ class PayPalService
     private string $clientId;
     private string $clientSecret;
     private PaymentGatewayEnvironment $environment;
+    private array $items = [];
+
+    public function setItems(array $items): self
+    {
+        $this->items = $items;
+        return $this;
+    }
+
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    public function addItem(Item $item): self
+    {
+        $this->items[] = $item;
+        return $this;
+    }
 
     public function setWebhookId(string $webhookId): self
     {
@@ -124,8 +143,11 @@ class PayPalService
                             'currency_code6',
                             'value0'
                         )->build()
-                    )
-                    ->build()
+                    )->items(
+                        $data['items'] ?? []
+                    )->shipping(
+                        $data['shipping'] ?? null
+                    )->build()
                 ]
             )->build(),
             'prefer' => 'return=minimal'

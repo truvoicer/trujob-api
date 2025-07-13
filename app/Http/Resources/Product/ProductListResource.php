@@ -26,6 +26,7 @@ class ProductListResource extends JsonResource
             'description' => $this->description,
             'active' => $this->active,
             'allow_offers' => $this->allow_offers,
+            'sku' => $this->sku,
             'quantity' => $this->quantity,
             'has_height' => $this->has_height,
             'has_depth' => $this->has_depth,

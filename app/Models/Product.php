@@ -6,6 +6,7 @@ use App\Enums\Price\PriceType;
 use App\Enums\Product\ProductType;
 use App\Enums\Product\ProductUnit;
 use App\Enums\Product\ProductWeightUnit;
+use App\Traits\Product\ProductableTrait;
 use Database\Factories\product\ProductFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, ProductableTrait;
 
     protected $fillable = [
         'name',
@@ -23,6 +24,7 @@ class Product extends Model
         'description',
         'active',
         'allow_offers',
+        'sku',
         'quantity',
         'has_weight',
         'has_height',
@@ -151,20 +153,34 @@ class Product extends Model
         return $this->morphMany(ProductableShippingMethod::class, 'productable');
     }
 
-    public function shippingMethods() {
+    public function shippingMethods()
+    {
         return $this->morphToMany(ShippingMethod::class, 'productable', 'productable_shipping_methods');
     }
 
-    public function getDefaultPrice(?PriceType $priceType): ?Price
+    public function getPriceByPriceType(PriceType $priceType): Price|null
     {
-        if ($priceType) {
-            return $this->prices()
-                ->where('is_default', true)
-                ->whereRelation('priceType', 'name', $priceType->value)
-                ->first();
-        }
-        return $this->prices
-            ->where('is_default', true)
+        return $this->prices()
+            ->whereRelation('priceType', 'name', $priceType->value)
             ->first();
     }
+
+    public function getPriceByUserLocaleAndPriceType(
+        User $user,
+        PriceType $priceType
+    ): Price|null {
+        $country = $user->userSetting->country;
+        $currency = $user->userSetting->currency;
+
+        if (!$country || !$currency) {
+            return null;
+        }
+
+        return $this->prices()
+            ->whereRelation('priceType', 'name', $priceType->value)
+            // ->whereRelation('country', 'id', $country->id)
+            // ->whereRelation('currency', 'id', $currency->id)
+            ->first();
+    }
+
 }

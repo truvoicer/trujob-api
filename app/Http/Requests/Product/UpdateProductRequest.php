@@ -35,6 +35,12 @@ class UpdateProductRequest extends FormRequest
             ],
             'description' => 'nullable',
             'allow_offers' => 'nullable|boolean',
+            'sku' => [
+                'sometimes',
+                'string',
+                'max:255',
+                'unique:products,sku',
+            ],
             'has_weight' => ['sometimes', 'boolean'],
             'has_height' => ['sometimes', 'boolean'],
             'has_width' => ['sometimes', 'boolean'],

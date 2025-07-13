@@ -29,7 +29,6 @@ class EditProductPriceRequest extends FormRequest
             'amount' => ['sometimes', 'numeric'],
             'currency_id' => ['sometimes', 'integer', 'exists:currencies,id'],
             'country_id' => ['sometimes', 'integer', 'exists:countries,id'],
-            'is_default' => ['sometimes', 'boolean'],
             'is_active' => ['sometimes', 'boolean'],
             'valid_from' => ['sometimes', 'date'],
             'valid_to' => ['sometimes', 'date', 'after:valid_from'],

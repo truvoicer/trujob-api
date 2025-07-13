@@ -31,7 +31,6 @@ class UpdatePriceRequest extends FormRequest
             'type_id' => ['sometimes', 'integer', 'exists:price_types,id'],
             'valid_from' => ['sometimes', 'date'],
             'valid_to' => ['nullable', 'date'],
-            'is_default' => ['sometimes', 'boolean'],
             'is_active' => ['sometimes', 'boolean'],
         ];
     }

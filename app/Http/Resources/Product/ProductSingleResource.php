@@ -35,6 +35,7 @@ class ProductSingleResource extends JsonResource
             'description' => $this->description,
             'active' => $this->active,
             'allow_offers' => $this->allow_offers,
+            'sku' => $this->sku,
             'categories' => $this->whenLoaded('types', CategoryResource::collection($this->categories)),
             'user' => $this->whenLoaded('user', UserResource::make($this->user)),
             'follow' => $this->whenLoaded('productFollow', FollowResource::collection($this->productFollow)),

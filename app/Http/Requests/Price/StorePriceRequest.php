@@ -32,7 +32,6 @@ class StorePriceRequest extends FormRequest
             'type_id' => ['required', 'integer', 'exists:price_types,id'],
             'valid_from' => ['required', 'date'],
             'valid_to' => ['nullable', 'date'],
-            'is_default' => ['required', 'boolean'],
             'is_active' => ['required', 'boolean'],
         ];
     }

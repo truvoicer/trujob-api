@@ -38,7 +38,7 @@ class ProductFetchService extends BaseService
     public function productsFetch(?array $data = [])
     {
         $product = $this->buildProductsQuery(Product::query(), $data);
-        
+
         if ($this->getPagination()) {
             $results = $product->paginate(
                 $this->getLimit(),
@@ -57,7 +57,7 @@ class ProductFetchService extends BaseService
     public function userProductsFetch(?array $data = [])
     {
         $product = $this->getUser()->product();
-        
+
         $product = $this->buildProductsQuery($this->getUser()->product(), $data);
         if ($this->getPagination()) {
             $results = $product->paginate(
