@@ -4,6 +4,9 @@ namespace App\Http\Resources\Country;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\Country
+ */
 class CountryResource extends JsonResource
 {
     /**

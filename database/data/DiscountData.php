@@ -6,13 +6,14 @@ use App\Enums\Order\Discount\DiscountScope;
 use App\Enums\Order\Discount\DiscountType;
 use App\Enums\Price\PriceType;
 use App\Models\Country;
+use App\Models\Currency;
 use App\Models\Product;
 
 $country = Country::where('iso2', 'GB')->first();
 if (!$country) {
     throw new Exception('Required country not found.');
 }
-$currency = $country->currency()->where('code', 'GBP')->first();
+$currency = Currency::where('code', 'GBP')->first();
 if (!$currency) {
     throw new Exception('Required currency not found.');
 }

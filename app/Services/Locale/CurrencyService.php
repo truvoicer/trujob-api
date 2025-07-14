@@ -13,7 +13,7 @@ class CurrencyService extends BaseService
         private CurrencyRepository $currencyRepository,
     )
     {
-        
+
     }
 
     public static function fetchCurrency(string|int $currencyValue) {
@@ -27,16 +27,14 @@ class CurrencyService extends BaseService
     public function createCurrencyBatch(array $data) {
         $createBatch = Currency::create($data['currencies']);
         if (!$createBatch) {
-            $this->addError('Error creating currency batch', $data);
-            return false;
+            throw new \Exception('Error creating currency batch');
         }
         return true;
     }
 
-    public function createCurrency(Country $country, array $data) {
+    public function createCurrency(array $data) {
         $currency = new Currency($data);
-        $createCurrency = $country->currency()->save($currency);
-        if (!$createCurrency) {
+        if (!$currency->save()) {
             throw new \Exception('Error creating currency');
         }
         return true;

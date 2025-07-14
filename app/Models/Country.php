@@ -27,11 +27,6 @@ class Country extends Model
         return $this->belongsTo(UserProfile::class);
     }
 
-    public function currency()
-    {
-        return $this->hasOne(Currency::class);
-    }
-
     public function productTransaction()
     {
         return $this->belongsTo(ProductPrice::class);
@@ -41,7 +36,6 @@ class Country extends Model
     {
         return $this->hasMany(Address::class);
     }
-
 
     public function regions()
     {

@@ -3,6 +3,7 @@
 namespace Database\Factories\user;
 
 use App\Models\Country;
+use App\Models\Currency;
 use App\Models\UserSetting;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,7 +26,7 @@ class UserSettingFactory extends Factory
         if (!$country) {
             throw new Exception('Required country not found.');
         }
-        $currency = $country->currency()->where('code', 'GBP')->first();
+        $currency = Currency::where('code', 'GBP')->first();
         if (!$currency) {
             throw new Exception('Required currency not found.');
         }

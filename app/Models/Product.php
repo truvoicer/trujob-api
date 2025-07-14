@@ -166,21 +166,15 @@ class Product extends Model
             ->first();
     }
 
-    public function getPriceByUserLocaleAndPriceType(
-        User $user,
+    public function getPriceByLocaleAndPriceType(
+        Currency $currency,
         PriceType $priceType
     ): Price|null {
-        $country = $user->userSetting->country;
-        $currency = $user->userSetting->currency;
-
-        if (!$country || !$currency) {
-            return null;
-        }
 
         return $this->prices()
             ->whereRelation('priceType', 'name', $priceType->value)
             // ->whereRelation('country', 'id', $country->id)
-            // ->whereRelation('currency', 'id', $currency->id)
+            ->whereRelation('currency', 'id', $currency->id)
             ->first();
     }
 

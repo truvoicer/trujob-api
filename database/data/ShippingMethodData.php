@@ -13,7 +13,7 @@ $country = Country::where('iso2', 'GB')->first();
 if (!$country) {
     throw new Exception('Required country not found.');
 }
-$currency = $country->currency()->where('code', 'GBP')->first();
+$currency = Currency::where('code', 'GBP')->first();
 if (!$currency) {
     throw new Exception('Required currency not found.');
 }
@@ -27,7 +27,7 @@ $internationalCountry = Country::where('iso2', 'JP')->first();
 if (!$internationalCountry) {
     throw new Exception('Required country not found.');
 }
-$internationalCurrency = $internationalCountry->currency()->where('code', 'JPY')->first();
+$internationalCurrency = Currency::where('code', 'JPY')->first();
 if (!$internationalCurrency) {
     throw new Exception('Required currency not found.');
 }

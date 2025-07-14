@@ -14,6 +14,8 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'country_id',
+        'currency_id',
         'billing_address_id',
         'shipping_address_id',
         'status',
@@ -22,6 +24,16 @@ class Order extends Model
     protected $casts = [
         'status' => OrderStatus::class,
     ];
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
 
     public function billingAddress(): BelongsTo
     {

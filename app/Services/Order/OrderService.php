@@ -23,7 +23,14 @@ class OrderService extends BaseService
         }
 
         $this->orderItemService->validateBulkOrderItems($orderItems);
-
+        $data['currency_id'] = $this->user?->userSetting?->currency?->id ?? null;
+        if (empty($data['currency_id'])) {
+            throw new \Exception('Currency ID is required to create an order');
+        }
+        $data['country_id'] = $this->user?->userSetting?->country?->id ?? null;
+        if (empty($data['country_id'])) {
+            throw new \Exception('Country ID is required to create an order');
+        }
         $order = $this->user->orders()->create($data);
 
         if (!$order->exists()) {

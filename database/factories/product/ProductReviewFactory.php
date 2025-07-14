@@ -24,6 +24,11 @@ class ProductReviewFactory extends Factory
             $user = $product->user()->first();
             if ($user->id === $productReview->user_id) {
                 $newUser = User::where('id', '<>', $productReview->user_id)->first();
+                if (!$newUser) {
+                    $newUser = User::factory()->create([
+                        'email' => fake()->unique()->safeEmail()
+                    ]);
+                }
                 $productReview->user_id = $newUser->id;
             }
             return $productReview;

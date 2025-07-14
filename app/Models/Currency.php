@@ -22,16 +22,6 @@ class Currency extends Model
         'is_active' => 'boolean',
     ];
 
-    public function currencies()
-    {
-        return $this->hasMany(Currency::class);
-    }
-
-    public function country()
-    {
-        return $this->belongsTo(Country::class);
-    }
-
     public function user()
     {
         return $this->belongsTo(UserProfile::class);

@@ -2,11 +2,10 @@
 
 namespace Database\Seeders\locale;
 
-use App\Models\Country;
 use App\Models\Currency;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CurrencySeeder extends Seeder
 {
@@ -15,25 +14,21 @@ class CurrencySeeder extends Seeder
     {
 
         // Fetch currency data from a reliable API
-        $response = Http::get('https://restcountries.com/v3.1/all?fields=cca2,currencies');
+        $response = Http::get('https://restcountries.com/v3.1/all?fields=currencies');
         $countries = $response->json();
 
         foreach ($countries as $countryData) {
             if (!isset($countryData['currencies'])) {
                 continue;
             }
-
-            $country = Country::where('iso2', $countryData['cca2'])->first();
-            if (!$country) {
-                var_dump("Country not found for ISO2: {$countryData['cca2']}");
-                continue;
-            }
-
             foreach ($countryData['currencies'] as $currencyCode => $currencyInfo) {
+                // Check if the currency already exists
+                if (Currency::where('code', $currencyCode)->exists()) {
+                    continue;
+                }
                 Currency::create([
-                    'country_id' => $country->id,
                     'name' => $currencyInfo['name'] ?? $currencyCode,
-                    'name_plural' => $currencyInfo['name'] ?? $currencyCode,
+                    'name_plural' => Str::plural($currencyInfo['name']) ?? $currencyCode,
                     'code' => $currencyCode,
                     'symbol' => $currencyInfo['symbol'] ?? $currencyCode,
                 ]);

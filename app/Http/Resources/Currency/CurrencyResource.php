@@ -5,6 +5,9 @@ namespace App\Http\Resources\Currency;
 use App\Http\Resources\Country\CountryResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @mixin \App\Models\Currency
+ */
 class CurrencyResource extends JsonResource
 {
     /**
@@ -23,7 +26,6 @@ class CurrencyResource extends JsonResource
             'code' => $this->code,
             'symbol' => $this->symbol,
             'is_active' => $this->is_active,
-            'country' => $this->whenLoaded('country', CountryResource::make($this->country)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

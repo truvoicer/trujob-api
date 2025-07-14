@@ -27,6 +27,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductFollow;
 use App\Models\ProductReview;
+use App\Services\Data\DefaultData;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
@@ -50,7 +51,6 @@ class SiteSeeder extends Seeder
         }
         return [
             'price_type_id' => $isDefault ? $priceType->id : $randomPriceType->id,
-            'is_default' => $isDefault ? true : false,
         ];
     }
 
@@ -88,6 +88,14 @@ class SiteSeeder extends Seeder
                 ->has(
                     User::factory()
                         ->count(10)
+                        ->sequence(
+                            function (Sequence $sequence) {
+                                if ($sequence->index === 0) {
+                                    return DefaultData::TEST_USER_DATA;
+                                }
+                                return [];
+                            }
+                        )
                         ->has(
                             Product::factory()
                                 ->count(5)
@@ -165,6 +173,10 @@ class SiteSeeder extends Seeder
                     ProductCategory::all()->random(1)
                         ->pluck('id')
                 );
+                $product->refresh();
+                $product->update([
+                    'sku' => $product->generateSku(),
+                ]);
             }
         }
     }

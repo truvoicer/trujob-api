@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Api\Locale;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Currency\StoreCurrencyRequest as CurrencyStoreCurrencyRequest;
-use App\Http\Requests\Currency\UpdateCurrencyRequest as CurrencyUpdateCurrencyRequest;
+use App\Http\Requests\Currency\StoreCurrencyRequest;
+use App\Http\Requests\Currency\UpdateCurrencyRequest;
 use App\Http\Resources\Currency\CurrencyResource;
-use App\Models\Country;
 use App\Models\Currency;
 use App\Repositories\CurrencyRepository;
 use App\Services\Locale\CurrencyService;
@@ -19,11 +18,10 @@ class CurrencyController extends Controller
     public function __construct(
         private CurrencyService $currencyService,
         private CurrencyRepository $currencyRepository
-    )
-    {
-    }
+    ) {}
 
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
 
@@ -54,18 +52,22 @@ class CurrencyController extends Controller
         );
     }
 
-    public function show(Currency $currency, Request $request) {
+    public function show(Currency $currency, Request $request)
+    {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
 
         return new CurrencyResource($currency);
     }
 
-    public function store(CurrencyStoreCurrencyRequest $request) {
+    public function store(StoreCurrencyRequest $request)
+    {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
 
-        $create = $this->currencyService->createCurrency($country, $request->validated());
+        $create = $this->currencyService->createCurrency(
+            $request->validated()
+        );
         if (!$create) {
             return response()->json([
                 'message' => 'Error creating currency',
@@ -76,11 +78,15 @@ class CurrencyController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function update(Currency $currency, CurrencyUpdateCurrencyRequest $request) {
+    public function update(Currency $currency, UpdateCurrencyRequest $request)
+    {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
 
-        $update = $this->currencyService->updateCurrency($currency, $request->validated());
+        $update = $this->currencyService->updateCurrency(
+            $currency,
+            $request->validated()
+        );
         if (!$update) {
             return response()->json([
                 'message' => 'Error updating currency',
@@ -91,7 +97,8 @@ class CurrencyController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function destroy(Currency $currency, Request $request) {
+    public function destroy(Currency $currency, Request $request)
+    {
         $this->currencyService->setUser($request->user()->user);
         $this->currencyService->setSite($request->user()->site);
 

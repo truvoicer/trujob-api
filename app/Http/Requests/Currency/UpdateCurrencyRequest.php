@@ -28,9 +28,8 @@ class UpdateCurrencyRequest extends FormRequest
             'name_plural' => ['sometimes', 'string', 'max:255'],
             'code' => ['sometimes', 'string', 'max:3'],
             'symbol' => ['sometimes', 'string', 'max:3'],
-            'country_id' => ['sometimes', 'integer', 'exists:countries,id'],
             'is_active' => ['sometimes', 'boolean'],
         ];
     }
-    
+
 }

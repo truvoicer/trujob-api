@@ -16,7 +16,6 @@ return new class extends Migration
     {
         Schema::create('currencies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('country_id')->constrained('countries')->onDelete('cascade');
             $table->string('name');
             $table->string('name_plural');
             $table->string('code');

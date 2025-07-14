@@ -35,6 +35,10 @@ class UpdateProductRequest extends FormRequest
             ],
             'description' => 'nullable',
             'allow_offers' => 'nullable|boolean',
+            'active' => [
+                'sometimes',
+                'boolean',
+            ],
             'sku' => [
                 'sometimes',
                 'string',

@@ -17,6 +17,12 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
+            $table->foreignId('country_id')
+                ->nullable()
+                ->constrained('countries');
+            $table->foreignId('currency_id')
+                ->constrained('currencies')
+                ->cascadeOnDelete();
             $table->foreignId('billing_address_id')
                 ->nullable()
                 ->constrained('addresses');

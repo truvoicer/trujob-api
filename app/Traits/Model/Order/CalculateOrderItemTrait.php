@@ -55,12 +55,11 @@ trait CalculateOrderItemTrait
         if ($this->orderItemPrice) {
             return $this;
         }
-        $user = $this->order?->user;
-        if (!$user instanceof User) {
-            throw new \Exception('User not found for order item initialization');
+        if (!$this->order?->currency) {
+            throw new \Exception('Order currency is not set');
         }
-        $this->orderItemPrice = $this->orderItemable->getPriceByUserLocaleAndPriceType(
-            $user,
+        $this->orderItemPrice = $this->orderItemable->getPriceByLocaleAndPriceType(
+            $this->order->currency,
             $this->priceType
         );
         if (!$this->orderItemPrice) {

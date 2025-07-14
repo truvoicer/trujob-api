@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\Admin\AuthService;
 use App\Services\Data\DefaultData;
 use App\Services\Site\SiteService;
+use App\Services\User\RoleService;
 use App\Services\User\UserAdminService;
 use Database\Seeders\admin\BlockSeeder;
 use Database\Seeders\admin\MenuSeeder;
@@ -43,11 +44,11 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(UserAdminService $userAdminService, SiteService $siteService): void
+    public function run(UserAdminService $userAdminService, SiteService $siteService, RoleService $roleService): void
     {
         $this->call([
             RoleSeeder::class,
-            UserSeeder::class,
+            // UserSeeder::class,
             // LocaleSeeder::class,
             CountrySeeder::class,
             CurrencySeeder::class,
@@ -86,7 +87,6 @@ class DatabaseSeeder extends Seeder
             throw new \Exception('Error finding superuser role during seeding');
         }
 
-
         $testUserData = DefaultData::TEST_USER_DATA;
         $user = $userAdminService->getUserRepository()->findOneBy(
             [['email', '=', $testUserData['email']]]
@@ -94,6 +94,9 @@ class DatabaseSeeder extends Seeder
         if (!$user instanceof User) {
             throw new \Exception("Error finding user");
         }
+
+        $user->roles()->syncWithoutDetaching([$findSuperUserRole->id]);
+
         $tokenData = [];
         foreach (Site::all() as $site) {
             $siteToken = $siteService->createToken($site);
