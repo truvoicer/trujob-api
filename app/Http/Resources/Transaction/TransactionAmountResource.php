@@ -20,7 +20,7 @@ class TransactionAmountResource extends JsonResource
      */
     public function toArray($request)
     {
-        return ResponseHelpers::response(
+        return ResponseHelpers::resourseResponse(
             [
             'id' => $this->id,
             'currency' => $this->whenLoaded('currency', function () {

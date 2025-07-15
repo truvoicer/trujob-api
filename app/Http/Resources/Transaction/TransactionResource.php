@@ -20,7 +20,7 @@ class TransactionResource extends JsonResource
      */
     public function toArray($request)
     {
-        return ResponseHelpers::response(
+        return ResponseHelpers::resourseResponse(
             [
                 'id' => $this->id,
                 'payment_gateway' => $this->whenLoaded('paymentGateway', PaymentGatewayResource::make($this->paymentGateway)),

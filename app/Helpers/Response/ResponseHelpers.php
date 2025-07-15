@@ -27,10 +27,12 @@ class ResponseHelpers
         ];
     }
 
-    public static function response(array $data, ?bool $encrypted = false): array
+    public static function resourseResponse(array $data, ?bool $encrypted = false): array
     {
         if ($encrypted) {
-            return self::encryptedResponse($data);
+            return self::encryptedResponse([
+                'data' => $data,
+            ]);
         }
 
         return $data;

@@ -27,6 +27,9 @@ class UpdateUserSettingRequest extends FormRequest
             'app_theme' => ['sometimes', 'string', 'in:light,dark'],
             'push_notification' => ['sometimes', 'boolean'],
             'currency_id' => ['sometimes', 'exists:currencies,id'],
+            'country_id' => ['sometimes', 'exists:countries,id'],
+            'language_id' => ['sometimes', 'exists:languages,id'],
+            'timezone' => ['sometimes', 'string', 'timezone'],
         ];
     }
 }

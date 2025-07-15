@@ -90,12 +90,8 @@ use App\Http\Controllers\Api\Price\Discount\PriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\PriceTaxRateController;
 use App\Http\Controllers\Api\Price\Type\PriceTypeController;
 use App\Http\Controllers\Api\Locale\RegionController;
-use App\Http\Controllers\Api\Order\OrderSummaryController;
-use App\Http\Controllers\Api\Order\Shipping\Method\OrderShippingMethodController;
-use App\Http\Controllers\Api\Order\Transaction\OrderTransactionController;
 use App\Http\Controllers\Api\PaymentGateway\AvailableSitePaymentGatewayController;
 use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayEnvironmentController;
-use App\Http\Controllers\Api\PaymentGateway\PayPal\PayPalOrderController;
 use App\Http\Controllers\Api\PaymentGateway\SitePaymentGatewayController;
 use App\Http\Controllers\Api\Price\BulkPriceController;
 use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
@@ -156,7 +152,6 @@ use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
 use App\Http\Controllers\Api\Widget\WidgetController;
 use App\Http\Controllers\Api\Widget\WidgetRoleController;
 use App\Http\Middleware\AppPublic;
-use App\Models\Site;
 use Illuminate\Support\Facades\Route;
 
 
@@ -235,61 +230,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::delete('/unset-default', [DiscountSetAsDefaultController::class, 'destroy'])->name('unset-default');
         });
     });
-    Route::prefix('order')->name('order.')->group(function () {
-        Route::get('/', [OrderController::class, 'index'])->name('index');
-        Route::post('/store', [OrderController::class, 'store'])->name('store');
-        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
-        Route::prefix('{order}')->group(function () {
-            Route::get('/summary', [OrderSummaryController::class, 'show'])->name('summary.show');
-            Route::patch('/update', [OrderController::class, 'update'])->name('update');
-            Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
 
-            Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
-                Route::prefix('paypal')->name('paypal.')->group(function () {
-                    Route::get('/', [PayPalOrderController::class, 'index'])->name('index');
-                    Route::post('/store', [PayPalOrderController::class, 'store'])->name('store');
-                    Route::get('/{paypalOrderId}', [PayPalOrderController::class, 'show'])->name('show');
-                });
-            });
+    include __DIR__ . '/api/order/order.php';
 
-            Route::prefix('transaction')->name('transaction.')->group(function () {
-                Route::get('/', [OrderTransactionController::class, 'index'])->name('index');
-                Route::post('/store', [OrderTransactionController::class, 'store'])->name('store');
-                Route::get('/{transaction}', [OrderTransactionController::class, 'show'])->name('show');
-                Route::patch('/{transaction}/update', [OrderTransactionController::class, 'update'])->name('update');
-                Route::delete('/{transaction}/delete', [OrderTransactionController::class, 'destroy'])->name('delete');
-            });
-
-            Route::prefix('shipping')->name('shipping.')->group(function () {
-                Route::prefix('method')->name('method.')->group(function () {
-                    Route::get('/', [OrderShippingMethodController::class, 'index'])->name('index');
-                    Route::prefix('{shippingMethod}')->group(function () {
-                        Route::get('/', [OrderShippingMethodController::class, 'show'])->name('show');
-                    });
-                });
-            });
-
-            Route::prefix('item')->name('item.')->group(function () {
-                Route::get('/', [OrderItemController::class, 'index'])->name('index');
-                Route::post('/store', [OrderItemController::class, 'store'])->name('store');
-                Route::prefix('{orderItem}')->group(function () {
-                    Route::get('/', [OrderItemController::class, 'show'])->name('show');
-                    Route::patch('/update', [OrderItemController::class, 'update'])->name('update');
-                    Route::delete('/delete', [OrderItemController::class, 'destroy'])->name('delete');
-                });
-            });
-            Route::prefix('discount')->name('discount.')->group(function () {
-                Route::get('/', [OrderDiscountController::class, 'index'])->name('index');
-                Route::prefix('bulk')->name('bulk.')->group(function () {
-                    Route::post('/store', BulkOrderDiscountController::class)->name('store');
-                });
-                Route::prefix('{discount}')->group(function () {
-                    Route::post('/store', [OrderDiscountController::class, 'store'])->name('store');
-                    Route::delete('/destroy', [OrderDiscountController::class, 'destroy'])->name('destroy');
-                });
-            });
-        });
-    });
     Route::prefix('price')->name('price.')->group(function () {
         Route::prefix('{price}')->group(function () {
             Route::prefix('tax-rate')->name('tax-rate.')->group(function () {

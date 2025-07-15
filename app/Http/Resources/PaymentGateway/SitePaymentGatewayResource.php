@@ -20,7 +20,7 @@ class SitePaymentGatewayResource extends JsonResource
      */
     public function toArray($request)
     {
-        return ResponseHelpers::response(
+        return ResponseHelpers::resourseResponse(
             [
                 'id' => $this->id,
                 'name' => $this->name,
