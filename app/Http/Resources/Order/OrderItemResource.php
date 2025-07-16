@@ -22,7 +22,7 @@ class OrderItemResource extends JsonResource
      */
     public function toArray($request)
     {
-        $this->setPriceType(PriceType::ONE_TIME);
+        $this->setPriceType($this->order->price_type);
         $this->init();
 
         return [

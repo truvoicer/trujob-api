@@ -21,7 +21,7 @@ class OrderSummaryResource extends JsonResource
      */
     public function toArray($request)
     {
-        $this->setPriceType(PriceType::ONE_TIME);
+        $this->setPriceType($this->price_type);
         $this->init();
         return [
             'id' => $this->id,

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Order\OrderStatus;
+use App\Enums\Price\PriceType;
 use App\Traits\Model\Order\CalculateOrderTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,7 @@ class Order extends Model
     use CalculateOrderTrait;
 
     protected $fillable = [
+        'price_type',
         'user_id',
         'country_id',
         'currency_id',
@@ -23,6 +25,7 @@ class Order extends Model
 
     protected $casts = [
         'status' => OrderStatus::class,
+        'price_type' => PriceType::class,
     ];
 
     public function country(): BelongsTo

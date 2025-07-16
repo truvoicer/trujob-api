@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Product\Price;
 
+use App\Enums\Price\PriceType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateProductPriceRequest extends FormRequest
 {
@@ -25,7 +27,11 @@ class CreateProductPriceRequest extends FormRequest
     {
         return [
             'created_by_user_id' => ['sometimes', 'integer', 'exists:users,id'],
-            'price_type_id' => ['required', 'integer', 'exists:price_types,id'],
+            'price_type' => [
+                'required',
+                'string',
+                Rule::enum(PriceType::class),
+            ],
             'amount' => ['required', 'numeric'],
             'currency_id' => ['required', 'integer', 'exists:currencies,id'],
             'country_id' => ['required', 'integer', 'exists:countries,id'],

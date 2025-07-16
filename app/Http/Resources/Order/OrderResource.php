@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Order;
 
-use App\Enums\Price\PriceType;
 use App\Http\Resources\Discount\DiscountListResource;
 use App\Http\Resources\Locale\AddressResource;
 use App\Http\Resources\Tax\TaxRateResource;
@@ -21,7 +20,7 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        $this->setPriceType(PriceType::ONE_TIME);
+        $this->setPriceType($this->price_type);
         $this->init();
         return [
             'id' => $this->id,

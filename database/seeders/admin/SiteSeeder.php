@@ -5,6 +5,7 @@ namespace Database\Seeders\admin;
 use App\Enums\Media\FileSystemType;
 use App\Enums\Media\MediaType;
 use App\Enums\Media\Types\Image\ImageCategory;
+use App\Enums\Price\PriceType;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
@@ -13,7 +14,6 @@ use App\Models\Media;
 use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
 use App\Models\Price;
-use App\Models\PriceType;
 use App\Models\Site;
 use App\Models\User;
 use App\Models\UserFollow;
@@ -34,24 +34,13 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 class SiteSeeder extends Seeder
 {
 
-    public function sequence(Sequence $sequence, bool $isDefault = false): array
+    public function priceState(): array
     {
-        $priceTypeCount = PriceType::count();
-        if ($priceTypeCount < 1) {
-            throw new Exception('No price types found.');
-        }
-        $randomPriceType = PriceType::all()->random();
-        if (!$randomPriceType) {
-            throw new Exception('Required price type not found.');
-        }
-        $priceType = PriceType::where('name', 'one_time')->first();
-
-        if (!$priceType) {
-            throw new Exception('Required price type not found.');
-        }
-        return [
-            'price_type_id' => $isDefault ? $priceType->id : $randomPriceType->id,
-        ];
+        return array_map(function (PriceType $priceType) {
+            return [
+                'price_type' => $priceType->value,
+            ];
+        }, PriceType::cases());
     }
 
     /**
@@ -118,17 +107,8 @@ class SiteSeeder extends Seeder
                                 ->has(Media::factory()->count(5))
                                 ->has(
                                     Price::factory()
-                                        ->state(new Sequence(
-                                            fn(Sequence $sequence) => $this->sequence($sequence, true)
-                                        ))
-                                        ->count(1)
-                                )
-                                ->has(
-                                    Price::factory()
-                                        ->state(new Sequence(
-                                            fn(Sequence $sequence) => $this->sequence($sequence)
-                                        ))
-                                        ->count(2)
+                                        ->sequence(...$this->priceState())
+                                        ->count(count(PriceType::cases()))
                                 )
                         )
                         ->has(UserFollow::factory()->count(5))

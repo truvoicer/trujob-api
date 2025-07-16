@@ -120,12 +120,12 @@ class PayPalOrderService extends BaseService
         $this->orderTransactionService->setSite($this->site);
 
         $this->initializePayPalService();
-        $order->setPriceType(PriceType::ONE_TIME);
+        $order->setPriceType($order->price_type);
         $order->init();
 
         foreach ($order->items as $item) {
 
-            $item->setPriceType(PriceType::ONE_TIME);
+            $item->setPriceType($order->price_type);
             $item->init();
             $orderItem = $this->createOrderItem($item);
             if (!$orderItem) {

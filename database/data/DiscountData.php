@@ -21,7 +21,9 @@ $firstProduct = Product::first();
 if (!$firstProduct) {
     throw new Exception('Required product not found.');
 }
-$firstProductOneTimePrice = $firstProduct->prices()->whereRelation('priceType', 'name', PriceType::ONE_TIME->value)->first();
+$firstProductOneTimePrice = $firstProduct->prices()
+    ->where('price_type', PriceType::ONE_TIME->value)
+    ->first();
 if (!$firstProductOneTimePrice) {
     throw new Exception('Required product one-time price not found.');
 }
@@ -29,7 +31,9 @@ $secondProduct = Product::where('id', 2)->first();
 if (!$secondProduct) {
     throw new Exception('Required second product not found.');
 }
-$secondProductOneTimePrice = $secondProduct->prices()->whereRelation('priceType', 'name', PriceType::ONE_TIME->value)->first();
+$secondProductOneTimePrice = $secondProduct->prices()
+    ->where('price_type', PriceType::ONE_TIME->value)
+    ->first();
 if (!$secondProductOneTimePrice) {
     throw new Exception('Required second product one-time price not found.');
 }

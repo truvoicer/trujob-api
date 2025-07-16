@@ -162,7 +162,7 @@ class Product extends Model
     public function getPriceByPriceType(PriceType $priceType): Price|null
     {
         return $this->prices()
-            ->whereRelation('priceType', 'name', $priceType->value)
+            ->where('price_type', $priceType->value)
             ->first();
     }
 
@@ -172,7 +172,7 @@ class Product extends Model
     ): Price|null {
 
         return $this->prices()
-            ->whereRelation('priceType', 'name', $priceType->value)
+            ->where('price_type', $priceType->value)
             // ->whereRelation('country', 'id', $country->id)
             ->whereRelation('currency', 'id', $currency->id)
             ->first();

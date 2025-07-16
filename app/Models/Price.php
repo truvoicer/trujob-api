@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Price\PriceType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,7 +12,7 @@ class Price extends Model
 
     protected $fillable = [
         'created_by_user_id',
-        'price_type_id',
+        'price_type',
         'country_id',
         'currency_id',
         'amount',
@@ -20,6 +21,7 @@ class Price extends Model
         'is_active',
     ];
     protected $casts = [
+        'price_type' => PriceType::class,
         'amount' => 'decimal:2',
         'valid_from' => 'datetime',
         'valid_to' => 'datetime',
@@ -28,11 +30,6 @@ class Price extends Model
     public function createdByUser()
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
-    }
-
-    public function priceType()
-    {
-        return $this->belongsTo(PriceType::class);
     }
 
     public function products()

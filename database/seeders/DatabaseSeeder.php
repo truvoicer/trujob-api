@@ -30,7 +30,6 @@ use Database\Seeders\locale\CurrencySeeder;
 use Database\Seeders\locale\RegionSeeder;
 use Database\Seeders\payment\PaymentGatewaySeeder;
 use Database\Seeders\payment\SitePaymentGatewaySeeder;
-use Database\Seeders\price\PriceTypeSeeder;
 use Database\Seeders\product\ProductCategorySeeder;
 use Database\Seeders\shipping\ShippingMethodSeeder;
 use Database\Seeders\shipping\ShippingZoneSeeder;
@@ -63,7 +62,6 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             FeatureSeeder::class,
             ProductCategorySeeder::class,
-            PriceTypeSeeder::class,
             PaymentGatewaySeeder::class,
             BlockSeeder::class,
             PermissionSeeder::class,

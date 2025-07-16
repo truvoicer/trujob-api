@@ -66,10 +66,6 @@ use App\Http\Controllers\Api\Menu\MenuItemMenuReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemReorderController;
 use App\Http\Controllers\Api\Menu\MenuItemRoleController;
 use App\Http\Controllers\Api\Menu\MenuRoleController;
-use App\Http\Controllers\Api\Order\Discount\BulkOrderDiscountController;
-use App\Http\Controllers\Api\Order\Discount\OrderDiscountController;
-use App\Http\Controllers\Api\Order\OrderController;
-use App\Http\Controllers\Api\Order\Item\OrderItemController;
 use App\Http\Controllers\Api\Page\Block\PageBlockReorderController;
 use App\Http\Controllers\Api\Page\Block\PageBlockRoleController;
 use App\Http\Controllers\Api\Page\Block\Sidebar\PageBlockSidebarController;
@@ -88,7 +84,6 @@ use App\Http\Controllers\Api\PermissionController;
 use App\Http\Controllers\Api\Price\PriceController;
 use App\Http\Controllers\Api\Price\Discount\PriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\PriceTaxRateController;
-use App\Http\Controllers\Api\Price\Type\PriceTypeController;
 use App\Http\Controllers\Api\Locale\RegionController;
 use App\Http\Controllers\Api\PaymentGateway\AvailableSitePaymentGatewayController;
 use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayEnvironmentController;
@@ -96,7 +91,7 @@ use App\Http\Controllers\Api\PaymentGateway\SitePaymentGatewayController;
 use App\Http\Controllers\Api\Price\BulkPriceController;
 use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\BulkPriceTaxRateController;
-use App\Http\Controllers\Api\Price\Type\BulkPriceTypeController;
+use App\Http\Controllers\Api\Price\Type\PriceTypeController;
 use App\Http\Controllers\Api\Product\Brand\BulkProductBrandController;
 use App\Http\Controllers\Api\Product\Category\BulkCategoryProductController;
 use App\Http\Controllers\Api\Product\Color\BulkProductColorController;
@@ -104,6 +99,7 @@ use App\Http\Controllers\Api\Product\Feature\BulkProductFeatureController;
 use App\Http\Controllers\Api\Product\Follow\BulkProductFollowController;
 use App\Http\Controllers\Api\Product\Media\ProductMediaController;
 use App\Http\Controllers\Api\Product\Price\BulkProductPriceController;
+use App\Http\Controllers\Api\Product\Price\ProductPriceTypeController;
 use App\Http\Controllers\Api\Product\ProductCategory\BulkProductCategoryController;
 use App\Http\Controllers\Api\Product\ProductCategory\ProductCategoryController;
 use App\Http\Controllers\Api\Product\ProductProductCategory\BulkProductProductCategoryController;
@@ -282,7 +278,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/', [ProductController::class, 'show'])->name('show');
             Route::patch('/update', [ProductController::class, 'update'])->name('update');
             Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
-
+            Route::prefix('price-type')->name('price-type.')->group(function () {
+                Route::get('/', [ProductPriceTypeController::class, 'index'])->name('index');
+            });
             Route::patch('/sku/update', [ProductSkuController::class, 'update'])->name('sku.update');
             Route::prefix('shipping')->name('shipping.')->group(function () {
                 Route::prefix('method')->name('method.')->group(function () {
@@ -561,7 +559,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product-type.index');
     Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
-    Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
+     Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
     Route::prefix('discount')->name('discount.')->group(function () {
         Route::get('/type', DiscountTypeController::class)->name('type.index');
         Route::get('/discountable/type', DiscountableTypeController::class)->name('discountable.type.index');
@@ -666,16 +664,6 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/{price}', [PriceController::class, 'show'])->name('show');
         Route::patch('/{price}/update', [PriceController::class, 'update'])->name('update');
         Route::delete('/{price}/delete', [PriceController::class, 'destroy'])->name('delete');
-    });
-    Route::prefix('price-type')->name('price-type.')->group(function () {
-        Route::post('/store', [PriceTypeController::class, 'store'])->name('store');
-
-        Route::prefix('bulk')->name('bulk.')->group(function () {
-            Route::delete('/destroy', [BulkPriceTypeController::class, 'destroy'])->name('destroy');
-        });
-        Route::get('/{priceType}', [PriceTypeController::class, 'show'])->name('show');
-        Route::patch('/{priceType}/update', [PriceTypeController::class, 'update'])->name('update');
-        Route::delete('/{priceType}/delete', [PriceTypeController::class, 'destroy'])->name('delete');
     });
 
     Route::prefix('category')->name('category.')->group(function () {

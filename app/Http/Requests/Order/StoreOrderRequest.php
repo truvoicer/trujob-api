@@ -4,6 +4,7 @@ namespace App\Http\Requests\Order;
 
 use App\Enums\Order\OrderItemType;
 use App\Enums\Order\OrderStatus;
+use App\Enums\Price\PriceType;
 use App\Rules\OrderItem;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -30,6 +31,11 @@ class StoreOrderRequest extends FormRequest
         return [
             'items' => ['required', 'array'],
             'items.*' => [new OrderItem],
+            'price_type' => [
+                'required',
+                'string',
+                Rule::enum(PriceType::class),
+            ],
             'billing_address_id' => [
                 'sometimes',
                 'nullable',

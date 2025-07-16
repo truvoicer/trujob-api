@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Enums\Price\PriceType;
 use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Price;
-use App\Models\PriceType;
 use App\Models\User;
 use App\Services\Data\DefaultData;
 use App\Services\User\UserAdminService;
@@ -34,10 +34,6 @@ class PriceFactory extends Factory
         if (!$currency) {
             throw new Exception('Required currency not found.');
         }
-        $priceType = PriceType::where('name', 'one_time')->first();
-        if (!$priceType) {
-            throw new Exception('Required price type not found.');
-        }
         $userAdminService = app(UserAdminService::class);
         $testUserData = DefaultData::TEST_USER_DATA;
         $user = $userAdminService->getUserRepository()->findOneBy(
@@ -50,7 +46,7 @@ class PriceFactory extends Factory
             'created_by_user_id' => $user->id,
             'currency_id' => $currency->id,
             'country_id' => $country->id,
-            'price_type_id' => $priceType->id,
+            'price_type' => PriceType::ONE_TIME->value,
             'valid_from' => now(),
             'valid_to' => now()->addDays(30),
             'is_active' => true,
