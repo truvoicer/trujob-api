@@ -38,7 +38,7 @@ return new class extends Migration
             );
 
             // Amount processed by the payment gateway (can be different from order total due to partial payments, refunds)
-            $table->decimal('amount', 10, 2);
+            $table->decimal('amount', 10, 2)->nullable();
 
             // JSON column to store order-specific data (e.g., order details, items purchased)
             $table->json('order_data')->nullable();

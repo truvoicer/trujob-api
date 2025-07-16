@@ -114,7 +114,7 @@ class PayPalOrderService extends BaseService
         }
         return null;
     }
-    public function createOrder(Order $order, Transaction $transaction): array
+    public function createOrder(Order $order, Transaction $transaction)
     {
         $this->orderTransactionService->setUser($this->user);
         $this->orderTransactionService->setSite($this->site);
@@ -133,16 +133,7 @@ class PayPalOrderService extends BaseService
             }
             $this->payPalService->addItem($orderItem);
         }
-        // 'total_price' => $this->calculateTotalPrice(),
-        //     'total_quantity' => $this->calculateTotalQuantity(),
-        //     'total_tax' => $this->calculateTotalTax(),
-        //     'total_discount' => $this->calculateTotalDiscount(),
-        //     'final_total' => $this->calculateFinalTotal(),
-        //     'total_items' => $this->calculateTotalItems(),
-        //     'average_price_per_item' => $this->calculateAveragePricePerItem(),
-        //     'total_price_after_discounts' => $this->calculateTotalPriceAfterDiscounts(),
-        //     'total_price_after_tax' => $this->calculateTotalPriceAfterTax(),
-        //     'total_price_after_tax_and_discounts' => $this->calculateTotalPriceAfterTaxAndDiscounts(),
+
         $finalTotal = $order->calculateFinalTotal();
         $currencyCode = $order->currency?->code;
         $this->payPalService->setCurrencyCode($currencyCode);

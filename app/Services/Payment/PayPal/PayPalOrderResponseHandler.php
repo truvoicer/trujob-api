@@ -51,6 +51,16 @@ class PayPalOrderResponseHandler
         return null;
     }
 
+    public function getTransactionId(): ?string
+    {
+        if ($this->isSuccess()) {
+            $result = $this->response->getResult();
+            // Access 'id' directly as a property of the result object
+            return $result->getId() ?? null;
+        }
+        return null;
+    }
+
     /**
      * Retrieves the approval link (redirect URL) for the PayPal order.
      * This URL is where the user needs to be redirected to approve the payment.
