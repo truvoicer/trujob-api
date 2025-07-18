@@ -21,7 +21,7 @@ class PriceSubscriptionItem extends Model
     ];
 
     protected $casts = [
-        'price_value' => 'decimal:4',
+        'price_value' => 'decimal:2',
     ];
 
     public function priceSubscription()

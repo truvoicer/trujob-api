@@ -61,7 +61,7 @@ class OrderController extends Controller
                     $this->orderService->getOrderByPriceType($order)
                 );
             case PriceType::SUBSCRIPTION:
-                    return new SubscriptionOrderResource(
+                return new SubscriptionOrderResource(
                     $this->orderService->getOrderByPriceType($order)
                 );
             default:
@@ -79,14 +79,16 @@ class OrderController extends Controller
                 'message' => 'Error creating order order',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
+        $getOrder = $order->loadOrderItemsByPriceType(
+            $order->price_type,
+            $request->user()->user
+        );
         switch ($order->price_type) {
             case PriceType::ONE_TIME:
-                return new OneTimeOrderResource(
-                    $this->orderService->getOrderByPriceType($order)
-                );
+                return new OneTimeOrderResource($getOrder);
             case PriceType::SUBSCRIPTION:
                 return new SubscriptionOrderResource(
-                    $this->orderService->getOrderByPriceType($order)
+                    $getOrder
                 );
             default:
                 throw new \Exception('Invalid price type');

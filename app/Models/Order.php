@@ -78,4 +78,39 @@ class Order extends Model
             ->withTimestamps();
     }
 
+    public function loadSubscriptionOrderItems(User $user)
+    {
+        return $this->load([
+            'items' => function ($query) use ($user) {
+                $query->with([
+                    'orderItemable' => function ($query) use ($user) {
+                        $query->with([
+                            'prices' => function ($query) use ($user) {
+                                $query->where(
+                                    'price_type',
+                                    PriceType::SUBSCRIPTION->value
+                                )
+                                    ->where('is_active', true)
+                                    ->where('currency_id', $user->userSetting?->currency?->id ?? null)
+                                    ->where('country_id', $user->userSetting?->country?->id ?? null);
+                            },
+                        ]);
+                    },
+                ]);
+            },
+        ]);
+    }
+
+    public function loadOrderItemsByPriceType(PriceType $priceType, User $user)
+    {
+        switch ($priceType) {
+            case PriceType::SUBSCRIPTION:
+                return $this->loadSubscriptionOrderItems($user);
+            case PriceType::ONE_TIME:
+                return $this->load(['items']);
+            default:
+                throw new \Exception('Invalid price type');
+        }
+    }
+
 }

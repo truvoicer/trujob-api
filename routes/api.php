@@ -134,6 +134,7 @@ use App\Http\Controllers\Api\Shipping\ShippingUnitController;
 use App\Http\Controllers\Api\Shipping\ShippingWeightUnitController;
 use App\Http\Controllers\Api\Shipping\Zone\ShippingZoneableTypeController;
 use App\Http\Controllers\Api\Subscription\SubscriptionIntervalUnitController;
+use App\Http\Controllers\Api\Subscription\SubscriptionSetupFeeFailureActionController;
 use App\Http\Controllers\Api\Subscription\SubscriptionTenureTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
@@ -238,6 +239,9 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
         Route::prefix('interval-unit')->name('interval-unit.')->group(function () {
             Route::get('/', [SubscriptionIntervalUnitController::class, 'index'])->name('index');
+        });
+        Route::prefix('setup-fee-failure-action')->name('setup-fee-failure-action.')->group(function () {
+            Route::get('/', [SubscriptionSetupFeeFailureActionController::class, 'index'])->name('index');
         });
     });
     Route::prefix('price')->name('price.')->group(function () {

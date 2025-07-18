@@ -3,6 +3,7 @@
 namespace App\Services\Payment\PayPal;
 
 use App\Enums\Order\OrderItemable;
+use App\Enums\Payment\PaymentGatewayEnvironment;
 use App\Enums\Price\PriceType;
 use App\Enums\Transaction\TransactionStatus;
 use App\Exceptions\Product\ProductHealthException;
@@ -12,22 +13,189 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Services\BaseService;
 use App\Services\Order\Transaction\OrderTransactionService;
-use App\Services\Payment\PayPal\PayPalService;
-use PaypalServerSdkLib\Models\Item;
-use PaypalServerSdkLib\Models\Money;
+use App\Services\Payment\PayPal\Billing\PayPalBillingCycleBuilder;
+use App\Services\Payment\PayPal\Billing\PayPalBillingPlanBuilder;
+use App\Services\Payment\PayPal\Billing\PayPalBillingPlanService;
+use App\Services\Payment\PayPal\Product\PayPalProductBuilder;
+use App\Services\Payment\PayPal\Product\PayPalProductService;
+use App\Services\Payment\PayPal\Subscription\PayPalSubscriptionBuilder;
+use App\Services\Payment\PayPal\Subscription\PayPalSubscriptionService;
 
 class PayPalSubscriptionOrderService extends BaseService
 {
 
 
     public function __construct(
-        private PayPalService $payPalService,
         private PayPalSubscriptionService $payPalSubscriptionService,
+        private PayPalProductService $payPalProductService,
+        private PayPalBillingPlanService $billingPlanService,
         private OrderTransactionService $orderTransactionService,
     ) {
         // Initialize any PayPal SDK or configuration here
         parent::__construct();
     }
+
+    public function createPayPalProduct(Product $product)
+    {
+        try {
+            $productBuilder = PayPalProductBuilder::build()
+                ->setName($product->title)
+                ->setType(strtoupper($product->type->value))
+                // ->setCategory($product->categories->first()?->name ?? 'General')
+                ->setDescription($product->description)
+                ->setImageUrl('https://example.com/ebook_image.jpg')
+                ->setHomeUrl('https://example.com/premium-ebooks');
+
+            return $this->payPalProductService->createProduct($productBuilder);
+        } catch (\Exception $e) {
+            dd($this->payPalProductService->getResponseData());
+        }
+    }
+
+    public function createPayPalBillingPlan(
+        string $paypalProductId,
+        Product $product
+    ) {
+        foreach ($product->prices as $price) {
+            if (!$price->subscription->exists()) {
+                throw new \Exception('Subscription not found for product price');
+            }
+            if ($price->subscription->items->isEmpty()) {
+                throw new \Exception('No subscription items found for product price');
+            }
+            $billingPlanBuilder = PayPalBillingPlanBuilder::build()
+                ->setProductId($paypalProductId)
+                ->setName($price->subscription->label)
+                ->setDescription($price->subscription->description)
+                ->setType($price->subscription->type->value);
+            if ($price->subscription->has_setup_fee) {
+                $billingPlanBuilder->setSetupFee(
+                    $price->subscription->setup_fee_value,
+                    $price->subscription->setupFeeCurrency->code
+                );
+            }
+            $billingPlanBuilder->setPaymentPreferences(
+                $price->subscription->auto_bill_outstanding,
+                $price->subscription->setup_fee_failure_action->value,
+                $price->subscription->payment_failure_threshold,
+            );
+
+            foreach ($price->subscription->items as $priceItem) {
+                // dd($priceItem->sequence);
+                // Add a trial billing cycle
+                $trialCycle = PayPalBillingCycleBuilder::build()
+                    ->setFrequency(
+                        $priceItem->frequency_interval_unit,
+                        $priceItem->frequency_interval_count,
+                    )
+                    ->setTenureType($priceItem->tenure_type)
+                    ->setSequence($priceItem->sequence)
+                    ->setTotalCycles($priceItem->total_cycles)
+                    ->setPricingScheme(
+                        $priceItem->priceCurrency->code,
+                        $priceItem->price_value,
+                    );
+
+                $billingPlanBuilder->addBillingCycle($trialCycle);
+            }
+        }
+        try {
+            return $this->billingPlanService->createPlan($billingPlanBuilder);
+        } catch (\Exception $e) {
+            // Handle exceptions as needed
+            dd($this->billingPlanService->getResponseData());
+        }
+    }
+
+    public function createProductSubscription(Product $product)
+    {
+        $healthCheckData = $product->healthCheck();
+        if ($healthCheckData['unhealthy']['count'] > 0) {
+            throw new ProductHealthException(
+                $product,
+                $healthCheckData
+            );
+        }
+
+        $createPayPalProduct = $this->createPayPalProduct($product);
+
+        $productId = $createPayPalProduct['id'];
+
+        $createBillingPlan = $this->createPayPalBillingPlan(
+            $productId,
+            $product
+        );
+
+        $planId = $createBillingPlan['id']; // Replace with an actual plan ID
+
+        $subscriptionBuilder = PayPalSubscriptionBuilder::build()
+            ->setPlanId($planId)
+            ->setStartTime(now()->addMinutes(5)->toIso8601ZuluString()) // Start 5 minutes from now
+            ->setQuantity(1)
+            ->setSubscriber(
+                'customer@example.com',
+                'John',
+                'Doe',
+                [
+                    'address_line_1' => '123 Main St',
+                    'admin_area_2' => 'San Jose',
+                    'admin_area_1' => 'CA',
+                    'postal_code' => '95131',
+                    'country_code' => 'US',
+                ]
+            )
+            ->setApplicationContext(
+                'https://your-app.com/paypal/return',
+                'https://your-app.com/paypal/cancel',
+                'Your Brand Name',
+                'en-US',
+                'LOGIN',
+                'SET_PROVIDED_ADDRESS',
+                'SUBSCRIBE_NOW'
+            );
+
+        $subscription = $this->payPalSubscriptionService->createSubscription($subscriptionBuilder);
+
+
+
+
+
+        $price = $item->getOrderItemPrice();
+        $itemAmount = new Money(
+            $price->currency->code,
+            $item->calculateTotalPrice()
+        );
+        $itemTax = new Money(
+            $price->currency->code,
+            $item->calculateTaxWithoutPrice($item->calculateTotalPrice()),
+        );
+        $paypalOrderItem = new Item(
+            $product->title,
+            $itemAmount,
+            $item->quantity
+        );
+        $paypalOrderItem->setDescription($product->description);
+        $paypalOrderItem->setTax($itemTax);
+        $paypalOrderItem->setQuantity($item->quantity);
+        $paypalOrderItem->setSku($product->sku);
+        // $paypalOrderItem->setCategory($product->productCategories->first()?->name ?? 'General');
+        return $paypalOrderItem;
+    }
+
+    public function createOrderItemSubscription(OrderItem $item): Item|null
+    {
+        switch ($item->order_itemable_type) {
+            case OrderItemable::PRODUCT:
+                $product = $item->orderItemable;
+                if (!$product instanceof Product) {
+                    throw new \Exception('Product not found for order item');
+                }
+                return $this->createProductSubscription($product);
+                break;
+        }
+        return null;
+    }
+
 
     private function initializePayPalService(): void
     {
@@ -62,170 +230,55 @@ class PayPalSubscriptionOrderService extends BaseService
         if (empty($environment)) {
             throw new \Exception('PayPal environment is not set in site payment gateway');
         }
-        $this->payPalService->setEnvironment($environment);
-        $this->payPalService->setClientId($clientId);
-        $this->payPalService->setClientSecret($clientSecret);
-        $this->payPalService->setWebhookId($webhookId);
-        $this->payPalService->init();
+        $this->payPalSubscriptionService->setSandboxMode(
+            $environment === PaymentGatewayEnvironment::SANDBOX
+        );
+        $this->payPalSubscriptionService->setCredentials(
+            $clientId,
+            $clientSecret
+        );
+
+        $this->payPalProductService->setSandboxMode(
+            $environment === PaymentGatewayEnvironment::SANDBOX
+        );
+        $this->payPalProductService->setCredentials(
+            $clientId,
+            $clientSecret
+        );
+
+        $this->billingPlanService->setSandboxMode(
+            $environment === PaymentGatewayEnvironment::SANDBOX
+        );
+        $this->billingPlanService->setCredentials(
+            $clientId,
+            $clientSecret
+        );
     }
 
-    public function createProductOrderItem(OrderItem $item): Item
-    {
-        $product = $item->orderItemable;
-        if (!$product instanceof Product) {
-            throw new \Exception('Product not found for order item');
-        }
-        $productData = $this->payPalSubscriptionService->createProduct(
-            $product->title,
-            $product->description,
-            ProductType::SERVICE, // Or ProductType::DIGITAL, ProductType::PHYSICAL
-            'SOFTWARE',
-            'https://example.com/product_image.jpg',
-            'https://example.com/product_home.html'
-            );
-
-
-            $planData = $this->payPalSubscriptionService->createPlan(
-                $productId,
-                $request->input('name', 'Monthly Premium Plan'),
-                $request->input('description', 'Billed monthly for premium features'),
-                FrequencyType::MONTH, // Monthly billing
-                1, // Every 1 month
-                CurrencyCode::GBP, // Or CurrencyCode::USD etc.
-                $request->input('price', '19.99'),
-                true, // autoBillOutstanding
-                3, // maxFails
-                $request->input('setup_fee', '0.00') // Optional setup fee
-            );
-
-
-            $subscriberData = [
-                'name' => ['given_name' => $request->input('first_name', 'Jane'), 'surname' => $request->input('last_name', 'Doe')],
-                'email_address' => $request->input('email', 'jane.doe@example.com')
-            ];
-
-            // Example shipping address (optional)
-            $shippingAddressData = [
-                'address_line_1' => '123 Main St',
-                'admin_area_2' => 'London',
-                'admin_area_1' => 'Greater London',
-                'postal_code' => 'SW1A 0AA',
-                'country_code' => 'GB',
-                'full_name' => 'Jane Doe'
-            ];
-
-            $subscriptionData = $this->payPalSubscriptionService->createSubscription(
-                $planId,
-                $subscriberData,
-                now()->addMinutes(5)->toIso8601String(), // Start 5 minutes from now for immediate testing
-                'YOUR_CUSTOM_SUBSCRIPTION_ID_HERE', // Optional custom ID
-                $shippingAddressData // Pass shipping address data
-            );
-
-        $product = $item->orderItemable;
-        if (!$product instanceof Product) {
-            throw new \Exception('Product not found for order item');
-        }
-
-        $healthCheckData = $product->healthCheck();
-        if ($healthCheckData['unhealthy']['count'] > 0) {
-            throw new ProductHealthException(
-                $product,
-                $healthCheckData
-            );
-        }
-
-        $price = $item->getOrderItemPrice();
-        $itemAmount = new Money(
-            $price->currency->code,
-            $item->calculateTotalPrice()
-        );
-        $itemTax = new Money(
-            $price->currency->code,
-            $item->calculateTaxWithoutPrice($item->calculateTotalPrice()),
-        );
-        $paypalOrderItem = new Item(
-            $product->title,
-            $itemAmount,
-            $item->quantity
-        );
-        $paypalOrderItem->setDescription($product->description);
-        $paypalOrderItem->setTax($itemTax);
-        $paypalOrderItem->setQuantity($item->quantity);
-        $paypalOrderItem->setSku($product->sku);
-        // $paypalOrderItem->setCategory($product->productCategories->first()?->name ?? 'General');
-        return $paypalOrderItem;
-    }
-
-    public function createOrderItem(OrderItem $item): Item|null
-    {
-        switch ($item->order_itemable_type) {
-            case OrderItemable::PRODUCT:
-                return $this->createProductOrderItem($item);
-                break;
-        }
-        return null;
-    }
     public function createSubscription(Order $order, Transaction $transaction)
     {
         $this->orderTransactionService->setUser($this->user);
         $this->orderTransactionService->setSite($this->site);
 
+        $getOrder = $order->loadOrderItemsByPriceType(
+            $order->price_type,
+            $this->user
+        );
 
-        // $this->initializePayPalService();
+        $this->initializePayPalService();
         // $order->setPriceType($order->price_type);
         // $order->init();
 
-        foreach ($order->items as $item) {
+        foreach ($getOrder->items as $item) {
 
             $item->setPriceType($order->price_type);
             $item->init();
-            $orderItem = $this->createOrderItem($item);
+            $orderItem = $this->createOrderItemSubscription($item);
             if (!$orderItem) {
                 throw new \Exception('Error creating PayPal order item');
             }
-            $this->payPalService->addItem($orderItem);
         }
 
-        $finalTotal = $order->calculateFinalTotal();
-        $currencyCode = $order->currency?->code;
-        $this->payPalService->setCurrencyCode($currencyCode);
-        $this->payPalService->setValue($finalTotal);
-        $this->payPalService->setItemTotal($order->calculateTotalPrice());
-        $this->payPalService->setTaxTotal($order->calculateTotalTax());
-        $this->payPalService->setDiscount($order->calculateTotalDiscount());
-        $responseHandler = $this->payPalService->createOrder();
-
-
-        if (!$responseHandler->isSuccess()) {
-            $errorMessage = $responseHandler->getErrorMessage();
-            $errorDetails = $responseHandler->getErrorDetails();
-            $this->orderTransactionService->updateTransaction(
-                $order,
-                $transaction,
-                [
-                    'currency_code' => $currencyCode,
-                    'status' => TransactionStatus::FAILED,
-                    'amount' => $finalTotal,
-                    'order_data' => $responseHandler->getResult(),
-                ]
-            );
-            // Log the error or throw a more specific exception
-            throw new \Exception(
-                'Error creating PayPal order: ' . $errorMessage . ' Details: ' . json_encode($errorDetails)
-            );
-        }
-
-        $this->orderTransactionService->updateTransaction(
-            $order,
-            $transaction,
-            [
-                'currency_code' => $currencyCode,
-                'status' => TransactionStatus::PROCESSING,
-                'amount' => $finalTotal,
-                'order_data' => $responseHandler->getResult(),
-            ]
-        );
         // Order created successfully, return relevant information
         return $responseHandler->getResult();
     }

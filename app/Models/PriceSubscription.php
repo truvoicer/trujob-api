@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\Price\PriceType;
+use App\Enums\Subscription\SubscriptionSetupFeeFailureAction;
+use App\Enums\Subscription\SubscriptionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -10,17 +12,26 @@ class PriceSubscription extends Model
 {
     use HasFactory;
 
-   protected $fillable = [
-      'price_id',
-      'name',
-      'label',
-      'description',
-      'setup_fee_value',
-      'setup_fee_currency_id',
+    protected $fillable = [
+        'price_id',
+        'name',
+        'label',
+        'description',
+        'type',
+        'has_setup_fee',
+        'setup_fee_value',
+        'setup_fee_currency_id',
+        'auto_bill_outstanding',
+        'setup_fee_failure_action',
+        'payment_failure_threshold',
     ];
 
     protected $casts = [
+        'type' => SubscriptionType::class,
+        'has_setup_fee' => 'boolean',
         'setup_fee_value' => 'decimal:2',
+        'auto_bill_outstanding' => 'boolean',
+        'setup_fee_failure_action' => SubscriptionSetupFeeFailureAction::class,
     ];
 
     public function price()

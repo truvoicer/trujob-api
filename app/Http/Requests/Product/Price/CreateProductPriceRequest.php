@@ -4,7 +4,10 @@ namespace App\Http\Requests\Product\Price;
 
 use App\Enums\Price\PriceType;
 use App\Enums\Subscription\SubscriptionIntervalUnit;
+use App\Enums\Subscription\SubscriptionSetupFeeFailureAction;
 use App\Enums\Subscription\SubscriptionTenureType;
+use App\Enums\Subscription\SubscriptionType;
+use App\Rules\GreaterThanPreviousSequence;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +30,7 @@ class CreateProductPriceRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'created_by_user_id' => ['sometimes', 'integer', 'exists:users,id'],
             'price_type' => [
                 'required',
@@ -47,11 +50,50 @@ class CreateProductPriceRequest extends FormRequest
 
             "label" => ['required_if:price_type,' . PriceType::SUBSCRIPTION->value, 'string', 'max:255'],
             "description" => ['required_if:price_type,' . PriceType::SUBSCRIPTION->value, 'string', 'max:1000'],
-            "setup_fee" => ['required_if:price_type,' . PriceType::SUBSCRIPTION->value, 'array'],
-            "setup_fee.value" => ['required', 'numeric'],
-            "setup_fee.currency_id" => ['required', 'integer', 'exists:currencies,id'],
-            "items" => ['required_if:price_type,' . PriceType::SUBSCRIPTION->value, 'array'],
-            "items.*.frequency" => ['required', 'array'],
+            'type' => [
+                'required_if:price_type,' . PriceType::SUBSCRIPTION->value,
+                'string',
+                Rule::enum(SubscriptionType::class)
+            ],
+            'has_setup_fee' => [
+                'sometimes',
+                'boolean'
+            ],
+            "setup_fee" => [
+                'sometimes',
+                'array'
+            ],
+            "setup_fee_value" => [
+                'required',
+                'numeric'
+            ],
+            "setup_fee_currency_id" => [
+                'required',
+                'integer',
+                'exists:currencies,id'
+            ],
+            'auto_bill_outstanding' => [
+                'required_if:price_type,' . PriceType::SUBSCRIPTION->value,
+                'boolean'
+            ],
+            'setup_fee_failure_action' => [
+                'required_if:price_type,' . PriceType::SUBSCRIPTION->value,
+                'string',
+                Rule::enum(SubscriptionSetupFeeFailureAction::class)
+            ],
+            'payment_failure_threshold' => [
+                'required_if:price_type,' . PriceType::SUBSCRIPTION->value,
+                'integer',
+                'min:0'
+            ],
+            "items" => [
+                'required_if:price_type,' . PriceType::SUBSCRIPTION->value,
+                'array'
+            ],
+            "items.*.frequency" => [
+                'required',
+                'array'
+            ],
             "items.*.frequency.interval_unit" => [
                 'required',
                 'string',
@@ -63,11 +105,28 @@ class CreateProductPriceRequest extends FormRequest
                 'string',
                 Rule::enum(SubscriptionTenureType::class)
             ],
-            'items.*.sequence' => ['required', 'integer', 'min:1'],
+            'items.*.sequence' => [
+                'required',
+                'integer',
+                'min:1'
+            ],
             'items.*.total_cycles' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required', 'array'],
             'items.*.price.value' => ['required', 'numeric'],
             'items.*.price.currency_id' => ['required', 'integer', 'exists:currencies,id'],
         ];
+
+
+        // Apply the custom rule to each 'sequence' field in the array
+        if (request()->has('items') && is_array(request()->input('items'))) {
+            foreach (request()->input('items') as $index => $item) {
+                $rules["items.{$index}.sequence"][] = new GreaterThanPreviousSequence(
+                    request()->input('items'), // Pass the entire 'items' array
+                    $index,                    // Pass the current index
+                    'sequence'                 // Pass the field name
+                );
+            }
+        }
+        return $rules;
     }
 }

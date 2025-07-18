@@ -38,6 +38,12 @@ class ProductPriceController extends Controller
         $this->productPriceRepository->setPage(
             $request->get('page', 1)
         );
+        $this->productPriceRepository->setWith([
+            'subscription.items' => function ($query) {
+                $query->orderBy('sequence', 'asc');
+            },
+        ]);
+
 
         return PriceResource::collection(
             $this->productPriceRepository->findMany()

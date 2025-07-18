@@ -8,6 +8,7 @@ use App\Models\Price;
 use App\Models\PriceSubscription;
 use App\Services\BaseService;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Constraint\IsEmpty;
 
 class ProductPriceService extends BaseService
 {
@@ -69,12 +70,26 @@ class ProductPriceService extends BaseService
         if (isset($data['description'])) {
             $newData['description'] = $data['description'];
         }
-        if (isset($data['setup_fee']['value'])) {
-            $newData['setup_fee_value'] = $data['setup_fee']['value'];
+
+        if (array_key_exists('has_setup_fee', $data)) {
+            $newData['has_setup_fee'] = $data['has_setup_fee'];
         }
-        if (isset($data['setup_fee']['currency_id'])) {
-            $newData['setup_fee_currency_id'] = $data['setup_fee']['currency_id'];
+        if (array_key_exists('setup_fee_value', $data)) {
+            $newData['setup_fee_value'] = $data['setup_fee_value'];
         }
+        if (isset($data['setup_fee_currency_id'])) {
+            $newData['setup_fee_currency_id'] = $data['setup_fee_currency_id'];
+        }
+        if (isset($data['auto_bill_outstanding'])) {
+            $newData['auto_bill_outstanding'] = $data['auto_bill_outstanding'];
+        }
+        if (isset($data['setup_fee_failure_action'])) {
+            $newData['setup_fee_failure_action'] = $data['setup_fee_failure_action'];
+        }
+        if (isset($data['payment_failure_threshold'])) {
+            $newData['payment_failure_threshold'] = $data['payment_failure_threshold'];
+        }
+
         if (isset($data['name'])) {
             $newData['name'] = $data['name'];
         } else {
@@ -86,6 +101,9 @@ class ProductPriceService extends BaseService
     private function extractPriceSubscriptionItemFields(array $data): array
     {
         $newData = [];
+        if (isset($data['id'])) {
+            $newData['id'] = $data['id'];
+        }
         if (isset($data['price_subscription_id'])) {
             $newData['price_subscription_id'] = $data['price_subscription_id'];
         }
@@ -143,10 +161,18 @@ class ProductPriceService extends BaseService
         }
         $subscription = $priceSubscription->update($subscriptionData);
         if (isset($data['items']) && is_array($data['items'])) {
+            $priceSubscription->items()->whereNotIn(
+                'id',
+                array_column($data['items'], 'id')
+            )->delete();
             foreach ($data['items'] as $item) {
                 $item = $this->extractPriceSubscriptionItemFields($item);
+                $compare = [];
+                if (!empty($item['id'])) {
+                    $compare['id'] = $item['id'];
+                }
                 $priceSubscription->items()->updateOrCreate(
-                    $item,
+                    $compare,
                     $item
                 );
             }
@@ -166,19 +192,23 @@ class ProductPriceService extends BaseService
         $discountIds = $data['discount_ids'] ?? null;
         unset($data['discount_ids']);
 
-
-        $hasPriceForCountryCurrency = $product->prices()
-            ->where(
-                'price_type',
-                $data['price_type'] ?? $price->price_type->value
-            )
-            ->where('currency_id', $data['currency_id'] ?? $price->currency_id)
-            ->where('country_id', $data['country_id'] ?? $price->country_id)
-            ->exists();
-        if ($hasPriceForCountryCurrency) {
-            throw new \Exception('Product already has a price for this type, currency and country');
+        if (
+            (isset($data['price_type']) && $data['price_type'] !== $price->price_type->value) ||
+            (isset($data['currency_id']) && $data['currency_id'] !== $price->currency_id) ||
+            (isset($data['country_id']) && $data['country_id'] !== $price->country_id)
+        ) {
+            $hasPriceForCountryCurrency = $product->prices()
+                ->where(
+                    'price_type',
+                    $data['price_type'] ?? $price->price_type->value
+                )
+                ->where('currency_id', $data['currency_id'] ?? $price->currency_id)
+                ->where('country_id', $data['country_id'] ?? $price->country_id)
+                ->exists();
+            if ($hasPriceForCountryCurrency) {
+                throw new \Exception('Product already has a price for this type, currency and country');
+            }
         }
-
         if (empty($data['valid_from'])) {
             $data['valid_from'] = now();
         }
@@ -192,10 +222,13 @@ class ProductPriceService extends BaseService
         if (is_array($discountIds)) {
             $this->syncDiscounts($productPrice, $discountIds);
         }
-
-        $priceType = PriceType::tryFrom($data['price_type']);
-        if (!$priceType) {
-            throw new \Exception('Invalid price type');
+        if (isset($data['price_type'])) {
+            $priceType = PriceType::tryFrom($data['price_type']);
+            if (!$priceType) {
+                throw new \Exception('Invalid price type');
+            }
+        } else {
+            $priceType = $productPrice->price_type;
         }
         switch ($priceType) {
             case PriceType::ONE_TIME:

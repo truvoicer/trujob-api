@@ -41,12 +41,16 @@ class PriceResource extends JsonResource
             $this->mergeWhen($this->price_type === PriceType::SUBSCRIPTION, [
                 'label' => $this->subscription?->label,
                 'description' => $this->subscription?->description,
-                'setup_fee' => [
-                    'value' => $this->subscription?->setup_fee_value,
-                    'currency' => $this->subscription?->setupFeeCurrency ? CurrencyResource::make($this->subscription->setupFeeCurrency) : null,
-                ],
+                'type' => $this->subscription?->type,
+                'auto_bill_outstanding' => $this->subscription?->auto_bill_outstanding,
+                'setup_fee_failure_action' => $this->subscription?->setup_fee_failure_action,
+                'payment_failure_threshold' => $this->subscription?->payment_failure_threshold,
+                'has_setup_fee' => $this->subscription?->has_setup_fee,
+                'setup_fee_value' => $this->subscription?->setup_fee_value,
+                'setup_fee_currency' => $this->subscription?->setupFeeCurrency ? CurrencyResource::make($this->subscription->setupFeeCurrency) : null,
                 'items' => $this->subscription?->items ? $this->subscription->items->map(function ($item) {
                     return [
+                        'id' => $item->id,
                         'frequency' => [
                             'interval_unit' => $item->frequency_interval_unit,
                             'interval_count' => $item->frequency_interval_count,
