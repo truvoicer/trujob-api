@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal;
 
+use App\Enums\Price\PriceType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\PaymentGateway\PayPal\EditPayPalOrderRequest;
 use App\Http\Requests\Order\PaymentGateway\PayPal\StorePayPalOrderRequest;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Services\Payment\PayPal\PayPalOrderService;
-
+use App\Services\Payment\PayPal\PayPalSubscriptionOrderService;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,6 +18,7 @@ class PayPalOrderTransactionController extends Controller
 
     public function __construct(
         private PayPalOrderService $paypalOrderService,
+        private PayPalSubscriptionOrderService $paypalSubscriptionOrderService,
     ) {
         parent::__construct();
     }
@@ -30,14 +32,37 @@ class PayPalOrderTransactionController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function store(Order $order, Transaction $transaction, StorePayPalOrderRequest $request)
+    public function store(
+        Order $order,
+        Transaction $transaction,
+        StorePayPalOrderRequest $request
+        )
     {
         $this->paypalOrderService->setUser($request->user()->user);
         $this->paypalOrderService->setSite($request->user()->site);
-        $createOrder = $this->paypalOrderService->createOrder(
-            $order,
-            $transaction
-        );
+
+        $this->paypalSubscriptionOrderService->setUser($request->user()->user);
+        $this->paypalSubscriptionOrderService->setSite($request->user()->site);
+
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                $createOrder = $this->paypalOrderService->createOrder(
+                    $order,
+                    $transaction
+                );
+                break;
+            case PriceType::SUBSCRIPTION:
+                $createOrder = $this->paypalSubscriptionOrderService->createSubscription(
+                    $order,
+                    $transaction
+                );
+                break;
+            default:
+                return response()->json([
+                    'message' => 'Invalid price type',
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         if (!$createOrder) {
             return $this->sendJsonResponse(
                 true,

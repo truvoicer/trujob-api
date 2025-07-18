@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Order\Shipping\Method;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\Order\OrderShippingMethodResource;
 use App\Http\Resources\Shipping\ShippingMethodResource;
 use App\Models\Order;
@@ -11,7 +10,6 @@ use App\Models\ShippingMethod;
 use App\Repositories\OrderRepository;
 use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class OrderShippingMethodController extends Controller
 {

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\Order;
 
+use App\Enums\Price\PriceType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Http\Resources\Order\OrderResource;
-use App\Models\Product;
+use App\Http\Resources\Order\PriceType\OneTime\OneTimeOrderResource;
+use App\Http\Resources\Order\PriceType\Subscription\SubscriptionOrderResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Services\Order\OrderService;
@@ -53,11 +55,18 @@ class OrderController extends Controller
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
 
-        return new OrderResource(
-            $order->load([
-                'items',
-            ])
-        );
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                return new OneTimeOrderResource(
+                    $this->orderService->getOrderByPriceType($order)
+                );
+            case PriceType::SUBSCRIPTION:
+                    return new SubscriptionOrderResource(
+                    $this->orderService->getOrderByPriceType($order)
+                );
+            default:
+                throw new \Exception('Invalid price type');
+        }
     }
 
     public function store(Order $order, StoreOrderRequest $request)
@@ -70,11 +79,18 @@ class OrderController extends Controller
                 'message' => 'Error creating order order',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return OrderResource::make(
-            $order->load([
-                'items',
-            ])
-        );
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                return new OneTimeOrderResource(
+                    $this->orderService->getOrderByPriceType($order)
+                );
+            case PriceType::SUBSCRIPTION:
+                return new SubscriptionOrderResource(
+                    $this->orderService->getOrderByPriceType($order)
+                );
+            default:
+                throw new \Exception('Invalid price type');
+        }
     }
 
 

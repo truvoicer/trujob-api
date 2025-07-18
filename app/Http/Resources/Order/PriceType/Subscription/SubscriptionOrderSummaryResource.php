@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Resources\Order;
+namespace App\Http\Resources\Order\PriceType\Subscription;
 
 use App\Http\Resources\Discount\DiscountListResource;
-use App\Http\Resources\Locale\AddressResource;
 use App\Http\Resources\Tax\TaxRateResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin \App\Models\Order
  */
-class OrderResource extends JsonResource
+class SubscriptionOrderSummaryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,8 +24,7 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'status' => $this->status,
-            'price_type' => $this->price_type,
-            'items' => $this->whenLoaded('items', OrderItemResource::collection($this->items)),
+            'items' => $this->whenLoaded('items', SubscriptionOrderItemResource::collection($this->items)),
             'total_price' => $this->calculateTotalPrice(),
             'total_quantity' => $this->calculateTotalQuantity(),
             'total_tax' => $this->calculateTotalTax(),
@@ -34,6 +32,8 @@ class OrderResource extends JsonResource
             'final_total' => $this->calculateFinalTotal(),
             'total_items' => $this->calculateTotalItems(),
             'average_price_per_item' => $this->calculateAveragePricePerItem(),
+            'total_shipping_cost' => $this->calculateTotalShippingCost(),
+            'total_price_with_shipping' => $this->calculateTotalPriceWithShipping(),
             'total_price_after_discounts' => $this->calculateTotalPriceAfterDiscounts(),
             'total_price_after_tax' => $this->calculateTotalPriceAfterTax(),
             'total_price_after_tax_and_discounts' => $this->calculateTotalPriceAfterTaxAndDiscounts(),
@@ -43,8 +43,6 @@ class OrderResource extends JsonResource
             'default_tax_rates' => TaxRateResource::collection(
                  $this->getDefaultTaxRates()
             ),
-            'billing_address' => $this->whenLoaded('billingAddress', AddressResource::make($this->billingAddress)),
-            'shipping_address' => $this->whenLoaded('shippingAddress', AddressResource::make($this->shippingAddress)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

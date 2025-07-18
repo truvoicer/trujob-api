@@ -2,6 +2,7 @@
 
 namespace App\Services\Order;
 
+use App\Enums\Price\PriceType;
 use App\Models\Order;
 use App\Services\BaseService;
 use App\Services\Order\Item\OrderItemService;
@@ -10,7 +11,7 @@ class OrderService extends BaseService
 {
     public function __construct(
         private OrderItemService $orderItemService,
-    ){
+    ) {
         parent::__construct();
     }
 
@@ -66,5 +67,44 @@ class OrderService extends BaseService
     {
         $order->discounts()->sync($discountIds);
         return true;
+    }
+
+    public function getOneTimeOrder(Order $order)
+    {
+        return $order->load(['items']);
+    }
+    public function getSubscriptionOrder(Order $order)
+    {
+        return $order->load([
+            'items' => function ($query) {
+                $query->with([
+                    'orderItemable' => function ($query) {
+                        $query->with([
+                            'prices' => function ($query) {
+                                $query->where(
+                                    'price_type',
+                                    PriceType::SUBSCRIPTION->value
+                                )
+                                    ->where('is_active', true)
+                                    ->where('currency_id', $this->user?->userSetting?->currency?->id ?? null)
+                                    ->where('country_id', $this->user?->userSetting?->country?->id ?? null);
+                            },
+                        ]);
+                    },
+                ]);
+            },
+        ]);
+    }
+
+    public function getOrderByPriceType(Order $order)
+    {
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                return $this->getOneTimeOrder($order);
+            case PriceType::SUBSCRIPTION:
+                return $this->getSubscriptionOrder($order);
+            default:
+                throw new \Exception('Invalid price type');
+        }
     }
 }

@@ -65,8 +65,18 @@ trait CalculateOrderItemTrait
         if (!$this->orderItemPrice) {
             throw new \Exception('Order item price not found for user locale and price type');
         }
-        $this->defaultTaxRates = $this->filterValidTaxRates(DefaultTaxRate::all(), true);
-        $this->defaultDiscounts = $this->filterValidDiscounts(DefaultDiscount::all(), true);
+        $this->defaultTaxRates = $this->filterValidTaxRates(
+            DefaultTaxRate::all()->map(function (DefaultTaxRate $defaultTaxRate) {
+                return $defaultTaxRate->taxRate;
+            }),
+            true
+        );
+        $this->defaultDiscounts = $this->filterValidDiscounts(
+            DefaultDiscount::all()->map(function (DefaultDiscount $defaultDiscount) {
+                return $defaultDiscount->discount;
+            }),
+            true
+        );
 
         if ($this->orderItemPrice->taxRates->isNotEmpty()) {
             $this->taxRates = $this->filterValidTaxRates($this->orderItemPrice->taxRates, false);
@@ -87,19 +97,15 @@ trait CalculateOrderItemTrait
 
     public function filterValidTaxRates(Collection $collection, bool $isDefault): Collection
     {
-        return $collection->filter(function (DefaultTaxRate $defaultTaxRate) use ($isDefault) {
-            return $this->isTaxRateValid($defaultTaxRate->taxRate, $isDefault);
-        })->map(function (DefaultTaxRate $defaultTaxRate) {
-            return $defaultTaxRate->taxRate;
+        return $collection->filter(function (TaxRate $defaultTaxRate) use ($isDefault) {
+            return $this->isTaxRateValid($defaultTaxRate, $isDefault);
         });
     }
 
     public function filterValidDiscounts(Collection $collection, bool $isDefault): Collection
     {
-        return $collection->filter(function (DefaultDiscount $defaultDiscount) use ($isDefault) {
-            return $this->isDiscountValid($defaultDiscount->discount, $isDefault);
-        })->map(function (DefaultDiscount $defaultDiscount) {
-            return $defaultDiscount->discount;
+        return $collection->filter(function (Discount $defaultDiscount) use ($isDefault) {
+            return $this->isDiscountValid($defaultDiscount, $isDefault);
         });
     }
 

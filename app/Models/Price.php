@@ -61,6 +61,11 @@ class Price extends Model
             ->first();
     }
 
+    public function subscription()
+    {
+        return $this->hasOne(PriceSubscription::class);
+    }
+
     public function discountables()
     {
         return $this->morphMany(Discountable::class, 'discountable');

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Order;
+namespace App\Http\Resources\Order\PriceType\Subscription;
 
 use App\Http\Resources\Discount\DiscountListResource;
 use App\Http\Resources\Locale\AddressResource;
@@ -10,7 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @mixin \App\Models\Order
  */
-class OrderResource extends JsonResource
+class SubscriptionOrderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -26,7 +26,7 @@ class OrderResource extends JsonResource
             'id' => $this->id,
             'status' => $this->status,
             'price_type' => $this->price_type,
-            'items' => $this->whenLoaded('items', OrderItemResource::collection($this->items)),
+            'items' => $this->whenLoaded('items', SubscriptionOrderItemResource::collection($this->items)),
             'total_price' => $this->calculateTotalPrice(),
             'total_quantity' => $this->calculateTotalQuantity(),
             'total_tax' => $this->calculateTotalTax(),

@@ -2,17 +2,14 @@
 
 namespace App\Http\Controllers\Api\Order;
 
+use App\Enums\Price\PriceType;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Order\StoreOrderRequest;
-use App\Http\Requests\Order\UpdateOrderRequest;
-use App\Http\Resources\Order\OrderResource;
-use App\Http\Resources\Order\OrderSummaryResource;
-use App\Models\Product;
+use App\Http\Resources\Order\PriceType\OneTime\OneTimeOrderSummaryResource;
+use App\Http\Resources\Order\PriceType\Subscription\SubscriptionOrderSummaryResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Services\Order\OrderService;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class OrderSummaryController extends Controller
 {
@@ -27,12 +24,21 @@ class OrderSummaryController extends Controller
     {
         $this->orderService->setUser($request->user()->user);
         $this->orderService->setSite($request->user()->site);
-
-        return new OrderSummaryResource(
-            $order->load([
-                'items',
-            ])
-        );
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                return new OneTimeOrderSummaryResource(
+                    $order->load([
+                        'items',
+                    ])
+                );
+            case PriceType::SUBSCRIPTION:
+                return new SubscriptionOrderSummaryResource(
+                    $order->load([
+                        'items',
+                    ])
+                );
+            default:
+                throw new \Exception('Invalid price type');
+        }
     }
-
 }

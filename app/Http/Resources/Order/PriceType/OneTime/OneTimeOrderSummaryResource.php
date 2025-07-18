@@ -1,17 +1,15 @@
 <?php
 
-namespace App\Http\Resources\Order;
+namespace App\Http\Resources\Order\PriceType\OneTime;
 
-use App\Enums\Price\PriceType;
 use App\Http\Resources\Discount\DiscountListResource;
 use App\Http\Resources\Tax\TaxRateResource;
-use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin \App\Models\Order
  */
-class OrderSummaryResource extends JsonResource
+class OneTimeOrderSummaryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -26,7 +24,7 @@ class OrderSummaryResource extends JsonResource
         return [
             'id' => $this->id,
             'status' => $this->status,
-            'items' => $this->whenLoaded('items', OrderItemResource::collection($this->items)),
+            'items' => $this->whenLoaded('items', OneTimeOrderItemResource::collection($this->items)),
             'total_price' => $this->calculateTotalPrice(),
             'total_quantity' => $this->calculateTotalQuantity(),
             'total_tax' => $this->calculateTotalTax(),

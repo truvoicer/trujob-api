@@ -23,7 +23,7 @@ return new class extends Migration
                 'price_type',
                 array_map(fn(PriceType $type) => $type->value, PriceType::cases())
             );
-            $table->dateTime('valid_from')->nullable();
+            $table->dateTime('valid_from');
             $table->dateTime('valid_to')->nullable();
             $table->boolean('is_active')->default(false);
             $table->decimal('amount', 19, 4);

@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Resources\Order;
+namespace App\Http\Resources\Order\PriceType\OneTime;
 
-use App\Enums\Price\PriceType;
 use App\Http\Resources\Discount\DiscountListResource;
 use App\Http\Resources\Discount\DiscountResource;
-use App\Http\Resources\Product\ProductListResource;
-use App\Http\Resources\Product\ProductSingleResource;
 use App\Http\Resources\Tax\TaxRateResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @mixin \App\Models\OrderItem
  */
-class OrderItemResource extends JsonResource
+class OneTimeOrderItemResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -30,7 +27,7 @@ class OrderItemResource extends JsonResource
             'id' => $this->id,
             'order_itemable_id' => $this->order_itemable_id,
             'order_itemable_type' => $this->order_itemable_type,
-            'entity' => ProductSingleResource::make($this->orderItemable),
+            'entity' => ProductListResource::make($this->orderItemable),
             'default_discounts' => DiscountListResource::collection(
                 $this->getDefaultDiscounts()
             ),

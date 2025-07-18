@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\Order\Item;
 
+use App\Enums\Price\PriceType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Order\Item\StoreOrderItemRequest;
 use App\Http\Requests\Order\Item\UpdateOrderItemRequest;
-use App\Http\Resources\Order\OrderItemResource;
+use App\Http\Resources\Order\PriceType\OneTime\OneTimeOrderItemResource;
+use App\Http\Resources\Order\PriceType\Subscription\SubscriptionOrderItemResource;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Repositories\OrderItemRepository;
@@ -46,9 +48,18 @@ class OrderItemController extends Controller
             $request->get('page', 1)
         );
 
-        return OrderItemResource::collection(
-            $this->orderItemRepository->findMany()
-        );
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                return OneTimeOrderItemResource::collection(
+                    $this->orderItemRepository->findMany()
+                );
+            case PriceType::SUBSCRIPTION:
+                return SubscriptionOrderItemResource::collection(
+                    $this->orderItemRepository->findMany()
+                );
+            default:
+                throw new \Exception('Invalid price type');
+        }
     }
 
     public function show(Order $order, OrderItem $orderItem, Request $request)
@@ -63,9 +74,18 @@ class OrderItemController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
-        return new OrderItemResource(
-            $orderItem
-        );
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                return new OneTimeOrderItemResource(
+                    $orderItem
+                );
+            case PriceType::SUBSCRIPTION:
+                return new SubscriptionOrderItemResource(
+                    $orderItem
+                );
+            default:
+                throw new \Exception('Invalid price type');
+        }
     }
 
     public function store(Order $order, StoreOrderItemRequest $request)
@@ -78,9 +98,19 @@ class OrderItemController extends Controller
                 'message' => 'Error creating order Item',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return OrderItemResource::make(
-            $orderItem
-        );
+
+        switch ($order->price_type) {
+            case PriceType::ONE_TIME:
+                return new OneTimeOrderItemResource(
+                    $orderItem
+                );
+            case PriceType::SUBSCRIPTION:
+                return new SubscriptionOrderItemResource(
+                    $orderItem
+                );
+            default:
+                throw new \Exception('Invalid price type');
+        }
     }
 
 

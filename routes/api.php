@@ -133,6 +133,8 @@ use App\Http\Controllers\Api\Shipping\ShippingRateTypeController;
 use App\Http\Controllers\Api\Shipping\ShippingUnitController;
 use App\Http\Controllers\Api\Shipping\ShippingWeightUnitController;
 use App\Http\Controllers\Api\Shipping\Zone\ShippingZoneableTypeController;
+use App\Http\Controllers\Api\Subscription\SubscriptionIntervalUnitController;
+use App\Http\Controllers\Api\Subscription\SubscriptionTenureTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateAmountTypeController;
 use App\Http\Controllers\Api\Tax\TaxRateController;
 use App\Http\Controllers\Api\Tax\TaxRateScopeController;
@@ -176,7 +178,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::get('/', [SessionApiTokenController::class, 'index'])->name('index');
                 Route::get('/show', [SessionApiTokenController::class, 'show'])->name('show');
                 Route::get('/store', [SessionApiTokenController::class, 'store'])->name('store');
-                Route::delete('/delete', [SessionApiTokenController::class, 'destroy'])->name('delete');
+                Route::delete('/destroy', [SessionApiTokenController::class, 'destroy'])->name('destroy');
             });
         });
     });
@@ -229,6 +231,15 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
     include __DIR__ . '/api/order/order.php';
 
+    Route::prefix('subscription')->name('subscription.')->group(function () {
+        Route::prefix('tenure-type')->name('tenure-type.')->group(function () {
+            Route::get('/', [SubscriptionTenureTypeController::class, 'index'])->name('index');
+        });
+
+        Route::prefix('interval-unit')->name('interval-unit.')->group(function () {
+            Route::get('/', [SubscriptionIntervalUnitController::class, 'index'])->name('index');
+        });
+    });
     Route::prefix('price')->name('price.')->group(function () {
         Route::prefix('{price}')->group(function () {
             Route::prefix('tax-rate')->name('tax-rate.')->group(function () {
@@ -266,7 +277,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::delete('/destroy', [BulkProductCategoryController::class, 'destroy'])->name('destroy');
         });
         Route::post('/{productCategory}/store', [ProductCategoryController::class, 'store'])->name('store');
-        Route::delete('/{productCategory}/delete', [ProductCategoryController::class, 'destroy'])->name('delete');
+        Route::delete('/{productCategory}/destroy', [ProductCategoryController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('product')->name('product.')->group(function () {
         Route::post('/store', [ProductController::class, 'store'])->name('store');
@@ -277,7 +288,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{product}')->group(function () {
             Route::get('/', [ProductController::class, 'show'])->name('show');
             Route::patch('/update', [ProductController::class, 'update'])->name('update');
-            Route::delete('/delete', [ProductController::class, 'destroy'])->name('delete');
+            Route::delete('/destroy', [ProductController::class, 'destroy'])->name('destroy');
             Route::prefix('price-type')->name('price-type.')->group(function () {
                 Route::get('/', [ProductPriceTypeController::class, 'index'])->name('index');
             });
@@ -304,7 +315,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/destroy', [BulkProductProductCategoryController::class, 'destroy'])->name('destroy');
                 });
                 Route::post('/{productCategory}/store', [ProductProductCategoryController::class, 'store'])->name('store');
-                Route::delete('/{productCategory}/delete', [ProductProductCategoryController::class, 'destroy'])->name('delete');
+                Route::delete('/{productCategory}/destroy', [ProductProductCategoryController::class, 'destroy'])->name('destroy');
             });
             Route::prefix('price')->name('price.')->group(function () {
                 Route::get('/', [ProductPriceController::class, 'index'])->name('index');
@@ -316,7 +327,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::prefix('{price}')->group(function () {
                     Route::get('/', [ProductPriceController::class, 'show'])->name('show');
                     Route::patch('/update', [ProductPriceController::class, 'update'])->name('update');
-                    Route::delete('/delete', [ProductPriceController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [ProductPriceController::class, 'destroy'])->name('destroy');
                 });
             });
             Route::prefix('feature')->name('feature.')->group(function () {
@@ -327,7 +338,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 });
                 Route::prefix('{feature}')->group(function () {
                     Route::post('/store', [ProductFeatureController::class, 'store'])->name('store');
-                    Route::delete('/delete', [ProductFeatureController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [ProductFeatureController::class, 'destroy'])->name('destroy');
                 });
             });
             Route::prefix('follow')->name('follow.')->group(function () {
@@ -337,7 +348,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::post('/store', [BulkProductFollowController::class, 'store'])->name('store');
                     Route::delete('/destroy', [BulkProductFollowController::class, 'destroy'])->name('destroy');
                 });
-                Route::delete('/{productFollow}/delete', [ProductFollowController::class, 'destroy'])->name('delete');
+                Route::delete('/{productFollow}/destroy', [ProductFollowController::class, 'destroy'])->name('destroy');
             });
             Route::prefix('review')->name('review.')->group(function () {
                 Route::get('/', [ProductReviewController::class, 'index'])->name('index');
@@ -346,7 +357,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/destroy', [BulkProductReviewController::class, 'destroy'])->name('destroy');
                 });
                 Route::post('/{productReview}/store', [ProductReviewController::class, 'store'])->name('store');
-                Route::delete('/{productReview}/delete', [ProductReviewController::class, 'destroy'])->name('delete');
+                Route::delete('/{productReview}/destroy', [ProductReviewController::class, 'destroy'])->name('destroy');
             });
             Route::prefix('category')->name('category.')->group(function () {
                 Route::get('/', [CategoryProductController::class, 'index'])->name('index');
@@ -355,7 +366,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/destroy', [BulkCategoryProductController::class, 'destroy'])->name('destroy');
                 });
                 Route::post('/{category}/store', [CategoryProductController::class, 'store'])->name('store');
-                Route::delete('/{category}/delete', [CategoryProductController::class, 'destroy'])->name('delete');
+                Route::delete('/{category}/destroy', [CategoryProductController::class, 'destroy'])->name('destroy');
             });
             Route::prefix('brand')->name('brand.')->group(function () {
                 Route::get('/', [ProductBrandController::class, 'index'])->name('index');
@@ -364,7 +375,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/destroy', [BulkProductBrandController::class, 'destroy'])->name('destroy');
                 });
                 Route::post('/{brand}/store', [ProductBrandController::class, 'store'])->name('store');
-                Route::delete('/{brand}/delete', [ProductBrandController::class, 'destroy'])->name('delete');
+                Route::delete('/{brand}/destroy', [ProductBrandController::class, 'destroy'])->name('destroy');
             });
             Route::prefix('color')->name('color.')->group(function () {
                 Route::get('/', [ProductColorController::class, 'index'])->name('index');
@@ -373,17 +384,17 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::delete('/destroy', [BulkProductColorController::class, 'destroy'])->name('destroy');
                 });
                 Route::post('/{color}/store', [ProductColorController::class, 'store'])->name('store');
-                Route::delete('/{color}/delete', [ProductColorController::class, 'destroy'])->name('delete');
+                Route::delete('/{color}/destroy', [ProductColorController::class, 'destroy'])->name('destroy');
             });
             Route::prefix('messaging-group')->name('message_group.')->group(function () {
                 Route::post('/store', [MessagingGroupController::class, 'storeMessageGroup'])->name('store');
                 Route::prefix('{messagingGroup}')->name('message_group.')->group(function () {
-                    Route::delete('/delete', [MessagingGroupController::class, 'deleteMessageGroup'])->name('delete');
+                    Route::delete('/destroy', [MessagingGroupController::class, 'deleteMessageGroup'])->name('destroy');
                     Route::prefix('message')->name('message.')->group(function () {
                         Route::post('/store', [MessagingGroupMessageController::class, 'storeMessage'])->name('store');
                         Route::prefix('/{messagingGroupMessage}')->group(function () {
                             Route::patch('/update', [MessagingGroupMessageController::class, 'updateMessage'])->name('update');
-                            Route::delete('/delete', [MessagingGroupMessageController::class, 'deleteMessage'])->name('delete');
+                            Route::delete('/destroy', [MessagingGroupMessageController::class, 'deleteMessage'])->name('destroy');
                         });
                     });
                 });
@@ -410,8 +421,8 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/{notification}', [NotificationController::class, 'edit'])->name('detail');
         Route::post('/{notification}/mark-read', [NotificationController::class, 'markAsRead'])->name('mark-read');
         Route::post('/{notification}/mark-unread', [NotificationController::class, 'markAsUnread'])->name('mark-unread');
-        Route::delete('/{notification}/delete', [NotificationController::class, 'destroy'])->name('delete');
-        Route::delete('/delete-all', [NotificationController::class, 'deleteAll'])->name('delete-all');
+        Route::delete('/{notification}/destroy', [NotificationController::class, 'destroy'])->name('destroy');
+        Route::delete('/destroy-all', [NotificationController::class, 'deleteAll'])->name('delete-all');
     });
 
 
@@ -577,7 +588,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::post('/store', [AddressController::class, 'store'])->name('store');
             Route::get('/{address}', [AddressController::class, 'show'])->name('show');
             Route::patch('/{address}/update', [AddressController::class, 'update'])->name('update');
-            Route::delete('/{address}/delete', [AddressController::class, 'destroy'])->name('delete');
+            Route::delete('/{address}/destroy', [AddressController::class, 'destroy'])->name('destroy');
         });
 
         Route::prefix('region')->name('region.')->group(function () {
@@ -585,7 +596,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::post('/store', [RegionController::class, 'store'])->name('store');
             Route::get('/{region}', [RegionController::class, 'show'])->name('show');
             Route::patch('/{region}/update', [RegionController::class, 'update'])->name('update');
-            Route::delete('/{region}/delete', [RegionController::class, 'destroy'])->name('delete');
+            Route::delete('/{region}/destroy', [RegionController::class, 'destroy'])->name('destroy');
         });
     });
 
@@ -604,7 +615,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{taxRate}')->group(function () {
             Route::get('/', [TaxRateController::class, 'show'])->name('show');
             Route::patch('/update', [TaxRateController::class, 'update'])->name('update');
-            Route::delete('/delete', [TaxRateController::class, 'destroy'])->name('delete');
+            Route::delete('/destroy', [TaxRateController::class, 'destroy'])->name('destroy');
             Route::post('/set-default', [TaxRateSetAsDefaultController::class, 'store'])->name('set-default');
             Route::delete('/unset-default', [TaxRateSetAsDefaultController::class, 'destroy'])->name('unset-default');
         });
@@ -618,7 +629,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/{file}', [FileSystemController::class, 'getSingleFile'])->name('detail');
             Route::prefix('{file}')->name('single.')->group(function () {
                 Route::get('/download', [FileSystemController::class, 'downloadFile'])->name('download');
-                Route::delete('/delete', [FileSystemController::class, 'deleteFile'])->name('delete');
+                Route::delete('/destroy', [FileSystemController::class, 'deleteFile'])->name('destroy');
             });
         });
     });
@@ -636,7 +647,7 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
         Route::patch('/{permission}/update', [PermissionController::class, 'updatePermission'])->name('update');
         Route::get('/list', [PermissionController::class, 'getPermissions'])->name('list');
         Route::post('/store', [PermissionController::class, 'storePermission'])->name('store');
-        Route::delete('/delete', [PermissionController::class, 'deletePermission'])->name('delete');
+        Route::delete('/destroy', [PermissionController::class, 'deletePermission'])->name('destroy');
     });
 });
 
@@ -646,14 +657,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/store', [PaymentMethodController::class, 'store'])->name('store');
         Route::get('/{paymentMethod}', [PaymentMethodController::class, 'show'])->name('show');
         Route::patch('/{paymentMethod}/update', [PaymentMethodController::class, 'update'])->name('update');
-        Route::delete('/{paymentMethod}/delete', [PaymentMethodController::class, 'destroy'])->name('delete');
+        Route::delete('/{paymentMethod}/destroy', [PaymentMethodController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
         Route::get('/', [PaymentGatewayController::class, 'index'])->name('index');
         Route::post('/store', [PaymentGatewayController::class, 'store'])->name('store');
         Route::get('/{paymentGateway}', [PaymentGatewayController::class, 'show'])->name('show');
         Route::patch('/{paymentGateway}/update', [PaymentGatewayController::class, 'update'])->name('update');
-        Route::delete('/{paymentGateway}/delete', [PaymentGatewayController::class, 'destroy'])->name('delete');
+        Route::delete('/{paymentGateway}/destroy', [PaymentGatewayController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('price')->name('price.')->group(function () {
         Route::post('/store', [PriceController::class, 'store'])->name('store');
@@ -663,28 +674,28 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
         Route::get('/{price}', [PriceController::class, 'show'])->name('show');
         Route::patch('/{price}/update', [PriceController::class, 'update'])->name('update');
-        Route::delete('/{price}/delete', [PriceController::class, 'destroy'])->name('delete');
+        Route::delete('/{price}/destroy', [PriceController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('category')->name('category.')->group(function () {
         Route::post('/store', [CategoryController::class, 'store'])->name('store');
         Route::patch('/{category}/update', [CategoryController::class, 'update'])->name('update');
-        Route::delete('/{category}/delete', [CategoryController::class, 'destroy'])->name('delete');
+        Route::delete('/{category}/destroy', [CategoryController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('brand')->name('brand.')->group(function () {
         Route::post('/store', [BrandController::class, 'store'])->name('store');
         Route::patch('/{brand}/update', [BrandController::class, 'update'])->name('update');
-        Route::delete('/{brand}/delete', [BrandController::class, 'destroy'])->name('delete');
+        Route::delete('/{brand}/destroy', [BrandController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('color')->name('color.')->group(function () {
         Route::post('/store', [ColorController::class, 'store'])->name('store');
         Route::patch('/{color}/update', [ColorController::class, 'update'])->name('update');
-        Route::delete('/{color}/delete', [ColorController::class, 'destroy'])->name('delete');
+        Route::delete('/{color}/destroy', [ColorController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('feature')->name('feature.')->group(function () {
         Route::post('/store', [FeatureController::class, 'store'])->name('store');
         Route::patch('/{feature}/update', [FeatureController::class, 'update'])->name('update');
-        Route::delete('/{feature}/delete', [FeatureController::class, 'destroy'])->name('delete');
+        Route::delete('/{feature}/destroy', [FeatureController::class, 'destroy'])->name('destroy');
     });
     Route::prefix('product')->name('product.')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('index');
@@ -699,19 +710,19 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{user}')->group(function () {
             Route::get('/', [UserController::class, 'show'])->name('detail');
             Route::patch('/update', [UserController::class, 'update'])->name('update');
-            Route::delete('/delete', [UserController::class, 'destroy'])->name('delete');
+            Route::delete('/destroy', [UserController::class, 'destroy'])->name('destroy');
             Route::prefix('api-token')->name('api-token.')->group(function () {
                 Route::get('/', [ApiTokenController::class, 'index'])->name('index');
                 Route::post('/store', [ApiTokenController::class, 'store'])->name('store');
                 Route::prefix('{personalAccessToken}')->group(function () {
                     Route::get('/', [ApiTokenController::class, 'show'])->name('show');
                     Route::patch('/update', [ApiTokenController::class, 'update'])->name('update');
-                    Route::delete('/delete', [ApiTokenController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [ApiTokenController::class, 'destroy'])->name('destroy');
                 });
             });
             Route::prefix('seller')->name('seller.')->group(function () {
                 Route::post('/add', [UserSellerController::class, 'addUserSeller'])->name('store');
-                Route::delete('/remove', [UserSellerController::class, 'removeUserSeller'])->name('delete');
+                Route::delete('/remove', [UserSellerController::class, 'removeUserSeller'])->name('destroy');
             });
             Route::prefix('role')->name('role.')->group(function () {
                 Route::patch('/{role}/update', [RoleController::class, 'update'])->name('update');
@@ -723,7 +734,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::get('/', [RoleController::class, 'index'])->name('detail');
         Route::post('/store', [RoleController::class, 'store'])->name('store');
         Route::patch('/{role}/update', [RoleController::class, 'update'])->name('update');
-        Route::delete('/{role}/delete', [RoleController::class, 'delete'])->name('delete');
+        Route::delete('/{role}/destroy', [RoleController::class, 'delete'])->name('destroy');
     });
 
     Route::prefix('firebase')->name('firebase.')->group(function () {
@@ -735,7 +746,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::post('/store', [FirebaseDeviceController::class, 'storeFirebaseDevice'])->name('store');
             Route::prefix('{firebaseDevice}')->group(function () {
                 Route::patch('/update', [FirebaseDeviceController::class, 'updateFirebaseDevice'])->name('update');
-                Route::delete('/delete', [FirebaseDeviceController::class, 'deleteFirebaseDevice'])->name('delete');
+                Route::delete('/destroy', [FirebaseDeviceController::class, 'deleteFirebaseDevice'])->name('destroy');
             });
         });
         Route::prefix('topic')->name('topic.')->group(function () {
@@ -744,7 +755,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             });
             Route::prefix('{firebaseTopic}')->group(function () {
                 Route::patch('/update', [FirebaseTopicController::class, 'updateFirebaseTopic'])->name('update');
-                Route::delete('/delete', [FirebaseTopicController::class, 'deleteFirebaseTopic'])->name('delete');
+                Route::delete('/destroy', [FirebaseTopicController::class, 'deleteFirebaseTopic'])->name('destroy');
             });
         });
     });
@@ -755,14 +766,14 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::post('/store/batch', [BulkCountryController::class, 'store'])->name('store_batch');
             Route::get('/{country}', [CountryController::class, 'show'])->name('show');
             Route::patch('/{country}/update', [CountryController::class, 'update'])->name('update');
-            Route::delete('/{country}/delete', [CountryController::class, 'destroy'])->name('delete');
+            Route::delete('/{country}/destroy', [CountryController::class, 'destroy'])->name('destroy');
         });
         Route::prefix('currency')->name('currency.')->group(function () {
             Route::post('/store', [CurrencyController::class, 'store'])->name('store');
             Route::post('/store/batch', [BulkCurrencyController::class, 'store'])->name('store_batch');
             Route::get('/{currency}', [CurrencyController::class, 'show'])->name('show');
             Route::patch('/{currency}/update', [CurrencyController::class, 'update'])->name('update');
-            Route::delete('/{currency}/delete', [CurrencyController::class, 'destroy'])->name('delete');
+            Route::delete('/{currency}/destroy', [CurrencyController::class, 'destroy'])->name('destroy');
         });
     });
     Route::prefix('block')->name('block.')->group(function () {
@@ -773,7 +784,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             Route::get('/sidebar', [BlockSidebarController::class, 'index'])->name('sidebar');
 
             // Route::patch('/update', [PageBlockController::class, 'update'])->name('update');
-            // Route::delete('/delete', [PageBlockController::class, 'destroy'])->name('delete');
+            // Route::delete('/destroy', [PageBlockController::class, 'destroy'])->name('destroy');
         });
     });
 
@@ -791,19 +802,19 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{page}')->group(function () {
             Route::get('/', [PageController::class, 'show'])->name('show');
             Route::patch('/update', [PageController::class, 'update'])->name('update');
-            Route::delete('/delete', [PageController::class, 'delete'])->name('delete');
+            Route::delete('/destroy', [PageController::class, 'delete'])->name('destroy');
             Route::prefix('role')->name('role.')->group(function () {
                 Route::get('/', [PageRoleController::class, 'index'])->name('index');
                 Route::prefix('{role}')->group(function () {
                     Route::post('/store', [PageRoleController::class, 'store'])->name('store');
-                    Route::delete('/delete', [PageRoleController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [PageRoleController::class, 'destroy'])->name('destroy');
                 });
             });
             Route::prefix('sidebar')->name('sidebar.')->group(function () {
                 Route::get('/', [PageSidebarController::class, 'index'])->name('index');
                 Route::prefix('{sidebar}')->group(function () {
                     Route::post('/store', [PageSidebarController::class, 'store'])->name('store');
-                    Route::delete('/delete', [PageSidebarController::class, 'destroy'])->name('destroy');
+                    Route::delete('/destroy', [PageSidebarController::class, 'destroy'])->name('destroy');
                 });
                 Route::prefix('reorder')->name('reorder.')->group(function () {
                     Route::post('/', PageSidebarReorderController::class)->name('reorder');
@@ -811,13 +822,13 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
             });
             Route::prefix('block')->name('block.')->group(function () {
                 Route::get('/', [PageBlockController::class, 'index'])->name('index');
-                Route::post('/batch/delete', BatchDeletePageBlockController::class)->name('batch.delete');
+                Route::post('/batch/destroy', BatchDeletePageBlockController::class)->name('batch.delete');
 
                 Route::prefix('rel')->name('rel.')->group(function () {
                     Route::prefix('{pageBlock}')->group(function () {
                         Route::get('/', [PageBlockController::class, 'show'])->name('show');
                         Route::patch('/update', [PageBlockController::class, 'update'])->name('update');
-                        Route::delete('/delete', [PageBlockController::class, 'destroy'])->name('delete');
+                        Route::delete('/destroy', [PageBlockController::class, 'destroy'])->name('destroy');
                         Route::prefix('reorder')->name('reorder.')->group(function () {
                             Route::post('/', PageBlockReorderController::class)->name('reorder');
                         });
@@ -825,7 +836,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                             Route::get('/', [PageBlockRoleController::class, 'index'])->name('index');
                             Route::prefix('{role}')->group(function () {
                                 Route::post('/store', [PageBlockRoleController::class, 'store'])->name('store');
-                                Route::delete('/delete', [PageBlockRoleController::class, 'destroy'])->name('delete');
+                                Route::delete('/destroy', [PageBlockRoleController::class, 'destroy'])->name('destroy');
                             });
                         });
                         Route::prefix('sidebar')->name('sidebar.')->group(function () {
@@ -836,7 +847,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
 
                             Route::prefix('rel')->name('rel.')->group(function () {
                                 Route::prefix('{pageBlockSidebar}')->group(function () {
-                                    Route::delete('/delete', [PageBlockSidebarController::class, 'destroy'])->name('delete');
+                                    Route::delete('/destroy', [PageBlockSidebarController::class, 'destroy'])->name('destroy');
                                     Route::prefix('reorder')->name('reorder.')->group(function () {
                                         Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
                                     });
@@ -857,12 +868,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/store', [SiteController::class, 'store'])->name('store');
         Route::prefix('{site}')->group(function () {
             Route::patch('/update', [SiteController::class, 'update'])->name('update');
-            Route::delete('/delete', [SiteController::class, 'destroy'])->name('destroy');
+            Route::delete('/destroy', [SiteController::class, 'destroy'])->name('destroy');
 
             Route::prefix('token')->name('token.')->group(function () {
                 Route::post('/store', [SiteTokenController::class, 'store'])->name('store');
                 Route::prefix('{personalAccessToken}')->group(function () {
-                    Route::delete('/delete', [SiteTokenController::class, 'destroy'])->name('destroy');
+                    Route::delete('/destroy', [SiteTokenController::class, 'destroy'])->name('destroy');
                 });
             });
 
@@ -875,12 +886,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::post('/store', [AppMenuController::class, 'store'])->name('store');
         Route::prefix('{appMenu}')->group(function () {
             Route::patch('/update', [AppMenuController::class, 'update'])->name('update');
-            Route::delete('/delete', [AppMenuController::class, 'destroy'])->name('delete');
+            Route::delete('/destroy', [AppMenuController::class, 'destroy'])->name('destroy');
             Route::prefix('item')->name('item.')->group(function () {
                 Route::post('/store', [AppMenuItemController::class, 'store'])->name('store');
                 Route::prefix('{appMenuItem}')->group(function () {
                     Route::patch('/update', [AppMenuItemController::class, 'update'])->name('update');
-                    Route::delete('/delete', [AppMenuItemController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [AppMenuItemController::class, 'destroy'])->name('destroy');
                 });
             });
         });
@@ -904,12 +915,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         });
         Route::prefix('{menu}')->group(function () {
             Route::patch('/update', [MenuController::class, 'update'])->name('update');
-            Route::delete('/delete', [MenuController::class, 'destroy'])->name('delete');
+            Route::delete('/destroy', [MenuController::class, 'destroy'])->name('destroy');
             Route::prefix('role')->name('role.')->group(function () {
                 Route::get('/', [MenuRoleController::class, 'index'])->name('index');
                 Route::prefix('{role}')->group(function () {
                     Route::post('/store', [MenuRoleController::class, 'store'])->name('store');
-                    Route::delete('/delete', [MenuRoleController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [MenuRoleController::class, 'destroy'])->name('destroy');
                 });
             });
             Route::prefix('item')->name('item.')->group(function () {
@@ -918,7 +929,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                 Route::prefix('{menuItem}')->group(function () {
                     Route::get('/', [MenuItemController::class, 'show'])->name('show');
                     Route::patch('/update', [MenuItemController::class, 'update'])->name('update');
-                    Route::delete('/delete', [MenuItemController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [MenuItemController::class, 'destroy'])->name('destroy');
                     Route::prefix('reorder')->name('reorder.')->group(function () {
                         Route::post('/', MenuItemReorderController::class)->name('update');
                     });
@@ -926,7 +937,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                         Route::get('/', [MenuItemRoleController::class, 'index'])->name('index');
                         Route::prefix('{role}')->group(function () {
                             Route::post('/store', [MenuItemRoleController::class, 'store'])->name('store');
-                            Route::delete('/delete', [MenuItemRoleController::class, 'destroy'])->name('delete');
+                            Route::delete('/destroy', [MenuItemRoleController::class, 'destroy'])->name('destroy');
                         });
                     });
                     Route::prefix('menu')->name('menu.')->group(function () {
@@ -936,7 +947,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                         });
                         Route::prefix('rel')->name('rel')->group(function () {
                             Route::prefix('{menuItemMenu}')->group(function () {
-                                Route::delete('/delete', [MenuItemMenuController::class, 'destroy'])->name('delete');
+                                Route::delete('/destroy', [MenuItemMenuController::class, 'destroy'])->name('destroy');
                                 Route::prefix('reorder')->name('reorder.')->group(function () {
                                     Route::post('/', MenuItemMenuReorderController::class)->name('update');
                                 });
@@ -956,12 +967,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{sidebar}')->group(function () {
             Route::get('/', [SidebarController::class, 'show'])->name('show');
             Route::patch('/update', [SidebarController::class, 'update'])->name('update');
-            Route::delete('/delete', [SidebarController::class, 'destroy'])->name('delete');
+            Route::delete('/destroy', [SidebarController::class, 'destroy'])->name('destroy');
             Route::prefix('role')->name('role.')->group(function () {
                 Route::get('/', [SidebarRoleController::class, 'index'])->name('index');
                 Route::prefix('{role}')->group(function () {
                     Route::post('/store', [SidebarRoleController::class, 'store'])->name('store');
-                    Route::delete('/delete', [SidebarRoleController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [SidebarRoleController::class, 'destroy'])->name('destroy');
                 });
             });
             Route::prefix('widget')->name('widget.')->group(function () {
@@ -970,7 +981,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                     Route::prefix('{sidebarWidget}')->group(function () {
                         Route::get('/', [SidebarWidgetController::class, 'show'])->name('show');
                         Route::patch('/update', [SidebarWidgetController::class, 'update'])->name('update');
-                        Route::delete('/delete', [SidebarWidgetController::class, 'destroy'])->name('delete');
+                        Route::delete('/destroy', [SidebarWidgetController::class, 'destroy'])->name('destroy');
                         Route::prefix('reorder')->name('reorder.')->group(function () {
                             Route::post('/', SidebarWidgetReorderController::class)->name('reorder');
                         });
@@ -978,7 +989,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
                             Route::get('/', [SidebarWidgetRoleController::class, 'index'])->name('index');
                             Route::prefix('{role}')->group(function () {
                                 Route::post('/store', [SidebarWidgetRoleController::class, 'store'])->name('store');
-                                Route::delete('/delete', [SidebarWidgetRoleController::class, 'destroy'])->name('delete');
+                                Route::delete('/destroy', [SidebarWidgetRoleController::class, 'destroy'])->name('destroy');
                             });
                         });
                     });
@@ -998,12 +1009,12 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
         Route::prefix('{widget}')->group(function () {
             Route::get('/', [WidgetController::class, 'show'])->name('show');
             Route::patch('/update', [WidgetController::class, 'update'])->name('update');
-            Route::delete('/delete', [WidgetController::class, 'destroy'])->name('delete');
+            Route::delete('/destroy', [WidgetController::class, 'destroy'])->name('destroy');
             Route::prefix('role')->name('role.')->group(function () {
                 Route::get('/', [WidgetRoleController::class, 'index'])->name('index');
                 Route::prefix('{role}')->group(function () {
                     Route::post('/store', [WidgetRoleController::class, 'store'])->name('store');
-                    Route::delete('/delete', [WidgetRoleController::class, 'destroy'])->name('delete');
+                    Route::delete('/destroy', [WidgetRoleController::class, 'destroy'])->name('destroy');
                 });
             });
         });
