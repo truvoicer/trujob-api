@@ -4,6 +4,7 @@ namespace App\Http\Resources\Order\PriceType\OneTime;
 
 use App\Http\Resources\Discount\DiscountListResource;
 use App\Http\Resources\Discount\DiscountResource;
+use App\Http\Resources\Product\ProductListResource;
 use App\Http\Resources\Tax\TaxRateResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 

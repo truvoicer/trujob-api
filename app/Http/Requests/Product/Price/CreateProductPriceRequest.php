@@ -55,6 +55,11 @@ class CreateProductPriceRequest extends FormRequest
                 'string',
                 Rule::enum(SubscriptionType::class)
             ],
+            'start_time' => [
+                'sometimes',
+                'date',
+                'nullable'
+            ],
             'has_setup_fee' => [
                 'sometimes',
                 'boolean'

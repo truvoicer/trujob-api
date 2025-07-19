@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal\PayPalOrderTransactionCaptureController;
 use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal\PayPalOrderTransactionController;
 use App\Http\Controllers\Api\Order\Transaction\OrderTransactionController;
+use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal\PayPalOrderTransactionApproveController;
+use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal\PayPalOrderTransactionCancelController;
 use App\Http\Controllers\Api\PaymentGateway\PayPal\PayPalOrderController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +24,8 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
             Route::prefix('paypal')->name('paypal.')->group(function () {
                 Route::post('/store', [PayPalOrderTransactionController::class, 'store'])->name('store');
                 Route::post('/capture/store', [PayPalOrderTransactionCaptureController::class, 'store'])->name('show');
+                Route::post('/approve/store', [PayPalOrderTransactionApproveController::class, 'store'])->name('approve.store');
+                Route::post('/cancel/store', [PayPalOrderTransactionCancelController::class, 'store'])->name('cancel.store');
             });
         });
     });

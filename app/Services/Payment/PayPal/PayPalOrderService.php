@@ -12,7 +12,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Services\BaseService;
 use App\Services\Order\Transaction\OrderTransactionService;
-use App\Services\Payment\PayPal\PayPalService;
+use App\Services\Payment\PayPal\Middleware\Order\PayPalOrderService as PaypalOrderServiceSdk;
 use PaypalServerSdkLib\Models\Item;
 use PaypalServerSdkLib\Models\Money;
 
@@ -21,7 +21,7 @@ class PayPalOrderService extends BaseService
 
 
     public function __construct(
-        private PayPalService $payPalService,
+        private PaypalOrderServiceSdk $payPalService,
         private OrderTransactionService $orderTransactionService,
     ) {
         // Initialize any PayPal SDK or configuration here
@@ -232,8 +232,19 @@ class PayPalOrderService extends BaseService
         // Logic to update a PayPal order
     }
 
-    public function cancelOrder(string $orderId)
+    public function handleOrderCancellation(Order $order, Transaction $transaction, array $data)
     {
-        // Logic to cancel a PayPal order
+        $this->orderTransactionService->setUser($this->user);
+        $this->orderTransactionService->setSite($this->site);
+
+        $this->orderTransactionService->updateTransaction(
+            $order,
+            $transaction,
+            [
+                'status' => TransactionStatus::CANCELLED,
+                'transaction_data' => $data,
+            ]
+        );
+        return true;
     }
 }

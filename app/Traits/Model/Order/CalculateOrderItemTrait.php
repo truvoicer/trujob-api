@@ -16,6 +16,7 @@ use App\Models\DefaultDiscount;
 use App\Models\DefaultTaxRate;
 use App\Models\Discount;
 use App\Models\Price;
+use App\Models\Product;
 use App\Models\TaxRate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -343,13 +344,26 @@ trait CalculateOrderItemTrait
         return $this->quantity;
     }
 
-    /**
-     * Calculate the total price of an order item.
-     *
-     * @return float
-     */
+    public function calculateSubscriptionTotalPrice(): float
+    {
+        $product = $this->orderItemable;
+        if (!$product instanceof Product) {
+            throw new \Exception('Product not found for order item');
+        }
+        $price = $product->prices->first();
+        if (!$price) {
+            throw new \Exception('Price not found for product');
+        }
+        $priceSubscription = $price->subscription;
+        if (!$priceSubscription) {
+            throw new \Exception('Subscription not found for price');
+        }
+        return MathHelpers::toDecimalPlaces(
+            $priceSubscription->setup_fee_value
+        );
+    }
 
-    public function calculateTotalPrice(): float
+    public function calculateOneTimeTotalPrice(): float
     {
         if (!$this->orderItemPrice) {
             return 0.0; // or throw an exception if a default price is required
@@ -357,6 +371,22 @@ trait CalculateOrderItemTrait
         return MathHelpers::toDecimalPlaces(
             $this->quantity * $this->orderItemPrice->amount
         );
+    }
+
+    /**
+     * Calculate the total price of an order item.
+     *
+     * @return float
+     */
+    public function calculateTotalPrice(): float
+    {
+        switch ($this->priceType) {
+            case PriceType::SUBSCRIPTION:
+                return $this->calculateSubscriptionTotalPrice();
+            case PriceType::ONE_TIME:
+            default:
+                return $this->calculateOneTimeTotalPrice();
+        }
     }
 
     /**

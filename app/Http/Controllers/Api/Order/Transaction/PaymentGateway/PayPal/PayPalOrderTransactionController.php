@@ -36,8 +36,7 @@ class PayPalOrderTransactionController extends Controller
         Order $order,
         Transaction $transaction,
         StorePayPalOrderRequest $request
-        )
-    {
+    ) {
         $this->paypalOrderService->setUser($request->user()->user);
         $this->paypalOrderService->setSite($request->user()->site);
 
@@ -50,11 +49,31 @@ class PayPalOrderTransactionController extends Controller
                     $order,
                     $transaction
                 );
+                if (!$createOrder) {
+                    return $this->sendJsonResponse(
+                        true,
+                        'Error creating PayPal order',
+                        null,
+                        Response::HTTP_UNPROCESSABLE_ENTITY
+                    );
+                }
+
+                return $this->sendJsonResponse(
+                    true,
+                    'PayPal order created',
+                    $createOrder,
+                    Response::HTTP_CREATED
+                );
                 break;
             case PriceType::SUBSCRIPTION:
-                $createOrder = $this->paypalSubscriptionOrderService->createSubscription(
-                    $order,
-                    $transaction
+                return $this->sendJsonResponse(
+                    true,
+                    'PayPal order created',
+                    $this->paypalSubscriptionOrderService->createSubscription(
+                        $order,
+                        $transaction
+                    )->getResponseData(),
+                    Response::HTTP_CREATED
                 );
                 break;
             default:
@@ -62,22 +81,6 @@ class PayPalOrderTransactionController extends Controller
                     'message' => 'Invalid price type',
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        if (!$createOrder) {
-            return $this->sendJsonResponse(
-                true,
-                'Error creating PayPal order',
-                null,
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-
-        return $this->sendJsonResponse(
-            true,
-            'PayPal order created',
-            $createOrder,
-            Response::HTTP_CREATED
-        );
     }
 
     public function update(Order $order, Transaction $transaction, EditPayPalOrderRequest $request)

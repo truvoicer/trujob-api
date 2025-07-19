@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Payment\PayPal\Product;
+namespace App\Services\Payment\PayPal\Middleware\Product;
 
-use App\Services\Payment\PayPal\PayPalBaseService;
+use App\Services\Payment\PayPal\Middleware\PayPalBaseService;
 use Exception;
 
 /**

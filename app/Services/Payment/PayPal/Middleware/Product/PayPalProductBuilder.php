@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payment\PayPal\Product;
+namespace App\Services\Payment\PayPal\Middleware\Product;
 
 use InvalidArgumentException;
 

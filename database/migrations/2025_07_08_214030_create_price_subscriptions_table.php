@@ -29,6 +29,7 @@ return new class extends Migration
                     SubscriptionType::cases()
                 )
             );
+            $table->datetime('start_time')->nullable();
             $table->boolean('has_setup_fee')->default(false);
             $table->decimal('setup_fee_value', 19, 4)->nullable();
             $table->foreignId('setup_fee_currency_id')

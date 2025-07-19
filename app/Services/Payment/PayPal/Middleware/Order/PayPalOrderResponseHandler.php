@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payment\PayPal;
+namespace App\Services\Payment\PayPal\Middleware\Order;
 
 use PaypalServerSdkLib\Http\ApiResponse;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payment\PayPal;
+namespace App\Services\Payment\PayPal\Middleware\Order;
 
 use App\Enums\Payment\PaymentGatewayEnvironment;
 use Money\Currency;
@@ -22,7 +22,7 @@ use PaypalServerSdkLib\PaypalServerSdkClient;
 use PaypalServerSdkLib\PaypalServerSdkClientBuilder;
 use Psr\Log\LogLevel;
 
-class PayPalService
+class PayPalOrderService
 {
     private PaypalServerSdkClient $client;
 

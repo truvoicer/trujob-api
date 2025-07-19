@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Services\Payment\PayPal\Subscription;
+namespace App\Services\Payment\PayPal\Middleware\Subscription;
 
+use App\Services\Payment\PayPal\Middleware\PayPalAddressBuilder;
 use InvalidArgumentException;
 
 /**
@@ -96,11 +97,15 @@ class PayPalSubscriptionBuilder
      * @param string $email The subscriber's email address.
      * @param string $nameGiven The subscriber's given name.
      * @param string $nameSurname The subscriber's surname.
-     * @param array $shippingAddress Optional shipping address details.
+     * @param PayPalAddressBuilder $shippingAddress
      * @return $this
      */
-    public function setSubscriber(string $email, string $nameGiven, string $nameSurname, array $shippingAddress = []): self
-    {
+    public function setSubscriber(
+        string $email,
+        string $nameGiven,
+        string $nameSurname,
+        PayPalAddressBuilder $shippingAddress
+    ): self {
         $this->data['subscriber'] = [
             'name' => [
                 'given_name' => $nameGiven,
@@ -109,54 +114,21 @@ class PayPalSubscriptionBuilder
             'email_address' => $email,
         ];
 
-        if (!empty($shippingAddress)) {
-            // Basic validation for shipping address structure
-            if (!isset($shippingAddress['address_line_1']) || !isset($shippingAddress['admin_area_2']) || !isset($shippingAddress['admin_area_1']) || !isset($shippingAddress['postal_code']) || !isset($shippingAddress['country_code'])) {
-                throw new InvalidArgumentException("Shipping address must contain address_line_1, admin_area_2, admin_area_1, postal_code, and country_code.");
-            }
-            $this->data['subscriber']['shipping_address'] = [
-                'address' => $shippingAddress,
-            ];
-        }
-        return $this;
-    }
+        $shippingAddress->validate();
 
-    /**
-     * Sets the application context for the subscription.
-     *
-     * @param string $returnUrl The URL to which the customer is redirected after approving the subscription.
-     * @param string $cancelUrl The URL to which the customer is redirected after canceling the subscription.
-     * @param string $brandName The label that overrides the business name in the PayPal checkout page.
-     * @param string $locale The BCP 47 language tag to localize the checkout flow.
-     * @param string $landingPage The type of landing page to show on the PayPal site for customer checkout.
-     * @param string $shippingPreference The shipping preference.
-     * @param string $userAction The user action.
-     * @param array $paymentMethod Optional payment method details.
-     * @return $this
-     */
-    public function setApplicationContext(
-        string $returnUrl,
-        string $cancelUrl,
-        string $brandName = '',
-        string $locale = 'en-US',
-        string $landingPage = 'LOGIN', // Possible values: LOGIN, BILLING, NO_PREFERENCE
-        string $shippingPreference = 'SET_PROVIDED_ADDRESS', // Possible values: GET_FROM_FILE, NO_SHIPPING, SET_PROVIDED_ADDRESS
-        string $userAction = 'SUBSCRIBE_NOW', // Possible values: CONTINUE, PAY_NOW, SUBSCRIBE_NOW
-        array $paymentMethod = [] // Example: ['payer_selected_funding_instrument' => 'PAYPAL']
-    ): self {
-        $this->data['application_context'] = [
-            'return_url' => $returnUrl,
-            'cancel_url' => $cancelUrl,
-            'brand_name' => $brandName,
-            'locale' => $locale,
-            'landing_page' => $landingPage,
-            'shipping_preference' => $shippingPreference,
-            'user_action' => $userAction,
+        $this->data['subscriber']['shipping_address'] = [
+            'name' => [
+                'full_name' => $nameGiven . ' ' . $nameSurname
+            ],
+            'address' => [
+                'address_line_1' => $shippingAddress->getAddressLine1(),
+                'address_line_2' => $shippingAddress->getAddressLine2(),
+                'admin_area_2' => $shippingAddress->getAdminArea2(),
+                'admin_area_1' => $shippingAddress->getAdminArea1(),
+                'postal_code' => $shippingAddress->getPostalCode(),
+                'country_code' => $shippingAddress->getCountryCode(),
+            ],
         ];
-
-        if (!empty($paymentMethod)) {
-            $this->data['application_context']['payment_method'] = $paymentMethod;
-        }
 
         return $this;
     }

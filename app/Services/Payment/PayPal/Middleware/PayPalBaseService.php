@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Payment\PayPal;
+namespace App\Services\Payment\PayPal\Middleware;
 
 use Exception;
 use Illuminate\Support\Facades\Http; // Import the Http facade
@@ -39,7 +39,16 @@ class PayPalBaseService
      */
     protected int $tokenExpiresAt = 0;
 
+    protected PayPalResponse $payPalResponse;
+
     protected array $responseData = [];
+
+    public function __construct(
+    )
+    {
+        // Initialize the PayPal response handler
+        $this->payPalResponse = new PayPalResponse([]);
+    }
 
     public function getResponseData(): array
     {
@@ -196,6 +205,8 @@ class PayPalBaseService
                 default => throw new Exception("Unsupported HTTP method: {$method}"),
             };
 
+            $this->payPalResponse->setResponse($response);
+
             $responseData = $response->json();
             $this->setResponseData($responseData);
 
@@ -213,5 +224,11 @@ class PayPalBaseService
         } catch (Exception $e) {
             throw new Exception("Error during PayPal API request to {$endpoint}: " . $e->getMessage());
         }
+    }
+
+    protected function handleResponse(PayPalResponse $response): PayPalResponse
+    {
+        $response->setResponse($this->payPalResponse->getResponse());
+        return $response;
     }
 }

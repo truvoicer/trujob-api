@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Payment\PayPal\Subscription;
+namespace App\Services\Payment\PayPal\Middleware\Subscription;
 
-use App\Services\Payment\PayPal\PayPalBaseService;
+use App\Services\Payment\PayPal\Middleware\PayPalBaseService;
 use Exception;
 
 /**
@@ -24,14 +24,18 @@ class PayPalSubscriptionService extends PayPalBaseService
      * Creates a new subscription in PayPal using a PayPalSubscriptionBuilder instance.
      *
      * @param PayPalSubscriptionBuilder $builder The subscription builder instance containing subscription data.
-     * @return array The created subscription details.
+     * @return PayPalSubscriptionResponseHandler The created subscription details.
      * @throws Exception If the subscription creation fails.
      */
-    public function createSubscription(PayPalSubscriptionBuilder $builder): array
+    public function createSubscription(PayPalSubscriptionBuilder $builder): PayPalSubscriptionResponseHandler
     {
         try {
             $subscriptionData = $builder->get();
-            return $this->makeRequest('POST', self::SUBSCRIPTIONS_ENDPOINT, $subscriptionData);
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('POST', self::SUBSCRIPTIONS_ENDPOINT, $subscriptionData)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to create PayPal subscription: " . $e->getMessage());
         }
@@ -44,10 +48,10 @@ class PayPalSubscriptionService extends PayPalBaseService
      * @param int $page The page number to return.
      * @param string|null $planId Filter subscriptions by plan ID.
      * @param string|null $status Filter subscriptions by status (e.g., 'APPROVAL_PENDING', 'ACTIVE', 'SUSPENDED', 'CANCELLED', 'EXPIRED').
-     * @return array A list of subscriptions.
+     * @return PayPalSubscriptionResponseHandler The response handler containing the list of subscriptions.
      * @throws Exception If fetching subscriptions fails.
      */
-    public function listSubscriptions(int $pageSize = 10, int $page = 1, ?string $planId = null, ?string $status = null): array
+    public function listSubscriptions(int $pageSize = 10, int $page = 1, ?string $planId = null, ?string $status = null): PayPalSubscriptionResponseHandler
     {
         $queryParams = [
             'page_size' => $pageSize,
@@ -64,7 +68,11 @@ class PayPalSubscriptionService extends PayPalBaseService
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '?' . http_build_query($queryParams);
 
         try {
-            return $this->makeRequest('GET', $endpoint);
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('GET', $endpoint)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to list PayPal subscriptions: " . $e->getMessage());
         }
@@ -74,14 +82,18 @@ class PayPalSubscriptionService extends PayPalBaseService
      * Retrieves details for a specific subscription by its ID.
      *
      * @param string $subscriptionId The ID of the subscription to retrieve.
-     * @return array The subscription details.
+     * @return PayPalSubscriptionResponseHandler The subscription details.
      * @throws Exception If the subscription is not found or fetching fails.
      */
-    public function showSubscription(string $subscriptionId): array
+    public function showSubscription(string $subscriptionId): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId;
         try {
-            return $this->makeRequest('GET', $endpoint);
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('GET', $endpoint)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to retrieve PayPal subscription '{$subscriptionId}': " . $e->getMessage());
         }
@@ -104,12 +116,15 @@ class PayPalSubscriptionService extends PayPalBaseService
      * so you might need to fetch the subscription again to get the updated details.
      * @throws Exception If the subscription update fails.
      */
-    public function updateSubscription(string $subscriptionId, array $patchData): array
+    public function updateSubscription(string $subscriptionId, array $patchData): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId;
         try {
-            $response = $this->makeRequest('PATCH', $endpoint, $patchData, ['Content-Type: application/json-patch+json']);
-            return $response; // Will be empty array if 204 No Content
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('PATCH', $endpoint, $patchData, ['Content-Type: application/json-patch+json'])
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to update PayPal subscription '{$subscriptionId}': " . $e->getMessage());
         }
@@ -125,7 +140,7 @@ class PayPalSubscriptionService extends PayPalBaseService
      * @return array The revised subscription details.
      * @throws Exception If the revision fails.
      */
-    public function reviseSubscription(string $subscriptionId, string $planId, ?int $quantity = null, array $shippingAmount = []): array
+    public function reviseSubscription(string $subscriptionId, string $planId, ?int $quantity = null, array $shippingAmount = []): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId . '/revise';
         $reviseData = [
@@ -140,7 +155,11 @@ class PayPalSubscriptionService extends PayPalBaseService
         }
 
         try {
-            return $this->makeRequest('POST', $endpoint, $reviseData);
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('POST', $endpoint, $reviseData)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to revise PayPal subscription '{$subscriptionId}': " . $e->getMessage());
         }
@@ -151,16 +170,19 @@ class PayPalSubscriptionService extends PayPalBaseService
      *
      * @param string $subscriptionId The ID of the subscription to suspend.
      * @param string|null $reason The reason for suspension (optional).
-     * @return bool True on success.
+     * @return PayPalSubscriptionResponseHandler The response handler containing the subscription details.
      * @throws Exception If suspension fails.
      */
-    public function suspendSubscription(string $subscriptionId, ?string $reason = null): bool
+    public function suspendSubscription(string $subscriptionId, ?string $reason = null): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId . '/suspend';
         $data = $reason ? ['reason' => $reason] : [];
         try {
-            $this->makeRequest('POST', $endpoint, $data);
-            return true;
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('POST', $endpoint, $data)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to suspend PayPal subscription '{$subscriptionId}': " . $e->getMessage());
         }
@@ -171,16 +193,19 @@ class PayPalSubscriptionService extends PayPalBaseService
      *
      * @param string $subscriptionId The ID of the subscription to cancel.
      * @param string|null $reason The reason for cancellation (optional).
-     * @return bool True on success.
+     * @return PayPalSubscriptionResponseHandler The response handler containing the subscription details.
      * @throws Exception If cancellation fails.
      */
-    public function cancelSubscription(string $subscriptionId, ?string $reason = null): bool
+    public function cancelSubscription(string $subscriptionId, ?string $reason = null): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId . '/cancel';
         $data = $reason ? ['reason' => $reason] : [];
         try {
-            $this->makeRequest('POST', $endpoint, $data);
-            return true;
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('POST', $endpoint, $data)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to cancel PayPal subscription '{$subscriptionId}': " . $e->getMessage());
         }
@@ -191,16 +216,19 @@ class PayPalSubscriptionService extends PayPalBaseService
      *
      * @param string $subscriptionId The ID of the subscription to activate.
      * @param string|null $reason The reason for activation (optional).
-     * @return bool True on success.
+     * @return PayPalSubscriptionResponseHandler The response handler containing the subscription details.
      * @throws Exception If activation fails.
      */
-    public function activateSubscription(string $subscriptionId, ?string $reason = null): bool
+    public function activateSubscription(string $subscriptionId, ?string $reason = null): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId . '/activate';
         $data = $reason ? ['reason' => $reason] : [];
         try {
-            $this->makeRequest('POST', $endpoint, $data);
-            return true;
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('POST', $endpoint, $data)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to activate PayPal subscription '{$subscriptionId}': " . $e->getMessage());
         }
@@ -214,10 +242,10 @@ class PayPalSubscriptionService extends PayPalBaseService
      * @param string $currencyCode The currency code (e.g., 'USD').
      * @param string $value The amount to capture.
      * @param bool $noteToPayer Optional note to the payer.
-     * @return array The captured payment details.
+     * @return PayPalSubscriptionResponseHandler The response handler containing the payment details.
      * @throws Exception If payment capture fails.
      */
-    public function capturePayment(string $subscriptionId, string $currencyCode, string $value, ?string $noteToPayer = null): array
+    public function capturePayment(string $subscriptionId, string $currencyCode, string $value, ?string $noteToPayer = null): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId . '/capture';
         $data = [
@@ -231,7 +259,11 @@ class PayPalSubscriptionService extends PayPalBaseService
         }
 
         try {
-            return $this->makeRequest('POST', $endpoint, $data);
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('POST', $endpoint, $data)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to capture payment for subscription '{$subscriptionId}': " . $e->getMessage());
         }
@@ -243,10 +275,10 @@ class PayPalSubscriptionService extends PayPalBaseService
      * @param string $subscriptionId The ID of the subscription.
      * @param string $startTime The start date and time for the transaction range in ISO 8601 format (e.g., "2023-01-01T00:00:00Z").
      * @param string $endTime The end date and time for the transaction range in ISO 8601 format (e.g., "2023-01-31T23:59:59Z").
-     * @return array A list of transactions.
+     * @return PayPalSubscriptionResponseHandler The response handler containing the list of transactions.
      * @throws Exception If fetching transactions fails.
      */
-    public function listTransactions(string $subscriptionId, string $startTime, string $endTime): array
+    public function listTransactions(string $subscriptionId, string $startTime, string $endTime): PayPalSubscriptionResponseHandler
     {
         $endpoint = self::SUBSCRIPTIONS_ENDPOINT . '/' . $subscriptionId . '/transactions';
         $queryParams = [
@@ -256,7 +288,11 @@ class PayPalSubscriptionService extends PayPalBaseService
         $endpoint .= '?' . http_build_query($queryParams);
 
         try {
-            return $this->makeRequest('GET', $endpoint);
+            return $this->handleResponse(
+                new PayPalSubscriptionResponseHandler(
+                    $this->makeRequest('GET', $endpoint)
+                )
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to list transactions for subscription '{$subscriptionId}': " . $e->getMessage());
         }

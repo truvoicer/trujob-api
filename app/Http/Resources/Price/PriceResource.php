@@ -45,6 +45,7 @@ class PriceResource extends JsonResource
                 'auto_bill_outstanding' => $this->subscription?->auto_bill_outstanding,
                 'setup_fee_failure_action' => $this->subscription?->setup_fee_failure_action,
                 'payment_failure_threshold' => $this->subscription?->payment_failure_threshold,
+                'start_time' => $this->subscription?->start_time,
                 'has_setup_fee' => $this->subscription?->has_setup_fee,
                 'setup_fee_value' => $this->subscription?->setup_fee_value,
                 'setup_fee_currency' => $this->subscription?->setupFeeCurrency ? CurrencyResource::make($this->subscription->setupFeeCurrency) : null,

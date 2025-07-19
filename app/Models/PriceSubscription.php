@@ -18,6 +18,7 @@ class PriceSubscription extends Model
         'label',
         'description',
         'type',
+        'start_time',
         'has_setup_fee',
         'setup_fee_value',
         'setup_fee_currency_id',
@@ -28,6 +29,7 @@ class PriceSubscription extends Model
 
     protected $casts = [
         'type' => SubscriptionType::class,
+        'start_time' => 'datetime',
         'has_setup_fee' => 'boolean',
         'setup_fee_value' => 'decimal:2',
         'auto_bill_outstanding' => 'boolean',

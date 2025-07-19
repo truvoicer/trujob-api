@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Order;
 
-use App\Enums\Order\OrderItemType;
 use App\Enums\Order\OrderStatus;
 use App\Enums\Price\PriceType;
 use App\Rules\OrderItem;
@@ -29,8 +28,6 @@ class StoreOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'items' => ['required', 'array'],
-            'items.*' => [new OrderItem],
             'price_type' => [
                 'required',
                 'string',
@@ -53,6 +50,34 @@ class StoreOrderRequest extends FormRequest
                 'string',
                 Rule::enum(OrderStatus::class),
             ],
+            'items' => [
+                'required',
+                'array'
+            ],
+            'items.*' => [new OrderItem],
+        ];
+    }
+
+
+    public function withValidator($validator)
+    {
+        $validator->sometimes('items', 'size:1', function ($input) {
+            return $input->price_type === PriceType::SUBSCRIPTION->value;
+        });
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'items.size' => sprintf(
+                'The items array must contain exactly one item when the price type is %s.',
+                PriceType::SUBSCRIPTION->value
+            ),
         ];
     }
 }
