@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('currency_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('country_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('language_id')->nullable()->constrained()->nullOnDelete();
+            $table->string('locale')->default('en');
             $table->string('timezone')->default('UTC');
             $table->timestamps();
         });

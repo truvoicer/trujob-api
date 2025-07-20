@@ -8,6 +8,7 @@ class SiteSetting extends Model
 {
     protected $fillable = [
         'site_id',
+        'locale',
         'frontend_url',
         'country_id',
         'currency_id',

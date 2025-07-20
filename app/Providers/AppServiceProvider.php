@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Enums\MorphEntity;
+use App\Models\Site;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Cashier::useCustomerModel(Site::class);
         Relation::enforceMorphMap(
             array_combine(
                 array_map(

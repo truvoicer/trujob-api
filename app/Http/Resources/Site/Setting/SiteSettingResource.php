@@ -19,6 +19,7 @@ class SiteSettingResource extends JsonResource
     {
         return [
             'frontend_url' => $this->frontend_url,
+            'locale' => $this->locale,
             'timezone' => $this->timezone,
             'country' => $this->whenLoaded('country', CountryResource::make($this->country)),
             'currency' => $this->whenLoaded('currency', CurrencyResource::make($this->currency)),

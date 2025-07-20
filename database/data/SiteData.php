@@ -42,6 +42,7 @@ return [
         'x_follow_url' => null,
         'timezone' => 'UTC',
         'settings' => [
+            'locale' => 'en',
             'timezone' => 'UTC',
             'currency_id' => $currency->id,
             'country_id' => $country->id,

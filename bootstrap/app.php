@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EncryptedRequest;
+use App\Http\Middleware\SetSiteCurrency;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

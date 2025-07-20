@@ -48,6 +48,11 @@ class EditSiteSettingRequest extends FormRequest
                 'string',
                 'max:255',
             ],
+            'locale' => [
+                'sometimes',
+                'string',
+                'max:10',
+            ],
         ];
     }
 }

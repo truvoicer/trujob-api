@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\Enums\Payment\PaymentGateway as PaymentGatewayEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -84,6 +86,12 @@ class Site extends Model
         return $this->morphMany(SiteUser::class, 'siteUserable');
     }
 
+    public function activePaymentGatewayByName(PaymentGatewayEnum $gateway): BelongsToMany
+    {
+        return $this->paymentGateways()
+            ->where('name', $gateway->value)
+            ->where('payment_gateway_sites.is_active', true);
+    }
     public function paymentGateways()
     {
         return $this->belongsToMany(PaymentGateway::class, 'payment_gateway_sites')
