@@ -6,6 +6,7 @@ use App\Enums\Order\OrderItemable;
 use App\Enums\Payment\PaymentGateway;
 use App\Enums\Price\PriceType;
 use App\Enums\Transaction\TransactionStatus;
+use App\Exceptions\PaymentGateway\StripeRequestException;
 use App\Exceptions\Product\ProductHealthException;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -14,9 +15,6 @@ use App\Models\Transaction;
 use App\Services\BaseService;
 use App\Services\Order\Transaction\OrderTransactionService;
 use App\Services\Payment\PayPal\Middleware\Order\PayPalOrderService as PaypalOrderServiceSdk;
-use Laravel\Cashier\Cashier;
-use PaypalServerSdkLib\Models\Item;
-use PaypalServerSdkLib\Models\Money;
 use Stripe\Exception\ApiErrorException;
 
 class StripeOrderService extends BaseService
@@ -158,19 +156,27 @@ class StripeOrderService extends BaseService
             throw new \Exception('Stripe payment gateway not found');
         }
 
-        $success_url = $stripePaymentGateway->settings['success_url'] ?? null;
-        $cancel_url = $stripePaymentGateway->settings['cancel_url'] ?? null;
+        $return_url = $stripePaymentGateway->settings['return_url'] ?? null;
+        $finalTotal = $order->calculateFinalTotal();
+        $currencyCode = $order->currency?->code;
         try {
+            $createData = [
+                    'payment_method_types' => ['card'],
+                    'line_items' => $lineItems,
+                    'ui_mode' => 'custom', // <-- ADD THIS LINE
+                    'mode' => 'payment',
+            ];
+            if ($return_url) {
+                $createData['return_url'] = $return_url;
+            } else {
+                // $createData['redirect_on_completion'] = 'never';
+            }
             $responseHandler = Cashier::stripe()
                 ->checkout
                 ->sessions
-                ->create([
-                    'payment_method_types' => ['card'],
-                    'line_items' => $lineItems,
-                    'mode' => 'payment',
-                    'success_url' => $success_url,
-                    'cancel_url' => $cancel_url,
-                ]);
+                ->create(
+                    $createData
+                );
 
             $this->orderTransactionService->updateTransaction(
                 $order,
@@ -179,19 +185,11 @@ class StripeOrderService extends BaseService
                     'currency_code' => $currencyCode,
                     'status' => TransactionStatus::PROCESSING,
                     'amount' => $finalTotal,
-                    'order_data' => $responseHandler->getResult(),
+                    'order_data' => $responseHandler->toArray(),
                 ]
             );
-            dd($responseHandler);
+            return $responseHandler;
         } catch (ApiErrorException $e) {
-            // An error occurred creating the session (e.g., invalid parameters, API key issue)
-            // Log the error for debugging
-            \Log::error('Stripe Checkout Session Creation Error: ' . $e->getMessage(), [
-                'error_code' => $e->getHttpStatus(),
-                'stripe_code' => $e->getStripeCode(),
-                'param' => $e->getStripeParam(),
-            ]);
-
             $this->orderTransactionService->updateTransaction(
                 $order,
                 $transaction,
@@ -199,18 +197,25 @@ class StripeOrderService extends BaseService
                     'currency_code' => $currencyCode,
                     'status' => TransactionStatus::FAILED,
                     'amount' => $finalTotal,
-                    'order_data' => $responseHandler->getResult(),
+                    'order_data' => $e->getJsonBody(),
                 ]
             );
             // Log the error or throw a more specific exception
-            throw new \Exception(
-                'Error creating PayPal order: ' . $errorMessage . ' Details: ' . json_encode($errorDetails)
+            throw new StripeRequestException(
+                [
+                    'error_code' => $e->getHttpStatus(),
+                    'stripe_code' => $e->getStripeCode(),
+                ],
+                'Stripe Checkout Session Creation Error: ' . $e->getMessage()
             );
         } catch (\Exception $e) {
-            // Catch any other unexpected PHP errors
-            \Log::critical('Unexpected error during Stripe Checkout Session creation: ' . $e->getMessage());
+            // Log the error or throw a more specific exception
+            throw new StripeRequestException(
+                [],
+                'Stripe Checkout Session Creation Error: ' . $e->getMessage()
+            );
         }
         // Order created successfully, return relevant information
-        return $responseHandler->getResult();
+        return false;
     }
 }

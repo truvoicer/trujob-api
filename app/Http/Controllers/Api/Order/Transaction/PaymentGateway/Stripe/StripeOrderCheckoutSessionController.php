@@ -15,7 +15,9 @@ class StripeOrderCheckoutSessionController extends Controller
 
     public function __construct(
         private StripeOrderService $stripeOrderService,
-    ) {}
+    ) {
+        parent::__construct();
+    }
 
     public function store(
         Order $order,
@@ -40,11 +42,13 @@ class StripeOrderCheckoutSessionController extends Controller
                         Response::HTTP_UNPROCESSABLE_ENTITY
                     );
                 }
-
                 return $this->sendJsonResponse(
                     true,
                     'Stripe checkout session created',
-                    $createOrder,
+                    [
+                        'id' => $createOrder->id,
+                        'client_secret' => $createOrder->client_secret,
+                    ],
                     Response::HTTP_CREATED
                 );
                 break;
