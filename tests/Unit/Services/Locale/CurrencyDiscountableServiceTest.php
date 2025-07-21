@@ -187,7 +187,7 @@ class CurrencyDiscountableServiceTest extends TestCase
         $orderItem->save();
 
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $result = $this->currencyDiscountableService->isDiscountValidForOrderItem($discountable, $orderItem);
 
@@ -210,7 +210,7 @@ class CurrencyDiscountableServiceTest extends TestCase
         $userSetting = UserSetting::factory()->create(['user_id' => $user->id]);
         $userSetting->currency()->associate($currency);
         $userSetting->save();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $result = $this->currencyDiscountableService->isDiscountValidForOrderItem($discountable, $orderItem);
 

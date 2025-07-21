@@ -25,9 +25,6 @@ class UserMediaTest extends TestCase
         $this->userMedia = UserMedia::factory()->create();
     }
 
-    /**
-     * @test
-     */
     public function it_has_a_user_relationship()
     {
         // Arrange

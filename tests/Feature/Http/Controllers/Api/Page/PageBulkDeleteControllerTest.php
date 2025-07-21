@@ -16,7 +16,7 @@ class PageBulkDeleteControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $pages = Page::factory(3)->create([
             'site_id' => $user->site_id,
@@ -44,7 +44,7 @@ class PageBulkDeleteControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Simulate an error during deletion by passing non-existent IDs
         $pageIds = [99999, 99998];
@@ -65,7 +65,7 @@ class PageBulkDeleteControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Act
         $response = $this->postJson(route('api.pages.bulk-delete'), [
@@ -92,7 +92,7 @@ class PageBulkDeleteControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $pages = Page::factory(3)->create(); // Creates pages for a different site
 

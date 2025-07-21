@@ -23,7 +23,7 @@ class ProductProductCategoryTest extends TestCase
         $this->productProductCategory = new ProductProductCategory();
     }
 
-    /** @test */
+    
     public function it_has_fillable_attributes()
     {
         $expected = [
@@ -34,7 +34,7 @@ class ProductProductCategoryTest extends TestCase
         $this->assertEquals($expected, $this->productProductCategory->getFillable());
     }
 
-    /** @test */
+    
     public function it_has_table_name()
     {
         $expected = 'product_product_category';
@@ -43,7 +43,7 @@ class ProductProductCategoryTest extends TestCase
     }
 
 
-    /** @test */
+    
     public function it_can_define_a_relationship_to_product()
     {
         $relation = $this->productProductCategory->product();
@@ -53,7 +53,7 @@ class ProductProductCategoryTest extends TestCase
         $this->assertEquals((new Product())->getTable(), $relation->getRelated()->getTable());
     }
 
-    /** @test */
+    
     public function it_can_define_a_relationship_to_product_category()
     {
         $relation = $this->productProductCategory->productCategory();

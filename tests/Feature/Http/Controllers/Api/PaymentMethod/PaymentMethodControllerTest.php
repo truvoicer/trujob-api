@@ -12,7 +12,7 @@ class PaymentMethodControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_list_payment_methods()
     {
         $user = User::factory()->create();
@@ -37,7 +37,7 @@ class PaymentMethodControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_show_a_payment_method()
     {
         $user = User::factory()->create();
@@ -57,7 +57,7 @@ class PaymentMethodControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_create_a_payment_method()
     {
         $user = User::factory()->create();
@@ -76,7 +76,7 @@ class PaymentMethodControllerTest extends TestCase
         $this->assertDatabaseHas('payment_methods', $data);
     }
 
-    /** @test */
+    
     public function it_can_update_a_payment_method()
     {
         $user = User::factory()->create();
@@ -96,7 +96,7 @@ class PaymentMethodControllerTest extends TestCase
         $this->assertDatabaseHas('payment_methods', $data);
     }
 
-    /** @test */
+    
     public function it_can_delete_a_payment_method()
     {
         $user = User::factory()->create();
@@ -112,7 +112,7 @@ class PaymentMethodControllerTest extends TestCase
         $this->assertDatabaseMissing('payment_methods', ['id' => $paymentMethod->id]);
     }
 
-    /** @test */
+    
     public function it_validates_store_request()
     {
         $user = User::factory()->create();
@@ -124,7 +124,7 @@ class PaymentMethodControllerTest extends TestCase
         $response->assertJsonValidationErrors(['name']);
     }
 
-    /** @test */
+    
     public function it_validates_update_request()
     {
         $user = User::factory()->create();

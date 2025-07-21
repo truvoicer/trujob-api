@@ -28,7 +28,7 @@ class TransactionAmountRepositoryTest extends TestCase
         unset($this->transactionAmountRepository);
     }
 
-    /** @test */
+    
     public function it_can_get_the_model(): void
     {
         $model = $this->transactionAmountRepository->getModel();
@@ -36,7 +36,7 @@ class TransactionAmountRepositoryTest extends TestCase
         $this->assertInstanceOf(TransactionAmount::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_by_params(): void
     {
         // Arrange
@@ -50,7 +50,7 @@ class TransactionAmountRepositoryTest extends TestCase
         $this->assertInstanceOf(TransactionAmount::class, $result->first());
     }
 
-    /** @test */
+    
     public function it_can_find_by_query(): void
     {
         // Arrange

@@ -19,14 +19,14 @@ class OrderShipmentRepositoryTest extends TestCase
         $this->orderShipmentRepository = new OrderShipmentRepository();
     }
 
-    /** @test */
+    
     public function it_can_get_the_model()
     {
         $model = $this->orderShipmentRepository->getModel();
         $this->assertInstanceOf(OrderShipment::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_by_params()
     {
         // Arrange
@@ -43,7 +43,7 @@ class OrderShipmentRepositoryTest extends TestCase
         $this->assertEquals(OrderShipment::orderBy($sort, $order)->limit($count)->get()->toArray(), $result->toArray());
     }
 
-    /** @test */
+    
     public function it_can_find_by_query()
     {
         // Arrange

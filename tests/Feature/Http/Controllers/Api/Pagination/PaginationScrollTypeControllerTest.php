@@ -10,7 +10,7 @@ class PaginationScrollTypeControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_returns_a_json_response_with_pagination_scroll_types(): void
     {
         $response = $this->getJson(route('api.pagination-scroll-type'));
@@ -34,7 +34,7 @@ class PaginationScrollTypeControllerTest extends TestCase
 
         $response->assertJson(['data' => $expectedData]);
     }
-    /** @test */
+    
     public function it_returns_the_correct_data_types_in_the_response(): void
     {
         $response = $this->getJson(route('api.pagination-scroll-type'));

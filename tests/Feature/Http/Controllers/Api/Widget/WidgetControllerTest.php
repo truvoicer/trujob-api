@@ -13,7 +13,7 @@ class WidgetControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_list_widgets()
     {
         $user = User::factory()->create();
@@ -28,7 +28,7 @@ class WidgetControllerTest extends TestCase
             ->assertJsonCount(3, 'data');
     }
 
-    /** @test */
+    
     public function it_can_show_a_widget()
     {
         $user = User::factory()->create();
@@ -49,7 +49,7 @@ class WidgetControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_store_a_widget()
     {
         $user = User::factory()->create();
@@ -69,7 +69,7 @@ class WidgetControllerTest extends TestCase
         $this->assertDatabaseHas('widgets', $widgetData);
     }
 
-    /** @test */
+    
     public function it_can_update_a_widget()
     {
         $user = User::factory()->create();
@@ -94,7 +94,7 @@ class WidgetControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_destroy_a_widget()
     {
         $user = User::factory()->create();
@@ -111,7 +111,7 @@ class WidgetControllerTest extends TestCase
         $this->assertDatabaseMissing('widgets', ['id' => $widget->id]);
     }
 
-    /** @test */
+    
     public function it_returns_unprocessable_entity_on_store_failure()
     {
         $user = User::factory()->create();
@@ -129,7 +129,7 @@ class WidgetControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test */
+    
     public function it_returns_unprocessable_entity_on_update_failure()
     {
         $user = User::factory()->create();

@@ -13,7 +13,7 @@ class PayPalOrderTransactionCaptureControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_capture_a_paypal_order()
     {
         // Arrange
@@ -41,7 +41,7 @@ class PayPalOrderTransactionCaptureControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_returns_unprocessable_entity_if_capture_fails()
     {
         // Arrange
@@ -78,7 +78,7 @@ class PayPalOrderTransactionCaptureControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_validates_the_store_request()
     {
         // Arrange

@@ -10,7 +10,6 @@ use Tests\CreatesApplication;
 
 class PayPalBillingPlanServiceTest extends TestCase
 {
-    use CreatesApplication;
 
     private $payPalBillingPlanService;
 

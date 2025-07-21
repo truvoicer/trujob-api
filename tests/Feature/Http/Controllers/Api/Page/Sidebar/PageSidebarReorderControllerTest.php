@@ -12,7 +12,7 @@ class PageSidebarReorderControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_reorder_a_page_block_in_the_sidebar()
     {
         $user = User::factory()->create();
@@ -41,7 +41,7 @@ class PageSidebarReorderControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_requires_a_valid_direction()
     {
         $user = User::factory()->create();
@@ -57,7 +57,7 @@ class PageSidebarReorderControllerTest extends TestCase
             ->assertJsonValidationErrors(['direction']);
     }
 
-    /** @test */
+    
     public function it_returns_a_403_if_the_user_is_not_authenticated()
     {
         $page = Page::factory()->create();
@@ -70,7 +70,7 @@ class PageSidebarReorderControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    /** @test */
+    
     public function it_returns_a_404_if_the_page_is_not_found()
     {
         $user = User::factory()->create();
@@ -84,7 +84,7 @@ class PageSidebarReorderControllerTest extends TestCase
         $response->assertStatus(404);
     }
 
-    /** @test */
+    
     public function it_returns_a_404_if_the_page_block_is_not_found()
     {
         $user = User::factory()->create();

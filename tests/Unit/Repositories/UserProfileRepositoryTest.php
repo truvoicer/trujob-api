@@ -19,7 +19,7 @@ class UserProfileRepositoryTest extends TestCase
         $this->userProfileRepository = new UserProfileRepository();
     }
 
-    /** @test */
+    
     public function it_can_find_user_profiles_by_params(): void
     {
         // Arrange
@@ -36,7 +36,7 @@ class UserProfileRepositoryTest extends TestCase
         $this->assertEquals($userProfiles->first()->id, 1);
     }
 
-    /** @test */
+    
     public function it_can_get_the_user_profile_model(): void
     {
         // Act

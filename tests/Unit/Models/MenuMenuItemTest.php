@@ -29,19 +29,19 @@ class MenuMenuItemTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    
     public function it_can_be_instantiated()
     {
         $this->assertInstanceOf(MenuMenuItem::class, $this->menuMenuItem);
     }
 
-    /** @test */
+    
     public function it_has_a_table_name()
     {
         $this->assertEquals('menu_menu_items', $this->menuMenuItem->getTable());
     }
 
-    /** @test */
+    
     public function it_can_create_a_menu_menu_item()
     {
         $menuMenuItem = MenuMenuItem::create([

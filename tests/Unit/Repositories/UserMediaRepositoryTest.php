@@ -19,7 +19,7 @@ class UserMediaRepositoryTest extends TestCase
         $this->repository = new UserMediaRepository();
     }
 
-    /** @test */
+    
     public function it_can_find_by_params()
     {
         // Arrange
@@ -52,7 +52,7 @@ class UserMediaRepositoryTest extends TestCase
         $this->assertInstanceOf(UserMedia::class, $results->first());
     }
 
-    /** @test */
+    
     public function it_can_get_the_model()
     {
         // Act

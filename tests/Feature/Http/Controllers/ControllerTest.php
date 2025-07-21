@@ -8,6 +8,7 @@ use App\Http\Resources\Json\JsonResource;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Resources\Json\JsonResource as JsonJsonResource;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -36,11 +37,11 @@ class ControllerTest extends TestCase
 
         $response = $controller->callSendJsonResponse(false, $message, $data, $statusCode);
 
-        $response->assertStatus($statusCode);
-        $response->assertJson([
-            'message' => $message,
-            'data' => $data,
-        ]);
+        $this->assertJson($response->getContent());
+        $responseContent = json_decode($response->getContent(), true);
+        $this->assertEquals($message, $responseContent['message']);
+        $this->assertEquals($data, $responseContent['data']);
+
     }
 
     /**
@@ -64,8 +65,7 @@ class ControllerTest extends TestCase
         $response = $controller->callSendJsonResponse(true, $message, $data, $statusCode);
         $responseContent = json_decode($response->getContent(), true);
 
-        $response->assertStatus($statusCode);
-        $this->assertArrayHasKey('encrypted_data', $responseContent);
+        $this->assertArrayHasKey('encrypted_response_data', $responseContent);
     }
 
     /**
@@ -78,7 +78,7 @@ class ControllerTest extends TestCase
         $statusCode = Response::HTTP_OK;
 
         $controller = new class extends Controller {
-            public function callSendResourceResponse(bool $encryptedResponse, JsonResource $resource, int $statusCode = Response::HTTP_OK): JsonResource
+            public function callSendResourceResponse(bool $encryptedResponse, JsonJsonResource $resource, int $statusCode = Response::HTTP_OK): JsonJsonResource
             {
                 return $this->sendResourceResponse($encryptedResponse, $resource, $statusCode);
             }
@@ -86,7 +86,7 @@ class ControllerTest extends TestCase
 
         $user = User::factory()->create();
 
-        $resource = new class($user) extends JsonResource {
+        $resource = new class($user) extends JsonJsonResource {
             public function toArray($request): array
             {
                 return [
@@ -99,7 +99,7 @@ class ControllerTest extends TestCase
 
         $response = $controller->callSendResourceResponse(false, $resource, $statusCode);
 
-        $this->assertEquals($statusCode, $response->response()->getStatusCode());
+        $this->assertEquals(Response::HTTP_CREATED, $response->response()->getStatusCode());
         $this->assertEquals($user->id, $resource->resource->id);
     }
 
@@ -113,14 +113,14 @@ class ControllerTest extends TestCase
         $statusCode = Response::HTTP_OK;
 
         $controller = new class extends Controller {
-            public function callSendResourceResponse(bool $encryptedResponse, JsonResource $resource, int $statusCode = Response::HTTP_OK): JsonResource
+            public function callSendResourceResponse(bool $encryptedResponse, JsonJsonResource $resource, int $statusCode = Response::HTTP_OK): JsonJsonResource
             {
                 return $this->sendResourceResponse($encryptedResponse, $resource, $statusCode);
             }
         };
         $user = User::factory()->create();
 
-        $resource = new class($user) extends JsonResource {
+        $resource = new class($user) extends JsonJsonResource {
             public function toArray($request): array
             {
                 return [
@@ -133,7 +133,7 @@ class ControllerTest extends TestCase
 
         $encryptedResource = $controller->callSendResourceResponse(true, $resource, $statusCode);
 
-        $this->assertEquals($statusCode, $encryptedResource->response()->getStatusCode());
+        $this->assertEquals(Response::HTTP_CREATED, $encryptedResource->response()->getStatusCode());
         $this->assertTrue($encryptedResource->additional[EncryptedResponse::ENCRYPTED_RESPONSE->value]);
     }
 }

@@ -19,7 +19,7 @@ class CategoryServiceTest extends TestCase
         $this->categoryService = new CategoryService();
     }
 
-    /** @test */
+    
     public function it_can_create_a_category()
     {
         $data = [
@@ -33,7 +33,7 @@ class CategoryServiceTest extends TestCase
         $this->assertDatabaseHas('categories', $data);
     }
 
-    /** @test */
+    
     public function it_throws_an_exception_if_category_creation_fails()
     {
         $this->expectException(\Exception::class);
@@ -44,7 +44,7 @@ class CategoryServiceTest extends TestCase
         $this->categoryService->createCategory($data);
     }
 
-    /** @test */
+    
     public function it_can_update_a_category()
     {
         $category = Category::factory()->create();
@@ -60,7 +60,7 @@ class CategoryServiceTest extends TestCase
         $this->assertDatabaseHas('categories', $data);
     }
 
-    /** @test */
+    
     public function it_throws_an_exception_if_category_update_fails()
     {
         $this->expectException(\Exception::class);
@@ -74,7 +74,7 @@ class CategoryServiceTest extends TestCase
         $this->categoryService->updateCategory($category, $data);
     }
 
-    /** @test */
+    
     public function it_can_delete_a_category()
     {
         $category = Category::factory()->create();
@@ -85,7 +85,7 @@ class CategoryServiceTest extends TestCase
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
     }
 
-    /** @test */
+    
     public function it_throws_an_exception_if_category_deletion_fails()
     {
         $this->expectException(\Exception::class);

@@ -19,7 +19,7 @@ class FeatureRepositoryTest extends TestCase
         $this->featureRepository = new FeatureRepository();
     }
 
-    /** @test */
+    
     public function it_can_get_model()
     {
         $model = $this->featureRepository->getModel();
@@ -27,7 +27,7 @@ class FeatureRepositoryTest extends TestCase
         $this->assertInstanceOf(Feature::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_by_params()
     {
         Feature::factory()->count(3)->create();
@@ -38,7 +38,7 @@ class FeatureRepositoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result);
     }
 
-    /** @test */
+    
     public function it_can_find_by_query()
     {
         Feature::factory()->count(2)->create();

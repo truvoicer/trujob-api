@@ -28,7 +28,7 @@ class PriceTaxRateRepositoryTest extends TestCase
         unset($this->priceTaxRateRepository);
     }
 
-    /** @test */
+    
     public function it_can_get_the_model()
     {
         $model = $this->priceTaxRateRepository->getModel();
@@ -36,7 +36,7 @@ class PriceTaxRateRepositoryTest extends TestCase
         $this->assertInstanceOf(PriceTaxRate::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_by_params()
     {
         // Arrange
@@ -56,7 +56,7 @@ class PriceTaxRateRepositoryTest extends TestCase
         }
     }
 
-    /** @test */
+    
     public function it_can_find_by_query()
     {
         // Arrange

@@ -2,9 +2,11 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Category;
 use App\Models\CategoryProduct;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,17 +14,18 @@ class CategoryProductTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @var CategoryProduct
-     */
-    private $categoryProduct;
+    protected User $user;
+    protected Category $category;
+    protected Product $product;
 
     protected function setUp(): void
     {
         parent::setUp();
-
-        // Create a CategoryProduct instance for testing
-        $this->categoryProduct = CategoryProduct::factory()->create();
+        $this->user = User::factory()->create();
+        $this->category = Category::factory()->create();
+        $this->product = Product::factory()->create([
+            'user_id' => $this->user->id,
+        ]);
     }
 
     /**
@@ -32,12 +35,13 @@ class CategoryProductTest extends TestCase
      */
     public function testProductRelationship()
     {
-        $product = Product::factory()->create();
-        $this->categoryProduct->product_id = $product->id;
-        $this->categoryProduct->save();
+        $categoryProduct = CategoryProduct::create([
+            'category_id' => $this->category->id,
+            'product_id' => $this->product->id,
+        ]);
 
-        $this->assertInstanceOf(Product::class, $this->categoryProduct->product);
-        $this->assertEquals($product->id, $this->categoryProduct->product->id);
+        $this->assertInstanceOf(Product::class, $categoryProduct->product);
+        $this->assertEquals($this->product->id, $categoryProduct->product->id);
     }
 
     /**
@@ -47,11 +51,12 @@ class CategoryProductTest extends TestCase
      */
     public function testCategoryRelationship()
     {
-        $category = ProductCategory::factory()->create();
-        $this->categoryProduct->category_id = $category->id;
-        $this->categoryProduct->save();
+        $categoryProduct = CategoryProduct::create([
+            'category_id' => $this->category->id,
+            'product_id' => $this->product->id,
+        ]);
 
-        $this->assertInstanceOf(ProductCategory::class, $this->categoryProduct->category);
-        $this->assertEquals($category->id, $this->categoryProduct->category->id);
+        $this->assertInstanceOf(Category::class, $categoryProduct->category);
+        $this->assertEquals($this->category->id, $categoryProduct->category->id);
     }
 }

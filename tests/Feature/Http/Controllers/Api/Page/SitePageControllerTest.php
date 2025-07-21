@@ -31,7 +31,7 @@ class SitePageControllerTest extends TestCase
         $site = Site::factory()->create();
         $user = User::factory()->create();
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $page = Page::factory()->create([
             'site_id' => $site->id,
@@ -78,7 +78,7 @@ class SitePageControllerTest extends TestCase
         $site = Site::factory()->create();
         $user = User::factory()->create();
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Mock SiteHelper::getCurrentSite() to return the created site and user
         $this->partialMock('App\Helpers\SiteHelper', function (MockInterface $mock) use ($site, $user) {

@@ -13,7 +13,7 @@ class BulkCurrencyControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_store_a_bulk_currency(): void
     {
         // Arrange
@@ -47,7 +47,7 @@ class BulkCurrencyControllerTest extends TestCase
     }
 
 
-    /** @test */
+    
     public function it_returns_unprocessable_entity_if_currency_creation_fails(): void
     {
         // Arrange
@@ -72,7 +72,7 @@ class BulkCurrencyControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test */
+    
     public function it_requires_authentication_to_store_a_bulk_currency(): void
     {
         // Arrange

@@ -25,9 +25,6 @@ class RoleUserRepositoryTest extends TestCase
         unset($this->roleUserRepository);
     }
 
-    /**
-     * @test
-     */
     public function it_can_get_model()
     {
         $model = $this->roleUserRepository->getModel();

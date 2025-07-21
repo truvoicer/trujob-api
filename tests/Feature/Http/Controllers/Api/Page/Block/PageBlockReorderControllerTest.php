@@ -12,7 +12,7 @@ class PageBlockReorderControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_reorder_a_page_block(): void
     {
         $user = User::factory()->create();
@@ -44,7 +44,7 @@ class PageBlockReorderControllerTest extends TestCase
 
     }
 
-    /** @test */
+    
     public function it_requires_a_valid_direction(): void
     {
         $user = User::factory()->create();
@@ -60,7 +60,7 @@ class PageBlockReorderControllerTest extends TestCase
             ->assertJsonValidationErrors(['direction']);
     }
 
-    /** @test */
+    
     public function it_returns_403_if_user_does_not_have_permission(): void
     {
         $user = User::factory()->create();

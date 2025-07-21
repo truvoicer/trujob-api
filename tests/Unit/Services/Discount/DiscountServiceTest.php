@@ -23,7 +23,7 @@ class DiscountServiceTest extends TestCase
         $this->discountService = new DiscountService();
     }
 
-    /** @test */
+    
     public function it_can_create_a_discount()
     {
         $data = [
@@ -56,7 +56,7 @@ class DiscountServiceTest extends TestCase
         $this->assertDatabaseHas('discount_defaults', ['discount_id' => $discount->id]);
     }
 
-     /** @test */
+     
     public function it_creates_a_discount_with_a_slugified_name_if_name_is_empty()
     {
         $data = [
@@ -72,7 +72,7 @@ class DiscountServiceTest extends TestCase
         $this->assertEquals(Str::slug('Test Discount'), $discount->name);
     }
 
-    /** @test */
+    
     public function it_can_update_a_discount()
     {
         $discount = Discount::factory()->create();
@@ -106,7 +106,7 @@ class DiscountServiceTest extends TestCase
         $this->assertDatabaseHas('discount_defaults', ['discount_id' => $discount->id]);
     }
 
-    /** @test */
+    
     public function it_can_sync_discountables()
     {
         $discount = Discount::factory()->create();
@@ -139,7 +139,7 @@ class DiscountServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_set_a_discount_as_default()
     {
         $discount = Discount::factory()->create();
@@ -149,7 +149,7 @@ class DiscountServiceTest extends TestCase
         $this->assertDatabaseHas('discount_defaults', ['discount_id' => $discount->id]);
     }
 
-    /** @test */
+    
     public function it_does_nothing_when_setting_as_default_if_already_default()
     {
         $discount = Discount::factory()->create();
@@ -160,7 +160,7 @@ class DiscountServiceTest extends TestCase
         $this->assertCount(1, DiscountDefault::where('discount_id', $discount->id)->get());
     }
 
-    /** @test */
+    
     public function it_can_remove_a_discount_as_default()
     {
         $discount = Discount::factory()->create();
@@ -171,7 +171,7 @@ class DiscountServiceTest extends TestCase
         $this->assertDatabaseMissing('discount_defaults', ['discount_id' => $discount->id]);
     }
 
-    /** @test */
+    
     public function it_can_delete_a_discount()
     {
         $discount = Discount::factory()->create();

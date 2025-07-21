@@ -19,7 +19,7 @@ class PaymentMethodRepositoryTest extends TestCase
         $this->paymentMethodRepository = new PaymentMethodRepository();
     }
 
-    /** @test */
+    
     public function it_can_get_the_payment_method_model()
     {
         $model = $this->paymentMethodRepository->getModel();
@@ -27,7 +27,7 @@ class PaymentMethodRepositoryTest extends TestCase
         $this->assertInstanceOf(PaymentMethod::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_payment_methods_by_params()
     {
         // Arrange
@@ -44,7 +44,7 @@ class PaymentMethodRepositoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result); // Check for collection instance
     }
 
-    /** @test */
+    
     public function it_can_find_payment_methods_by_query()
     {
         // Arrange

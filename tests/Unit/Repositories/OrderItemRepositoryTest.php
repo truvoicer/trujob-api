@@ -30,7 +30,7 @@ class OrderItemRepositoryTest extends TestCase
         unset($this->orderItemRepository);
     }
 
-    /** @test */
+    
     public function it_can_get_the_model(): void
     {
         $model = $this->orderItemRepository->getModel();
@@ -38,7 +38,7 @@ class OrderItemRepositoryTest extends TestCase
         $this->assertInstanceOf(OrderItem::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_by_params(): void
     {
         // Arrange
@@ -55,7 +55,7 @@ class OrderItemRepositoryTest extends TestCase
         $this->assertEquals(1, $result->first()->id);
     }
 
-    /** @test */
+    
     public function it_can_find_by_query(): void
     {
         // Arrange

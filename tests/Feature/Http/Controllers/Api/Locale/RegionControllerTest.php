@@ -12,7 +12,7 @@ class RegionControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_list_regions()
     {
         $user = User::factory()->create();
@@ -37,7 +37,7 @@ class RegionControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_show_a_region()
     {
         $user = User::factory()->create();
@@ -58,7 +58,7 @@ class RegionControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_store_a_region()
     {
         $user = User::factory()->create();
@@ -78,7 +78,7 @@ class RegionControllerTest extends TestCase
         $this->assertDatabaseHas('regions', $data);
     }
 
-     /** @test */
+     
     public function it_returns_an_error_if_store_fails()
     {
         $user = User::factory()->create();
@@ -93,7 +93,7 @@ class RegionControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test */
+    
     public function it_can_update_a_region()
     {
         $user = User::factory()->create();
@@ -115,7 +115,7 @@ class RegionControllerTest extends TestCase
         $this->assertDatabaseHas('regions', $data);
     }
 
-    /** @test */
+    
     public function it_returns_an_error_if_update_fails()
     {
         $user = User::factory()->create();
@@ -133,7 +133,7 @@ class RegionControllerTest extends TestCase
 
     }
 
-    /** @test */
+    
     public function it_can_delete_a_region()
     {
         $user = User::factory()->create();
@@ -151,7 +151,7 @@ class RegionControllerTest extends TestCase
         $this->assertDatabaseMissing('regions', ['id' => $region->id]);
     }
 
-    /** @test */
+    
     public function it_returns_an_error_if_delete_fails()
     {
         $user = User::factory()->create();

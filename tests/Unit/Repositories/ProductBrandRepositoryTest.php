@@ -28,7 +28,7 @@ class ProductBrandRepositoryTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    
     public function it_can_get_the_model()
     {
         $model = $this->productBrandRepository->getModel();
@@ -36,7 +36,7 @@ class ProductBrandRepositoryTest extends TestCase
         $this->assertInstanceOf(ProductBrand::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_by_params()
     {
         // Arrange
@@ -53,7 +53,7 @@ class ProductBrandRepositoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result);
     }
 
-     /** @test */
+     
     public function it_can_find_by_params_without_count()
     {
         // Arrange
@@ -69,7 +69,7 @@ class ProductBrandRepositoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result);
     }
 
-    /** @test */
+    
     public function it_can_find_by_query()
     {
         // Arrange

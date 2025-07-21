@@ -7,20 +7,21 @@ use App\Models\Site;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PageControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_list_pages()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $user->id]);
         $pages = Page::factory(3)->create(['site_id' => $site->id]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('pages.index'));
 
@@ -28,14 +29,14 @@ class PageControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
     }
 
-    /** @test */
+    
     public function it_can_show_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $user->id]);
         $page = Page::factory()->create(['site_id' => $site->id]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->getJson(route('pages.show', $page));
 
@@ -43,13 +44,13 @@ class PageControllerTest extends TestCase
         $response->assertJson(['data' => ['id' => $page->id]]);
     }
 
-    /** @test */
+    
     public function it_can_create_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $user->id]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $data = [
             'title' => $this->faker->sentence,
@@ -63,13 +64,13 @@ class PageControllerTest extends TestCase
         $this->assertDatabaseHas('pages', $data);
     }
 
-     /** @test */
+     
     public function it_returns_error_if_page_creation_fails()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $user->id]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $data = [
             'title' => null, // Will cause validation error
@@ -83,14 +84,14 @@ class PageControllerTest extends TestCase
         $response->assertJsonValidationErrors('title');
     }
 
-    /** @test */
+    
     public function it_can_update_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $user->id]);
         $page = Page::factory()->create(['site_id' => $site->id]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $data = [
             'title' => $this->faker->sentence,
@@ -104,14 +105,14 @@ class PageControllerTest extends TestCase
         $this->assertDatabaseHas('pages', $data);
     }
 
-    /** @test */
+    
     public function it_can_delete_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $user->id]);
         $page = Page::factory()->create(['site_id' => $site->id]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->deleteJson(route('pages.destroy', $page));
 

@@ -146,7 +146,7 @@ class RegionDiscountableServiceTest extends TestCase
         $orderItem = OrderItem::factory()->create();
         $user = $orderItem->order->user;
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $result = $this->regionDiscountableService->isDiscountValidForOrderItem($discountable, $orderItem);
 
@@ -158,7 +158,7 @@ class RegionDiscountableServiceTest extends TestCase
         $discountable = Discountable::factory()->make(['discountable_id' => $this->region->id]);
         $orderItem = OrderItem::factory()->create();
         $user = $orderItem->order->user;
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $userSetting = UserSetting::factory()->create(['user_id' => $user->id]);
         $userSetting->region()->attach($this->region->id);

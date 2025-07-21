@@ -12,7 +12,7 @@ class PermissionControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_get_all_permissions(): void
     {
         Permission::factory()->count(3)->create();
@@ -33,7 +33,7 @@ class PermissionControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_get_a_single_permission(): void
     {
         $permission = Permission::factory()->create();
@@ -59,7 +59,7 @@ class PermissionControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_create_a_permission(): void
     {
         $data = [
@@ -87,7 +87,7 @@ class PermissionControllerTest extends TestCase
         $this->assertDatabaseHas('permissions', $data);
     }
 
-    /** @test */
+    
     public function it_can_update_a_permission(): void
     {
         $permission = Permission::factory()->create();
@@ -117,7 +117,7 @@ class PermissionControllerTest extends TestCase
         $this->assertDatabaseHas('permissions', $data);
     }
 
-    /** @test */
+    
     public function it_can_delete_a_permission(): void
     {
         $permission = Permission::factory()->create();

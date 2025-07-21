@@ -11,7 +11,7 @@ class BulkOrderDiscountControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_sync_discounts_to_an_order()
     {
         $user = User::factory()->create();
@@ -29,7 +29,7 @@ class BulkOrderDiscountControllerTest extends TestCase
             ]);
     }
 
-     /** @test */
+     
      public function it_returns_error_when_syncing_discounts_fails()
      {
          $user = User::factory()->create();
@@ -58,7 +58,7 @@ class BulkOrderDiscountControllerTest extends TestCase
      }
 
 
-    /** @test */
+    
     public function it_requires_authentication()
     {
         $order = Order::factory()->create();
@@ -70,7 +70,7 @@ class BulkOrderDiscountControllerTest extends TestCase
         $response->assertStatus(401); // Or 403 depending on your auth setup
     }
 
-    /** @test */
+    
     public function it_validates_the_request()
     {
         $user = User::factory()->create();

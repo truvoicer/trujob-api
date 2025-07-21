@@ -2,8 +2,14 @@
 
 namespace Tests\Feature\Api\Sidebar;
 
+use App\Enums\SiteStatus;
+use App\Models\Role;
 use App\Models\Sidebar;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,11 +19,27 @@ class SidebarBulkDeleteControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+    }
+    
     public function it_can_bulk_delete_sidebars(): void
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Create some sidebars to delete
         $sidebars = Sidebar::factory(3)->create(['site_id' => $user->site_id]);
@@ -33,11 +55,11 @@ class SidebarBulkDeleteControllerTest extends TestCase
         $this->assertDatabaseMissing('sidebars', ['id' => $sidebarIds[2]]);
     }
 
-    /** @test */
+    
     public function it_returns_error_if_bulk_delete_fails(): void
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Create some sidebars to delete
         $sidebars = Sidebar::factory(3)->create(['site_id' => $user->site_id]);
@@ -59,11 +81,11 @@ class SidebarBulkDeleteControllerTest extends TestCase
         $this->assertDatabaseHas('sidebars', ['id' => $sidebarIds[2]]);
     }
 
-    /** @test */
+    
     public function it_validates_the_ids_are_required(): void
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->postJson(route('api.sidebar.bulk-delete'), []);
 
@@ -71,11 +93,11 @@ class SidebarBulkDeleteControllerTest extends TestCase
             ->assertJsonValidationErrors(['ids']);
     }
 
-    /** @test */
+    
     public function it_validates_the_ids_are_an_array(): void
     {
         $user = User::factory()->create();
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         $response = $this->postJson(route('api.sidebar.bulk-delete'), ['ids' => 'not an array']);
 

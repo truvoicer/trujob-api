@@ -24,14 +24,14 @@ class SidebarRepositoryTest extends TestCase
         $this->sidebarRepository = new SidebarRepository();
     }
 
-    /** @test */
+    
     public function it_can_get_the_model()
     {
         $model = $this->sidebarRepository->getModel();
         $this->assertInstanceOf(Sidebar::class, $model);
     }
 
-    /** @test */
+    
     public function it_can_find_by_params()
     {
         Sidebar::factory()->count(3)->create();
@@ -43,7 +43,7 @@ class SidebarRepositoryTest extends TestCase
         $this->assertInstanceOf(Sidebar::class, $result->first());
     }
 
-    /** @test */
+    
     public function it_can_find_by_query()
     {
         Sidebar::factory()->count(2)->create();
@@ -55,7 +55,7 @@ class SidebarRepositoryTest extends TestCase
         $this->assertInstanceOf(Sidebar::class, $result->first());
     }
 
-    /** @test */
+    
     public function it_can_find_by_site()
     {
         $site = Site::factory()->create();
@@ -69,7 +69,7 @@ class SidebarRepositoryTest extends TestCase
         $this->assertEquals($sidebar->id, $result->first()->id);
     }
 
-    /** @test */
+    
     public function it_can_find_sidebar_widgets()
     {
         $sidebar = Sidebar::factory()->create();

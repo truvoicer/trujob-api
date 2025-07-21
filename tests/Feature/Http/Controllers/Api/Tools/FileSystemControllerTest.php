@@ -12,7 +12,7 @@ class FileSystemControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_download_a_file()
     {
         $file = File::factory()->create();
@@ -29,7 +29,7 @@ class FileSystemControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_get_a_list_of_files()
     {
         File::factory()->count(3)->create();
@@ -52,7 +52,7 @@ class FileSystemControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_get_a_single_file()
     {
         $file = File::factory()->create();
@@ -73,7 +73,7 @@ class FileSystemControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_delete_a_file()
     {
         $file = File::factory()->create();
@@ -89,7 +89,7 @@ class FileSystemControllerTest extends TestCase
         $this->assertDatabaseMissing('files', ['id' => $file->id]);
     }
 
-    /** @test */
+    
     public function it_returns_an_error_response_when_file_deletion_fails()
     {
         // Mock the FileSystemService to simulate a failed deletion

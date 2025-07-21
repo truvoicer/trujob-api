@@ -11,7 +11,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_batch_delete_page_blocks()
     {
         $user = User::factory()->create();
@@ -28,7 +28,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_returns_error_if_delete_fails()
     {
         $user = User::factory()->create();
@@ -51,7 +51,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_requires_authentication()
     {
         $page = Page::factory()->create();
@@ -63,7 +63,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
     }
 
 
-    /** @test */
+    
     public function it_validates_the_request()
     {
         $user = User::factory()->create();

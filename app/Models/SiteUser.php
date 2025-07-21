@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Enums\SiteStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Laravel\Sanctum\HasApiTokens;
 
-class SiteUser extends Model
+class SiteUser extends Authenticatable
 {
     use HasApiTokens;
 
@@ -16,6 +17,8 @@ class SiteUser extends Model
     protected $fillable = [
         'status', // active, inactive, banned
         'password_reset',
+        'site_id',
+        'user_id',
     ];
 
     protected $casts = [

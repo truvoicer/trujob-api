@@ -11,7 +11,7 @@ class AddressControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_list_addresses()
     {
         $user = User::factory()->create();
@@ -23,7 +23,7 @@ class AddressControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
     }
 
-    /** @test */
+    
     public function it_can_show_a_specific_address()
     {
         $user = User::factory()->create();
@@ -37,7 +37,7 @@ class AddressControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_create_an_address()
     {
         $user = User::factory()->create();
@@ -57,7 +57,7 @@ class AddressControllerTest extends TestCase
         $this->assertDatabaseHas('addresses', $addressData);
     }
 
-    /** @test */
+    
     public function it_can_update_an_address()
     {
         $user = User::factory()->create();
@@ -77,7 +77,7 @@ class AddressControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_cannot_update_an_address_that_does_not_belong_to_the_user()
     {
         $user = User::factory()->create();
@@ -98,7 +98,7 @@ class AddressControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_delete_an_address()
     {
         $user = User::factory()->create();
@@ -110,7 +110,7 @@ class AddressControllerTest extends TestCase
         $this->assertDatabaseMissing('addresses', ['id' => $address->id]);
     }
 
-     /** @test */
+     
     public function it_cannot_delete_an_address_that_does_not_belong_to_the_user()
     {
         $user = User::factory()->create();

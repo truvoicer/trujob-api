@@ -2,39 +2,51 @@
 
 namespace Tests\Feature;
 
+use App\Enums\SiteStatus;
+use App\Models\Role;
 use App\Models\Sidebar;
 use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use App\Services\Admin\Sidebar\SidebarService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class SidebarControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    protected User $user;
+    protected SiteUser $siteUser;
     protected Site $site;
-
+    protected User $user;
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->user = User::factory()->create();
+        // Additional setup if needed
         $this->site = Site::factory()->create();
-        $this->user->site_id = $this->site->id;
-        $this->user->save();
-
-        $this->actingAs($this->user); // Authenticate the user for the tests
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
     }
 
     public function testIndex(): void
     {
         Sidebar::factory()->count(3)->create(['site_id' => $this->site->id]);
-        Sidebar::factory()->count(2)->create(); // Other sidebars
 
+
+        Sanctum::actingAs(
+            $this->siteUser,
+            ['*']
+        );
         $response = $this->getJson(route('sidebar.index'));
 
         $response->assertStatus(200);
@@ -45,15 +57,24 @@ class SidebarControllerTest extends TestCase
     {
         $sidebar = Sidebar::factory()->create(['site_id' => $this->site->id]);
 
+        Sanctum::actingAs(
+            $this->siteUser,
+            ['*']
+        );
         $response = $this->getJson(route('sidebar.show', ['sidebar' => $sidebar->id]));
 
         $response->assertStatus(200);
+
         $response->assertJsonStructure([
             'data' => [
                 'id',
-                'site_id',
-                'created_at',
-                'updated_at',
+                'name',
+                'title',
+                'icon',
+                'properties',
+                'roles',
+                'widgets',
+                'has_permission',
                 // Add other attributes as needed based on your SidebarResource
             ],
         ]);
@@ -63,9 +84,15 @@ class SidebarControllerTest extends TestCase
     {
         $data = [
             'name' => $this->faker->name,
-            // Add other required fields from your CreateSidebarRequest
+            'title' => $this->faker->sentence,
+            'icon' => $this->faker->word,
+            'site_id' => $this->site->id,
         ];
 
+        Sanctum::actingAs(
+            $this->siteUser,
+            ['*']
+        );
         $response = $this->postJson(route('sidebar.store'), $data);
 
         $response->assertStatus(200);
@@ -80,6 +107,10 @@ class SidebarControllerTest extends TestCase
     {
         $data = []; // Missing required fields
 
+        Sanctum::actingAs(
+            $this->siteUser,
+            ['*']
+        );
         $response = $this->postJson(route('sidebar.store'), $data);
 
         $response->assertStatus(422);
@@ -96,7 +127,11 @@ class SidebarControllerTest extends TestCase
             // Add other fields you want to update
         ];
 
-        $response = $this->putJson(route('sidebar.update', ['sidebar' => $sidebar->id]), $data);
+        Sanctum::actingAs(
+            $this->siteUser,
+            ['*']
+        );
+        $response = $this->patchJson(route('sidebar.update', ['sidebar' => $sidebar->id]), $data);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -113,9 +148,13 @@ class SidebarControllerTest extends TestCase
             'name' => null, // Invalid data
         ];
 
-        $response = $this->putJson(route('sidebar.update', ['sidebar' => $sidebar->id]), $data);
+        Sanctum::actingAs(
+            $this->siteUser,
+            ['*']
+        );
+        $response = $this->patchJson(route('sidebar.update', ['sidebar' => $sidebar->id]), $data);
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $response->assertJsonValidationErrors(['name']);
     }
 
@@ -124,6 +163,10 @@ class SidebarControllerTest extends TestCase
     {
         $sidebar = Sidebar::factory()->create(['site_id' => $this->site->id]);
 
+        Sanctum::actingAs(
+            $this->siteUser,
+            ['*']
+        );
         $response = $this->deleteJson(route('sidebar.destroy', ['sidebar' => $sidebar->id]));
 
         $response->assertStatus(200);

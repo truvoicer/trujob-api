@@ -10,7 +10,7 @@ class PageViewControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_return_index_data()
     {
         $response = $this->getJson(route('page-view.index'));

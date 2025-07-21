@@ -13,7 +13,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_reorder_a_page_block_sidebar(): void
     {
         // Arrange
@@ -31,7 +31,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
             'order' => 2,
         ]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Act
         $response = $this->postJson(
@@ -54,7 +54,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $this->assertEquals(1, $pageBlockSidebar2->fresh()->order);
     }
 
-    /** @test */
+    
     public function it_returns_404_if_page_does_not_exist(): void
     {
         // Arrange
@@ -62,7 +62,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $pageBlock = PageBlock::factory()->create();
         $pageBlockSidebar = PageBlockSidebar::factory()->create();
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Act
         $response = $this->postJson(
@@ -78,7 +78,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-    /** @test */
+    
     public function it_returns_404_if_page_block_does_not_exist(): void
     {
         // Arrange
@@ -86,7 +86,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $page = Page::factory()->create(['site_id' => $user->site_id]);
         $pageBlockSidebar = PageBlockSidebar::factory()->create();
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Act
         $response = $this->postJson(
@@ -102,7 +102,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-        /** @test */
+        
     public function it_returns_404_if_page_block_sidebar_does_not_exist(): void
     {
         // Arrange
@@ -110,7 +110,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $page = Page::factory()->create(['site_id' => $user->site_id]);
         $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
 
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Act
         $response = $this->postJson(
@@ -126,7 +126,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-    /** @test */
+    
     public function it_requires_a_direction(): void
     {
         // Arrange
@@ -137,7 +137,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
             'page_block_id' => $pageBlock->id,
             'order' => 1,
         ]);
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Act
         $response = $this->postJson(
@@ -154,7 +154,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $response->assertJsonValidationErrors(['direction']);
     }
 
-    /** @test */
+    
     public function it_requires_the_direction_to_be_a_valid_value(): void
     {
         // Arrange
@@ -165,7 +165,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
             'page_block_id' => $pageBlock->id,
             'order' => 1,
         ]);
-        $this->actingAs($user);
+        Sanctum::actingAs($user, ['*']);
 
         // Act
         $response = $this->postJson(

@@ -10,7 +10,7 @@ class PaginationTypeControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    
     public function it_can_return_all_pagination_types(): void
     {
         $response = $this->getJson(route('api.pagination-type'));

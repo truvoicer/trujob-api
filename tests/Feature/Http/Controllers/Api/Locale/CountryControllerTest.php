@@ -12,7 +12,7 @@ class CountryControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_list_countries()
     {
         $user = User::factory()->create();
@@ -36,7 +36,7 @@ class CountryControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_show_a_country()
     {
         $user = User::factory()->create();
@@ -56,7 +56,7 @@ class CountryControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function it_can_store_a_country()
     {
         $user = User::factory()->create();
@@ -77,7 +77,7 @@ class CountryControllerTest extends TestCase
         $this->assertDatabaseHas('countries', ['name' => $data['name']]);
     }
 
-    /** @test */
+    
     public function it_can_update_a_country()
     {
         $user = User::factory()->create();
@@ -100,7 +100,7 @@ class CountryControllerTest extends TestCase
         $this->assertDatabaseHas('countries', ['id' => $country->id, 'name' => $data['name']]);
     }
 
-    /** @test */
+    
     public function it_can_destroy_a_country()
     {
         $user = User::factory()->create();
@@ -118,7 +118,7 @@ class CountryControllerTest extends TestCase
         $this->assertDatabaseMissing('countries', ['id' => $country->id]);
     }
 
-        /** @test */
+        
     public function it_returns_unprocessable_entity_when_store_fails()
     {
         $user = User::factory()->create();
@@ -132,7 +132,7 @@ class CountryControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test */
+    
     public function it_returns_unprocessable_entity_when_update_fails()
     {
         $user = User::factory()->create();
@@ -146,7 +146,7 @@ class CountryControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    /** @test */
+    
     public function it_returns_unprocessable_entity_when_delete_fails()
     {
         $user = User::factory()->create();

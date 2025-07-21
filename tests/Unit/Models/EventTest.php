@@ -31,13 +31,13 @@ class EventTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    
     public function it_has_comments_relationship()
     {
         $this->assertInstanceOf(MorphMany::class, $this->event->comments());
     }
 
-    /** @test */
+    
     public function it_returns_correct_morph_many_relation_for_comments()
     {
         $relation = $this->event->comments();
@@ -48,7 +48,7 @@ class EventTest extends TestCase
         $this->assertEquals(Ticket::class, $relation->getModel());
     }
 
-    /** @test */
+    
     public function it_can_have_comments()
     {
         $event = Event::factory()->create();

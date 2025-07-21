@@ -15,7 +15,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    
     public function it_can_show_a_paypal_order()
     {
         $user = User::factory()->create();
@@ -32,7 +32,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_store_a_paypal_one_time_order()
     {
         $user = User::factory()->create();
@@ -51,7 +51,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
         $response->assertStatus(201);
     }
 
-    /** @test */
+    
     public function it_can_store_a_paypal_subscription_order()
     {
         $user = User::factory()->create();
@@ -70,7 +70,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
         $response->assertStatus(201);
     }
 
-    /** @test */
+    
     public function it_returns_unprocessable_entity_for_invalid_price_type()
     {
         $user = User::factory()->create();
@@ -92,7 +92,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_update_a_paypal_order()
     {
         $user = User::factory()->create();
@@ -114,7 +114,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
             ]);
     }
 
-    /** @test */
+    
     public function it_can_destroy_a_paypal_order()
     {
         $user = User::factory()->create();
