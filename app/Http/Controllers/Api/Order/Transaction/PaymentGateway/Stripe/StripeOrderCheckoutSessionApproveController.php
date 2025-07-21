@@ -11,7 +11,7 @@ use App\Services\Payment\Stripe\StripeOrderService;
 use App\Services\Payment\Stripe\StripeSubscriptionOrderService;
 use Symfony\Component\HttpFoundation\Response;
 
-class StripeOrderCheckoutSessionController extends Controller
+class StripeOrderCheckoutSessionApproveController extends Controller
 {
 
     public function __construct(
@@ -57,25 +57,23 @@ class StripeOrderCheckoutSessionController extends Controller
                 );
             case PriceType::SUBSCRIPTION:
 
-                $createOrder = $this->stripeSubscriptionOrderService->createSubscription(
+                $approveSubscription = $this->stripeSubscriptionOrderService->handleSubscriptionApproval(
                     $order,
-                    $transaction
+                    $transaction,
+                    $request->validated()
                 );
-                if (!$createOrder) {
+                if (!$approveSubscription) {
                     return $this->sendJsonResponse(
                         true,
-                        'Error creating Stripe checkout session',
+                        'Error creating Stripe subscription checkout session',
                         null,
                         Response::HTTP_UNPROCESSABLE_ENTITY
                     );
                 }
                 return $this->sendJsonResponse(
                     true,
-                    'Stripe checkout session created',
-                    [
-                        'id' => $createOrder->id,
-                        'client_secret' => $createOrder->client_secret,
-                    ],
+                    'Stripe subscription checkout session approved',
+                    $approveSubscription,
                     Response::HTTP_CREATED
                 );
             default:

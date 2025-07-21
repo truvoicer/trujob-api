@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Subscription\SubscriptionIntervalUnit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +22,7 @@ class PriceSubscriptionItem extends Model
     ];
 
     protected $casts = [
+        'frequency_interval_unit' => SubscriptionIntervalUnit::class,
         'price_value' => 'decimal:2',
     ];
 

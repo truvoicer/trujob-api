@@ -30,6 +30,8 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
             });
             Route::prefix('stripe')->name('stripe.')->group(function () {
                 Route::post('/checkout-session/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('store');
+                Route::post('/checkout-session/approve/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('approve.store');
+                Route::post('/checkout-session/cancel/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('cancel.store');
             });
         });
     });

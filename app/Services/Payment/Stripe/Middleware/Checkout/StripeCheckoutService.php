@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Services\Stripe;
+namespace App\Services\Payment\Stripe\Middleware\Checkout;
 
 use App\Services\Payment\Stripe\Middleware\StripeBaseService;
 use Stripe\Checkout\Session;
-use Stripe\Exception\ApiErrorException;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -15,72 +14,50 @@ use Illuminate\Support\Facades\Log;
  * for setting up various types of checkout experiences, such as one-time payments
  * and subscriptions.
  */
-class CheckoutSessionService extends StripeBaseService
+class StripeCheckoutService extends StripeBaseService
 {
     /**
-     * Creates a new Stripe Checkout Session for a one-time payment.
+     * Creates a new Stripe Checkout Session for a one-time payment using a CheckoutSessionBuilder.
      *
-     * @param array $lineItems An array of line item objects for the products being purchased.
-     * Each item should typically have 'price_data' or 'price' and 'quantity'.
-     * Example: [[ 'price_data' => ['currency' => 'usd', 'product_data' => ['name' => 'Product Name'], 'unit_amount' => 2000], 'quantity' => 1 ]]
-     * @param string $successUrl The URL to redirect to after successful checkout.
-     * @param string $cancelUrl The URL to redirect to if the user cancels checkout.
-     * @param array $options Additional options for the session (e.g., customer_email, metadata).
+     * @param \App\Services\Stripe\CheckoutSessionBuilder $builder An instance of the CheckoutSessionBuilder
+     * pre-configured with session parameters.
+     * The builder's mode should be 'payment'.
      * @return \Stripe\Checkout\Session The created Checkout Session object.
-     * @throws \Exception If a Stripe API error occurs.
+     * @throws \Exception If a Stripe API error occurs or builder validation fails.
      */
-    public function createOneTimePaymentSession(array $lineItems, string $successUrl, string $cancelUrl, array $options = []): Session
+    public function createOneTimePaymentSession(StripeCheckoutSessionBuilder $builder): Session
     {
-        $params = array_merge([
-            'mode' => 'payment',
-            'line_items' => $lineItems,
-            'success_url' => $successUrl,
-            'cancel_url' => $cancelUrl,
-        ], $options);
-
-        Log::info('Attempting to create one-time payment checkout session.', $params);
+        // Ensure the builder is configured for payment mode, if not already.
+        // The builder's build() method will also perform validation.
+        $builder->setMode('payment');
+        $params = $builder->build();
 
         return $this->callStripeApi(function () use ($params) {
-            return Session::create($params);
+            return $this->stripeClient->checkout->sessions->create($params);
         });
     }
 
     /**
-     * Creates a new Stripe Checkout Session for a subscription.
+     * Creates a new Stripe Checkout Session for a subscription using a CheckoutSessionBuilder.
      *
-     * @param string $priceId The ID of the Stripe Price object for the subscription.
-     * @param string $successUrl The URL to redirect to after successful checkout.
-     * @param string $cancelUrl The URL to redirect to if the user cancels checkout.
-     * @param string|null $customerId Optional: The ID of an existing Stripe Customer.
-     * @param array $options Additional options for the session (e.g., metadata, trial_end).
+     * @param \App\Services\Stripe\CheckoutSessionBuilder $builder An instance of the CheckoutSessionBuilder
+     * pre-configured with session parameters.
+     * The builder's mode should be 'subscription'.
      * @return \Stripe\Checkout\Session The created Checkout Session object.
-     * @throws \Exception If a Stripe API error occurs.
+     * @throws \Exception If a Stripe API error occurs or builder validation fails.
      */
-    public function createSubscriptionSession(string $priceId, string $successUrl, string $cancelUrl, ?string $customerId = null, array $options = []): Session
+    public function createSubscriptionSession(StripeCheckoutSessionBuilder $builder): Session
     {
-        $lineItems = [
-            [
-                'price' => $priceId,
-                'quantity' => 1,
-            ],
-        ];
+        // Ensure the builder is configured for subscription mode, if not already.
+        // The builder's build() method will also perform validation.
+        $builder->setMode('subscription');
+        $params = $builder->build();
 
-        $params = array_merge([
-            'mode' => 'subscription',
-            'line_items' => $lineItems,
-            'success_url' => $successUrl,
-            'cancel_url' => $cancelUrl,
-        ], $options);
+        Log::info('Attempting to create subscription checkout session using builder.', $params);
 
-        // If a customer ID is provided, attach the session to that customer.
-        if ($customerId) {
-            $params['customer'] = $customerId;
-        }
-
-        Log::info('Attempting to create subscription checkout session.', $params);
 
         return $this->callStripeApi(function () use ($params) {
-            return Session::create($params);
+            return $this->stripeClient->checkout->sessions->create($params);
         });
     }
 
@@ -97,7 +74,7 @@ class CheckoutSessionService extends StripeBaseService
         Log::info('Attempting to retrieve checkout session.', ['session_id' => $sessionId]);
 
         return $this->callStripeApi(function () use ($sessionId, $options) {
-            return Session::retrieve($sessionId, $options);
+            return $this->stripeClient->checkout->sessions->retrieve($sessionId, $options);
         });
     }
 }

@@ -6,6 +6,7 @@ use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Stripe\StripeClient;
 
 /**
  * StripeBaseService Class
@@ -20,6 +21,9 @@ use Illuminate\Support\Facades\Log;
  */
 class StripeBaseService
 {
+
+    protected StripeClient $stripeClient;
+
     /**
      * The Stripe API secret key.
      *
@@ -27,12 +31,11 @@ class StripeBaseService
      */
     protected $apiKey;
 
-    /**
-     * The Stripe API version.
-     *
-     * @var string
-     */
-    protected $apiVersion;
+    protected string $currencyCode;
+    protected string $locale;
+
+
+    protected StripeResponse $stripeResponse;
 
     /**
      * Constructor for the StripeBaseService.
@@ -40,21 +43,12 @@ class StripeBaseService
      */
     public function __construct()
     {
-        // Retrieve Stripe API key from Laravel configuration.
-        // Ensure you have 'stripe.secret_key' and 'stripe.api_version'
-        // defined in your config/services.php or a dedicated config file.
-        $this->apiKey = config('services.stripe.secret_key');
-        $this->apiVersion = config('services.stripe.api_version', '2024-06-20'); // Use a default version if not set
-
-        // Set the Stripe API key globally for the Stripe PHP library.
-        Stripe::setApiKey($this->apiKey);
-        Stripe::setApiVersion($this->apiVersion);
+        $this->stripeResponse = new StripeResponse([]);
     }
 
     public function setApiKey(string $apiKey): void
     {
         $this->apiKey = $apiKey;
-        Stripe::setApiKey($this->apiKey);
     }
 
     public function getApiKey(): string
@@ -62,43 +56,45 @@ class StripeBaseService
         return $this->apiKey;
     }
 
-
-    /**
-     * Retrieves an access token.
-     *
-     * While the Stripe PHP library primarily uses a persistent API key,
-     * this method is a placeholder for scenarios requiring dynamic token management
-     * (e.g., Stripe Connect OAuth where you get access tokens for connected accounts).
-     * For standard API key usage, this might simply return the configured API key
-     * or null if not applicable.
-     *
-     * @return string|null The access token, or null if not applicable.
-     */
-    protected function getAccessToken(): ?string
+    public function getClient(): StripeClient
     {
-        // Example: If using OAuth, you might retrieve the token from cache or database.
-        // For direct API key usage, this method might not be strictly necessary
-        // as the API key is set globally in the constructor.
-        // return Cache::get('stripe_access_token');
-        return $this->apiKey; // For basic API key usage
+        return $this->stripeClient;
+    }
+
+    public function setCurrencyCode(string $currencyCode): void
+    {
+        $this->currencyCode = $currencyCode;
+    }
+
+    public function getCurrencyCode(): string
+    {
+        return $this->currencyCode;
+    }
+
+    public function setLocale(string $locale): void
+    {
+        $this->locale = $locale;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
     }
 
     /**
-     * Stores an access token.
+     * Initializes the Stripe client with the API key.
      *
-     * Similar to getAccessToken, this is primarily for OAuth flows.
-     * For standard API key usage, this method might not be used.
-     *
-     * @param string $token The access token to store.
-     * @param int $expiresIn The expiration time in seconds.
-     * @return void
+     * @throws \Exception If the API key is not set.
      */
-    protected function storeAccessToken(string $token, int $expiresIn = 3600): void
+    protected function initializeStripeClient(): void
     {
-        // Example: Store the token in cache with an expiration.
-        // Cache::put('stripe_access_token', $token, $expiresIn);
-        Log::info('Stripe access token stored (if applicable)', ['token_length' => strlen($token), 'expires_in' => $expiresIn]);
+        if (!$this->apiKey) {
+            throw new \Exception('Stripe API key is not set.');
+        }
+        $this->stripeClient = new StripeClient($this->apiKey);
+
     }
+
 
     /**
      * Handles API responses and exceptions.
@@ -114,6 +110,7 @@ class StripeBaseService
     protected function callStripeApi(callable $callback)
     {
         try {
+            $this->initializeStripeClient();
             return $callback();
         } catch (ApiErrorException $e) {
             // Log the Stripe API error for debugging.
@@ -121,7 +118,6 @@ class StripeBaseService
                 'code' => $e->getCode(),
                 'http_status' => $e->getHttpStatus(),
                 'stripe_code' => $e->getStripeCode(),
-                'param' => $e->getParam(),
                 'request_id' => $e->getRequestId(),
                 'json_body' => $e->getJsonBody(),
             ]);
@@ -139,16 +135,4 @@ class StripeBaseService
         }
     }
 
-    /**
-     * Example method to demonstrate using callStripeApi.
-     * This method is not part of the core base service but shows how to use it.
-     *
-     * @return \Stripe\Balance|null
-     */
-    public function getBalance()
-    {
-        return $this->callStripeApi(function () {
-            return \Stripe\Balance::retrieve();
-        });
-    }
 }

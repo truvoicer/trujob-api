@@ -350,13 +350,19 @@ trait CalculateOrderItemTrait
         if (!$product instanceof Product) {
             throw new \Exception('Product not found for order item');
         }
-        $price = $product->prices->first();
+        $price = $product->prices
+        ->where('price_type', PriceType::SUBSCRIPTION->value)
+        ->first();
         if (!$price) {
             throw new \Exception('Price not found for product');
         }
         $priceSubscription = $price->subscription;
+
         if (!$priceSubscription) {
             throw new \Exception('Subscription not found for price');
+        }
+        if (!$priceSubscription->setup_fee_value) {
+            return 0.0; // No setup fee, return 0
         }
         return MathHelpers::toDecimalPlaces(
             $priceSubscription->setup_fee_value

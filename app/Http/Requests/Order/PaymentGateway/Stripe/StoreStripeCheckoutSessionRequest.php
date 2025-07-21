@@ -23,8 +23,8 @@ class StoreStripeCheckoutSessionRequest extends FormRequest
      */
     public function rules()
     {
-
         return [
+            'checkout_type' => 'required|string|in:subscription,one_time',
         ];
     }
 }

@@ -11,7 +11,7 @@ use App\Services\Payment\Stripe\StripeOrderService;
 use App\Services\Payment\Stripe\StripeSubscriptionOrderService;
 use Symfony\Component\HttpFoundation\Response;
 
-class StripeOrderCheckoutSessionController extends Controller
+class StripeOrderCheckoutSessionCancelController extends Controller
 {
 
     public function __construct(
