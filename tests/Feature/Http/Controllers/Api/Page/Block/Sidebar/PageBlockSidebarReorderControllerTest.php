@@ -1,0 +1,184 @@
+<?php
+
+namespace Tests\Feature\Api\Page\Block\Sidebar;
+
+use App\Models\Page;
+use App\Models\PageBlock;
+use App\Models\PageBlockSidebar;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class PageBlockSidebarReorderControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    /** @test */
+    public function it_can_reorder_a_page_block_sidebar(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $page = Page::factory()->create(['site_id' => $user->site_id]);
+        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+
+        // Create two page block sidebars for reordering.
+        $pageBlockSidebar1 = PageBlockSidebar::factory()->create([
+            'page_block_id' => $pageBlock->id,
+            'order' => 1,
+        ]);
+        $pageBlockSidebar2 = PageBlockSidebar::factory()->create([
+            'page_block_id' => $pageBlock->id,
+            'order' => 2,
+        ]);
+
+        $this->actingAs($user);
+
+        // Act
+        $response = $this->postJson(
+            route('api.pages.blocks.sidebars.reorder', [
+                'page' => $page->id,
+                'page_block' => $pageBlock->id,
+                'page_block_sidebar' => $pageBlockSidebar1->id,
+            ]),
+            ['direction' => 'down']
+        );
+
+        // Assert
+        $response->assertOk()
+            ->assertJson([
+                'message' => 'Page block moved down',
+            ]);
+
+        // Verify that the orders have been updated in the database.
+        $this->assertEquals(2, $pageBlockSidebar1->fresh()->order);
+        $this->assertEquals(1, $pageBlockSidebar2->fresh()->order);
+    }
+
+    /** @test */
+    public function it_returns_404_if_page_does_not_exist(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $pageBlock = PageBlock::factory()->create();
+        $pageBlockSidebar = PageBlockSidebar::factory()->create();
+
+        $this->actingAs($user);
+
+        // Act
+        $response = $this->postJson(
+            route('api.pages.blocks.sidebars.reorder', [
+                'page' => 999,
+                'page_block' => $pageBlock->id,
+                'page_block_sidebar' => $pageBlockSidebar->id,
+            ]),
+            ['direction' => 'down']
+        );
+
+        // Assert
+        $response->assertNotFound();
+    }
+
+    /** @test */
+    public function it_returns_404_if_page_block_does_not_exist(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $page = Page::factory()->create(['site_id' => $user->site_id]);
+        $pageBlockSidebar = PageBlockSidebar::factory()->create();
+
+        $this->actingAs($user);
+
+        // Act
+        $response = $this->postJson(
+            route('api.pages.blocks.sidebars.reorder', [
+                'page' => $page->id,
+                'page_block' => 999,
+                'page_block_sidebar' => $pageBlockSidebar->id,
+            ]),
+            ['direction' => 'down']
+        );
+
+        // Assert
+        $response->assertNotFound();
+    }
+
+        /** @test */
+    public function it_returns_404_if_page_block_sidebar_does_not_exist(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $page = Page::factory()->create(['site_id' => $user->site_id]);
+        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+
+        $this->actingAs($user);
+
+        // Act
+        $response = $this->postJson(
+            route('api.pages.blocks.sidebars.reorder', [
+                'page' => $page->id,
+                'page_block' => $pageBlock->id,
+                'page_block_sidebar' => 999,
+            ]),
+            ['direction' => 'down']
+        );
+
+        // Assert
+        $response->assertNotFound();
+    }
+
+    /** @test */
+    public function it_requires_a_direction(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $page = Page::factory()->create(['site_id' => $user->site_id]);
+        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+        $pageBlockSidebar = PageBlockSidebar::factory()->create([
+            'page_block_id' => $pageBlock->id,
+            'order' => 1,
+        ]);
+        $this->actingAs($user);
+
+        // Act
+        $response = $this->postJson(
+            route('api.pages.blocks.sidebars.reorder', [
+                'page' => $page->id,
+                'page_block' => $pageBlock->id,
+                'page_block_sidebar' => $pageBlockSidebar->id,
+            ]),
+            []
+        );
+
+        // Assert
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['direction']);
+    }
+
+    /** @test */
+    public function it_requires_the_direction_to_be_a_valid_value(): void
+    {
+        // Arrange
+        $user = User::factory()->create();
+        $page = Page::factory()->create(['site_id' => $user->site_id]);
+        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+        $pageBlockSidebar = PageBlockSidebar::factory()->create([
+            'page_block_id' => $pageBlock->id,
+            'order' => 1,
+        ]);
+        $this->actingAs($user);
+
+        // Act
+        $response = $this->postJson(
+            route('api.pages.blocks.sidebars.reorder', [
+                'page' => $page->id,
+                'page_block' => $pageBlock->id,
+                'page_block_sidebar' => $pageBlockSidebar->id,
+            ]),
+            ['direction' => 'invalid']
+        );
+
+        // Assert
+        $response->assertUnprocessable();
+        $response->assertJsonValidationErrors(['direction']);
+    }
+}
