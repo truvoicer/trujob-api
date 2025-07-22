@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Transaction\TransactionPaymentStatus;
 use App\Enums\Transaction\TransactionStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -34,6 +35,13 @@ return new class extends Migration
                 array_map(
                     fn(TransactionStatus $status) => $status->value,
                     TransactionStatus::cases()
+                )
+            );
+            $table->enum(
+                'payment_status',
+                array_map(
+                    fn(TransactionPaymentStatus $status) => $status->value,
+                    TransactionPaymentStatus::cases()
                 )
             );
 

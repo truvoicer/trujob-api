@@ -15,7 +15,7 @@ Route::prefix('order')->name('order.')->group(function () {
     Route::prefix('{order}')->group(function () {
         Route::get('/summary', [OrderSummaryController::class, 'show'])->name('summary.show');
         Route::patch('/update', [OrderController::class, 'update'])->name('update');
-        Route::delete('/delete', [OrderController::class, 'destroy'])->name('delete');
+        Route::delete('/destroy', [OrderController::class, 'destroy'])->name('destroy');
 
         include __DIR__ . '/order-transaction.php';
 

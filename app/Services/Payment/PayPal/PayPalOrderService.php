@@ -4,6 +4,7 @@ namespace App\Services\Payment\PayPal;
 
 use App\Enums\Order\OrderItemable;
 use App\Enums\Price\PriceType;
+use App\Enums\Transaction\TransactionPaymentStatus;
 use App\Enums\Transaction\TransactionStatus;
 use App\Exceptions\Product\ProductHealthException;
 use App\Models\Order;
@@ -153,6 +154,7 @@ class PayPalOrderService extends BaseService
                 [
                     'currency_code' => $currencyCode,
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'amount' => $finalTotal,
                     'order_data' => $responseHandler->getResult(),
                 ]
@@ -169,6 +171,7 @@ class PayPalOrderService extends BaseService
             [
                 'currency_code' => $currencyCode,
                 'status' => TransactionStatus::PROCESSING,
+                'payment_status' => TransactionPaymentStatus::UNPAID,
                 'amount' => $finalTotal,
                 'order_data' => $responseHandler->getResult(),
             ]
@@ -208,6 +211,7 @@ class PayPalOrderService extends BaseService
                 $transaction,
                 [
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'transaction_data' => $response->getResult(),
                 ]
             );
@@ -220,6 +224,7 @@ class PayPalOrderService extends BaseService
             $transaction,
             [
                 'status' => TransactionStatus::COMPLETED,
+                'payment_status' => TransactionPaymentStatus::PAID,
                 'transaction_data' => $response->getResult(),
             ]
         );
@@ -243,6 +248,7 @@ class PayPalOrderService extends BaseService
             [
                 'status' => TransactionStatus::CANCELLED,
                 'transaction_data' => $data,
+                'payment_status' => TransactionPaymentStatus::UNPAID,
             ]
         );
         return true;

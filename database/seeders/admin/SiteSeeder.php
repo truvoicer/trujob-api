@@ -9,6 +9,8 @@ use App\Enums\Price\PriceType;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Country;
+use App\Models\Currency;
 use App\Models\Feature;
 use App\Models\Media;
 use App\Models\MessagingGroup;
@@ -28,17 +30,28 @@ use App\Models\ProductCategory;
 use App\Models\ProductFollow;
 use App\Models\ProductReview;
 use App\Services\Data\DefaultData;
+use App\Services\User\UserAdminService;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class SiteSeeder extends Seeder
 {
 
-    public function priceState(): array
-    {
-        return array_map(function (PriceType $priceType) {
+    public function priceState(
+        Country $country,
+        Currency $currency,
+        User $user
+    ): array {
+        return array_map(function (PriceType $priceType) use (
+            $country,
+            $currency,
+            $user
+        ) {
             return [
                 'price_type' => $priceType->value,
+                'created_by_user_id' => $user->id,
+                'currency_id' => $currency->id,
+                'country_id' => $country->id,
             ];
         }, PriceType::cases());
     }
@@ -46,13 +59,31 @@ class SiteSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run(UserAdminService $userAdminService): void
     {
 
         $siteData = include(database_path('data/SiteData.php'));
         if (!$siteData) {
             throw new \Exception('Error reading SiteData.php file ' . database_path('data/SiteData.php'));
         }
+
+        $country = Country::where('iso2', 'GB')->first();
+        if (!$country) {
+            throw new Exception('Required country not found.');
+        }
+        $currency = Currency::where('code', 'GBP')->first();
+        if (!$currency) {
+            throw new Exception('Required currency not found.');
+        }
+
+        $testUserData = DefaultData::TEST_USER_DATA;
+        $user = $userAdminService->getUserRepository()->findOneBy(
+            [['email', '=', $testUserData['email']]]
+        );
+        if (!$user instanceof User) {
+            throw new \Exception("Error finding user");
+        }
+
 
         foreach ($siteData as $item) {
             $settings = $item['settings'] ?? null;
@@ -107,7 +138,11 @@ class SiteSeeder extends Seeder
                                 ->has(Media::factory()->count(5))
                                 ->has(
                                     Price::factory()
-                                        ->sequence(...$this->priceState())
+                                        ->sequence(...$this->priceState(
+                                            $country,
+                                            $currency,
+                                            $user
+                                        ))
                                         ->count(count(PriceType::cases()))
                                 )
                         )

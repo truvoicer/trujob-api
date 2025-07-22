@@ -7,6 +7,7 @@ use App\Enums\Payment\PaymentGateway;
 use App\Enums\Price\PriceType;
 use App\Enums\Subscription\SubscriptionIntervalUnit;
 use App\Enums\Subscription\SubscriptionTenureType;
+use App\Enums\Transaction\TransactionPaymentStatus;
 use App\Enums\Transaction\TransactionStatus;
 use App\Exceptions\PaymentGateway\StripeRequestException;
 use App\Models\Order;
@@ -142,6 +143,7 @@ class StripeSubscriptionOrderService extends StripeBaseOrderService
                 [
                     'currency_code' => $currencyCode,
                     'status' => TransactionStatus::PROCESSING,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'amount' => $finalTotal,
                     'order_data' => $response->toArray(),
                 ]
@@ -154,6 +156,7 @@ class StripeSubscriptionOrderService extends StripeBaseOrderService
                 [
                     'currency_code' => $currencyCode,
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'amount' => $finalTotal,
                     'order_data' => $e->getJsonBody(),
                 ]
@@ -191,6 +194,7 @@ class StripeSubscriptionOrderService extends StripeBaseOrderService
                 $transaction,
                 [
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'transaction_data' => $data,
                 ]
             );
@@ -200,38 +204,20 @@ class StripeSubscriptionOrderService extends StripeBaseOrderService
         }
 
         try {
-
-            $response = $this->stripeSubscriptionService->retrieveSubscription(
-                $data['id']
-            );
-            if (!$response) {
-                $this->orderTransactionService->updateTransaction(
-                    $order,
-                    $transaction,
-                    [
-                        'status' => TransactionStatus::FAILED,
-                        'transaction_data' => $response,
-                    ]
-                );
-                throw new \Exception(
-                    'Error retrieving PayPal subscription: ' . json_encode($response)
-                );
-            }
-            $this->orderTransactionService->updateTransaction(
+            return $this->handleApproveResponse(
                 $order,
                 $transaction,
-                [
-                    'status' => TransactionStatus::COMPLETED,
-                    'transaction_data' => $response,
-                ]
+                $this->stripeCheckoutService->retrieveSession(
+                    $data['id']
+                )
             );
-            return $response;
         } catch (ApiErrorException $e) {
             $this->orderTransactionService->updateTransaction(
                 $order,
                 $transaction,
                 [
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'transaction_data' => $e->getJsonBody(),
                 ]
             );
@@ -250,6 +236,7 @@ class StripeSubscriptionOrderService extends StripeBaseOrderService
                 $transaction,
                 [
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'transaction_data' => [
                         'error' => $e->getMessage(),
                         'data' => $data,
@@ -275,6 +262,7 @@ class StripeSubscriptionOrderService extends StripeBaseOrderService
             $transaction,
             [
                 'status' => TransactionStatus::CANCELLED,
+                'payment_status' => TransactionPaymentStatus::UNPAID,
                 'transaction_data' => $data,
             ]
         );

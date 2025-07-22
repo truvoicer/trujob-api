@@ -5,6 +5,7 @@ namespace App\Services\Payment\PayPal;
 use App\Enums\Order\OrderItemable;
 use App\Enums\Payment\PaymentGatewayEnvironment;
 use App\Enums\Price\PriceType;
+use App\Enums\Transaction\TransactionPaymentStatus;
 use App\Enums\Transaction\TransactionStatus;
 use App\Exceptions\Product\ProductHealthException;
 use App\Models\Order;
@@ -283,6 +284,7 @@ class PayPalSubscriptionOrderService extends BaseService
                 [
                     'currency_code' => $currencyCode,
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'amount' => $finalTotal,
                     'order_data' => $response->getResponseData(),
                 ]
@@ -299,6 +301,7 @@ class PayPalSubscriptionOrderService extends BaseService
             [
                 'currency_code' => $currencyCode,
                 'status' => TransactionStatus::PROCESSING,
+                'payment_status' => TransactionPaymentStatus::UNPAID,
                 'amount' => $finalTotal,
                 'order_data' => $response->getResponseData(),
             ]
@@ -327,6 +330,7 @@ class PayPalSubscriptionOrderService extends BaseService
                 $transaction,
                 [
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'transaction_data' => $data,
                 ]
             );
@@ -344,6 +348,7 @@ class PayPalSubscriptionOrderService extends BaseService
                 $transaction,
                 [
                     'status' => TransactionStatus::FAILED,
+                    'payment_status' => TransactionPaymentStatus::UNPAID,
                     'transaction_data' => $response->getResponseData(),
                 ]
             );
@@ -356,6 +361,7 @@ class PayPalSubscriptionOrderService extends BaseService
             $transaction,
             [
                 'status' => TransactionStatus::COMPLETED,
+                'payment_status' => TransactionPaymentStatus::PAID,
                 'transaction_data' => $response->getResponseData(),
             ]
         );
@@ -371,6 +377,7 @@ class PayPalSubscriptionOrderService extends BaseService
             $transaction,
             [
                 'status' => TransactionStatus::CANCELLED,
+                'payment_status' => TransactionPaymentStatus::UNPAID,
                 'transaction_data' => $data,
             ]
         );

@@ -40,7 +40,7 @@ class AddressControllerTest extends TestCase
     public function it_can_list_addresses()
     {
         $user = User::factory()->create();
-        $address = Address::factory()->count(3)->create(['user_id' => $user->id]);
+        $address = Address::factory()->count(3)->create(['user_id' => $this->user->id]);
 
         $response = $this->getJson(route('addresses.index'));
 
@@ -52,7 +52,7 @@ class AddressControllerTest extends TestCase
     public function it_can_show_a_specific_address()
     {
         $user = User::factory()->create();
-        $address = Address::factory()->create(['user_id' => $user->id]);
+        $address = Address::factory()->create(['user_id' => $this->user->id]);
 
         $response = $this->getJson(route('addresses.show', $address));
 
@@ -86,7 +86,7 @@ class AddressControllerTest extends TestCase
     public function it_can_update_an_address()
     {
         $user = User::factory()->create();
-        $address = Address::factory()->create(['user_id' => $user->id]);
+        $address = Address::factory()->create(['user_id' => $this->user->id]);
         $updatedAddressData = [
             'label' => 'New Home Address',
             'address_line_1' => '456 Oak Ave',
@@ -127,7 +127,7 @@ class AddressControllerTest extends TestCase
     public function it_can_delete_an_address()
     {
         $user = User::factory()->create();
-        $address = Address::factory()->create(['user_id' => $user->id]);
+        $address = Address::factory()->create(['user_id' => $this->user->id]);
 
         $response = $this->deleteJson(route('addresses.destroy', $address));
 

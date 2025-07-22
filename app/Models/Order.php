@@ -5,13 +5,14 @@ namespace App\Models;
 use App\Enums\Order\OrderStatus;
 use App\Enums\Price\PriceType;
 use App\Traits\Model\Order\CalculateOrderTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Order extends Model
 {
-    use CalculateOrderTrait;
+    use CalculateOrderTrait, HasFactory;
 
     protected $fillable = [
         'price_type',

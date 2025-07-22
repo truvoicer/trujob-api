@@ -55,7 +55,7 @@ class PaymentGatewayService extends BaseService
                 'description' => $gateway->description(),
                 'is_active' => true,
                 'is_default' => $gateway->isDefault(),
-                'required_fields' => $requiredFields,
+                'required_fields' => json_encode($requiredFields),
             ])) {
                 throw new \Exception('Error seeding paymentGateway');
             }

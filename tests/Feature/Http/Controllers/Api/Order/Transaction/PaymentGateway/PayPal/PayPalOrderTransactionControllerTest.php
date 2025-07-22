@@ -44,7 +44,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     public function it_can_show_a_paypal_order()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $order = Order::factory()->create(['site_id' => $site->id]);
         $transaction = Transaction::factory()->create(['order_id' => $order->id]);
 
@@ -61,7 +61,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     public function it_can_store_a_paypal_one_time_order()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $order = Order::factory()->create(['site_id' => $site->id, 'price_type' => PriceType::ONE_TIME]);
         $transaction = Transaction::factory()->create(['order_id' => $order->id]);
 
@@ -80,7 +80,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     public function it_can_store_a_paypal_subscription_order()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $order = Order::factory()->create(['site_id' => $site->id, 'price_type' => PriceType::SUBSCRIPTION]);
         $transaction = Transaction::factory()->create(['order_id' => $order->id]);
 
@@ -99,7 +99,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     public function it_returns_unprocessable_entity_for_invalid_price_type()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $order = Order::factory()->create(['site_id' => $site->id, 'price_type' => 'invalid_type']);
         $transaction = Transaction::factory()->create(['order_id' => $order->id]);
 
@@ -121,7 +121,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     public function it_can_update_a_paypal_order()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $order = Order::factory()->create(['site_id' => $site->id]);
         $transaction = Transaction::factory()->create(['order_id' => $order->id]);
 
@@ -143,7 +143,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     public function it_can_destroy_a_paypal_order()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $order = Order::factory()->create(['site_id' => $site->id]);
         $transaction = Transaction::factory()->create(['order_id' => $order->id]);
 

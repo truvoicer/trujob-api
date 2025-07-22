@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\locale\CurrencyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -10,7 +11,6 @@ class Currency extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'country_id',
         'name',
         'name_plural',
         'code',
@@ -21,6 +21,10 @@ class Currency extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+    
+    protected static function newFactory() {
+        return CurrencyFactory::new();
+    }
 
     public function user()
     {

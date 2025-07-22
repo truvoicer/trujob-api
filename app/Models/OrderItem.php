@@ -4,12 +4,13 @@ namespace App\Models;
 
 use App\Enums\Order\OrderItemable;
 use App\Traits\Model\Order\CalculateOrderItemTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class OrderItem extends Model
 {
-    use CalculateOrderItemTrait;
+    use CalculateOrderItemTrait, HasFactory;
 
     protected $fillable = [
         'order_id',

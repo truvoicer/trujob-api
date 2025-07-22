@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Order\Transaction\PaymentGateway\Stripe;
 
 use App\Enums\Price\PriceType;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Order\PaymentGateway\Stripe\StoreStripeCheckoutSessionRequest;
+use App\Http\Requests\Order\PaymentGateway\Stripe\StoreStripeCheckoutSessionApproveRequest;
 use App\Models\Order;
 use App\Models\Transaction;
 use App\Services\Payment\Stripe\StripeOrderService;
@@ -24,7 +24,7 @@ class StripeOrderCheckoutSessionApproveController extends Controller
     public function store(
         Order $order,
         Transaction $transaction,
-        StoreStripeCheckoutSessionRequest $request
+        StoreStripeCheckoutSessionApproveRequest $request
     ) {
         $this->stripeOrderService->setUser($request->user()->user);
         $this->stripeOrderService->setSite($request->user()->site);
@@ -34,9 +34,10 @@ class StripeOrderCheckoutSessionApproveController extends Controller
 
         switch ($order->price_type) {
             case PriceType::ONE_TIME:
-                $createOrder = $this->stripeOrderService->createCheckoutSession(
+                $createOrder = $this->stripeOrderService->handleOneTimePaymentApproval(
                     $order,
-                    $transaction
+                    $transaction,
+                    $request->validated()
                 );
                 if (!$createOrder) {
                     return $this->sendJsonResponse(

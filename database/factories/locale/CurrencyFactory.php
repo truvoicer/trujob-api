@@ -2,6 +2,7 @@
 
 namespace Database\Factories\locale;
 
+use App\Models\Currency;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CurrencyFactory extends Factory
 {
+
+    protected $model = Currency::class;
     /**
      * Define the model's default state.
      *
@@ -17,7 +20,11 @@ class CurrencyFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => $this->faker->word,
+            'name_plural' => $this->faker->word . 's',
+            'code' => $this->faker->currencyCode,
+            'symbol' => $this->faker->currencyCode,
+            'is_active' => $this->faker->boolean,
         ];
     }
 }

@@ -4,9 +4,11 @@ namespace App\Rules;
 
 use App\Enums\Order\OrderItemType;
 use App\Enums\Price\PriceType;
+use App\Models\Order;
 use App\Models\Product;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Support\Arr;
 
 class OrderItem implements ValidationRule
 {
@@ -17,15 +19,20 @@ class OrderItem implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        
         if (!is_array($value)) {
             $fail("The $attribute must be an array.");
             return;
         }
+
         if (!isset($value['quantity']) || !is_int($value['quantity']) || $value['quantity'] < 1) {
             $fail("The $attribute.quantity must be an integer and at least 1.");
             return;
         }
-        if (!isset($value['entity_type']) || !in_array($value['entity_type'], ['product'])) {
+        if (
+            !isset($value['entity_type']) ||
+            !OrderItemType::tryFrom($value['entity_type'])
+        ) {
             $fail("The $attribute.entity_type must be a valid entity type.");
             return;
         }

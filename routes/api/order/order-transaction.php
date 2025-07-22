@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal\PayPalOrder
 use App\Http\Controllers\Api\Order\Transaction\OrderTransactionController;
 use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal\PayPalOrderTransactionApproveController;
 use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\PayPal\PayPalOrderTransactionCancelController;
+use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\Stripe\StripeOrderCheckoutSessionApproveController;
+use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\Stripe\StripeOrderCheckoutSessionCancelController;
 use App\Http\Controllers\Api\Order\Transaction\PaymentGateway\Stripe\StripeOrderCheckoutSessionController;
 use App\Http\Controllers\Api\PaymentGateway\PayPal\PayPalOrderController;
 use Illuminate\Support\Facades\Route;
@@ -30,8 +32,8 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
             });
             Route::prefix('stripe')->name('stripe.')->group(function () {
                 Route::post('/checkout-session/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('store');
-                Route::post('/checkout-session/approve/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('approve.store');
-                Route::post('/checkout-session/cancel/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('cancel.store');
+                Route::post('/checkout-session/approve/store', [StripeOrderCheckoutSessionApproveController::class, 'store'])->name('approve.store');
+                Route::post('/checkout-session/cancel/store', [StripeOrderCheckoutSessionCancelController::class, 'store'])->name('cancel.store');
             });
         });
     });

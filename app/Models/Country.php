@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\locale\CountryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -21,6 +22,9 @@ class Country extends Model
         'is_active' => 'boolean',
     ];
 
+    protected static function newFactory() {
+        return CountryFactory::new();
+    }
 
     public function user()
     {

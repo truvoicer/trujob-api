@@ -61,7 +61,7 @@ class PageControllerTest extends TestCase
     public function it_can_show_a_page()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $page = Page::factory()->create(['site_id' => $site->id]);
 
         Sanctum::actingAs($user, ['*']);
@@ -76,7 +76,7 @@ class PageControllerTest extends TestCase
     public function it_can_create_a_page()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
 
         Sanctum::actingAs($user, ['*']);
 
@@ -96,7 +96,7 @@ class PageControllerTest extends TestCase
     public function it_returns_error_if_page_creation_fails()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
 
         Sanctum::actingAs($user, ['*']);
 
@@ -116,7 +116,7 @@ class PageControllerTest extends TestCase
     public function it_can_update_a_page()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $page = Page::factory()->create(['site_id' => $site->id]);
 
         Sanctum::actingAs($user, ['*']);
@@ -137,7 +137,7 @@ class PageControllerTest extends TestCase
     public function it_can_delete_a_page()
     {
         $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
+        $site = Site::factory()->create(['user_id' => $this->user->id]);
         $page = Page::factory()->create(['site_id' => $site->id]);
 
         Sanctum::actingAs($user, ['*']);

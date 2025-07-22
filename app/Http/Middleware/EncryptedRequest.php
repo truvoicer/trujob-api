@@ -58,6 +58,7 @@ class EncryptedRequest
         try {
             $this->jwtService->setSecret($payloadSecret);
             $decryptedData = $this->jwtService->jwtRawDecode($data);
+
             if (!isset($decryptedData[JWTEncryptedRequest::ENCRYPTED_REQUEST_PAYLOAD->value])) {
                 return response()->json(
                     [
