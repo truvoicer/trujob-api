@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\Block\BlockType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Block extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'type',
         'properties',

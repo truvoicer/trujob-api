@@ -479,7 +479,7 @@ class BaseRepository
 
         foreach ($orderBy as $order) {
             if (isset($order['column']) && isset($order['dir'])) {
-                $query->orderByRaw("{$order['column']} {$order['dir']}");
+                $query->orderByRaw("`{$order['column']}` {$order['dir']}");
             }
         }
         return $query;

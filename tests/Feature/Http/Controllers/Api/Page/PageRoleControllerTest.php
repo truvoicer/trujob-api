@@ -2,9 +2,15 @@
 
 namespace Tests\Feature\Api\Page;
 
+use App\Enums\SiteStatus;
 use App\Models\Page;
 use App\Models\Role;
+use App\Models\Sidebar;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,23 +18,43 @@ class PageRoleControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+    }
+
     public function test_index_returns_roles_for_page()
     {
         $user = User::factory()->create();
-        $page = Page::factory()->create();
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role = Role::factory()->create();
         $page->roles()->attach($role);
 
-        $this->actingAs($user)
-            ->getJson(route('pages.roles.index', $page))
+        Sanctum::actingAs($this->siteUser, ['*']);
+        $this
+            ->getJson(route('page.role.index', $page))
             ->assertOk()
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
                         'id',
                         'name',
-                        'created_at',
-                        'updated_at',
+                        'label',
+                        'ability',
                     ],
                 ],
             ]);
@@ -37,11 +63,14 @@ class PageRoleControllerTest extends TestCase
     public function test_store_assigns_role_to_page()
     {
         $user = User::factory()->create();
-        $page = Page::factory()->create();
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role = Role::factory()->create();
 
-        $this->actingAs($user)
-            ->postJson(route('pages.roles.store', [$page, $role]))
+        Sanctum::actingAs($this->siteUser, ['*']);
+        $this
+            ->postJson(route('page.role.store', [$page, $role]))
             ->assertOk()
             ->assertJson([
                 'message' => 'Role assigned to page.',
@@ -56,12 +85,15 @@ class PageRoleControllerTest extends TestCase
     public function test_destroy_removes_role_from_page()
     {
         $user = User::factory()->create();
-        $page = Page::factory()->create();
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role = Role::factory()->create();
         $page->roles()->attach($role);
 
-        $this->actingAs($user)
-            ->deleteJson(route('pages.roles.destroy', [$page, $role]))
+        Sanctum::actingAs($this->siteUser, ['*']);
+        $this
+            ->deleteJson(route('page.role.destroy', [$page, $role]))
             ->assertOk()
             ->assertJson([
                 'message' => 'Role removed from page.',
@@ -75,27 +107,38 @@ class PageRoleControllerTest extends TestCase
 
      public function test_index_returns_401_when_unauthenticated()
     {
-        $page = Page::factory()->create();
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
 
-        $this->getJson(route('pages.roles.index', $page))
+        // Sanctum::actingAs($this->siteUser, ['*']);
+        $this->getJson(route('page.role.index', $page))
             ->assertUnauthorized();
     }
 
     public function test_store_returns_401_when_unauthenticated()
     {
-        $page = Page::factory()->create();
+        $user = User::factory()->create();
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role = Role::factory()->create();
 
-        $this->postJson(route('pages.roles.store', [$page, $role]))
+        // Sanctum::actingAs($user, ['*']);
+        $this->postJson(route('page.role.store', [$page, $role]))
             ->assertUnauthorized();
     }
 
     public function test_destroy_returns_401_when_unauthenticated()
     {
-        $page = Page::factory()->create();
+        $user = User::factory()->create();
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role = Role::factory()->create();
 
-        $this->deleteJson(route('pages.roles.destroy', [$page, $role]))
+        // Sanctum::actingAs($this->siteUser, ['api:app_user']);
+        $this->deleteJson(route('page.role.destroy', [$page, $role]))
             ->assertUnauthorized();
     }
 }

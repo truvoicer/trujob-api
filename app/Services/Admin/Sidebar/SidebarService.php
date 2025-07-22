@@ -150,7 +150,6 @@ class SidebarService extends BaseService
             $roles = $data['roles'];
             unset($data['roles']);
         }
-        
         if (!$sidebarWidget->update($data)) {
             $this->resultsService->addError('Error updating app sidebar item', $data);
             return false;

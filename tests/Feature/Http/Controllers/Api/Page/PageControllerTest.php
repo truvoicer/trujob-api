@@ -3,8 +3,15 @@
 namespace Tests\Feature;
 
 use App\Models\Page;
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
 use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
@@ -14,16 +21,37 @@ class PageControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+    }
     
     public function it_can_list_pages()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $user->id]);
-        $pages = Page::factory(3)->create(['site_id' => $site->id]);
+        $site = Site::factory()->create([
+            'user_id' => $this->user->id,
+        ]);
+        $pages = Page::factory(3)->create([
+            'site_id' => $this->site->id,
+        ]);
 
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $response = $this->getJson(route('pages.index'));
+        $response = $this->getJson(route('page.index'));
 
         $response->assertStatus(200);
         $response->assertJsonCount(3, 'data');
@@ -38,7 +66,7 @@ class PageControllerTest extends TestCase
 
         Sanctum::actingAs($user, ['*']);
 
-        $response = $this->getJson(route('pages.show', $page));
+        $response = $this->getJson(route('page.show', $page));
 
         $response->assertStatus(200);
         $response->assertJson(['data' => ['id' => $page->id]]);
@@ -58,7 +86,7 @@ class PageControllerTest extends TestCase
             'content' => $this->faker->paragraph,
         ];
 
-        $response = $this->postJson(route('pages.store'), $data);
+        $response = $this->postJson(route('page.store'), $data);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('pages', $data);
@@ -78,7 +106,7 @@ class PageControllerTest extends TestCase
             'content' => $this->faker->paragraph,
         ];
 
-        $response = $this->postJson(route('pages.store'), $data);
+        $response = $this->postJson(route('page.store'), $data);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('title');
@@ -99,7 +127,7 @@ class PageControllerTest extends TestCase
             'content' => $this->faker->paragraph,
         ];
 
-        $response = $this->putJson(route('pages.update', $page), $data);
+        $response = $this->putJson(route('page.update', $page), $data);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('pages', $data);
@@ -114,7 +142,7 @@ class PageControllerTest extends TestCase
 
         Sanctum::actingAs($user, ['*']);
 
-        $response = $this->deleteJson(route('pages.destroy', $page));
+        $response = $this->deleteJson(route('page.destroy', $page));
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('pages', ['id' => $page->id]);

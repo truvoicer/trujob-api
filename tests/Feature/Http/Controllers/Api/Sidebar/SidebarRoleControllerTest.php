@@ -32,18 +32,23 @@ class SidebarRoleControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
+
+        Sanctum::actingAs($this->siteUser, ['*']);
     }
+    
     public function testIndexReturnsRolesForSidebar(): void
     {
         $user = User::factory()->create();
-        $sidebar = Sidebar::factory()->create();
+        $sidebar = Sidebar::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role1 = Role::factory()->create();
         $role2 = Role::factory()->create();
 
         $sidebar->roles()->attach([$role1->id, $role2->id]);
 
-        $response = $this->actingAs($user)
-            ->getJson(route('sidebars.roles.index', $sidebar));
+        $response = $this
+            ->getJson(route('sidebar.role.index', $sidebar));
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -51,8 +56,8 @@ class SidebarRoleControllerTest extends TestCase
                     '*' => [
                         'id',
                         'name',
-                        'created_at',
-                        'updated_at',
+                        'label',
+                        'ability',
                     ],
                 ],
             ]);
@@ -62,19 +67,20 @@ class SidebarRoleControllerTest extends TestCase
 
     public function testStoreAssignsRoleToSidebar(): void
     {
-        $user = User::factory()->create();
-        $sidebar = Sidebar::factory()->create();
+        $sidebar = Sidebar::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role = Role::factory()->create();
 
-        $response = $this->actingAs($user)
-            ->postJson(route('sidebars.roles.store', ['sidebar' => $sidebar, 'role' => $role]));
+        $response = $this
+            ->postJson(route('sidebar.role.store', ['sidebar' => $sidebar, 'role' => $role]));
 
         $response->assertStatus(200)
             ->assertJson([
                 'message' => "Role assigned to sidebar.",
             ]);
 
-        $this->assertDatabaseHas('role_sidebar', [
+        $this->assertDatabaseHas('sidebar_role', [
             'sidebar_id' => $sidebar->id,
             'role_id' => $role->id,
         ]);
@@ -83,25 +89,27 @@ class SidebarRoleControllerTest extends TestCase
     public function testDestroyRemovesRoleFromSidebar(): void
     {
         $user = User::factory()->create();
-        $sidebar = Sidebar::factory()->create();
+        $sidebar = Sidebar::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
         $role = Role::factory()->create();
 
         $sidebar->roles()->attach($role->id);
 
-        $this->assertDatabaseHas('role_sidebar', [
+        $this->assertDatabaseHas('sidebar_role', [
             'sidebar_id' => $sidebar->id,
             'role_id' => $role->id,
         ]);
 
-        $response = $this->actingAs($user)
-            ->deleteJson(route('sidebars.roles.destroy', ['sidebar' => $sidebar, 'role' => $role]));
+        $response = $this
+            ->deleteJson(route('sidebar.role.destroy', ['sidebar' => $sidebar, 'role' => $role]));
 
         $response->assertStatus(200)
             ->assertJson([
                 'message' => "Role removed from sidebar.",
             ]);
 
-        $this->assertDatabaseMissing('role_sidebar', [
+        $this->assertDatabaseMissing('sidebar_role', [
             'sidebar_id' => $sidebar->id,
             'role_id' => $role->id,
         ]);

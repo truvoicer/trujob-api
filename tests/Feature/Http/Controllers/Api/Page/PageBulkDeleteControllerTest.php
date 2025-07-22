@@ -3,14 +3,41 @@
 namespace Tests\Feature\Api\Page;
 
 use App\Models\Page;
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class PageBulkDeleteControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+
+
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+    }
 
     public function test_bulk_delete_pages_success(): void
     {
@@ -19,13 +46,14 @@ class PageBulkDeleteControllerTest extends TestCase
         Sanctum::actingAs($user, ['*']);
 
         $pages = Page::factory(3)->create([
-            'site_id' => $user->site_id,
+            'site_id' => $this->site->id,
         ]);
 
         $pageIds = $pages->pluck('id')->toArray();
 
+        Sanctum::actingAs($this->siteUser, ['*']);
         // Act
-        $response = $this->postJson(route('api.pages.bulk-delete'), [
+        $response = $this->deleteJson(route('page.bulk.destroy'), [
             'ids' => $pageIds,
         ]);
 
@@ -44,31 +72,30 @@ class PageBulkDeleteControllerTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Simulate an error during deletion by passing non-existent IDs
         $pageIds = [99999, 99998];
 
         // Act
-        $response = $this->postJson(route('api.pages.bulk-delete'), [
+        $response = $this->deleteJson(route('page.bulk.destroy'), [
             'ids' => $pageIds,
         ]);
 
         // Assert
-        $response->assertStatus(500);
-        $response->assertJson([
-            'message' => 'Pages could not be deleted.'
-        ]);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrors('ids.0');
+        $response->assertJsonValidationErrors('ids.1');
     }
 
     public function test_bulk_delete_pages_validation_failure(): void
     {
         // Arrange
         $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Act
-        $response = $this->postJson(route('api.pages.bulk-delete'), [
+        $response = $this->deleteJson(route('page.bulk.destroy'), [
             'ids' => [], // Empty array should trigger validation error
         ]);
 
@@ -80,33 +107,38 @@ class PageBulkDeleteControllerTest extends TestCase
     public function test_bulk_delete_pages_unauthenticated(): void
     {
         // Act
-        $response = $this->postJson(route('api.pages.bulk-delete'), [
+        $response = $this->deleteJson(route('page.bulk.destroy'), [
             'ids' => [1, 2, 3],
         ]);
 
         // Assert
-        $response->assertStatus(401); // or 403 depending on your app's auth setup
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED); // or 403 depending on your app's auth setup
     }
 
     public function test_bulk_delete_pages_different_site(): void
     {
         // Arrange
         $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        $site = Site::factory()->create();
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $pages = Page::factory(3)->create(); // Creates pages for a different site
+        $pages = Page::factory(3)->create([
+            'site_id' => $site->id,
+        ]); // Creates pages for a different site
 
         $pageIds = $pages->pluck('id')->toArray();
 
         // Act
-        $response = $this->postJson(route('api.pages.bulk-delete'), [
+        $response = $this->deleteJson(route('page.bulk.destroy'), [
             'ids' => $pageIds,
         ]);
 
         // Assert
-        $response->assertStatus(500); //Or appropriate error message
-        $response->assertJson([
-            'message' => 'Pages could not be deleted.'
-        ]);
+
+        $response->assertStatus(422);
+
+        $response->assertJsonValidationErrors('ids.0');
+        $response->assertJsonValidationErrors('ids.1');
+        $response->assertJsonValidationErrors('ids.2');
     }
 }

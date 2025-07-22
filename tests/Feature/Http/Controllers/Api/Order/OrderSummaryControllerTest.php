@@ -4,8 +4,15 @@ namespace Tests\Feature\Api\Order;
 
 use App\Enums\Price\PriceType;
 use App\Models\Order;
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
 use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
@@ -14,6 +21,23 @@ class OrderSummaryControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+    }
     public function test_show_one_time_order_summary(): void
     {
         // Arrange
@@ -26,7 +50,7 @@ class OrderSummaryControllerTest extends TestCase
         ]);
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->getJson(route('api.order-summary.show', $order));
 
         // Assert
@@ -57,7 +81,7 @@ class OrderSummaryControllerTest extends TestCase
         ]);
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->getJson(route('api.order-summary.show', $order));
 
         // Assert
@@ -88,7 +112,7 @@ class OrderSummaryControllerTest extends TestCase
         ]);
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->getJson(route('api.order-summary.show', $order));
 
         // Assert

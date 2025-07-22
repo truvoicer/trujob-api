@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Traits\Model\PermissionTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PageBlock extends Model
 {
-    use PermissionTrait;
+    use PermissionTrait, HasFactory;
+    
     protected $fillable = [
         'properties',
         'has_sidebar',

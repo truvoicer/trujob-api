@@ -2,10 +2,17 @@
 
 namespace Tests\Feature\Api;
 
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use App\Services\Permission\AccessControlService;
 use Mockery;
@@ -14,6 +21,25 @@ use Mockery\MockInterface;
 class AdminControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
+
+
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+    }
 
     public function test_get_user_role_list_requires_admin_role()
     {

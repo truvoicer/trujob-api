@@ -4,9 +4,17 @@ namespace Tests\Feature\Api\Order\Transaction\PaymentGateway\Stripe;
 
 use App\Enums\Price\PriceType;
 use App\Models\Order;
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
 use App\Models\Site;
-use App\Models\Transaction;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
+use App\Models\Transaction;
+
 use App\Services\Payment\Stripe\StripeOrderService;
 use App\Services\Payment\Stripe\StripeSubscriptionOrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -20,6 +28,23 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+    }
     public function test_store_one_time_success(): void
     {
         // Arrange
@@ -50,7 +75,7 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
 
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->postJson(route('api.orders.transactions.stripe.store', ['order' => $order->id, 'transaction' => $transaction->id]));
 
 
@@ -95,7 +120,7 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
         $this->app->instance(StripeSubscriptionOrderService::class, $stripeSubscriptionOrderServiceMock);
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->postJson(route('api.orders.transactions.stripe.store', ['order' => $order->id, 'transaction' => $transaction->id]));
 
         // Assert
@@ -126,7 +151,7 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
 
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->postJson(route('api.orders.transactions.stripe.store', ['order' => $order->id, 'transaction' => $transaction->id]));
 
         // Assert
@@ -160,7 +185,7 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
         $this->app->instance(StripeOrderService::class, $stripeOrderServiceMock);
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->postJson(route('api.orders.transactions.stripe.store', ['order' => $order->id, 'transaction' => $transaction->id]));
 
         // Assert
@@ -196,7 +221,7 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
         $this->app->instance(StripeSubscriptionOrderService::class, $stripeSubscriptionOrderServiceMock);
 
         // Act
-        $response = $this->actingAs($user)
+        $response = $this
             ->postJson(route('api.orders.transactions.stripe.store', ['order' => $order->id, 'transaction' => $transaction->id]));
 
         // Assert

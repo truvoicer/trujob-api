@@ -3,7 +3,15 @@
 namespace Tests\Feature\Api\Locale;
 
 use App\Models\Address;
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,13 +19,30 @@ class AddressControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+    }
     
     public function it_can_list_addresses()
     {
         $user = User::factory()->create();
         $address = Address::factory()->count(3)->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->getJson(route('addresses.index'));
+        $response = $this->getJson(route('addresses.index'));
 
         $response->assertStatus(200);
         $response->assertJsonCount(3, 'data');
@@ -29,7 +54,7 @@ class AddressControllerTest extends TestCase
         $user = User::factory()->create();
         $address = Address::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->getJson(route('addresses.show', $address));
+        $response = $this->getJson(route('addresses.show', $address));
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
@@ -51,7 +76,7 @@ class AddressControllerTest extends TestCase
             'type' => 'shipping',
         ];
 
-        $response = $this->actingAs($user)->postJson(route('addresses.store'), $addressData);
+        $response = $this->postJson(route('addresses.store'), $addressData);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('addresses', $addressData);
@@ -67,7 +92,7 @@ class AddressControllerTest extends TestCase
             'address_line_1' => '456 Oak Ave',
         ];
 
-        $response = $this->actingAs($user)->putJson(route('addresses.update', $address), $updatedAddressData);
+        $response = $this->putJson(route('addresses.update', $address), $updatedAddressData);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('addresses', [
@@ -88,7 +113,7 @@ class AddressControllerTest extends TestCase
             'address_line_1' => '456 Oak Ave',
         ];
 
-        $response = $this->actingAs($user)->putJson(route('addresses.update', $address), $updatedAddressData);
+        $response = $this->putJson(route('addresses.update', $address), $updatedAddressData);
 
         $response->assertStatus(404);
         $this->assertDatabaseMissing('addresses', [
@@ -104,7 +129,7 @@ class AddressControllerTest extends TestCase
         $user = User::factory()->create();
         $address = Address::factory()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)->deleteJson(route('addresses.destroy', $address));
+        $response = $this->deleteJson(route('addresses.destroy', $address));
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('addresses', ['id' => $address->id]);
@@ -117,7 +142,7 @@ class AddressControllerTest extends TestCase
         $anotherUser = User::factory()->create();
         $address = Address::factory()->create(['user_id' => $anotherUser->id]);
 
-        $response = $this->actingAs($user)->deleteJson(route('addresses.destroy', $address));
+        $response = $this->deleteJson(route('addresses.destroy', $address));
 
         $response->assertStatus(404);
         $this->assertDatabaseHas('addresses', ['id' => $address->id]);

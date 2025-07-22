@@ -3,7 +3,15 @@
 namespace Tests\Feature\Api\Order\Discount;
 
 use App\Models\Order;
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,6 +19,23 @@ class BulkOrderDiscountControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+    }
     
     public function it_can_sync_discounts_to_an_order()
     {
@@ -18,7 +43,7 @@ class BulkOrderDiscountControllerTest extends TestCase
         $order = Order::factory()->create();
         $discountIds = [1, 2, 3];
 
-        $response = $this->actingAs($user)
+        $response = $this
             ->postJson(route('orders.bulk-discounts', $order), [
                 'ids' => $discountIds,
             ]);
@@ -46,7 +71,7 @@ class BulkOrderDiscountControllerTest extends TestCase
                  ->andReturn(false); // Simulate failure
          });
 
-         $response = $this->actingAs($user)
+         $response = $this
              ->postJson(route('orders.bulk-discounts', $order), [
                  'ids' => $discountIds,
              ]);
@@ -76,7 +101,7 @@ class BulkOrderDiscountControllerTest extends TestCase
         $user = User::factory()->create();
         $order = Order::factory()->create();
 
-        $response = $this->actingAs($user)
+        $response = $this
             ->postJson(route('orders.bulk-discounts', $order), [
                 'ids' => 'not an array',
             ]);

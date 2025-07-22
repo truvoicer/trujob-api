@@ -38,6 +38,12 @@ class EditSidebarWidgetRequest extends FormRequest
                 'max:255',
                 'nullable',
             ],
+            'order' => [ 
+                'sometimes',
+                'integer',
+                'min:0',
+                'nullable',
+            ],
             'properties' => [
                 'sometimes',
                 'array',

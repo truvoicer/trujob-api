@@ -38,23 +38,34 @@ class SidebarWidgetControllerTest extends TestCase
     }
     public function testIndex(): void
     {
-        $user = User::factory()->create();
-        $sidebar = Sidebar::factory()->create();
-        SidebarWidget::factory()->count(3)->create(['sidebar_id' => $sidebar->id]);
+        $sidebar = Sidebar::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
+        $widget = Widget::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
+        $sidebarWidget = SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id
+        ]);
 
         $response = $this
             ->getJson(route('sidebar.widget.index', ['sidebar' => $sidebar->id]));
 
         $response->assertStatus(200);
+
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
                     'id',
-                    'sidebar_id',
-                    'widget_id',
+                    'name',
+                    'title',
+                    'icon',
+                    'properties',
                     'order',
-                    'created_at',
-                    'updated_at',
+                    'has_container',
+                    'roles',
+                    'has_permission',
                 ],
             ],
         ]);
@@ -62,21 +73,31 @@ class SidebarWidgetControllerTest extends TestCase
 
     public function testShow(): void
     {
-        $user = User::factory()->create();
-        $sidebar = Sidebar::factory()->create();
-        $sidebarWidget = SidebarWidget::factory()->create(['sidebar_id' => $sidebar->id]);
+        $sidebar = Sidebar::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
+        $widget = Widget::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
+        $sidebarWidget = SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id
+        ]);
 
         $response = $this->getJson(route('sidebar.widget.relshow', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]));
 
         $response->assertStatus(200);
+
         $response->assertJsonStructure([
             'data' => [
-                'id',
-                'sidebar_id',
-                'widget_id',
+                'name',
+                'title',
+                'icon',
+                'properties',
                 'order',
-                'created_at',
-                'updated_at',
+                'has_container',
+                'roles',
+                'has_permission',
             ],
         ]);
     }
@@ -138,12 +159,13 @@ class SidebarWidgetControllerTest extends TestCase
         $sidebar = Sidebar::factory()->create([
             'site_id' => $this->site->id,
         ]);
-        $sidebarWidget = SidebarWidget::factory()->create(['sidebar_id' => $sidebar->id,
+        $sidebarWidget = SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
             'widget_id' => $widget->id,
         ]);
 
         $data = [
-            'order' => 1
+            'order' => $this->faker->numberBetween(11, 20),
         ];
 
         $response = $this->patchJson(route('sidebar.widget.relupdate', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]), $data);
@@ -152,8 +174,8 @@ class SidebarWidgetControllerTest extends TestCase
         $response->assertJson(['message' => 'Sidebar widget updated']);
 
         $this->assertDatabaseHas('sidebar_widgets', [
-            'id' => $sidebarWidget->widget->id,
-            'order' => 1,
+            'id' => $sidebarWidget->id,
+            'order' => $data['order'],
         ]);
     }
 
@@ -171,10 +193,11 @@ class SidebarWidgetControllerTest extends TestCase
         ]);
 
         $data = [
-            'roles' => 'invalid',
+            'order' => 'invalid',
         ];
 
         $response = $this->patchJson(route('sidebar.widget.relupdate', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]), $data);
+
         $response->assertStatus(422);
     }
 

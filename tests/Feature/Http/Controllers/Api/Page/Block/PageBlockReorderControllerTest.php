@@ -4,7 +4,15 @@ namespace Tests\Feature\Api\Page\Block;
 
 use App\Models\Page;
 use App\Models\PageBlock;
+
+use App\Enums\SiteStatus;
+use App\Models\Role;
+use App\Models\Sidebar;
+use App\Models\Site;
+use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,6 +20,24 @@ class PageBlockReorderControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+
+    protected SiteUser $siteUser;
+    protected Site $site;
+    protected User $user;
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Additional setup if needed
+        $this->site = Site::factory()->create();
+        $this->user = User::factory()->create();
+        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->siteUser = SiteUser::create([
+            'user_id' => $this->user->id,
+            'site_id' => $this->site->id,
+            'status' => SiteStatus::ACTIVE->value,
+        ]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+    }
     
     public function it_can_reorder_a_page_block(): void
     {
@@ -21,8 +47,8 @@ class PageBlockReorderControllerTest extends TestCase
         $pageBlock2 = PageBlock::factory()->create(['page_id' => $page->id, 'order' => 2]);
 
 
-        $response = $this->actingAs($user)
-            ->postJson(route('api.pages.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock1->id]), [
+        $response = $this
+            ->postJson(route('page.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock1->id]), [
                 'direction' => 'down',
             ]);
 
@@ -51,8 +77,8 @@ class PageBlockReorderControllerTest extends TestCase
         $page = Page::factory()->create(['site_id' => $user->site_id]);
         $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
 
-        $response = $this->actingAs($user)
-            ->postJson(route('api.pages.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock->id]), [
+        $response = $this
+            ->postJson(route('page.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock->id]), [
                 'direction' => 'invalid',
             ]);
 
@@ -68,8 +94,8 @@ class PageBlockReorderControllerTest extends TestCase
         $page = Page::factory()->create(['site_id' => $otherUser->site_id]);
         $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
 
-        $response = $this->actingAs($user)
-            ->postJson(route('api.pages.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock->id]), [
+        $response = $this
+            ->postJson(route('page.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock->id]), [
                 'direction' => 'down',
             ]);
 
