@@ -31,19 +31,22 @@ class BulkCountryControllerTest extends TestCase
         // Additional setup if needed
         $this->site = Site::factory()->create();
         $this->user = User::factory()->create();
-        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->user->roles()->attach(Role::factory()->create([
+            'name' => 'superuser'
+        ])->id);
+
         $this->siteUser = SiteUser::create([
             'user_id' => $this->user->id,
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
+
     }
 
     public function test_store_creates_country_batch_successfully(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         // Arrange
-        $user = User::factory()->create();
         $data = [
             'countries' => [
                 [
@@ -61,15 +64,15 @@ class BulkCountryControllerTest extends TestCase
             ],
         ];
 
-        $this->mock(CountryService::class, function (MockInterface $mock) use ($user) {
-            $mock->shouldReceive('setUser')->once()->with($user->user);
-            $mock->shouldReceive('setSite')->once()->with($user->site);
+        $this->mock(CountryService::class, function (MockInterface $mock) use ($data) {
+            $mock->shouldReceive('setUser')->once()->with($this->siteUser->user);
+            $mock->shouldReceive('setSite')->once()->with($this->siteUser->site);
             $mock->shouldReceive('createCountryBatch')->once()->with($data)->andReturn(true);
         });
 
 
         // Act
-        $response = $this->postJson(route('api.locale.bulk-countries.store'), $data);
+        $response = $this->postJson(route('locale.country.bulk.store'), $data);
 
         // Assert
         $response->assertStatus(200)
@@ -80,8 +83,8 @@ class BulkCountryControllerTest extends TestCase
 
     public function test_store_returns_error_if_country_batch_creation_fails(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         // Arrange
-        $user = User::factory()->create();
         $data = [
             'countries' => [
                 [
@@ -99,14 +102,14 @@ class BulkCountryControllerTest extends TestCase
             ],
         ];
 
-        $this->mock(CountryService::class, function (MockInterface $mock) use ($user) {
-            $mock->shouldReceive('setUser')->once()->with($user->user);
-            $mock->shouldReceive('setSite')->once()->with($user->site);
+        $this->mock(CountryService::class, function (MockInterface $mock) use ($data) {
+            $mock->shouldReceive('setUser')->once()->with($this->siteUser->user);
+            $mock->shouldReceive('setSite')->once()->with($this->siteUser->site);
             $mock->shouldReceive('createCountryBatch')->once()->with($data)->andReturn(false);
         });
 
         // Act
-        $response = $this->postJson(route('api.locale.bulk-countries.store'), $data);
+        $response = $this->postJson(route('locale.country.bulk.store'), $data);
 
         // Assert
         $response->assertStatus(422)
@@ -117,8 +120,8 @@ class BulkCountryControllerTest extends TestCase
 
     public function test_store_validates_input_data(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         // Arrange
-        $user = User::factory()->create();
         $data = [
             'countries' => [
                 [
@@ -131,7 +134,7 @@ class BulkCountryControllerTest extends TestCase
         ];
 
         // Act
-        $response = $this->postJson(route('api.locale.bulk-countries.store'), $data);
+        $response = $this->postJson(route('locale.country.bulk.store'), $data);
 
         // Assert
         $response->assertStatus(422)

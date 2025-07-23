@@ -37,5 +37,17 @@ class CountryService extends BaseService
         return true;
     }
 
+    public function deleteCountryBatch(array $data) {
+        $countryIds = $data['ids'] ?? [];
+        if (empty($countryIds)) {
+            throw new \Exception('No countries provided for deletion');
+        }
+
+        $deletedCount = Country::whereIn('id', $countryIds)->delete();
+        if ($deletedCount === 0) {
+            throw new \Exception('Error deleting country batch');
+        }
+        return true;
+    }
 
 }

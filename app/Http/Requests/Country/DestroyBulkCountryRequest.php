@@ -4,7 +4,7 @@ namespace App\Http\Requests\Country;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreBulkCountryRequest extends FormRequest
+class DestroyBulkCountryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,8 @@ class StoreBulkCountryRequest extends FormRequest
     public function rules()
     {
         return [
-            'countries' => ['required', 'array'],
-            'countries.*.name' => ['required', 'string', 'max:255'],
-            'countries.*.iso2' => ['required', 'string', 'max:2'],
-            'countries.*.iso3' => ['required', 'string', 'max:3'],
-            'countries.*.phone_code' => ['required', 'string', 'max:5'],
-            'countries.*.is_active' => ['required', 'boolean'],
+            'ids' => ['required', 'array'],
+            'ids.*' => ['required', 'integer', 'exists:currencies,id'],
         ];
     }
 }

@@ -8,6 +8,7 @@ enum TransactionPaymentStatus: string
     case PARTIALLY_PAID = 'partially_paid';
     case REQUIRES_PAYMENT_METHOD = 'requires_payment_method';
     case REQUIRES_CAPTURE = 'requires_capture';
+    case NO_PAYMENT_REQUIRED = 'no_payment_required';
 
     public function label(): string
     {
@@ -17,6 +18,7 @@ enum TransactionPaymentStatus: string
             self::PARTIALLY_PAID => 'Partially Paid',
             self::REQUIRES_PAYMENT_METHOD => 'Requires Payment Method',
             self::REQUIRES_CAPTURE => 'Requires Capture',
+            self::NO_PAYMENT_REQUIRED => 'No Payment Required',
         };
     }
 }

@@ -22,7 +22,7 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
     Route::prefix('{transaction}')->group(function () {
         Route::get('/', [OrderTransactionController::class, 'show'])->name('show');
         Route::patch('/update', [OrderTransactionController::class, 'update'])->name('update');
-        Route::delete('/delete', [OrderTransactionController::class, 'destroy'])->name('delete');
+        Route::delete('/delete', [OrderTransactionController::class, 'destroy'])->name('destroy');
         Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
             Route::prefix('paypal')->name('paypal.')->group(function () {
                 Route::post('/store', [PayPalOrderTransactionController::class, 'store'])->name('store');
@@ -31,9 +31,11 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
                 Route::post('/cancel/store', [PayPalOrderTransactionCancelController::class, 'store'])->name('cancel.store');
             });
             Route::prefix('stripe')->name('stripe.')->group(function () {
-                Route::post('/checkout-session/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('store');
-                Route::post('/checkout-session/approve/store', [StripeOrderCheckoutSessionApproveController::class, 'store'])->name('approve.store');
-                Route::post('/checkout-session/cancel/store', [StripeOrderCheckoutSessionCancelController::class, 'store'])->name('cancel.store');
+                Route::prefix('checkout-session')->name('checkout-session.')->group(function () {
+                    Route::post('/store', [StripeOrderCheckoutSessionController::class, 'store'])->name('store');
+                    Route::post('/approve/store', [StripeOrderCheckoutSessionApproveController::class, 'store'])->name('approve.store');
+                    Route::post('/cancel/store', [StripeOrderCheckoutSessionCancelController::class, 'store'])->name('cancel.store');
+                });
             });
         });
     });

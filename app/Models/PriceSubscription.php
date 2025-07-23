@@ -50,4 +50,8 @@ class PriceSubscription extends Model
     {
         return $this->hasMany(PriceSubscriptionItem::class);
     }
+    public function priceSubscriptionItems()
+    {
+        return $this->hasMany(PriceSubscriptionItem::class);
+    }
 }

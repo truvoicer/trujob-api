@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Order\Transaction;
 
 use App\Enums\Order\OrderStatus;
+use App\Enums\Transaction\TransactionPaymentStatus;
+use App\Enums\Transaction\TransactionStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,6 +32,29 @@ class UpdateOrderTransactionRequest extends FormRequest
                 'sometimes',
                 'integer',
                 'exists:payment_gateways,id'
+            ],
+            'amount' => [
+                'sometimes',
+                'numeric',
+                'min:0'
+            ],
+            'status' => [
+                'sometimes',
+                'string',
+                Rule::enum(TransactionStatus::class)
+            ],
+            'payment_status' => [
+                'sometimes',
+                'string',
+                Rule::enum(TransactionPaymentStatus::class)
+            ],
+            'order_data' => [
+                'sometimes',
+                'array'
+            ],
+            'transaction_data' => [
+                'sometimes',
+                'array'
             ],
         ];
     }

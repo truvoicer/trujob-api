@@ -65,6 +65,10 @@ class Price extends Model
     {
         return $this->hasOne(PriceSubscription::class);
     }
+    public function priceSubscription()
+    {
+        return $this->hasOne(PriceSubscription::class);
+    }
 
     public function discountables()
     {

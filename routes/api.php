@@ -151,15 +151,19 @@ use App\Http\Controllers\Api\Widget\WidgetBulkDeleteController;
 use App\Http\Controllers\Api\Widget\WidgetController;
 use App\Http\Controllers\Api\Widget\WidgetRoleController;
 use App\Http\Middleware\AppPublic;
+use App\Http\Middleware\AuthenticateSiteRequest;
+use App\Http\Middleware\AuthenticateSiteUserRequest;
 use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(AppPublic::class)->group(function () {});
 
 
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user'])->group(function () {
-
-
+Route::middleware([
+    'auth:sanctum',
+    'ability:api:admin,api:superuser,api:super_admin,api:user,api:app_user',
+    AuthenticateSiteUserRequest::class,
+])->group(function () {
     Route::prefix('site')->name('site.')->group(function () {
         Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
             Route::get('/', [SitePaymentGatewayController::class, 'index'])->name('index');
@@ -514,7 +518,11 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 });
 
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site'])->group(function () {
+Route::middleware([
+    'auth:sanctum',
+    'ability:api:admin,api:superuser,api:super_admin,api:site',
+    AuthenticateSiteRequest::class
+])->group(function () {
     Route::get('/reset-password/{token}', [AuthPasswordResetController::class, 'show'])->name('password.reset');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
 
@@ -555,7 +563,11 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 });
 
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:site,api:user,api:app_user'])->group(function () {
+Route::middleware([
+    'auth:sanctum',
+    'ability:api:admin,api:superuser,api:super_admin,api:site,api:user,api:app_user',
+    AuthenticateSiteUserRequest::class,
+])->group(function () {
     Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
         Route::get('/environment', [PaymentGatewayEnvironmentController::class, 'index'])->name('environment.index');
     });
@@ -574,7 +586,7 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::get('/product-type', [ProductTypeController::class, 'index'])->name('product-type.index');
     Route::get('/feature', [FeatureController::class, 'index'])->name('feature.index');
     Route::get('/review', [ReviewController::class, 'index'])->name('review.index');
-     Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
+    Route::get('/price-type', [PriceTypeController::class, 'index'])->name('price-type.index');
     Route::prefix('discount')->name('discount.')->group(function () {
         Route::get('/type', DiscountTypeController::class)->name('type.index');
         Route::get('/discountable/type', DiscountableTypeController::class)->name('discountable.type.index');
@@ -626,7 +638,11 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 });
 
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin,api:user'])->group(function () {
+Route::middleware([
+    'auth:sanctum',
+    'ability:api:admin,api:superuser,api:super_admin,api:user',
+    AuthenticateSiteUserRequest::class,
+])->group(function () {
     Route::prefix('tools')->name('tools.')->group(function () {
         Route::prefix('filesystem')->name('filesystem.')->group(function () {
             Route::get('/list', [FileSystemController::class, 'getFiles'])->name('list');
@@ -639,7 +655,11 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     });
 });
 
-Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function () {
+Route::middleware([
+    'auth:sanctum',
+    'ability:api:superuser,',
+    AuthenticateSiteUserRequest::class,
+])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('user')->name('user.')->group(function () {
             Route::get('/role/list', [AdminController::class, 'getUserRoleList'])->name('role.list');
@@ -655,7 +675,11 @@ Route::middleware(['auth:sanctum', 'ability:api:superuser,'])->group(function ()
     });
 });
 
-Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_admin'])->group(function () {
+Route::middleware([
+    'auth:sanctum',
+    'ability:api:admin,api:superuser,api:super_admin',
+    AuthenticateSiteUserRequest::class,
+])->group(function () {
     Route::prefix('payment-method')->name('payment-method.')->group(function () {
         Route::get('/', [PaymentMethodController::class, 'index'])->name('index');
         Route::post('/store', [PaymentMethodController::class, 'store'])->name('store');
@@ -767,7 +791,10 @@ Route::middleware(['auth:sanctum', 'ability:api:admin,api:superuser,api:super_ad
     Route::prefix('locale')->name('locale.')->group(function () {
         Route::prefix('country')->name('country.')->group(function () {
             Route::post('/store', [CountryController::class, 'store'])->name('store');
-            Route::post('/store/batch', [BulkCountryController::class, 'store'])->name('store_batch');
+            Route::prefix('bulk')->name('bulk.')->group(function () {
+                Route::post('/store', [BulkCountryController::class, 'store'])->name('store');
+                Route::delete('/destroy', [BulkCountryController::class, 'destroy'])->name('destroy');
+            });
             Route::get('/{country}', [CountryController::class, 'show'])->name('show');
             Route::patch('/{country}/update', [CountryController::class, 'update'])->name('update');
             Route::delete('/{country}/destroy', [CountryController::class, 'destroy'])->name('destroy');

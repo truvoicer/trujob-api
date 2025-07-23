@@ -210,6 +210,20 @@ class StripeCheckoutSessionBuilder
     }
 
     /**
+     * Sets the shipping address collection mode.
+     *
+     * @param array $allowedCountryCodes An array of allowed 2 letter country codes for shipping addresses.
+     * @return self
+     */
+    public function setShippingAddressCollection(array $allowedCountryCodes): self
+    {
+        $this->params['shipping_address_collection'] = [
+            'allowed_countries' => $allowedCountryCodes,
+        ];
+        return $this;
+    }
+
+    /**
      * Adds any custom parameter to the Checkout Session.
      * Use this for parameters not explicitly covered by other methods.
      *

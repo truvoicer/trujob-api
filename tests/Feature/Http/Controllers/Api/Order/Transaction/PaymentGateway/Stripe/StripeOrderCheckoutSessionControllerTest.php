@@ -6,47 +6,40 @@ use App\Enums\Order\OrderItemType;
 use App\Enums\Payment\PaymentGateway as PaymentPaymentGateway;
 use App\Enums\Price\PriceType;
 use App\Models\Order;
-
 use App\Enums\SiteStatus;
+use App\Enums\Transaction\TransactionPaymentStatus;
+use App\Enums\Transaction\TransactionStatus;
 use App\Models\Address;
 use App\Models\Country;
 use App\Models\Currency;
-use App\Models\OrderItem;
 use App\Models\PaymentGateway;
 use App\Models\Price;
 use App\Models\Product;
 use App\Models\Role;
-use App\Models\Sidebar;
 use App\Models\Site;
 use App\Models\SiteUser;
 use App\Models\User;
-use App\Models\Widget;
 use Laravel\Sanctum\Sanctum;
 use App\Models\Transaction;
 use App\Services\JWT\JWTService;
-use App\Services\Payment\Stripe\StripeOrderService;
-use App\Services\Payment\Stripe\StripeSubscriptionOrderService;
 use Database\Seeders\payment\PaymentGatewaySeeder;
 use Database\Seeders\payment\SitePaymentGatewaySeeder;
-use Faker\Provider\ar_EG\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
-use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Stripe\Checkout\Session;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class StripeOrderCheckoutSessionControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    protected PaymentGateway $paymentGateway;
     protected SiteUser $siteUser;
     protected Site $site;
     protected User $user;
     protected Currency $currency;
     protected Country $country;
+    protected PaymentGateway $paymentGateway;
 
     protected function setUp(): void
     {
@@ -96,7 +89,7 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
 
 
     #[DataProvider('checkoutTypeProvider')]
-    public function test_store_success(string $checkoutType): void
+    public function test_create_checkout_session_request(string $checkoutType): void
     {
         Sanctum::actingAs($this->siteUser, ['*']);
 
@@ -138,23 +131,16 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
         ]);
         $transaction = Transaction::factory()->create([
             'order_id' => $order->id,
+            'status' => TransactionStatus::PENDING->value,
+            'payment_status' => TransactionPaymentStatus::UNPAID->value,
             'payment_gateway_id' => $this->paymentGateway->id,
         ]);
-
-        // $stripeSubscriptionOrderServiceMock = Mockery::mock(StripeSubscriptionOrderService::class);
-        // $stripeSubscriptionOrderServiceMock->shouldReceive('setUser')->once();
-        // $stripeSubscriptionOrderServiceMock->shouldReceive('setSite')->once();
-        // $stripeSubscriptionOrderServiceMock->shouldReceive('createSubscription')
-        //     ->with($order, $transaction)
-        //     ->andReturn(false);
-
-        // $this->app->instance(StripeSubscriptionOrderService::class, $stripeSubscriptionOrderServiceMock);
 
         // Act
         $response = $this
             ->postJson(
                 route(
-                    'order.transaction.payment-gateway.stripe.store',
+                    'order.transaction.payment-gateway.stripe.checkout-session.store',
                     [
                         'order' => $order->id,
                         'transaction' => $transaction->id
@@ -188,84 +174,72 @@ class StripeOrderCheckoutSessionControllerTest extends TestCase
         $this->assertArrayHasKey('client_secret', $payload['data']);
     }
 
+    public function test_create_checkout_session_request_invalid_checkout_type(): void
+    {
+        Sanctum::actingAs($this->siteUser, ['*']);
 
+        $billingAddress = Address::factory()->create([
+            'user_id' => $this->user->id,
+            'country_id' => $this->country->id,
+        ]);
+        $shippingAddress = Address::factory()->create([
+            'user_id' => $this->user->id,
+            'country_id' => $this->country->id,
+        ]);
+        $order = Order::factory()->create([
+            'price_type' => PriceType::ONE_TIME,
+            'user_id' => $this->user->id,
+            'country_id' => $this->country->id,
+            'currency_id' => $this->currency->id,
+            'billing_address_id' => $billingAddress->id,
+            'shipping_address_id' => $shippingAddress->id,
+        ]);
 
-    // public function test_store_error(): void
-    // {
-    //     Sanctum::actingAs($this->siteUser, ['*']);
+        $price = Price::factory()->create([
+            'price_type' => PriceType::ONE_TIME->value,
+            'created_by_user_id' => $this->user->id,
+            'currency_id' => $this->currency->id,
+            'country_id' => $this->country->id,
+            'amount' => 0,
+        ]);
+        $product = Product::factory()->create([
+            'user_id' => $this->user->id,
+            'sku' => $this->faker->unique()->word,
+            'active' => true,
+        ]);
+        $product->prices()->attach($price->id);
+        $product->orderItems()->create([
+            'order_id' => $order->id,
+            'entity_type' => OrderItemType::PRODUCT->value,
+            'entity_id' => $product->id,
+            'quantity' => 1,
+        ]);
+        $transaction = Transaction::factory()->create([
+            'order_id' => $order->id,
+            'status' => TransactionStatus::PENDING->value,
+            'payment_status' => TransactionPaymentStatus::UNPAID->value,
+            'payment_gateway_id' => $this->paymentGateway->id,
+        ]);
 
-    //     $billingAddress = Address::factory()->create([
-    //         'user_id' => $this->user->id,
-    //         'country_id' => $this->country->id,
-    //     ]);
-    //     $shippingAddress = Address::factory()->create([
-    //         'user_id' => $this->user->id,
-    //         'country_id' => $this->country->id,
-    //     ]);
-    //     $order = Order::factory()->create([
-    //         'price_type' => PriceType::ONE_TIME,
-    //         'user_id' => $this->user->id,
-    //         'country_id' => $this->country->id,
-    //         'currency_id' => $this->currency->id,
-    //         'billing_address_id' => $billingAddress->id,
-    //         'shipping_address_id' => $shippingAddress->id,
-    //     ]);
+        // Act
+        $response = $this
+            ->postJson(
+                route(
+                    'order.transaction.payment-gateway.stripe.checkout-session.store',
+                    [
+                        'order' => $order->id,
+                        'transaction' => $transaction->id
+                    ]
+                ),
+                [
+                    'checkout_type' => 'invalid_type', // Intentionally invalid type to test error handling
+                ]
+            );
 
-    //     $price = Price::factory()->create([
-    //         'price_type' => PriceType::ONE_TIME->value,
-    //         'created_by_user_id' => $this->user->id,
-    //         'currency_id' => $this->currency->id,
-    //         'country_id' => $this->country->id,
-    //         'amount' => 0,
-    //     ]);
-    //     $product = Product::factory()->create([
-    //         'user_id' => $this->user->id,
-    //         'sku' => $this->faker->unique()->word,
-    //         'active' => true,
-    //     ]);
-    //     $product->prices()->attach($price->id);
-    //     $product->orderItems()->create([
-    //         'order_id' => $order->id,
-    //         'entity_type' => OrderItemType::PRODUCT->value,
-    //         'entity_id' => $product->id,
-    //         'quantity' => 1,
-    //     ]);
-    //     $transaction = Transaction::factory()->create([
-    //         'order_id' => $order->id,
-    //         'payment_gateway_id' => $this->paymentGateway->id,
-    //     ]);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertJsonValidationErrorFor('checkout_type');
 
-    //     $stripeSubscriptionOrderServiceMock = Mockery::mock(StripeSubscriptionOrderService::class);
-    //     $stripeSubscriptionOrderServiceMock->shouldReceive('setUser')->once();
-    //     $stripeSubscriptionOrderServiceMock->shouldReceive('setSite')->once();
-    //     $stripeSubscriptionOrderServiceMock->shouldReceive('createSubscription')
-    //         ->with($order, $transaction)
-    //         ->andReturn(false);
-
-    //     $this->app->instance(StripeSubscriptionOrderService::class, $stripeSubscriptionOrderServiceMock);
-
-    //     // Act
-    //     $response = $this
-    //         ->postJson(
-    //             route(
-    //                 'order.transaction.payment-gateway.stripe.store',
-    //                 [
-    //                     'order' => $order->id,
-    //                     'transaction' => $transaction->id
-    //                 ]
-    //             ),
-    //             [
-    //                 'checkout_type' => 'ww',
-    //             ]
-    //         );
-    //     // Assert
-    //     $response->assertStatus(422)
-    //         ->assertJsonValidationErrors(
-    //             [
-    //                 'checkout_type' => 'The selected checkout type is invalid.'
-    //             ]
-    //         );
-    // }
+    }
 
     public static function checkoutTypeProvider(): array
     {

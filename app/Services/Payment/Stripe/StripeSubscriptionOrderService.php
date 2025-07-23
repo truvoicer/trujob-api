@@ -77,6 +77,9 @@ class StripeSubscriptionOrderService extends StripeBaseOrderService
 
             return $this->stripeCheckoutService->createSubscriptionSession(
                 StripeCheckoutSessionBuilder::make()
+                ->setBillingAddressCollection('required')
+                // TODO: Implement shipping address collection if needed
+                // ->setShippingAddressCollection() 
                     ->setLineItems([
                         [
                             'price_data' => [

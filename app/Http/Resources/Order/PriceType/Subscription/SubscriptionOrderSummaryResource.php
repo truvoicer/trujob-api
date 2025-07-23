@@ -23,6 +23,7 @@ class SubscriptionOrderSummaryResource extends JsonResource
         $this->init();
         return [
             'id' => $this->id,
+            'price_type' => $this->price_type,
             'status' => $this->status,
             'items' => $this->whenLoaded('items', SubscriptionOrderItemResource::collection($this->items)),
             'total_price' => $this->calculateTotalPrice(),

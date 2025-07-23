@@ -36,14 +36,14 @@ return new class extends Migration
                     fn(TransactionStatus $status) => $status->value,
                     TransactionStatus::cases()
                 )
-            );
+            )->default(TransactionStatus::PENDING->value);
             $table->enum(
                 'payment_status',
                 array_map(
                     fn(TransactionPaymentStatus $status) => $status->value,
                     TransactionPaymentStatus::cases()
                 )
-            );
+            )->default(TransactionPaymentStatus::UNPAID->value);
 
             // Amount processed by the payment gateway (can be different from order total due to partial payments, refunds)
             $table->decimal('amount', 10, 2)->nullable();

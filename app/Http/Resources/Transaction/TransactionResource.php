@@ -24,9 +24,12 @@ class TransactionResource extends JsonResource
             [
                 'id' => $this->id,
                 'payment_gateway' => $this->whenLoaded('paymentGateway', PaymentGatewayResource::make($this->paymentGateway)),
-                'transaction_amounts' => $this->whenLoaded('transactionAmounts', function () {
-                    return TransactionAmountResource::collection($this->transactionAmounts);
-                }),
+                'currency_code' => $this->currency_code,
+                'amount' => $this->amount,
+                'status' => $this->status,
+                'payment_status' => $this->payment_status,
+                'order_data' => $this->order_data,
+                'transaction_data' => $this->transaction_data,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ],

@@ -52,7 +52,8 @@ class StripeOrderCheckoutSessionApproveController extends Controller
                     'Stripe checkout session created',
                     [
                         'id' => $createOrder->id,
-                        'client_secret' => $createOrder->client_secret,
+                        'status' => $createOrder->status,
+                        'payment_status' => $createOrder->payment_status,
                     ],
                     Response::HTTP_CREATED
                 );
@@ -74,7 +75,11 @@ class StripeOrderCheckoutSessionApproveController extends Controller
                 return $this->sendJsonResponse(
                     true,
                     'Stripe subscription checkout session approved',
-                    $approveSubscription,
+                    [
+                        'id' => $approveSubscription->id,
+                        'status' => $approveSubscription->status,
+                        'payment_status' => $approveSubscription->payment_status,
+                    ],
                     Response::HTTP_CREATED
                 );
             default:

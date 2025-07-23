@@ -24,27 +24,39 @@ class CurrencyControllerTest extends TestCase
     protected SiteUser $siteUser;
     protected Site $site;
     protected User $user;
+    protected Currency $currency;
+
     protected function setUp(): void
     {
         parent::setUp();
         // Additional setup if needed
         $this->site = Site::factory()->create();
         $this->user = User::factory()->create();
-        $this->user->roles()->attach(Role::factory()->create(['name' => 'superuser'])->id);
+        $this->user->roles()->attach(Role::factory()->create([
+            'name' => 'superuser'
+        ])->id);
+
         $this->siteUser = SiteUser::create([
             'user_id' => $this->user->id,
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $this->currency = Currency::factory()->create([
+            'code' => 'GBP',
+            'name' => 'British Pound',
+            'symbol' => '£',
+            'is_active' => true,
+        ]);
     }
 
 
     public function test_index_returns_collection_of_currencies(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         Currency::factory(3)->create();
 
-        $response = $this->getJson(route('currencies.index'));
+        $response = $this->getJson(route('locale.currency.index'));
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -65,9 +77,10 @@ class CurrencyControllerTest extends TestCase
 
     public function test_show_returns_a_currency(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $currency = Currency::factory()->create();
 
-        $response = $this->getJson(route('currencies.show', $currency));
+        $response = $this->getJson(route('locale.currency.show', $currency));
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -84,13 +97,16 @@ class CurrencyControllerTest extends TestCase
 
     public function test_store_creates_a_currency(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $data = [
-            'name' => $this->faker->currencyName,
+            'name' => $this->faker->name,
+            'name_plural' => $this->faker->word,
+            'is_active' => true,
             'code' => $this->faker->unique()->currencyCode,
-            'symbol' => $this->faker->currencySymbol,
+            'symbol' => $this->faker->randomLetter(),
         ];
 
-        $response = $this->postJson(route('currencies.store'), $data);
+        $response = $this->postJson(route('locale.currency.store'), $data);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -102,13 +118,14 @@ class CurrencyControllerTest extends TestCase
 
     public function test_store_validation_failure(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $data = [
             'name' => '',
             'code' => '',
             'symbol' => '',
         ];
 
-        $response = $this->postJson(route('currencies.store'), $data);
+        $response = $this->postJson(route('locale.currency.store'), $data);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'code', 'symbol']);
@@ -117,6 +134,7 @@ class CurrencyControllerTest extends TestCase
 
     public function test_update_updates_a_currency(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $currency = Currency::factory()->create();
 
         $data = [
@@ -125,7 +143,7 @@ class CurrencyControllerTest extends TestCase
             'symbol' => '$',
         ];
 
-        $response = $this->putJson(route('currencies.update', $currency), $data);
+        $response = $this->patchJson(route('locale.currency.update', $currency), $data);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -137,6 +155,7 @@ class CurrencyControllerTest extends TestCase
 
     public function test_update_validation_failure(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $currency = Currency::factory()->create();
 
         $data = [
@@ -145,7 +164,7 @@ class CurrencyControllerTest extends TestCase
             'symbol' => '',
         ];
 
-        $response = $this->putJson(route('currencies.update', $currency), $data);
+        $response = $this->patchJson(route('locale.currency.update', $currency), $data);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'code', 'symbol']);
@@ -153,9 +172,10 @@ class CurrencyControllerTest extends TestCase
 
     public function test_destroy_deletes_a_currency(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $currency = Currency::factory()->create();
 
-        $response = $this->deleteJson(route('currencies.destroy', $currency));
+        $response = $this->deleteJson(route('locale.currency.destroy', $currency));
 
         $response->assertStatus(200)
             ->assertJson([
@@ -167,6 +187,7 @@ class CurrencyControllerTest extends TestCase
 
     public function test_destroy_currency_deletion_failure(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         // Mock the CurrencyService to return false for deleteCurrency
         $this->mock(\App\Services\Locale\CurrencyService::class, function ($mock) {
             $mock->shouldReceive('setUser')->andReturnSelf();
@@ -176,8 +197,8 @@ class CurrencyControllerTest extends TestCase
 
         $currency = Currency::factory()->create();
 
-        $response = $this->deleteJson(route('currencies.destroy', $currency));
-
+        $response = $this->deleteJson(route('locale.currency.destroy', $currency));
+        
         $response->assertStatus(422)
             ->assertJson([
                 'message' => 'Error deleting currency',

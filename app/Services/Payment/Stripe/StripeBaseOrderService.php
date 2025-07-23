@@ -3,6 +3,8 @@
 namespace App\Services\Payment\Stripe;
 
 use App\Enums\Payment\PaymentGateway;
+use App\Enums\Transaction\PaymentGateway\Stripe\StripeTransactionPaymentStatus;
+use App\Enums\Transaction\PaymentGateway\Stripe\StripeTransactionStatus;
 use App\Enums\Transaction\TransactionPaymentStatus;
 use App\Enums\Transaction\TransactionStatus;
 use App\Models\Order;
@@ -108,23 +110,18 @@ class StripeBaseOrderService extends BaseService
         }
         $transactionStatus = null;
         $transactionPaymentStatus = null;
-        switch ($response->status) {
-            case 'complete':
-                switch ($response->payment_status) {
-                    case 'paid':
+        switch (StripeTransactionStatus::tryFrom($response->status)) {
+            case StripeTransactionStatus::COMPLETE:
+                $transactionStatus = TransactionStatus::COMPLETED;
+                switch (StripeTransactionPaymentStatus::tryFrom($response->payment_status)) {
+                    case StripeTransactionPaymentStatus::PAID:
                         $transactionPaymentStatus = TransactionPaymentStatus::PAID;
                         break;
-                    case 'unpaid':
+                    case StripeTransactionPaymentStatus::UNPAID:
                         $transactionPaymentStatus = TransactionPaymentStatus::UNPAID;
                         break;
-                    case 'partially_paid':
-                        $transactionPaymentStatus = TransactionPaymentStatus::PARTIALLY_PAID;
-                        break;
-                    case 'requires_payment_method':
-                        $transactionPaymentStatus = TransactionPaymentStatus::REQUIRES_PAYMENT_METHOD;
-                        break;
-                    case 'requires_capture':
-                        $transactionPaymentStatus = TransactionPaymentStatus::REQUIRES_CAPTURE;
+                    case StripeTransactionPaymentStatus::NO_PAYMENT_REQUIRED:
+                        $transactionPaymentStatus = TransactionPaymentStatus::NO_PAYMENT_REQUIRED;
                         break;
                     default:
                         throw new \Exception(
@@ -132,12 +129,11 @@ class StripeBaseOrderService extends BaseService
                         );
                         break;
                 }
-            case 'processing':
-                $transactionStatus = TransactionStatus::PROCESSING;
-                break;
-            case 'requires_action':
-            case 'requires_confirmation':
+            case StripeTransactionStatus::OPEN:
                 $transactionStatus = TransactionStatus::PENDING;
+                break;
+            case StripeTransactionStatus::EXPIRED:
+                $transactionStatus = TransactionStatus::EXPIRED;
                 break;
             default:
                 throw new \Exception(
@@ -149,8 +145,8 @@ class StripeBaseOrderService extends BaseService
             $order,
             $transaction,
             [
-                'status' => $transactionStatus,
-                'payment_status' => $transactionPaymentStatus,
+                'status' => $transactionStatus ?? TransactionStatus::PENDING,
+                'payment_status' => $transactionPaymentStatus ?? TransactionPaymentStatus::UNPAID,
                 'transaction_data' => $response,
             ]
         );
