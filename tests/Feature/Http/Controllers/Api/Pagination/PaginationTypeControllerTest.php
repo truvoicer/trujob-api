@@ -38,7 +38,7 @@ class PaginationTypeControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_return_all_pagination_types(): void
+    public function test_it_can_return_all_pagination_types(): void
     {
         $response = $this->getJson(route('api.pagination-type'));
 

@@ -39,7 +39,7 @@ class FileSystemControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_download_a_file()
+    public function test_it_can_download_a_file()
     {
         $file = File::factory()->create();
 
@@ -56,7 +56,7 @@ class FileSystemControllerTest extends TestCase
     }
 
     
-    public function it_can_get_a_list_of_files()
+    public function test_it_can_get_a_list_of_files()
     {
         File::factory()->count(3)->create();
 
@@ -79,7 +79,7 @@ class FileSystemControllerTest extends TestCase
     }
 
     
-    public function it_can_get_a_single_file()
+    public function test_it_can_get_a_single_file()
     {
         $file = File::factory()->create();
 
@@ -100,7 +100,7 @@ class FileSystemControllerTest extends TestCase
     }
 
     
-    public function it_can_delete_a_file()
+    public function test_it_can_delete_a_file()
     {
         $file = File::factory()->create();
 
@@ -116,7 +116,7 @@ class FileSystemControllerTest extends TestCase
     }
 
     
-    public function it_returns_an_error_response_when_file_deletion_fails()
+    public function test_it_returns_an_error_response_when_file_deletion_fails()
     {
         // Mock the FileSystemService to simulate a failed deletion
         $this->mock(FileSystemService::class, function ($mock) {

@@ -38,7 +38,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_batch_delete_page_blocks()
+    public function test_it_can_batch_delete_page_blocks()
     {
         $user = User::factory()->create();
         $page = Page::factory()->create([
@@ -57,7 +57,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
     }
 
     
-    public function it_returns_error_if_delete_fails()
+    public function test_it_returns_error_if_delete_fails()
     {
         $user = User::factory()->create();
         $page = Page::factory()->create([
@@ -82,7 +82,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
     }
 
     
-    public function it_requires_authentication()
+    public function test_it_requires_authentication()
     {
         $page = Page::factory()->create([
             'site_id' => $this->site->id,
@@ -96,7 +96,7 @@ class BatchDeletePageBlockControllerTest extends TestCase
 
 
     
-    public function it_validates_the_request()
+    public function test_it_validates_the_request()
     {
         $user = User::factory()->create();
         $page = Page::factory()->create([

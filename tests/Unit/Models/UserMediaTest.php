@@ -25,7 +25,7 @@ class UserMediaTest extends TestCase
         $this->userMedia = UserMedia::factory()->create();
     }
 
-    public function it_has_a_user_relationship()
+    public function test_it_has_a_user_relationship()
     {
         // Arrange
         $this->assertInstanceOf(UserMedia::class, $this->userMedia);

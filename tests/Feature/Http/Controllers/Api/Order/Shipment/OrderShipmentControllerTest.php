@@ -159,7 +159,7 @@ class OrderShipmentControllerTest extends TestCase
         //     'shipping_carrier' => $this->faker->company(),
         // ];
 
-        // $response = $this->putJson("/api/orders/{$order->id}/shipments/{$orderShipment->id}", $data);
+        // $response = $this->patchJson("/api/orders/{$order->id}/shipments/{$orderShipment->id}", $data);
 
         // $response->assertStatus(200)
         //     ->assertJson(['message' => 'Order Shipment updated']);
@@ -182,7 +182,7 @@ class OrderShipmentControllerTest extends TestCase
         //     'shipping_carrier' => $this->faker->company(),
         // ];
 
-        // $response = $this->putJson("/api/orders/{$order->id}/shipments/{$orderShipment->id}", $data);
+        // $response = $this->patchJson("/api/orders/{$order->id}/shipments/{$orderShipment->id}", $data);
 
         // $response->assertStatus(404)
         //     ->assertJson(['message' => 'Order Shipment not found']);

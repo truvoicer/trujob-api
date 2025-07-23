@@ -41,7 +41,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_show_a_paypal_order()
+    public function test_it_can_show_a_paypal_order()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -58,7 +58,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     }
 
     
-    public function it_can_store_a_paypal_one_time_order()
+    public function test_it_can_store_a_paypal_one_time_order()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -77,7 +77,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     }
 
     
-    public function it_can_store_a_paypal_subscription_order()
+    public function test_it_can_store_a_paypal_subscription_order()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -96,7 +96,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     }
 
     
-    public function it_returns_unprocessable_entity_for_invalid_price_type()
+    public function test_it_returns_unprocessable_entity_for_invalid_price_type()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -118,7 +118,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     }
 
     
-    public function it_can_update_a_paypal_order()
+    public function test_it_can_update_a_paypal_order()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -131,7 +131,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
         ];
 
         $response = $this
-            ->putJson(route('api.orders.transactions.payment-gateway.paypal.update', ['order' => $order->id, 'transaction' => $transaction->id]), $data);
+            ->patchJson(route('api.orders.transactions.payment-gateway.paypal.update', ['order' => $order->id, 'transaction' => $transaction->id]), $data);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -140,7 +140,7 @@ class PayPalOrderTransactionControllerTest extends TestCase
     }
 
     
-    public function it_can_destroy_a_paypal_order()
+    public function test_it_can_destroy_a_paypal_order()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);

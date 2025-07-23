@@ -39,7 +39,7 @@ class PayPalOrderTransactionCaptureControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_capture_a_paypal_order()
+    public function test_it_can_capture_a_paypal_order()
     {
         // Arrange
         $user = User::factory()->create();
@@ -67,7 +67,7 @@ class PayPalOrderTransactionCaptureControllerTest extends TestCase
     }
 
     
-    public function it_returns_unprocessable_entity_if_capture_fails()
+    public function test_it_returns_unprocessable_entity_if_capture_fails()
     {
         // Arrange
         $user = User::factory()->create();
@@ -104,7 +104,7 @@ class PayPalOrderTransactionCaptureControllerTest extends TestCase
     }
 
     
-    public function it_validates_the_store_request()
+    public function test_it_validates_the_store_request()
     {
         // Arrange
         $user = User::factory()->create();

@@ -20,7 +20,7 @@ class FeatureRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_model()
+    public function test_it_can_get_model()
     {
         $model = $this->featureRepository->getModel();
 
@@ -28,7 +28,7 @@ class FeatureRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_params()
+    public function test_it_can_find_by_params()
     {
         Feature::factory()->count(3)->create();
 
@@ -39,7 +39,7 @@ class FeatureRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_query()
+    public function test_it_can_find_by_query()
     {
         Feature::factory()->count(2)->create();
 

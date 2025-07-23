@@ -37,7 +37,7 @@ class PageViewControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
 
-    public function it_can_return_index_data()
+    public function test_it_can_return_index_data()
     {
         $response = $this->getJson(route('page-view.index'));
 

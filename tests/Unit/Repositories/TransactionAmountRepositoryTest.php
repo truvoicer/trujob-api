@@ -29,7 +29,7 @@ class TransactionAmountRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_the_model(): void
+    public function test_it_can_get_the_model(): void
     {
         $model = $this->transactionAmountRepository->getModel();
 
@@ -37,7 +37,7 @@ class TransactionAmountRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_params(): void
+    public function test_it_can_find_by_params(): void
     {
         // Arrange
         TransactionAmount::factory()->count(3)->create();
@@ -51,7 +51,7 @@ class TransactionAmountRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_query(): void
+    public function test_it_can_find_by_query(): void
     {
         // Arrange
         TransactionAmount::factory()->count(5)->create();

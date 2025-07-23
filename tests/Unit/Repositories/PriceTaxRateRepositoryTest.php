@@ -29,7 +29,7 @@ class PriceTaxRateRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_the_model()
+    public function test_it_can_get_the_model()
     {
         $model = $this->priceTaxRateRepository->getModel();
 
@@ -37,7 +37,7 @@ class PriceTaxRateRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_params()
+    public function test_it_can_find_by_params()
     {
         // Arrange
         PriceTaxRate::factory()->count(3)->create();
@@ -57,7 +57,7 @@ class PriceTaxRateRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_query()
+    public function test_it_can_find_by_query()
     {
         // Arrange
         PriceTaxRate::factory()->count(5)->create();

@@ -20,7 +20,7 @@ class UserProfileRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_user_profiles_by_params(): void
+    public function test_it_can_find_user_profiles_by_params(): void
     {
         // Arrange
         UserProfile::factory()->count(3)->create();
@@ -37,7 +37,7 @@ class UserProfileRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_the_user_profile_model(): void
+    public function test_it_can_get_the_user_profile_model(): void
     {
         // Act
         $model = $this->userProfileRepository->getModel();

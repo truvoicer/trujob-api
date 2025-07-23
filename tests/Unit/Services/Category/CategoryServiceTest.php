@@ -20,7 +20,7 @@ class CategoryServiceTest extends TestCase
     }
 
     
-    public function it_can_create_a_category()
+    public function test_it_can_create_a_category()
     {
         $data = [
             'name' => 'Test Category',
@@ -34,7 +34,7 @@ class CategoryServiceTest extends TestCase
     }
 
     
-    public function it_throws_an_exception_if_category_creation_fails()
+    public function test_it_throws_an_exception_if_category_creation_fails()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Error creating product category');
@@ -45,7 +45,7 @@ class CategoryServiceTest extends TestCase
     }
 
     
-    public function it_can_update_a_category()
+    public function test_it_can_update_a_category()
     {
         $category = Category::factory()->create();
 
@@ -61,7 +61,7 @@ class CategoryServiceTest extends TestCase
     }
 
     
-    public function it_throws_an_exception_if_category_update_fails()
+    public function test_it_throws_an_exception_if_category_update_fails()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Error updating product category');
@@ -75,7 +75,7 @@ class CategoryServiceTest extends TestCase
     }
 
     
-    public function it_can_delete_a_category()
+    public function test_it_can_delete_a_category()
     {
         $category = Category::factory()->create();
 
@@ -86,7 +86,7 @@ class CategoryServiceTest extends TestCase
     }
 
     
-    public function it_throws_an_exception_if_category_deletion_fails()
+    public function test_it_throws_an_exception_if_category_deletion_fails()
     {
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Error deleting product category');

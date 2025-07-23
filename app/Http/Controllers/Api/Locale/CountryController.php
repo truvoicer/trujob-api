@@ -74,7 +74,11 @@ class CountryController extends Controller
     public function update(Country $country, UpdateCountryRequest $request) {
         $this->countryService->setUser($request->user()->user);
         $this->countryService->setSite($request->user()->site);
-        $update = $this->countryService->updateCountry($country, $request->validated());
+        
+        $update = $this->countryService->updateCountry(
+            $country, 
+            $request->validated()
+        );
         if (!$update) {
             return response()->json([
                 'message' => 'Error updating country',

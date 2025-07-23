@@ -37,7 +37,7 @@ class BulkOrderDiscountControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_sync_discounts_to_an_order()
+    public function test_it_can_sync_discounts_to_an_order()
     {
         $user = User::factory()->create();
         $order = Order::factory()->create();
@@ -55,7 +55,7 @@ class BulkOrderDiscountControllerTest extends TestCase
     }
 
      
-     public function it_returns_error_when_syncing_discounts_fails()
+     public function test_it_returns_error_when_syncing_discounts_fails()
      {
          $user = User::factory()->create();
          $order = Order::factory()->create();
@@ -84,7 +84,7 @@ class BulkOrderDiscountControllerTest extends TestCase
 
 
     
-    public function it_requires_authentication()
+    public function test_it_requires_authentication()
     {
         $order = Order::factory()->create();
 
@@ -96,7 +96,7 @@ class BulkOrderDiscountControllerTest extends TestCase
     }
 
     
-    public function it_validates_the_request()
+    public function test_it_validates_the_request()
     {
         $user = User::factory()->create();
         $order = Order::factory()->create();

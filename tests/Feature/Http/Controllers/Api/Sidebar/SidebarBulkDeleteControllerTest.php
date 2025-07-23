@@ -36,7 +36,7 @@ class SidebarBulkDeleteControllerTest extends TestCase
         ]);
     }
     
-    public function it_can_bulk_delete_sidebars(): void
+    public function test_it_can_bulk_delete_sidebars(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
@@ -56,7 +56,7 @@ class SidebarBulkDeleteControllerTest extends TestCase
     }
 
     
-    public function it_returns_error_if_bulk_delete_fails(): void
+    public function test_it_returns_error_if_bulk_delete_fails(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
@@ -82,7 +82,7 @@ class SidebarBulkDeleteControllerTest extends TestCase
     }
 
     
-    public function it_validates_the_ids_are_required(): void
+    public function test_it_validates_the_ids_are_required(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
@@ -94,7 +94,7 @@ class SidebarBulkDeleteControllerTest extends TestCase
     }
 
     
-    public function it_validates_the_ids_are_an_array(): void
+    public function test_it_validates_the_ids_are_an_array(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);

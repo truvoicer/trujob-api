@@ -39,7 +39,7 @@ class PermissionControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_get_all_permissions(): void
+    public function test_it_can_get_all_permissions(): void
     {
         Permission::factory()->count(3)->create();
 
@@ -60,7 +60,7 @@ class PermissionControllerTest extends TestCase
     }
 
     
-    public function it_can_get_a_single_permission(): void
+    public function test_it_can_get_a_single_permission(): void
     {
         $permission = Permission::factory()->create();
 
@@ -86,7 +86,7 @@ class PermissionControllerTest extends TestCase
     }
 
     
-    public function it_can_create_a_permission(): void
+    public function test_it_can_create_a_permission(): void
     {
         $data = [
             'name' => $this->faker->unique()->word,
@@ -114,7 +114,7 @@ class PermissionControllerTest extends TestCase
     }
 
     
-    public function it_can_update_a_permission(): void
+    public function test_it_can_update_a_permission(): void
     {
         $permission = Permission::factory()->create();
 
@@ -123,7 +123,7 @@ class PermissionControllerTest extends TestCase
             'label' => $this->faker->sentence,
         ];
 
-        $response = $this->putJson(route('permissions.update', $permission), $data);
+        $response = $this->patchJson(route('permissions.update', $permission), $data);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
@@ -144,7 +144,7 @@ class PermissionControllerTest extends TestCase
     }
 
     
-    public function it_can_delete_a_permission(): void
+    public function test_it_can_delete_a_permission(): void
     {
         $permission = Permission::factory()->create();
 

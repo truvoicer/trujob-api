@@ -20,14 +20,14 @@ class OrderShipmentRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_the_model()
+    public function test_it_can_get_the_model()
     {
         $model = $this->orderShipmentRepository->getModel();
         $this->assertInstanceOf(OrderShipment::class, $model);
     }
 
     
-    public function it_can_find_by_params()
+    public function test_it_can_find_by_params()
     {
         // Arrange
         OrderShipment::factory()->count(3)->create();
@@ -44,7 +44,7 @@ class OrderShipmentRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_query()
+    public function test_it_can_find_by_query()
     {
         // Arrange
         OrderShipment::factory()->count(3)->create();

@@ -31,7 +31,7 @@ class OrderItemRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_the_model(): void
+    public function test_it_can_get_the_model(): void
     {
         $model = $this->orderItemRepository->getModel();
 
@@ -39,7 +39,7 @@ class OrderItemRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_params(): void
+    public function test_it_can_find_by_params(): void
     {
         // Arrange
         OrderItem::factory()->count(3)->create();
@@ -56,7 +56,7 @@ class OrderItemRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_query(): void
+    public function test_it_can_find_by_query(): void
     {
         // Arrange
         OrderItem::factory()->count(2)->create();

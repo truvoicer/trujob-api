@@ -32,13 +32,13 @@ class EventTest extends TestCase
     }
 
     
-    public function it_has_comments_relationship()
+    public function test_it_has_comments_relationship()
     {
         $this->assertInstanceOf(MorphMany::class, $this->event->comments());
     }
 
     
-    public function it_returns_correct_morph_many_relation_for_comments()
+    public function test_it_returns_correct_morph_many_relation_for_comments()
     {
         $relation = $this->event->comments();
 
@@ -49,7 +49,7 @@ class EventTest extends TestCase
     }
 
     
-    public function it_can_have_comments()
+    public function test_it_can_have_comments()
     {
         $event = Event::factory()->create();
         $ticket1 = Ticket::factory()->create(['ticketable_id' => $event->id, 'ticketable_type' => Event::class]);

@@ -15,9 +15,8 @@ class RegionService extends BaseService
     }
 
     public function createRegionBatch(array $data) {
-        $createRegionBatch = Region::create($data['countries']);
-        if (!$createRegionBatch) {
-            throw new \Exception('Error creating region batch');
+        foreach ($data as $value) {
+            $this->createRegion($value);
         }
         return true;
     }
@@ -50,5 +49,18 @@ class RegionService extends BaseService
     public function getRegionsByCountry(int $countryId): array
     {
         return $this->regionRepository->getByCountry($countryId)->toArray();
+    }
+
+    public function deleteRegionBatch(array $data) {
+        $regionIds = $data['ids'] ?? [];
+        if (empty($regionIds)) {
+            throw new \Exception('No regions provided for deletion');
+        }
+
+        $deletedCount = Region::whereIn('id', $regionIds)->delete();
+        if ($deletedCount === 0) {
+            throw new \Exception('Error deleting region batch');
+        }
+        return true;
     }
 }

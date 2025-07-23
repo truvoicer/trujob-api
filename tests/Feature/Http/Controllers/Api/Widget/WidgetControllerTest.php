@@ -37,7 +37,7 @@ class WidgetControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_list_widgets()
+    public function test_it_can_list_widgets()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create();
@@ -52,7 +52,7 @@ class WidgetControllerTest extends TestCase
     }
 
     
-    public function it_can_show_a_widget()
+    public function test_it_can_show_a_widget()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create();
@@ -73,7 +73,7 @@ class WidgetControllerTest extends TestCase
     }
 
     
-    public function it_can_store_a_widget()
+    public function test_it_can_store_a_widget()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create();
@@ -93,7 +93,7 @@ class WidgetControllerTest extends TestCase
     }
 
     
-    public function it_can_update_a_widget()
+    public function test_it_can_update_a_widget()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create();
@@ -106,7 +106,7 @@ class WidgetControllerTest extends TestCase
         ];
 
         $this->actingAs($user, 'api')
-            ->putJson(route('widgets.update', $widget), $updatedWidgetData)
+            ->patchJson(route('widgets.update', $widget), $updatedWidgetData)
             ->assertStatus(200)
             ->assertJson(['message' => 'Widget updated']);
 
@@ -118,7 +118,7 @@ class WidgetControllerTest extends TestCase
     }
 
     
-    public function it_can_destroy_a_widget()
+    public function test_it_can_destroy_a_widget()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create();
@@ -135,7 +135,7 @@ class WidgetControllerTest extends TestCase
     }
 
     
-    public function it_returns_unprocessable_entity_on_store_failure()
+    public function test_it_returns_unprocessable_entity_on_store_failure()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create();
@@ -153,7 +153,7 @@ class WidgetControllerTest extends TestCase
     }
 
     
-    public function it_returns_unprocessable_entity_on_update_failure()
+    public function test_it_returns_unprocessable_entity_on_update_failure()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create();
@@ -166,7 +166,7 @@ class WidgetControllerTest extends TestCase
         ];
 
         $response = $this->actingAs($user, 'api')
-            ->putJson(route('widgets.update', $widget), $updatedWidgetData);
+            ->patchJson(route('widgets.update', $widget), $updatedWidgetData);
 
         $response->assertStatus(422);
     }

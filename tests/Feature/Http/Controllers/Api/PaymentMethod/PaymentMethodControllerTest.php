@@ -39,7 +39,7 @@ class PaymentMethodControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_list_payment_methods()
+    public function test_it_can_list_payment_methods()
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
@@ -64,7 +64,7 @@ class PaymentMethodControllerTest extends TestCase
     }
 
     
-    public function it_can_show_a_payment_method()
+    public function test_it_can_show_a_payment_method()
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
@@ -84,7 +84,7 @@ class PaymentMethodControllerTest extends TestCase
     }
 
     
-    public function it_can_create_a_payment_method()
+    public function test_it_can_create_a_payment_method()
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
@@ -103,7 +103,7 @@ class PaymentMethodControllerTest extends TestCase
     }
 
     
-    public function it_can_update_a_payment_method()
+    public function test_it_can_update_a_payment_method()
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
@@ -113,7 +113,7 @@ class PaymentMethodControllerTest extends TestCase
             'name' => $this->faker->name,
         ];
 
-        $response = $this->putJson(route('payment-methods.update', $paymentMethod), $data);
+        $response = $this->patchJson(route('payment-methods.update', $paymentMethod), $data);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -123,7 +123,7 @@ class PaymentMethodControllerTest extends TestCase
     }
 
     
-    public function it_can_delete_a_payment_method()
+    public function test_it_can_delete_a_payment_method()
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
@@ -139,7 +139,7 @@ class PaymentMethodControllerTest extends TestCase
     }
 
     
-    public function it_validates_store_request()
+    public function test_it_validates_store_request()
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
@@ -151,13 +151,13 @@ class PaymentMethodControllerTest extends TestCase
     }
 
     
-    public function it_validates_update_request()
+    public function test_it_validates_update_request()
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
         $paymentMethod = PaymentMethod::factory()->create();
 
-        $response = $this->putJson(route('payment-methods.update', $paymentMethod), []);
+        $response = $this->patchJson(route('payment-methods.update', $paymentMethod), []);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name']);

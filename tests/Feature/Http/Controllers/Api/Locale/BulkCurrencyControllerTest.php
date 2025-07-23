@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Api\Locale;
+namespace Tests\Feature\Http\Controllers\Api\Locale;
 
 
 use App\Enums\SiteStatus;
@@ -34,49 +34,49 @@ class BulkCurrencyControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
-    public function it_can_store_a_bulk_currency(): void
+
+    public function test_it_can_store_a_bulk_currency(): void
     {
-        // Arrange
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->sites()->attach($site);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
-            [
-                'name' => 'Test Currency 1',
-                'code' => 'TC1',
-                'symbol' => '$',
-            ],
-            [
-                'name' => 'Test Currency 2',
-                'code' => 'TC2',
-                'symbol' => '€',
+            'currencies' => [
+                [
+                    'name' => 'Test Currency 1',
+                    'code' => 'TC1',
+                    'symbol' => '$',
+                    'name_plural' => 'Test Currency Plural 1',
+                    'is_active' => true,
+                ],
+                [
+                    'name' => 'Test Currency 2',
+                    'code' => 'TC2',
+                    'symbol' => '€',
+                    'name_plural' => 'Test Currency Plural 2',
+                    'is_active' => true,
+                ]
             ],
         ];
 
         // Act
         $response = $this
-            ->postJson(route('bulk-currencies.store'), $data);
+            ->postJson(route('locale.currency.bulk.store'), $data);
 
         // Assert
         $response->assertStatus(200)
             ->assertJson(['message' => 'Currency batch created']);
 
-        $this->assertDatabaseHas('currencies', ['name' => 'Test Currency 1', 'code' => 'TC1', 'site_id' => $site->id]);
-        $this->assertDatabaseHas('currencies', ['name' => 'Test Currency 2', 'code' => 'TC2', 'site_id' => $site->id]);
+        $this->assertDatabaseHas('currencies', ['name' => 'Test Currency 1', 'code' => 'TC1']);
+        $this->assertDatabaseHas('currencies', ['name' => 'Test Currency 2', 'code' => 'TC2']);
     }
 
 
-    
-    public function it_returns_unprocessable_entity_if_currency_creation_fails(): void
+
+    public function test_it_returns_unprocessable_entity_if_currency_creation_fails(): void
     {
-        // Arrange
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->sites()->attach($site);
+        
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Simulating a failure by sending invalid data
         $data = [
@@ -89,26 +89,30 @@ class BulkCurrencyControllerTest extends TestCase
 
         // Act
         $response = $this
-            ->postJson(route('bulk-currencies.store'), $data);
+            ->postJson(route('locale.currency.bulk.store'), $data);
 
         // Assert
         $response->assertStatus(422);
     }
 
-    
-    public function it_requires_authentication_to_store_a_bulk_currency(): void
+
+    public function test_it_requires_authentication_to_store_a_bulk_currency(): void
     {
         // Arrange
         $data = [
-            [
-                'name' => 'Test Currency 1',
-                'code' => 'TC1',
-                'symbol' => '$',
+            'currencies' => [
+                [
+                    'name' => 'Test Currency 1',
+                    'code' => 'TC1',
+                    'symbol' => '$',
+                    'name_plural' => 'Test Currency Plural 1',
+                    'is_active' => true,
+                ]
             ],
         ];
 
         // Act
-        $response = $this->postJson(route('bulk-currencies.store'), $data);
+        $response = $this->postJson(route('locale.currency.bulk.store'), $data);
 
         // Assert
         $response->assertStatus(401);

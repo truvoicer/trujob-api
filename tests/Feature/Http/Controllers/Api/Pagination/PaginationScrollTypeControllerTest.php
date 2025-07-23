@@ -38,7 +38,7 @@ class PaginationScrollTypeControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_returns_a_json_response_with_pagination_scroll_types(): void
+    public function test_it_returns_a_json_response_with_pagination_scroll_types(): void
     {
         $response = $this->getJson(route('api.pagination-scroll-type'));
 
@@ -62,7 +62,7 @@ class PaginationScrollTypeControllerTest extends TestCase
         $response->assertJson(['data' => $expectedData]);
     }
     
-    public function it_returns_the_correct_data_types_in_the_response(): void
+    public function test_it_returns_the_correct_data_types_in_the_response(): void
     {
         $response = $this->getJson(route('api.pagination-scroll-type'));
 

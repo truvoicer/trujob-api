@@ -4,7 +4,7 @@ namespace App\Http\Requests\Currency;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreBulkCurrencyRequest extends FormRequest
+class DestroyBulkCurrencyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,9 @@ class StoreBulkCurrencyRequest extends FormRequest
     public function rules()
     {
         return [
-            'currencies' => ['required', 'array'],
-            'currencies.*.name' => ['required', 'string', 'max:255'],
-            'currencies.*.name_plural' => ['required', 'string', 'max:255'],
-            'currencies.*.code' => ['required', 'string', 'max:10'],
-            'currencies.*.symbol' => ['required', 'string', 'max:10'],
-            'currencies.*.is_active' => ['required', 'boolean'],
+            'ids' => ['required', 'array'],
+            'ids.*' => ['required', 'integer', 'exists:currencies,id'],
         ];
+
     }
 }

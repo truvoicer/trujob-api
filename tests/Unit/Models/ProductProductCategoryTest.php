@@ -24,7 +24,7 @@ class ProductProductCategoryTest extends TestCase
     }
 
     
-    public function it_has_fillable_attributes()
+    public function test_it_has_fillable_attributes()
     {
         $expected = [
             'product_id',
@@ -35,7 +35,7 @@ class ProductProductCategoryTest extends TestCase
     }
 
     
-    public function it_has_table_name()
+    public function test_it_has_table_name()
     {
         $expected = 'product_product_category';
 
@@ -44,7 +44,7 @@ class ProductProductCategoryTest extends TestCase
 
 
     
-    public function it_can_define_a_relationship_to_product()
+    public function test_it_can_define_a_relationship_to_product()
     {
         $relation = $this->productProductCategory->product();
 
@@ -54,7 +54,7 @@ class ProductProductCategoryTest extends TestCase
     }
 
     
-    public function it_can_define_a_relationship_to_product_category()
+    public function test_it_can_define_a_relationship_to_product_category()
     {
         $relation = $this->productProductCategory->productCategory();
 

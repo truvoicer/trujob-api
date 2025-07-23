@@ -33,7 +33,7 @@ class SidebarWidgetReorderControllerTest extends TestCase
         ]);
     }
     
-    public function it_can_move_a_sidebar_widget(): void
+    public function test_it_can_move_a_sidebar_widget(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -60,7 +60,7 @@ class SidebarWidgetReorderControllerTest extends TestCase
     }
 
     
-    public function it_requires_authentication(): void
+    public function test_it_requires_authentication(): void
     {
         // Arrange
         $sidebar = Sidebar::factory()->create();
@@ -76,7 +76,7 @@ class SidebarWidgetReorderControllerTest extends TestCase
     }
 
     
-    public function it_validates_the_direction_parameter(): void
+    public function test_it_validates_the_direction_parameter(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -96,7 +96,7 @@ class SidebarWidgetReorderControllerTest extends TestCase
     }
 
     
-    public function it_returns_404_if_sidebar_not_found(): void
+    public function test_it_returns_404_if_sidebar_not_found(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -114,7 +114,7 @@ class SidebarWidgetReorderControllerTest extends TestCase
     }
 
     
-    public function it_returns_404_if_sidebar_widget_not_found(): void
+    public function test_it_returns_404_if_sidebar_widget_not_found(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -132,7 +132,7 @@ class SidebarWidgetReorderControllerTest extends TestCase
     }
 
     
-    public function it_requires_correct_site_id_for_sidebar(): void
+    public function test_it_requires_correct_site_id_for_sidebar(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);

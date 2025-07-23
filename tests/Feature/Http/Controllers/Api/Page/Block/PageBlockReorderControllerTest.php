@@ -39,7 +39,7 @@ class PageBlockReorderControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_reorder_a_page_block(): void
+    public function test_it_can_reorder_a_page_block(): void
     {
         $user = User::factory()->create();
         $page = Page::factory()->create(['site_id' => $user->site_id]);
@@ -71,7 +71,7 @@ class PageBlockReorderControllerTest extends TestCase
     }
 
     
-    public function it_requires_a_valid_direction(): void
+    public function test_it_requires_a_valid_direction(): void
     {
         $user = User::factory()->create();
         $page = Page::factory()->create(['site_id' => $user->site_id]);
@@ -87,7 +87,7 @@ class PageBlockReorderControllerTest extends TestCase
     }
 
     
-    public function it_returns_403_if_user_does_not_have_permission(): void
+    public function test_it_returns_403_if_user_does_not_have_permission(): void
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();

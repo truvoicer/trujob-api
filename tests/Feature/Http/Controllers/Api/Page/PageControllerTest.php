@@ -40,7 +40,7 @@ class PageControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_list_pages()
+    public function test_it_can_list_pages()
     {
         $site = Site::factory()->create([
             'user_id' => $this->user->id,
@@ -58,7 +58,7 @@ class PageControllerTest extends TestCase
     }
 
     
-    public function it_can_show_a_page()
+    public function test_it_can_show_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -73,7 +73,7 @@ class PageControllerTest extends TestCase
     }
 
     
-    public function it_can_create_a_page()
+    public function test_it_can_create_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -93,7 +93,7 @@ class PageControllerTest extends TestCase
     }
 
      
-    public function it_returns_error_if_page_creation_fails()
+    public function test_it_returns_error_if_page_creation_fails()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -113,7 +113,7 @@ class PageControllerTest extends TestCase
     }
 
     
-    public function it_can_update_a_page()
+    public function test_it_can_update_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);
@@ -127,14 +127,14 @@ class PageControllerTest extends TestCase
             'content' => $this->faker->paragraph,
         ];
 
-        $response = $this->putJson(route('page.update', $page), $data);
+        $response = $this->patchJson(route('page.update', $page), $data);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('pages', $data);
     }
 
     
-    public function it_can_delete_a_page()
+    public function test_it_can_delete_a_page()
     {
         $user = User::factory()->create();
         $site = Site::factory()->create(['user_id' => $this->user->id]);

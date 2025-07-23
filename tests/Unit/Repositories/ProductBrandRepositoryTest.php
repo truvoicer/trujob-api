@@ -29,7 +29,7 @@ class ProductBrandRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_the_model()
+    public function test_it_can_get_the_model()
     {
         $model = $this->productBrandRepository->getModel();
 
@@ -37,7 +37,7 @@ class ProductBrandRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_params()
+    public function test_it_can_find_by_params()
     {
         // Arrange
         ProductBrand::factory()->count(3)->create();
@@ -54,7 +54,7 @@ class ProductBrandRepositoryTest extends TestCase
     }
 
      
-    public function it_can_find_by_params_without_count()
+    public function test_it_can_find_by_params_without_count()
     {
         // Arrange
         ProductBrand::factory()->count(3)->create();
@@ -70,7 +70,7 @@ class ProductBrandRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_query()
+    public function test_it_can_find_by_query()
     {
         // Arrange
         ProductBrand::factory()->count(5)->create();

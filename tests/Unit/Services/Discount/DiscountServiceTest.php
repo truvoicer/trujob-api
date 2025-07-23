@@ -24,7 +24,7 @@ class DiscountServiceTest extends TestCase
     }
 
     
-    public function it_can_create_a_discount()
+    public function test_it_can_create_a_discount()
     {
         $data = [
             'label' => 'Test Discount',
@@ -57,7 +57,7 @@ class DiscountServiceTest extends TestCase
     }
 
      
-    public function it_creates_a_discount_with_a_slugified_name_if_name_is_empty()
+    public function test_it_creates_a_discount_with_a_slugified_name_if_name_is_empty()
     {
         $data = [
             'label' => 'Test Discount',
@@ -73,7 +73,7 @@ class DiscountServiceTest extends TestCase
     }
 
     
-    public function it_can_update_a_discount()
+    public function test_it_can_update_a_discount()
     {
         $discount = Discount::factory()->create();
         $data = [
@@ -107,7 +107,7 @@ class DiscountServiceTest extends TestCase
     }
 
     
-    public function it_can_sync_discountables()
+    public function test_it_can_sync_discountables()
     {
         $discount = Discount::factory()->create();
         $product1 = Product::factory()->create();
@@ -140,7 +140,7 @@ class DiscountServiceTest extends TestCase
     }
 
     
-    public function it_can_set_a_discount_as_default()
+    public function test_it_can_set_a_discount_as_default()
     {
         $discount = Discount::factory()->create();
 
@@ -150,7 +150,7 @@ class DiscountServiceTest extends TestCase
     }
 
     
-    public function it_does_nothing_when_setting_as_default_if_already_default()
+    public function test_it_does_nothing_when_setting_as_default_if_already_default()
     {
         $discount = Discount::factory()->create();
         DiscountDefault::create(['discount_id' => $discount->id]);
@@ -161,7 +161,7 @@ class DiscountServiceTest extends TestCase
     }
 
     
-    public function it_can_remove_a_discount_as_default()
+    public function test_it_can_remove_a_discount_as_default()
     {
         $discount = Discount::factory()->create();
         DiscountDefault::create(['discount_id' => $discount->id]);
@@ -172,7 +172,7 @@ class DiscountServiceTest extends TestCase
     }
 
     
-    public function it_can_delete_a_discount()
+    public function test_it_can_delete_a_discount()
     {
         $discount = Discount::factory()->create();
 

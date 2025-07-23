@@ -40,7 +40,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_reorder_a_page_block_sidebar(): void
+    public function test_it_can_reorder_a_page_block_sidebar(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -81,7 +81,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
     }
 
     
-    public function it_returns_404_if_page_does_not_exist(): void
+    public function test_it_returns_404_if_page_does_not_exist(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -105,7 +105,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
     }
 
     
-    public function it_returns_404_if_page_block_does_not_exist(): void
+    public function test_it_returns_404_if_page_block_does_not_exist(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -129,7 +129,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
     }
 
         
-    public function it_returns_404_if_page_block_sidebar_does_not_exist(): void
+    public function test_it_returns_404_if_page_block_sidebar_does_not_exist(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -153,7 +153,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
     }
 
     
-    public function it_requires_a_direction(): void
+    public function test_it_requires_a_direction(): void
     {
         // Arrange
         $user = User::factory()->create();
@@ -181,7 +181,7 @@ class PageBlockSidebarReorderControllerTest extends TestCase
     }
 
     
-    public function it_requires_the_direction_to_be_a_valid_value(): void
+    public function test_it_requires_the_direction_to_be_a_valid_value(): void
     {
         // Arrange
         $user = User::factory()->create();

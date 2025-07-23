@@ -20,7 +20,7 @@ class UserMediaRepositoryTest extends TestCase
     }
 
     
-    public function it_can_find_by_params()
+    public function test_it_can_find_by_params()
     {
         // Arrange
         UserMedia::factory()->count(3)->create(); // Create some UserMedia records
@@ -53,7 +53,7 @@ class UserMediaRepositoryTest extends TestCase
     }
 
     
-    public function it_can_get_the_model()
+    public function test_it_can_get_the_model()
     {
         // Act
         $model = $this->repository->getModel();

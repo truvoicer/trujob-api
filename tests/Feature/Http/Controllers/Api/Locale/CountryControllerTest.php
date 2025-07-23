@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Http\Controllers\Api\Locale;
 
 use App\Models\Country;
 
@@ -35,25 +35,31 @@ class CountryControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_list_countries()
+    public function test_it_can_list_countries()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+       
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         Country::factory(3)->create();
 
-        $response = $this->getJson(route('countries.index'));
+        $response = $this->getJson(route('locale.country.index'));
 
         $response->assertStatus(200);
+
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
                     'id',
-                    'name',
-                    // Add other attributes expected in your CountryResource
+                    "name",
+                    "iso2",
+                    "iso3",
+                    "phone_code",
+                    "is_active",
+                    "created_at",
+                    "updated_at"
                 ],
             ],
             'links',
@@ -62,14 +68,15 @@ class CountryControllerTest extends TestCase
     }
 
     
-    public function it_can_show_a_country()
+    public function test_it_can_show_a_country()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $country = Country::factory()->create();
 
-        $response = $this->getJson(route('countries.show', $country));
+        $response = $this->getJson(route('locale.country.show', $country));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -82,17 +89,21 @@ class CountryControllerTest extends TestCase
     }
 
     
-    public function it_can_store_a_country()
+    public function test_it_can_store_a_country()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
             'name' => $this->faker->country,
-            // Add other required attributes
+            'iso2' => $this->faker->countryCode,
+            'iso3' => $this->faker->countryISOAlpha3,
+            'phone_code' => $this->faker->text(5),
+            'is_active' => $this->faker->boolean,
         ];
 
-        $response = $this->postJson(route('countries.store'), $data);
+        $response = $this->postJson(route('locale.country.store'), $data);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -103,10 +114,11 @@ class CountryControllerTest extends TestCase
     }
 
     
-    public function it_can_update_a_country()
+    public function test_it_can_update_a_country()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $country = Country::factory()->create();
 
@@ -115,7 +127,7 @@ class CountryControllerTest extends TestCase
             // Add other attributes to update
         ];
 
-        $response = $this->putJson(route('countries.update', $country), $data);
+        $response = $this->patchJson(route('locale.country.update', $country), $data);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -126,14 +138,15 @@ class CountryControllerTest extends TestCase
     }
 
     
-    public function it_can_destroy_a_country()
+    public function test_it_can_destroy_a_country()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $country = Country::factory()->create();
 
-        $response = $this->deleteJson(route('countries.destroy', $country));
+        $response = $this->deleteJson(route('locale.country.destroy', $country));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -144,38 +157,41 @@ class CountryControllerTest extends TestCase
     }
 
         
-    public function it_returns_unprocessable_entity_when_store_fails()
+    public function test_it_returns_unprocessable_entity_when_store_fails()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Assuming StoreCountryRequest requires 'name'
         $data = [];
 
-        $response = $this->postJson(route('countries.store'), $data);
+        $response = $this->postJson(route('locale.country.store'), $data);
 
         $response->assertStatus(422);
     }
 
     
-    public function it_returns_unprocessable_entity_when_update_fails()
+    public function test_it_returns_unprocessable_entity_when_update_fails()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $country = Country::factory()->create();
         $data = [];
 
-        $response = $this->putJson(route('countries.update', $country), $data);
+        $response = $this->patchJson(route('locale.country.update', $country), $data);
 
         $response->assertStatus(422);
     }
 
     
-    public function it_returns_unprocessable_entity_when_delete_fails()
+    public function test_it_returns_unprocessable_entity_when_delete_fails()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $country = Country::factory()->create();
 
@@ -188,7 +204,7 @@ class CountryControllerTest extends TestCase
             return $mock;
         });
 
-        $response = $this->deleteJson(route('countries.destroy', $country));
+        $response = $this->deleteJson(route('locale.country.destroy', $country));
 
         $response->assertStatus(422);
         $response->assertJson([

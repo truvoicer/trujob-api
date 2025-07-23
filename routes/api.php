@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\Auth\ApiTokenController;
 use App\Http\Controllers\Api\Auth\Session\SessionApiTokenController;
 use App\Http\Controllers\Api\Auth\AuthLoginController;
@@ -660,11 +659,6 @@ Route::middleware([
     'ability:api:superuser,',
     AuthenticateSiteUserRequest::class,
 ])->group(function () {
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::prefix('user')->name('user.')->group(function () {
-            Route::get('/role/list', [AdminController::class, 'getUserRoleList'])->name('role.list');
-        });
-    });
 
     Route::prefix('permission')->name('permission.')->group(function () {
         Route::get('/{permission}', [PermissionController::class, 'getSinglePermission'])->name('detail');
@@ -795,16 +789,38 @@ Route::middleware([
                 Route::post('/store', [BulkCountryController::class, 'store'])->name('store');
                 Route::delete('/destroy', [BulkCountryController::class, 'destroy'])->name('destroy');
             });
-            Route::get('/{country}', [CountryController::class, 'show'])->name('show');
-            Route::patch('/{country}/update', [CountryController::class, 'update'])->name('update');
-            Route::delete('/{country}/destroy', [CountryController::class, 'destroy'])->name('destroy');
+
+            Route::prefix('{country}')->group(function () {
+                Route::get('/', [CountryController::class, 'show'])->name('show');
+                Route::patch('/update', [CountryController::class, 'update'])->name('update');
+                Route::delete('/destroy', [CountryController::class, 'destroy'])->name('destroy');
+            });
         });
         Route::prefix('currency')->name('currency.')->group(function () {
             Route::post('/store', [CurrencyController::class, 'store'])->name('store');
-            Route::post('/store/batch', [BulkCurrencyController::class, 'store'])->name('store_batch');
-            Route::get('/{currency}', [CurrencyController::class, 'show'])->name('show');
-            Route::patch('/{currency}/update', [CurrencyController::class, 'update'])->name('update');
-            Route::delete('/{currency}/destroy', [CurrencyController::class, 'destroy'])->name('destroy');
+
+            Route::prefix('bulk')->name('bulk.')->group(function () {
+                Route::post('/store', [BulkCurrencyController::class, 'store'])->name('store');
+                Route::delete('/destroy', [BulkCurrencyController::class, 'destroy'])->name('destroy');
+            });
+            Route::prefix('{currency}')->group(function () {
+                Route::get('/', [CurrencyController::class, 'show'])->name('show');
+                Route::patch('/update', [CurrencyController::class, 'update'])->name('update');
+                Route::delete('/destroy', [CurrencyController::class, 'destroy'])->name('destroy');
+            });
+        });
+        Route::prefix('region')->name('region.')->group(function () {
+            Route::post('/store', [RegionController::class, 'store'])->name('store');
+
+            Route::prefix('bulk')->name('bulk.')->group(function () {
+                Route::post('/store', [BulkRegionController::class, 'store'])->name('store');
+                Route::delete('/destroy', [BulkRegionController::class, 'destroy'])->name('destroy');
+            });
+            Route::prefix('{region}')->group(function () {
+                Route::get('/', [RegionController::class, 'show'])->name('show');
+                Route::patch('/update', [RegionController::class, 'update'])->name('update');
+                Route::delete('/destroy', [RegionController::class, 'destroy'])->name('destroy');
+            });
         });
     });
     Route::prefix('block')->name('block.')->group(function () {

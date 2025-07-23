@@ -24,10 +24,9 @@ class CurrencyService extends BaseService
             ->first();
     }
 
-    public function createCurrencyBatch(array $data) {
-        $createBatch = Currency::create($data['currencies']);
-        if (!$createBatch) {
-            throw new \Exception('Error creating currency batch');
+    public function createCurrencyBatch(array $currencies) {
+        foreach ($currencies as $currencyData) {
+            $this->createCurrency($currencyData);
         }
         return true;
     }
@@ -54,5 +53,16 @@ class CurrencyService extends BaseService
         return true;
     }
 
+    public function deleteCurrencyBatch(array $ids) {
+        if (empty($ids)) {
+            throw new \Exception('No currencies provided for deletion');
+        }
+
+        $deletedCount = Currency::whereIn('id', $ids)->delete();
+        if ($deletedCount === 0) {
+            throw new \Exception('Error deleting currency batch');
+        }
+        return true;
+    }
 
 }

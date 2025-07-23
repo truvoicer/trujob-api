@@ -35,13 +35,12 @@ class RegionControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
     
-    public function it_can_list_regions()
+    public function test_it_can_list_regions()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         Region::factory(3)->create();
 
@@ -63,10 +62,10 @@ class RegionControllerTest extends TestCase
     }
 
     
-    public function it_can_show_a_region()
+    public function test_it_can_show_a_region()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $region = Region::factory()->create();
 
@@ -84,10 +83,10 @@ class RegionControllerTest extends TestCase
     }
 
     
-    public function it_can_store_a_region()
+    public function test_it_can_store_a_region()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
             'name' => $this->faker->country,
@@ -104,10 +103,10 @@ class RegionControllerTest extends TestCase
     }
 
      
-    public function it_returns_an_error_if_store_fails()
+    public function test_it_returns_an_error_if_store_fails()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
             'name' => null, // will cause validation to fail
@@ -119,10 +118,10 @@ class RegionControllerTest extends TestCase
     }
 
     
-    public function it_can_update_a_region()
+    public function test_it_can_update_a_region()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $region = Region::factory()->create();
 
@@ -130,7 +129,7 @@ class RegionControllerTest extends TestCase
             'name' => $this->faker->country,
         ];
 
-        $response = $this->putJson(route('regions.update', $region), $data);
+        $response = $this->patchJson(route('regions.update', $region), $data);
 
         $response->assertStatus(200)
             ->assertJson([
@@ -141,10 +140,10 @@ class RegionControllerTest extends TestCase
     }
 
     
-    public function it_returns_an_error_if_update_fails()
+    public function test_it_returns_an_error_if_update_fails()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $region = Region::factory()->create();
 
@@ -152,17 +151,17 @@ class RegionControllerTest extends TestCase
             'name' => null,
         ];
 
-        $response = $this->putJson(route('regions.update', $region), $data);
+        $response = $this->patchJson(route('regions.update', $region), $data);
 
         $response->assertStatus(422);
 
     }
 
     
-    public function it_can_delete_a_region()
+    public function test_it_can_delete_a_region()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $region = Region::factory()->create();
 
@@ -177,10 +176,10 @@ class RegionControllerTest extends TestCase
     }
 
     
-    public function it_returns_an_error_if_delete_fails()
+    public function test_it_returns_an_error_if_delete_fails()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $region = Region::factory()->create();
 
