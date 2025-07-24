@@ -28,7 +28,7 @@ class PriceSubscriptionFactory extends Factory
             'setup_fee_value' => $this->faker->randomFloat(2, 0, 100),
             'auto_bill_outstanding' => $this->faker->boolean(),
             'setup_fee_failure_action' => SubscriptionSetupFeeFailureAction::CANCEL->value,
-            'payment_failure_threshold' => $this->faker->randomNumber(),
+            'payment_failure_threshold' => $this->faker->numberBetween(0, 999),
         ];
     }
 }

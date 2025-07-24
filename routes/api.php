@@ -58,6 +58,7 @@ use App\Http\Controllers\Api\Product\Type\ProductTypeController;
 use App\Http\Controllers\Api\Locale\AddressController;
 use App\Http\Controllers\Api\Locale\BulkCountryController;
 use App\Http\Controllers\Api\Locale\BulkCurrencyController;
+use App\Http\Controllers\Api\Locale\BulkRegionController;
 use App\Http\Controllers\Api\Review\ReviewController;
 use App\Http\Controllers\Api\Menu\MenuBulkDeleteController;
 use App\Http\Controllers\Api\Menu\MenuItemMenuController;
@@ -79,7 +80,7 @@ use App\Http\Controllers\Api\Pagination\PaginationScrollTypeController;
 use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayController;
 use App\Http\Controllers\Api\PaymentMethod\PaymentMethodController;
 use App\Http\Controllers\Api\Site\SiteController;
-use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\Api\Permission\PermissionController;
 use App\Http\Controllers\Api\Price\PriceController;
 use App\Http\Controllers\Api\Price\Discount\PriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\PriceTaxRateController;
@@ -87,6 +88,7 @@ use App\Http\Controllers\Api\Locale\RegionController;
 use App\Http\Controllers\Api\PaymentGateway\AvailableSitePaymentGatewayController;
 use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayEnvironmentController;
 use App\Http\Controllers\Api\PaymentGateway\SitePaymentGatewayController;
+use App\Http\Controllers\Api\Permission\BulkPermissionController;
 use App\Http\Controllers\Api\Price\BulkPriceController;
 use App\Http\Controllers\Api\Price\Discount\BulkPriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\BulkPriceTaxRateController;
@@ -661,11 +663,16 @@ Route::middleware([
 ])->group(function () {
 
     Route::prefix('permission')->name('permission.')->group(function () {
-        Route::get('/{permission}', [PermissionController::class, 'getSinglePermission'])->name('detail');
-        Route::patch('/{permission}/update', [PermissionController::class, 'updatePermission'])->name('update');
-        Route::get('/list', [PermissionController::class, 'getPermissions'])->name('list');
-        Route::post('/store', [PermissionController::class, 'storePermission'])->name('store');
-        Route::delete('/destroy', [PermissionController::class, 'deletePermission'])->name('destroy');
+        Route::get('/', [PermissionController::class, 'index'])->name('index');
+        Route::post('/store', [PermissionController::class, 'store'])->name('store');
+        Route::prefix('bulk')->name('bulk.')->group(function () {
+            Route::delete('/destroy', [BulkPermissionController::class, 'destroy'])->name('destroy');
+        });
+        Route::prefix('{permission}')->group(function () {
+            Route::get('/', [PermissionController::class, 'show'])->name('show');
+            Route::patch('/update', [PermissionController::class, 'update'])->name('update');
+            Route::delete('/destroy', [PermissionController::class, 'destroy'])->name('destroy');
+        });
     });
 });
 

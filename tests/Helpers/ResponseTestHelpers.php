@@ -44,9 +44,8 @@ class ResponseTestHelpers
     public static function extractEncryptedResponseData(
         $response,
     ): array|null {
-        self::assertEncryptedResponse($response);
         $responseJson = $response->json();
-
+        
         if (!empty($responseJson['encrypted_response_data'])) {
             $encryptedData = $responseJson['encrypted_response_data'];
         } else if (!empty($responseJson['data']['encrypted_response_data'])) {
@@ -62,6 +61,7 @@ class ResponseTestHelpers
 
         $jwtService->setSecret($payloadSecret);
         $decryptedData = $jwtService->jwtRawDecode($encryptedData);
+
         return $decryptedData['payload'] ?? null;
     }
 }

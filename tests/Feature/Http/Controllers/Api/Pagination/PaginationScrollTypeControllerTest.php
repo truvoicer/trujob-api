@@ -35,43 +35,24 @@ class PaginationScrollTypeControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_returns_a_json_response_with_pagination_scroll_types(): void
     {
-        $response = $this->getJson(route('api.pagination-scroll-type'));
+        Sanctum::actingAs($this->siteUser, ['*']);
+        $response = $this->getJson(route('pagination.scroll.type'));
 
         $response->assertOk()
             ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'name',
-                        'value'
-                    ],
-                ],
+                'data'
             ]);
 
-        $expectedData = collect(PaginationScrollType::cases())
-            ->map(fn (PaginationScrollType $type) => [
-                'name' => $type->name,
-                'value' => $type->value,
-            ])
-            ->toArray();
-
-        $response->assertJson(['data' => $expectedData]);
+        $response->assertJson([
+            'data' => array_map(
+                fn(PaginationScrollType $item) => $item->value,
+                PaginationScrollType::cases()
+            )
+        ]);
     }
-    
-    public function test_it_returns_the_correct_data_types_in_the_response(): void
-    {
-        $response = $this->getJson(route('api.pagination-scroll-type'));
 
-        $response->assertOk();
-        $responseData = $response->json('data');
-
-        foreach ($responseData as $item) {
-            $this->assertIsString($item['name']);
-            $this->assertIsString($item['value']);
-        }
-    }
 }

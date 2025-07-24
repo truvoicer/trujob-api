@@ -3,21 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Enums\DatabaseEnum;
-use App\Enums\Order\Discount\DiscountAmountType;
-use App\Enums\Order\Discount\DiscountScope;
-use App\Enums\Order\Discount\DiscountType;
-use App\Enums\Order\OrderStatus;
-use App\Enums\Order\Shipping\OrderShipmentStatus;
-use App\Enums\Order\Shipping\ShippingRateType;
-use App\Enums\Order\Shipping\ShippingRestrictionAction;
-use App\Enums\Order\Shipping\ShippingUnit;
-use App\Enums\Order\Shipping\ShippingWeightUnit;
-use App\Enums\Order\Tax\TaxRateAmountType;
-use App\Enums\Order\Tax\TaxRateType;
-use App\Enums\Order\Tax\TaxScope;
-use App\Enums\Product\ProductType;
-use App\Enums\Product\ProductUnit;
-use App\Enums\Product\ProductWeightUnit;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 

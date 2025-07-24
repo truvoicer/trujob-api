@@ -58,9 +58,12 @@ class JWTService
                 400
             );
         }
-        $header = base64_decode($tokenParts[0]);
-        $payload = base64_decode($tokenParts[1]);
-        $signatureProvided = $tokenParts[2];
+
+        // Apply base64UrlDecode before base64_decode
+        $header = $this->base64UrlDecode($tokenParts[0]);
+        $payload = $this->base64UrlDecode($tokenParts[1]);
+        $signatureProvided = $tokenParts[2]; // Signature part is already in Base64Url format
+
         return [
             self::TOKEN_DATA_HEADER => $header,
             self::TOKEN_DATA_PAYLOAD => $payload,
@@ -87,8 +90,10 @@ class JWTService
 
     private function validateSignature(array $tokenData, string $secret) {
         $validateTokenData = $this->validateTokenData($tokenData);
-        $base64UrlHeader = $this->base64UrlEncode($tokenData[self::TOKEN_DATA_HEADER]);
-        $base64UrlPayload = $this->base64UrlEncode($tokenData[self::TOKEN_DATA_PAYLOAD]);
+        // These are already decoded strings, so re-encode them to Base64Url for signature verification
+        $base64UrlHeader = $this->base64UrlEncode(json_encode(json_decode($tokenData[self::TOKEN_DATA_HEADER], true)));
+        $base64UrlPayload = $this->base64UrlEncode(json_encode(json_decode($tokenData[self::TOKEN_DATA_PAYLOAD], true)));
+
         $signature = hash_hmac('sha256', $base64UrlHeader . "." . $base64UrlPayload, $secret, true);
         $base64UrlSignature = $this->base64UrlEncode($signature);
 
@@ -105,10 +110,12 @@ class JWTService
         $buildData = [];
         foreach ($tokenData as $key => $value) {
             if ($key !== self::TOKEN_DATA_SIGNATURE) {
+                // The values in $tokenData['header'] and $tokenData['payload'] are already
+                // the raw decoded strings (JSON). So, just decode them from JSON.
                 $buildData[$key] = json_decode($value, true);
                 continue;
             }
-            $buildData[$key] = $value;
+            $buildData[$key] = $value; // Signature remains Base64Url encoded for comparison
         }
         return $buildData;
     }
@@ -126,6 +133,9 @@ class JWTService
     {
         $tokenData = $this->buildTokenData($jwt);
         $validateSignature = $this->validateSignature($tokenData, $this->getSecret());
+        if ($validateSignature instanceof JWTException) {
+            throw $validateSignature;
+        }
 
         return $this->buildDecodedTokenData($tokenData);
     }
@@ -137,6 +147,16 @@ class JWTService
             ['-', '_', ''],
             base64_encode($text)
         );
+    }
+
+    public function base64UrlDecode($text)
+    {
+        $data = str_replace(['-', '_'], ['+', '/'], $text);
+        $mod4 = strlen($data) % 4;
+        if ($mod4) {
+            $data .= substr('====', $mod4);
+        }
+        return base64_decode($data);
     }
 
     /**
@@ -179,7 +199,7 @@ class JWTService
 
     public function getPayload(array $decodedToken) {
         if (!isset($decodedToken[self::TOKEN_DATA_PAYLOAD])) {
-            return new JWTException(
+            throw new JWTException( // Changed to throw exception directly
                 'Payload not found'
             );
         }

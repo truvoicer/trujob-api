@@ -89,7 +89,8 @@ class CreateProductPriceRequest extends FormRequest
             'payment_failure_threshold' => [
                 'required_if:price_type,' . PriceType::SUBSCRIPTION->value,
                 'integer',
-                'min:0'
+                'min:0',
+                'max:999'
             ],
             "items" => [
                 'required_if:price_type,' . PriceType::SUBSCRIPTION->value,

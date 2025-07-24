@@ -7,6 +7,7 @@ use App\Enums\Payment\PaymentGatewayEnvironment;
 use App\Enums\Price\PriceType;
 use App\Enums\Transaction\TransactionPaymentStatus;
 use App\Enums\Transaction\TransactionStatus;
+use App\Exceptions\PaymentGateway\PayPalRequestException;
 use App\Exceptions\Product\ProductHealthException;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -38,6 +39,11 @@ class PayPalSubscriptionOrderService extends BaseService
         parent::__construct();
     }
 
+    public function getPayPalSubscriptionService(): PayPalSubscriptionService
+    {
+        return $this->payPalSubscriptionService;
+    }
+
     public function createPayPalProduct(Product $product)
     {
         try {
@@ -51,8 +57,10 @@ class PayPalSubscriptionOrderService extends BaseService
 
             return $this->payPalProductService->createProduct($productBuilder);
         } catch (\Exception $e) {
-            throw new \Exception('Failed to create PayPal product');
-            //     $this->payPalProductService->getResponseData()
+            throw new PayPalRequestException(
+                $this->payPalProductService->getResponseData(),
+                'Failed to create PayPal product: ' . $e->getMessage()
+            );
         }
     }
 
@@ -88,7 +96,7 @@ class PayPalSubscriptionOrderService extends BaseService
             // Add a trial billing cycle
             $trialCycle = PayPalBillingCycleBuilder::build()
                 ->setFrequency(
-                    $priceItem->frequency_interval_unit,
+                    $priceItem->frequency_interval_unit->value,
                     $priceItem->frequency_interval_count,
                 )
                 ->setTenureType($priceItem->tenure_type)
@@ -106,8 +114,10 @@ class PayPalSubscriptionOrderService extends BaseService
             return $this->billingPlanService->createPlan($billingPlanBuilder);
         } catch (\Exception $e) {
             // Handle exceptions as needed
-            throw new \Exception('Failed to create PayPal billing plan');
-            // $this->billingPlanService->getResponseData()
+            throw new PayPalRequestException(
+                $this->billingPlanService->getResponseData(),
+                'Failed to create PayPal billing plan'
+            );
         }
     }
 
@@ -311,14 +321,28 @@ class PayPalSubscriptionOrderService extends BaseService
         return $response;
     }
 
+
+    public function getSubscription(string $subscriptionId)
+    {
+        $this->initializePayPalService();
+        $response = $this->payPalSubscriptionService->showSubscription(
+            $subscriptionId
+        );
+        if (!$response->isSuccess()) {
+            $errorMessage = $response->getErrorMessage();
+            $errorDetails = $response->getErrorDetails();
+            // Log the error or throw a more specific exception
+            throw new \Exception(
+                'Error retrieving PayPal subscription: ' . $errorMessage . ' Details: ' . json_encode($errorDetails)
+            );
+        }
+
+        // Subscription retrieved successfully, return relevant information
+        return $response;
+    }
+
     public function handleSubscriptionApproval(Order $order, Transaction $transaction, array $data): PayPalSubscriptionResponseHandler
     {
-        //         {
-        //     "orderID": "3GE228659M104945X",
-        //     "subscriptionID": "I-NCH9FU5V8KNC",
-        //     "facilitatorAccessToken": "A21AAKP1h25im1yU5RCa6jubcbJxl9EQdwV9dXCnp-nh_7sp0L9ytBN6KNs-5-q7OZIHE-uD86v_ppznF7G7HFXGjLiAYO41g",
-        //     "paymentSource": "paypal"
-        // }
         $this->orderTransactionService->setUser($this->user);
         $this->orderTransactionService->setSite($this->site);
 

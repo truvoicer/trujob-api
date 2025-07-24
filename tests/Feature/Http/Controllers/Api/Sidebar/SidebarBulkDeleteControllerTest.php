@@ -9,6 +9,7 @@ use App\Models\Site;
 use App\Models\SiteUser;
 use App\Models\User;
 use App\Models\Widget;
+use App\Services\Admin\Sidebar\SidebarService;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -35,17 +36,16 @@ class SidebarBulkDeleteControllerTest extends TestCase
             'status' => SiteStatus::ACTIVE->value,
         ]);
     }
-    
+
     public function test_it_can_bulk_delete_sidebars(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Create some sidebars to delete
-        $sidebars = Sidebar::factory(3)->create(['site_id' => $user->site_id]);
+        $sidebars = Sidebar::factory(3)->create(['site_id' => $this->site->id]);
         $sidebarIds = $sidebars->pluck('id')->toArray();
 
-        $response = $this->postJson(route('api.sidebar.bulk-delete'), ['ids' => $sidebarIds]);
+        $response = $this->deleteJson(route('sidebar.bulk.destroy'), ['ids' => $sidebarIds]);
 
         $response->assertStatus(Response::HTTP_OK)
             ->assertJson(['message' => 'Sidebars deleted successfully.']);
@@ -55,22 +55,21 @@ class SidebarBulkDeleteControllerTest extends TestCase
         $this->assertDatabaseMissing('sidebars', ['id' => $sidebarIds[2]]);
     }
 
-    
+
     public function test_it_returns_error_if_bulk_delete_fails(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Create some sidebars to delete
-        $sidebars = Sidebar::factory(3)->create(['site_id' => $user->site_id]);
+        $sidebars = Sidebar::factory(3)->create(['site_id' => $this->site->id]);
         $sidebarIds = $sidebars->pluck('id')->toArray();
 
         // Mock the repository to simulate a failure
-        $this->partialMock(\App\Repositories\SidebarRepository::class, function ($mock) {
-            $mock->shouldReceive('delete')->andReturn(false); // Simulate a failed deletion
+        $this->partialMock(SidebarService::class, function ($mock) {
+            $mock->shouldReceive('deleteBulkSidebars')->andReturn(false); // Simulate a failed deletion
         });
 
-        $response = $this->postJson(route('api.sidebar.bulk-delete'), ['ids' => $sidebarIds]);
+        $response = $this->deleteJson(route('sidebar.bulk.destroy'), ['ids' => $sidebarIds]);
 
         $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR)
             ->assertJson(['message' => 'Sidebars could not be deleted.']);
@@ -81,25 +80,23 @@ class SidebarBulkDeleteControllerTest extends TestCase
         $this->assertDatabaseHas('sidebars', ['id' => $sidebarIds[2]]);
     }
 
-    
+
     public function test_it_validates_the_ids_are_required(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $response = $this->postJson(route('api.sidebar.bulk-delete'), []);
+        $response = $this->deleteJson(route('sidebar.bulk.destroy'), []);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['ids']);
     }
 
-    
+
     public function test_it_validates_the_ids_are_an_array(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $response = $this->postJson(route('api.sidebar.bulk-delete'), ['ids' => 'not an array']);
+        $response = $this->deleteJson(route('sidebar.bulk.destroy'), ['ids' => 'not an array']);
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['ids']);

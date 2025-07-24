@@ -27,14 +27,46 @@ class BulkStoreRegionRequest extends FormRequest
                 'string',
                 'max:100'
             ],
-            'regions.*.code' => [
-                'nullable',
+            'regions.*.admin_name' => [
+                'required',
                 'string',
-                'max:20',
-                'unique:regions,code,NULL,id,country_id,' . $this->input('regions.*.country_id')
+                'max:100'
             ],
             'regions.*.is_active' => [
+                'required',
                 'boolean'
+            ],
+            'regions.*.toponym_name' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+            'regions.*.category' => [
+                'required',
+                'string',
+                'max:50'
+            ],
+            'regions.*.description' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'regions.*.lng' => [
+                'required',
+                'numeric    ',
+                'min:-180',
+                'max:180'
+            ],
+            'regions.*.lat' => [
+                'required',
+                'numeric',
+                'min:-90',
+                'max:90'
+            ],
+            'regions.*.population' => [
+                'required',
+                'integer',
+                'min:0'
             ],
         ];
     }

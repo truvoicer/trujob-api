@@ -37,19 +37,21 @@ class PaginationTypeControllerTest extends TestCase
         ]);
         Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_can_return_all_pagination_types(): void
     {
-        $response = $this->getJson(route('api.pagination-type'));
+        $response = $this->getJson(route('enum.pagination.type'));
 
-        $response->assertStatus(200);
 
-        $expectedData = collect(PaginationType::cases())->map(fn ($case) => [
-            'name' => $case->name,
-            'value' => $case->value,
-        ])->toArray();
-
-        $response->assertJson(['data' => $expectedData]);
-
+        $response->assertOk()
+            ->assertJsonStructure([
+                'data'
+            ]);
+        $response->assertJson([
+            'data' => array_map(
+                fn(PaginationType $item) => $item->value,
+                PaginationType::cases()
+            )
+        ]);
     }
 }

@@ -18,13 +18,16 @@ class PayPalOrderTransactionCaptureController extends Controller
 
     public function __construct(
         private PayPalOrderService $paypalOrderService,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
 
-    public function store(Order $order, Transaction $transaction, StorePayPalOrderCaptureRequest $request) {
+    public function store(
+        Order $order,
+        Transaction $transaction,
+        StorePayPalOrderCaptureRequest $request
+    ) {
         $this->paypalOrderService->setUser($request->user()->user);
         $this->paypalOrderService->setSite($request->user()->site);
         $createOrder = $this->paypalOrderService->captureOrder(
@@ -48,5 +51,4 @@ class PayPalOrderTransactionCaptureController extends Controller
             Response::HTTP_CREATED
         );
     }
-
 }

@@ -26,7 +26,7 @@ Route::prefix('transaction')->name('transaction.')->group(function () {
         Route::prefix('payment-gateway')->name('payment-gateway.')->group(function () {
             Route::prefix('paypal')->name('paypal.')->group(function () {
                 Route::post('/store', [PayPalOrderTransactionController::class, 'store'])->name('store');
-                Route::post('/capture/store', [PayPalOrderTransactionCaptureController::class, 'store'])->name('show');
+                Route::post('/capture/store', [PayPalOrderTransactionCaptureController::class, 'store'])->name('capture.store');
                 Route::post('/approve/store', [PayPalOrderTransactionApproveController::class, 'store'])->name('approve.store');
                 Route::post('/cancel/store', [PayPalOrderTransactionCancelController::class, 'store'])->name('cancel.store');
             });

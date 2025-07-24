@@ -93,4 +93,36 @@ class PermissionService extends BaseService
     {
         return $this->permissionRepository;
     }
+
+    public function bulkStorePermission(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            $createdPermission = $this->createPermission(
+                $permission['name'],
+                $permission['label']
+            );
+            if (!$createdPermission) {
+                throw new BadRequestHttpException(sprintf(
+                    "Error creating permission with name: %s and label: %s",
+                    $permission['name'],
+                    $permission['label']
+                ));
+            }
+        }
+        return true;
+    }
+
+    public function bulkDeletePermission(array $permissionIds): bool
+    {
+        foreach ($permissionIds as $permissionId) {
+            $deleted = $this->deletePermissionById($permissionId);
+            if (!$deleted) {
+                throw new BadRequestHttpException(sprintf(
+                    "Error deleting permission with id: %s",
+                    $permissionId
+                ));
+            }
+        }
+        return true;
+    }
 }

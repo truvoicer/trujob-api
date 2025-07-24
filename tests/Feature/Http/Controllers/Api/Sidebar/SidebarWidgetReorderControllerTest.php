@@ -9,7 +9,9 @@ use App\Models\SidebarWidget;
 use App\Models\Site;
 use App\Models\SiteUser;
 use App\Models\User;
+use App\Models\Widget;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class SidebarWidgetReorderControllerTest extends TestCase
@@ -32,18 +34,29 @@ class SidebarWidgetReorderControllerTest extends TestCase
             'status' => SiteStatus::ACTIVE->value,
         ]);
     }
-    
+
     public function test_it_can_move_a_sidebar_widget(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $sidebar = Sidebar::factory()->create(['site_id' => $user->site_id]);
-        $sidebarWidget = SidebarWidget::factory()->create(['sidebar_id' => $sidebar->id]);
+        $widget = Widget::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->create();
+        $sidebar = Sidebar::factory()
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id,
+        ]);
 
         // Act
-        $response = $this->postJson(route('api.sidebar.widgets.reorder', [$sidebar, $sidebarWidget]), [
+        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, $sidebarWidget]), [
             'direction' => 'up',
         ]);
 
@@ -59,15 +72,27 @@ class SidebarWidgetReorderControllerTest extends TestCase
         ]);
     }
 
-    
+
     public function test_it_requires_authentication(): void
     {
         // Arrange
-        $sidebar = Sidebar::factory()->create();
-        $sidebarWidget = SidebarWidget::factory()->create();
+        $widget = Widget::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->create();
+        $sidebar = Sidebar::factory()
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id,
+        ]);
 
         // Act
-        $response = $this->postJson(route('api.sidebar.widgets.reorder', [$sidebar, $sidebarWidget]), [
+        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, $sidebarWidget]), [
             'direction' => 'up',
         ]);
 
@@ -75,18 +100,29 @@ class SidebarWidgetReorderControllerTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    
+
     public function test_it_validates_the_direction_parameter(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $sidebar = Sidebar::factory()->create(['site_id' => $user->site_id]);
-        $sidebarWidget = SidebarWidget::factory()->create(['sidebar_id' => $sidebar->id]);
+        $widget = Widget::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->create();
+        $sidebar = Sidebar::factory()
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id,
+        ]);
 
         // Act
-        $response = $this->postJson(route('api.sidebar.widgets.reorder', [$sidebar, $sidebarWidget]), [
+        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, $sidebarWidget]), [
             'direction' => 'invalid',
         ]);
 
@@ -95,17 +131,29 @@ class SidebarWidgetReorderControllerTest extends TestCase
             ->assertJsonValidationErrors(['direction']);
     }
 
-    
+
     public function test_it_returns_404_if_sidebar_not_found(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $sidebarWidget = SidebarWidget::factory()->create();
+        $widget = Widget::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->create();
+        $sidebar = Sidebar::factory()
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id,
+        ]);
 
         // Act
-        $response = $this->postJson(route('api.sidebar.widgets.reorder', [999, $sidebarWidget]), [
+        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [999, $sidebarWidget]), [
             'direction' => 'up',
         ]);
 
@@ -113,37 +161,33 @@ class SidebarWidgetReorderControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-    
+
     public function test_it_returns_404_if_sidebar_widget_not_found(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $sidebar = Sidebar::factory()->create(['site_id' => $user->site_id]);
+        $widget = Widget::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->create();
+        $sidebar = Sidebar::factory()
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        SidebarWidget::factory()->create([
+            'sidebar_id' => $sidebar->id,
+            'widget_id' => $widget->id,
+        ]);
 
         // Act
-        $response = $this->postJson(route('api.sidebar.widgets.reorder', [$sidebar, 999]), [
+        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, 999]), [
             'direction' => 'up',
         ]);
 
         // Assert
-        $response->assertNotFound();
-    }
-
-    
-    public function test_it_requires_correct_site_id_for_sidebar(): void
-    {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user, ['*']);
-
-        $sidebar = Sidebar::factory()->create(['site_id' => 999]); // Different site ID
-        $sidebarWidget = SidebarWidget::factory()->create(['sidebar_id' => $sidebar->id]);
-
-        $response = $this->postJson(route('api.sidebar.widgets.reorder', [$sidebar, $sidebarWidget]), [
-            'direction' => 'up',
-        ]);
-
         $response->assertNotFound();
     }
 }

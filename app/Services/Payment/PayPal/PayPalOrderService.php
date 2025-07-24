@@ -29,6 +29,11 @@ class PayPalOrderService extends BaseService
         parent::__construct();
     }
 
+    public function getPayPalOrderService(): PaypalOrderServiceSdk
+    {
+        return $this->payPalService;
+    }
+
     private function initializePayPalService(): void
     {
 

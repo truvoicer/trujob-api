@@ -6,7 +6,6 @@ enum ProductType: string
 {
     case DIGITAL = 'digital';
     case PHYSICAL = 'physical';
-    case SUBSCRIPTION = 'subscription';
     case SERVICE = 'service';
 
     public function label(): string
@@ -14,7 +13,6 @@ enum ProductType: string
         return match ($this) {
             self::DIGITAL => 'Digital',
             self::PHYSICAL => 'Physical',
-            self::SUBSCRIPTION => 'Subscription',
             self::SERVICE => 'Service',
         };
     }

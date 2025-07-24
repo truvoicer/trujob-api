@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Order\PaymentGateway\PayPal\Capture;
+namespace App\Http\Requests\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StorePayPalOrderCaptureRequest extends FormRequest
+class UpdatePermissionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,17 @@ class StorePayPalOrderCaptureRequest extends FormRequest
     public function rules()
     {
         return [
-            'order_id' => ['required', 'string'],
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                'unique:permissions,name,' . $this->route('permission')->id
+            ],
+            'label' => [
+                'sometimes',
+                'string',
+                'max:255',
+            ],
         ];
     }
 }

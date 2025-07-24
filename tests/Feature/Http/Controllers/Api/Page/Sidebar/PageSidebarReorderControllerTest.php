@@ -36,12 +36,11 @@ class PageSidebarReorderControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_can_reorder_a_page_block_in_the_sidebar()
     {
-        $user = User::factory()->create();
+        Sanctum::actingAs($this->siteUser, ['*']);
         $page = Page::factory()->create([
             'site_id' => $this->site->id,
         ]);
@@ -69,10 +68,11 @@ class PageSidebarReorderControllerTest extends TestCase
         ]);
     }
 
-    
+
     public function test_it_requires_a_valid_direction()
     {
-        $user = User::factory()->create();
+
+        Sanctum::actingAs($this->siteUser, ['*']);
         $page = Page::factory()->create([
             'site_id' => $this->site->id,
         ]);
@@ -87,9 +87,11 @@ class PageSidebarReorderControllerTest extends TestCase
             ->assertJsonValidationErrors(['direction']);
     }
 
-    
+
     public function test_it_returns_a_403_if_the_user_is_not_authenticated()
     {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user, ['*']);
         $page = Page::factory()->create([
             'site_id' => $this->site->id,
         ]);
@@ -102,10 +104,11 @@ class PageSidebarReorderControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    
+
     public function test_it_returns_a_404_if_the_page_is_not_found()
     {
-        $user = User::factory()->create();
+
+        Sanctum::actingAs($this->siteUser, ['*']);
         $pageBlock = PageBlock::factory()->create();
 
         $response = $this
@@ -116,10 +119,11 @@ class PageSidebarReorderControllerTest extends TestCase
         $response->assertStatus(404);
     }
 
-    
+
     public function test_it_returns_a_404_if_the_page_block_is_not_found()
     {
-        $user = User::factory()->create();
+
+        Sanctum::actingAs($this->siteUser, ['*']);
         $page = Page::factory()->create([
             'site_id' => $this->site->id,
         ]);

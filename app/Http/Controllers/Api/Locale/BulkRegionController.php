@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Locale;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Region\DestroyBulkRegionRequest;
-use App\Http\Requests\Region\StoreBulkRegionRequest;
+use App\Http\Requests\Region\BulkDestroyRegionRequest;
+use App\Http\Requests\Region\BulkStoreRegionRequest;
 use App\Services\Region\RegionService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,11 +17,11 @@ class BulkRegionController extends Controller
     {
     }
 
-    public function store(StoreBulkRegionRequest $request) {
+    public function store(BulkStoreRegionRequest $request) {
         $this->regionService->setUser($request->user()->user);
         $this->regionService->setSite($request->user()->site);
         $create = $this->regionService->createRegionBatch(
-            $request->validated('currencies')
+            $request->validated('regions')
         );
         if (!$create) {
             return response()->json([
@@ -33,7 +33,7 @@ class BulkRegionController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function destroy(DestroyBulkRegionRequest $request) {
+    public function destroy(BulkDestroyRegionRequest $request) {
         $this->regionService->setUser($request->user()->user);
         $this->regionService->setSite($request->user()->site);
         $delete = $this->regionService->deleteRegionBatch(

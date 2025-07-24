@@ -34,34 +34,29 @@ class WidgetControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_can_list_widgets()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->site_id = $site->id;
-        $user->save();
-        $widgets = Widget::factory()->count(3)->create(['site_id' => $site->id]);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $this->actingAs($user, 'api')
-            ->getJson(route('widgets.index'))
+        $widgets = Widget::factory()->count(3)->create(['site_id' => $this->site->id]);
+
+        $this
+            ->getJson(route('widget.index'))
             ->assertStatus(200)
             ->assertJsonCount(3, 'data');
     }
 
-    
+
     public function test_it_can_show_a_widget()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->site_id = $site->id;
-        $user->save();
-        $widget = Widget::factory()->create(['site_id' => $site->id]);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $this->actingAs($user, 'api')
-            ->getJson(route('widgets.show', $widget))
+        $widget = Widget::factory()->create(['site_id' => $this->site->id]);
+
+        $this
+            ->getJson(route('widget.show', $widget))
             ->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -72,41 +67,38 @@ class WidgetControllerTest extends TestCase
             ]);
     }
 
-    
+
     public function test_it_can_store_a_widget()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->site_id = $site->id;
-        $user->save();
+        Sanctum::actingAs($this->siteUser, ['*']);
+
         $widgetData = [
+            'title' => $this->faker->sentence(3),
             'name' => $this->faker->name,
             'description' => $this->faker->sentence,
         ];
 
-        $this->actingAs($user, 'api')
-            ->postJson(route('widgets.store'), $widgetData)
+        $this
+            ->postJson(route('widget.store'), $widgetData)
             ->assertStatus(200)
             ->assertJson(['message' => 'Widget created']);
 
         $this->assertDatabaseHas('widgets', $widgetData);
     }
 
-    
+
     public function test_it_can_update_a_widget()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->site_id = $site->id;
-        $user->save();
-        $widget = Widget::factory()->create(['site_id' => $site->id]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $widget = Widget::factory()->create(['site_id' => $this->site->id]);
         $updatedWidgetData = [
             'name' => 'Updated Name',
             'description' => 'Updated Description',
         ];
 
-        $this->actingAs($user, 'api')
-            ->patchJson(route('widgets.update', $widget), $updatedWidgetData)
+        $this
+            ->patchJson(route('widget.update', $widget), $updatedWidgetData)
             ->assertStatus(200)
             ->assertJson(['message' => 'Widget updated']);
 
@@ -117,56 +109,50 @@ class WidgetControllerTest extends TestCase
         ]);
     }
 
-    
+
     public function test_it_can_destroy_a_widget()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->site_id = $site->id;
-        $user->save();
-        $widget = Widget::factory()->create(['site_id' => $site->id]);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $this->actingAs($user, 'api')
-            ->deleteJson(route('widgets.destroy', $widget))
+        $widget = Widget::factory()->create(['site_id' => $this->site->id]);
+
+        $this
+            ->deleteJson(route('widget.destroy', $widget))
             ->assertStatus(200)
             ->assertJson(['message' => 'Widget deleted']);
 
         $this->assertDatabaseMissing('widgets', ['id' => $widget->id]);
     }
 
-    
+
     public function test_it_returns_unprocessable_entity_on_store_failure()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->site_id = $site->id;
-        $user->save();
+        Sanctum::actingAs($this->siteUser, ['*']);
+
         $widgetData = [
             'name' => '', // Invalid data to trigger validation error
             'description' => $this->faker->sentence,
         ];
 
-        $response = $this->actingAs($user, 'api')
-            ->postJson(route('widgets.store'), $widgetData);
+        $response = $this
+            ->postJson(route('widget.store'), $widgetData);
 
         $response->assertStatus(422);
     }
 
-    
+
     public function test_it_returns_unprocessable_entity_on_update_failure()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create();
-        $user->site_id = $site->id;
-        $user->save();
-        $widget = Widget::factory()->create(['site_id' => $site->id]);
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $widget = Widget::factory()->create(['site_id' => $this->site->id]);
         $updatedWidgetData = [
             'name' => '', // Invalid data to trigger validation error
             'description' => $this->faker->sentence,
         ];
 
-        $response = $this->actingAs($user, 'api')
-            ->patchJson(route('widgets.update', $widget), $updatedWidgetData);
+        $response = $this
+            ->patchJson(route('widget.update', $widget), $updatedWidgetData);
 
         $response->assertStatus(422);
     }

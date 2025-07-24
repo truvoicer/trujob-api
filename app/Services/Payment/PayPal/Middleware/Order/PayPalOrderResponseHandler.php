@@ -110,7 +110,7 @@ class PayPalOrderResponseHandler
         if (!$this->isSuccess()) {
             $result = $this->response->getResult();
             // Attempt to get message from result object, fallback to raw body
-            return (is_object($result) && isset($result->message)) ? $result->message : $this->response->getRawBody();
+            return (is_object($result) && isset($result->message)) ? $result->message : $this->response->getBody();
         }
         return null;
     }

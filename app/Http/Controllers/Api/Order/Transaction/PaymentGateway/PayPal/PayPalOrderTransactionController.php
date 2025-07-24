@@ -68,7 +68,7 @@ class PayPalOrderTransactionController extends Controller
             case PriceType::SUBSCRIPTION:
                 return $this->sendJsonResponse(
                     true,
-                    'PayPal order created',
+                    'PayPal subscription created',
                     $this->paypalSubscriptionOrderService->createSubscription(
                         $order,
                         $transaction

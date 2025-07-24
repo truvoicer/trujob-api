@@ -13,10 +13,56 @@ class UpdateRegionRequest extends FormRequest
     public function rules()
     {
         return [
-            'country_id' => 'sometimes|exists:countries,id',
-            'name' => 'sometimes|string|max:100',
-            'code' => 'nullable|string|max:20|unique:regions,code,'.$this->region->id.',id,country_id,'.$this->input('country_id', $this->region->country_id),
-            'is_active' => 'boolean',
+             'country_id' => [
+                'sometimes',
+                'exists:countries,id'
+            ],
+            'name' => [
+                'sometimes',
+                'string',
+                'max:100'
+            ],
+            'admin_name' => [
+                'sometimes',
+                'string',
+                'max:100'
+            ],
+            'is_active' => [
+                'sometimes',
+                'boolean'
+            ],
+            'toponym_name' => [
+                'sometimes',
+                'string',
+                'max:100'
+            ],
+            'category' => [
+                'sometimes',
+                'string',
+                'max:50'
+            ],
+            'description' => [
+                'sometimes',
+                'string',
+                'max:255'
+            ],
+            'lng' => [
+                'sometimes',
+                'integer',
+                'min:-180',
+                'max:180'
+            ],
+            'lat' => [
+                'sometimes',
+                'integer',
+                'min:-90',
+                'max:90'
+            ],
+            'population' => [
+                'sometimes',
+                'integer',
+                'min:0'
+            ],
         ];
     }
 }

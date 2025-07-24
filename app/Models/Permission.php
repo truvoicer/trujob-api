@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class Permission extends Model
 {
     use HasFactory;
-    public const TABLE_NAME = 'permissions';
-    public const REPOSITORY = PermissionRepository::class;
-
+    protected $fillable = [
+        'name',
+        'label',
+    ];
 }

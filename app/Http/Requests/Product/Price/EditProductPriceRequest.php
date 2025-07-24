@@ -91,7 +91,8 @@ class EditProductPriceRequest extends FormRequest
             'payment_failure_threshold' => [
                 'sometimes',
                 'integer',
-                'min:0'
+                'min:0',
+                'max:999'
             ],
             "items" => [
                 'sometimes',

@@ -14,13 +14,23 @@ class Region extends Model
 
     protected $fillable = [
         'country_id',
+        'admin_name',
         'name',
         'code',
+        'toponym_name',
+        'category',
+        'description',
+        'lng',
+        'lat',
+        'population',
         'is_active'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'lng' => 'float',
+        'lat' => 'float',
+        'population' => 'integer',
     ];
 
     public function country()

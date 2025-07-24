@@ -36,17 +36,15 @@ class PaymentMethodControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_can_list_payment_methods()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         PaymentMethod::factory()->count(3)->create();
 
-        $response = $this->getJson(route('payment-methods.index'));
+        $response = $this->getJson(route('payment-method.index'));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -63,14 +61,13 @@ class PaymentMethodControllerTest extends TestCase
         ]);
     }
 
-    
+
     public function test_it_can_show_a_payment_method()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
         $paymentMethod = PaymentMethod::factory()->create();
 
-        $response = $this->getJson(route('payment-methods.show', $paymentMethod));
+        $response = $this->getJson(route('payment-method.show', $paymentMethod));
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -83,37 +80,41 @@ class PaymentMethodControllerTest extends TestCase
         ]);
     }
 
-    
+
     public function test_it_can_create_a_payment_method()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
             'name' => $this->faker->name,
+            'description' => $this->faker->text,
+            'icon' => $this->faker->imageUrl(),
+            'is_default' => $this->faker->boolean,
+            'is_active' => $this->faker->boolean,
+            'settings' => $this->faker->randomElements(['setting1', 'setting2'], 2),
         ];
 
-        $response = $this->postJson(route('payment-methods.store'), $data);
+        $response = $this->postJson(route('payment-method.store'), $data);
 
         $response->assertStatus(201);
         $response->assertJson([
             'message' => 'PaymentMethod created',
         ]);
+        $data['settings'] = json_encode($data['settings']); // Ensure settings is stored as JSON
         $this->assertDatabaseHas('payment_methods', $data);
     }
 
-    
+
     public function test_it_can_update_a_payment_method()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
         $paymentMethod = PaymentMethod::factory()->create();
 
         $data = [
             'name' => $this->faker->name,
         ];
 
-        $response = $this->patchJson(route('payment-methods.update', $paymentMethod), $data);
+        $response = $this->patchJson(route('payment-method.update', $paymentMethod), $data);
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -122,14 +123,13 @@ class PaymentMethodControllerTest extends TestCase
         $this->assertDatabaseHas('payment_methods', $data);
     }
 
-    
+
     public function test_it_can_delete_a_payment_method()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
         $paymentMethod = PaymentMethod::factory()->create();
 
-        $response = $this->deleteJson(route('payment-methods.destroy', $paymentMethod));
+        $response = $this->deleteJson(route('payment-method.destroy', $paymentMethod));
 
         $response->assertStatus(200);
         $response->assertJson([
@@ -138,26 +138,26 @@ class PaymentMethodControllerTest extends TestCase
         $this->assertDatabaseMissing('payment_methods', ['id' => $paymentMethod->id]);
     }
 
-    
+
     public function test_it_validates_store_request()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $response = $this->postJson(route('payment-methods.store'), []);
+        $response = $this->postJson(route('payment-method.store'), []);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name']);
     }
 
-    
+
     public function test_it_validates_update_request()
     {
-        $user = User::factory()->create();
-        $this->actingAs($user, 'api');
+        Sanctum::actingAs($this->siteUser, ['*']);
         $paymentMethod = PaymentMethod::factory()->create();
 
-        $response = $this->patchJson(route('payment-methods.update', $paymentMethod), []);
+        $response = $this->patchJson(route('payment-method.update', $paymentMethod), [
+            'name' => '', // Invalid data
+        ]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['name']);
