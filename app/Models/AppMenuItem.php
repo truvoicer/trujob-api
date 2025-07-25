@@ -14,12 +14,21 @@ class AppMenuItem extends Model
         'label',
         'screen',
         'type',
+        'active',
         'show_in_menu',
         'icon',
     ];
 
+    protected $casts = [
+        'active' => 'boolean',
+        'show_in_menu' => 'boolean',
+    ];
+
     public function appMenu() {
-        return $this->belongsTo(AppMenu::class);
+        return $this->belongsToMany(
+            AppMenu::class,
+            'app_menu_app_menu_items'
+        );
     }
 
 }

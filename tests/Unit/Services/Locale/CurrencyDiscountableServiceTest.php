@@ -5,9 +5,11 @@ namespace Tests\Unit\Services\Locale;
 use App\Contracts\Discount\DiscountableInterface;
 use App\Enums\MorphEntity;
 use App\Http\Resources\Currency\CurrencyResource;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Discount;
 use App\Models\Discountable;
+use App\Models\Language;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
@@ -18,6 +20,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\Sanctum;
 use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
@@ -196,7 +199,10 @@ class CurrencyDiscountableServiceTest extends TestCase
 
     public function testIsDiscountValidForOrderItem_userSettingFound_returnsTrue(): void
     {
+        $user = User::factory()->create();
         $currency = Currency::factory()->create();
+        $country = Country::factory()->create();
+        $language = Language::factory()->create();
         $discountable = Discountable::factory()->create([
             'discountable_id' => $currency->id,
             'discountable_type' => MorphEntity::CURRENCY,
@@ -206,11 +212,15 @@ class CurrencyDiscountableServiceTest extends TestCase
         $orderItem->orderItemable()->associate(Currency::factory()->create());
         $orderItem->save();
 
-        $user = User::factory()->create();
-        $userSetting = UserSetting::factory()->create(['user_id' => $user->id]);
+
+        $userSetting = UserSetting::factory()->create([
+            'user_id' => $user->id,
+            'country_id' => $country->id,
+            'language_id' => $language->id,
+            'currency_id' => $currency->id,
+        ]);
         $userSetting->currency()->associate($currency);
         $userSetting->save();
-        Sanctum::actingAs($user, ['*']);
 
         $result = $this->currencyDiscountableService->isDiscountValidForOrderItem($discountable, $orderItem);
 

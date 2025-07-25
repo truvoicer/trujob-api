@@ -4,11 +4,15 @@ namespace Tests\Unit\Services\Region;
 
 use App\Enums\MorphEntity;
 use App\Http\Resources\Region\RegionResource;
+use App\Models\Country;
+use App\Models\Currency;
 use App\Models\Discount;
 use App\Models\Discountable;
+use App\Models\Language;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Region;
+use App\Models\User;
 use App\Models\UserSetting;
 use App\Repositories\RegionRepository;
 use App\Services\Region\RegionDiscountableService;
@@ -155,12 +159,20 @@ class RegionDiscountableServiceTest extends TestCase
 
     public function testIsDiscountValidForOrderItemReturnsTrueWhenUserSettingExists(): void
     {
+
+        $user = User::factory()->create();
+        $currency = Currency::factory()->create();
+        $country = Country::factory()->create();
+        $language = Language::factory()->create();
         $discountable = Discountable::factory()->make(['discountable_id' => $this->region->id]);
         $orderItem = OrderItem::factory()->create();
-        $user = $orderItem->order->user;
-        Sanctum::actingAs($user, ['*']);
 
-        $userSetting = UserSetting::factory()->create(['user_id' => $user->id]);
+        $userSetting = UserSetting::factory()->create([
+            'user_id' => $user->id,
+            'country_id' => $country->id,
+            'language_id' => $language->id,
+            'currency_id' => $currency->id,
+        ]);
         $userSetting->region()->attach($this->region->id);
 
         $result = $this->regionDiscountableService->isDiscountValidForOrderItem($discountable, $orderItem);

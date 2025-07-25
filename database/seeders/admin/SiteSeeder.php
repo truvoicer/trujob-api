@@ -76,6 +76,11 @@ class SiteSeeder extends Seeder
             throw new Exception('Required currency not found.');
         }
 
+        $language = $country->languages()->first();
+        if (!$language) {
+            throw new Exception('Required language not found.');
+        }
+
         $testUserData = DefaultData::TEST_USER_DATA;
         $user = $userAdminService->getUserRepository()->findOneBy(
             [['email', '=', $testUserData['email']]]
@@ -150,7 +155,15 @@ class SiteSeeder extends Seeder
                         ->has(UserProfile::factory()->count(1))
                         ->has(UserReview::factory()->count(5))
                         ->has(UserReward::factory()->count(5))
-                        ->has(UserSetting::factory()->count(1))
+                        ->has(
+                            UserSetting::factory()
+                                ->state([
+                                    'country_id' => $country->id,
+                                    'language_id' => $language->id,
+                                    'currency_id' => $currency->id,
+                                ])
+                                ->count(1)
+                        )
                         ->has(UserMedia::factory()->count(1))
                         ->has(
                             MessagingGroup::factory()

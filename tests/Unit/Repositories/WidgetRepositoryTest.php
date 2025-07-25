@@ -31,7 +31,8 @@ class WidgetRepositoryTest extends TestCase
     public function testFindByParams(): void
     {
         // Arrange
-        Widget::factory()->count(3)->create();
+        $site = Site::factory()->create();
+        Widget::factory()->count(3)->create(['site_id' => $site->id]);
         $sort = 'name';
         $order = 'asc';
         $count = 2;
@@ -51,8 +52,9 @@ class WidgetRepositoryTest extends TestCase
 
     public function testFindByQuery(): void
     {
+        $site = Site::factory()->create();
         // Arrange
-        Widget::factory()->count(2)->create();
+        Widget::factory()->count(2)->create(['site_id' => $site->id]);
 
         // Act
         $result = $this->widgetRepository->findByQuery('test');

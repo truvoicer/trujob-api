@@ -2,6 +2,10 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Country;
+use App\Models\Currency;
+use App\Models\Language;
+use App\Models\User;
 use App\Models\UserSetting;
 use App\Repositories\UserSettingRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,8 +25,18 @@ class UserSettingRepositoryTest extends TestCase
 
     public function testFindByParams(): void
     {
+        $user = User::factory()->create();
+        $currency = Currency::factory()->create();
+        $country = Country::factory()->create();
+        $language = Language::factory()->create();
+
         // Create some UserSetting records for testing
-        UserSetting::factory()->count(3)->create();
+        UserSetting::factory()->count(3)->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+            'country_id' => $country->id,
+            'language_id' => $language->id,
+        ]);
 
         // Test sorting and ordering
         $result = $this->userSettingRepository->findByParams('id', 'asc');
