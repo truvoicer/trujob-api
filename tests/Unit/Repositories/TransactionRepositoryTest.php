@@ -2,7 +2,11 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Currency;
+use App\Models\Order;
+use App\Models\PaymentGateway;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Repositories\TransactionRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -27,7 +31,17 @@ class TransactionRepositoryTest extends TestCase
 
     public function testFindByParamsReturnsCollection(): void
     {
-        Transaction::factory()->count(3)->create();
+        $paymentGateway = PaymentGateway::factory()->create();
+        $currency = Currency::factory()->create();
+        $user = User::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
+        Transaction::factory()->count(3)->create([
+            'order_id' => $order->id,
+            'payment_gateway_id' => $paymentGateway->id,
+        ]);
 
         $result = $this->transactionRepository->findByParams('id', 'asc');
 
@@ -37,7 +51,17 @@ class TransactionRepositoryTest extends TestCase
 
     public function testFindByParamsReturnsCollectionWithCountLimit(): void
     {
-        Transaction::factory()->count(5)->create();
+        $paymentGateway = PaymentGateway::factory()->create();
+        $currency = Currency::factory()->create();
+        $user = User::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
+        Transaction::factory()->count(5)->create([
+            'order_id' => $order->id,
+            'payment_gateway_id' => $paymentGateway->id,
+        ]);
 
         $result = $this->transactionRepository->findByParams('id', 'asc', 2);
 
@@ -47,7 +71,17 @@ class TransactionRepositoryTest extends TestCase
 
     public function testFindByQueryReturnsAllTransactions(): void
     {
-        Transaction::factory()->count(2)->create();
+        $paymentGateway = PaymentGateway::factory()->create();
+        $currency = Currency::factory()->create();
+        $user = User::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
+        Transaction::factory()->count(2)->create([
+            'order_id' => $order->id,
+            'payment_gateway_id' => $paymentGateway->id,
+        ]);
 
         $result = $this->transactionRepository->findByQuery([]);
 

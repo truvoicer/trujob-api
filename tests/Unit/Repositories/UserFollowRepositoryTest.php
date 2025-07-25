@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\User;
 use App\Models\UserFollow;
 use App\Repositories\UserFollowRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,8 +22,13 @@ class UserFollowRepositoryTest extends TestCase
 
     public function testFindByParams(): void
     {
+        $user = User::factory()->create();
+        $followUser = User::factory()->create();
         // Arrange
-        UserFollow::factory()->count(3)->create();
+        UserFollow::factory()->count(3)->create([
+            'user_id' => $user->id,
+            'follow_user_id' => $followUser->id,
+        ]);
         $sort = 'created_at';
         $order = 'asc';
         $count = 2;
@@ -38,8 +44,13 @@ class UserFollowRepositoryTest extends TestCase
 
     public function testFindByParamsWithoutCount(): void
     {
+        $user = User::factory()->create();
+        $followUser = User::factory()->create();
         // Arrange
-        UserFollow::factory()->count(5)->create();
+        UserFollow::factory()->count(5)->create([
+            'user_id' => $user->id,
+            'follow_user_id' => $followUser->id,
+        ]);
         $sort = 'created_at';
         $order = 'asc';
 

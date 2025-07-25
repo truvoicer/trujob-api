@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class PriceTaxRate extends Model
 {
-    
+
     protected $table = 'price_tax_rates';
 
-    protected $casts = [
-        'is_primary' => 'boolean',
+    protected $fillable = [
+        'price_id',
+        'tax_rate_id',
     ];
 
     public function productTaxRateable(): MorphTo

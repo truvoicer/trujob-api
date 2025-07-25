@@ -21,10 +21,12 @@ class UserFollowFactory extends Factory
     public function configure()
     {
         return $this->afterMaking(function (UserFollow $userFollow) {
-            $user = $userFollow->user()->first();
-            if ($user->id === $userFollow->user_id) {
+            if ($userFollow->follow_user_id === $userFollow->user_id) {
                 $newUser = User::where('id', '<>', $userFollow->user_id)->first();
-                $userFollow->user_id = $newUser->id;
+
+                if ($newUser) {
+                    $userFollow->user_id = $newUser->id;
+                }
             }
             return $userFollow;
         });

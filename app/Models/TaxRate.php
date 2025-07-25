@@ -17,13 +17,11 @@ class TaxRate extends Model
         'label',
         'type',
         'amount_type',
+        'amount',
         'rate',
-        'country_id',
         'currency_id',
-        'has_region',
-        'region',
-        'applies_to',
-        'is_active'
+        'is_active',
+        'scope'
     ];
 
     protected $casts = [
@@ -44,30 +42,6 @@ class TaxRate extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
-    }
-
-    public function scopeForCountry($query, string $countryCode)
-    {
-        return $query->where('country_code', $countryCode);
-    }
-
-    public function scopeDefaultRate($query)
-    {
-        return $query->where('is_default', true);
-    }
-
-    public function scopeForRegion($query, string $countryCode, ?string $region = null)
-    {
-        return $query->where('country_code', $countryCode)
-            ->where(function($q) use ($region) {
-                $q->where('region', $region)
-                  ->orWhereNull('region');
-            })
-            ->orderByDesc('region'); // Prefer region-specific rates over null
-    }
-
-    public function country() {
-        return $this->belongsTo(Country::class);
     }
 
     public function currency() {
