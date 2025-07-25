@@ -3,6 +3,8 @@
 namespace Tests\Unit\Models;
 
 use App\Models\PetProduct;
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,7 +15,7 @@ class PetProductTest extends TestCase
     /**
      * @var PetProduct
      */
-    private $petProduct;
+    private PetProduct $petProduct;
 
     /**
      * Setup the test environment.
@@ -23,9 +25,15 @@ class PetProductTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id,
+        ]);
         // Create a new PetProduct instance for each test.  This can be adjusted if needed based on your actual tests.
-        $this->petProduct = new PetProduct();
+        $this->petProduct = PetProduct::factory()->create([
+            'created_by_user_id' => $user->id,
+            'product_id' => $product->id
+        ]);
     }
 
     /**
@@ -57,10 +65,15 @@ class PetProductTest extends TestCase
      */
     public function testPetProductCanBeSaved(): void
     {
-        $petProduct = PetProduct::create([
-            // Add any required attributes for your PetProduct model here.
-            // 'name' => 'Test Product',  Example.  Adjust according to real requirements.
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id
         ]);
+        $petProduct = PetProduct::create([
+            'created_by_user_id' => $user->id,
+            'product_id' => $product->id
+        ]);
+
 
         $this->assertDatabaseHas('pet_products', ['id' => $petProduct->id]);
     }
@@ -72,9 +85,13 @@ class PetProductTest extends TestCase
      */
     public function testPetProductCanBeRetrieved(): void
     {
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id
+        ]);
         $petProduct = PetProduct::create([
-            // Add any required attributes for your PetProduct model here.
-            // 'name' => 'Test Product',  Example.  Adjust according to real requirements.
+            'created_by_user_id' => $user->id,
+            'product_id' => $product->id
         ]);
 
         $retrievedPetProduct = PetProduct::find($petProduct->id);

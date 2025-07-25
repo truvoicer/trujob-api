@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Currency;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Order;
@@ -13,16 +14,23 @@ class TransactionTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test the user relationship.
-     *
-     * @return void
-     */
-    public function testUserRelationship()
+    protected Transaction $transaction;
+    protected function setUp(): void
     {
-        $transaction = Transaction::factory()->create();
-        $this->assertInstanceOf(User::class, $transaction->user);
+        parent::setUp();
+        $currency = Currency::factory()->create();
+        $user = User::factory()->create();
+        $paymentGateway = PaymentGateway::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
+        $this->transaction = Transaction::factory()->create([
+            'order_id' => $order->id,
+            'payment_gateway_id' => $paymentGateway->id,
+        ]);
     }
+
 
     /**
      * Test the order relationship.
@@ -31,8 +39,7 @@ class TransactionTest extends TestCase
      */
     public function testOrderRelationship()
     {
-        $transaction = Transaction::factory()->create();
-        $this->assertInstanceOf(Order::class, $transaction->order);
+        $this->assertInstanceOf(Order::class, $this->transaction->order);
     }
 
     /**
@@ -42,7 +49,6 @@ class TransactionTest extends TestCase
      */
     public function testPaymentGatewayRelationship()
     {
-        $transaction = Transaction::factory()->create();
-        $this->assertInstanceOf(PaymentGateway::class, $transaction->paymentGateway);
+        $this->assertInstanceOf(PaymentGateway::class, $this->transaction->paymentGateway);
     }
 }

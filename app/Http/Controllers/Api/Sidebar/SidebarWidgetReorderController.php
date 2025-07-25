@@ -15,14 +15,14 @@ class SidebarWidgetReorderController extends Controller
         private SidebarService $sidebarService
     ) {}
 
-    public function __invoke(
+    public function update(
         Sidebar $sidebar,
         SidebarWidget $sidebarWidget,
         SidebarWidgetReorderRequest $request
     ) {
         $this->sidebarService->setUser($request->user()->user);
         $this->sidebarService->setSite($request->user()->site);
-        
+
         $this->sidebarService->moveSidebarWidget(
             $sidebar,
             $sidebarWidget,

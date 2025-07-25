@@ -40,23 +40,24 @@ class SidebarWidgetReorderControllerTest extends TestCase
         // Arrange
         Sanctum::actingAs($this->siteUser, ['*']);
 
-        $widget = Widget::factory()
-            ->state([
-                'site_id' => $this->site->id,
-            ])
-            ->create();
         $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
             ->create([
                 'site_id' => $this->site->id
             ]);
 
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        $sidebarWidget1 = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
 
         // Act
-        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, $sidebarWidget]), [
+        $response = $this->patchJson(route('sidebar.widget.rel.reorder.update', [
+            $sidebar, $sidebarWidget2]), [
             'direction' => 'up',
         ]);
 
@@ -67,32 +68,38 @@ class SidebarWidgetReorderControllerTest extends TestCase
             ]);
 
         $this->assertDatabaseHas('sidebar_widgets', [
-            'id' => $sidebarWidget->id,
-            // Add assertions for order/position changes if applicable in your logic
+            'id' => $sidebarWidget2->id,
+            'order' => 0,
+        ]);
+        $this->assertDatabaseHas('sidebar_widgets', [
+            'id' => $sidebarWidget1->id,
+            'order' => 1,
         ]);
     }
 
 
     public function test_it_requires_authentication(): void
     {
+        $user = User::factory()->create();
         // Arrange
-        $widget = Widget::factory()
-            ->state([
-                'site_id' => $this->site->id,
-            ])
-            ->create();
+        Sanctum::actingAs($user, ['*']);
+
         $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
             ->create([
                 'site_id' => $this->site->id
             ]);
 
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
-
+        $sidebarWidget1 = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
         // Act
-        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, $sidebarWidget]), [
+        $response = $this->patchJson(route('sidebar.widget.rel.reorder.update', [$sidebar, $sidebarWidget2]), [
             'direction' => 'up',
         ]);
 
@@ -106,23 +113,23 @@ class SidebarWidgetReorderControllerTest extends TestCase
         // Arrange
         Sanctum::actingAs($this->siteUser, ['*']);
 
-        $widget = Widget::factory()
-            ->state([
-                'site_id' => $this->site->id,
-            ])
-            ->create();
         $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
             ->create([
                 'site_id' => $this->site->id
             ]);
 
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        $sidebarWidget1 = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
 
         // Act
-        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, $sidebarWidget]), [
+        $response = $this->patchJson(route('sidebar.widget.rel.reorder.update', [$sidebar, $sidebarWidget2]), [
             'direction' => 'invalid',
         ]);
 
@@ -137,23 +144,23 @@ class SidebarWidgetReorderControllerTest extends TestCase
         // Arrange
         Sanctum::actingAs($this->siteUser, ['*']);
 
-        $widget = Widget::factory()
-            ->state([
-                'site_id' => $this->site->id,
-            ])
-            ->create();
         $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
             ->create([
                 'site_id' => $this->site->id
             ]);
 
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        $sidebarWidget1 = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
 
         // Act
-        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [999, $sidebarWidget]), [
+        $response = $this->patchJson(route('sidebar.widget.rel.reorder.update', [999, $sidebarWidget2]), [
             'direction' => 'up',
         ]);
 
@@ -167,23 +174,23 @@ class SidebarWidgetReorderControllerTest extends TestCase
         // Arrange
         Sanctum::actingAs($this->siteUser, ['*']);
 
-        $widget = Widget::factory()
-            ->state([
-                'site_id' => $this->site->id,
-            ])
-            ->create();
         $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
             ->create([
                 'site_id' => $this->site->id
             ]);
 
-        SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        $sidebarWidget1 = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
 
         // Act
-        $response = $this->postJson(route('sidebar.widget.relreorder.reorder', [$sidebar, 999]), [
+        $response = $this->patchJson(route('sidebar.widget.rel.reorder.update', [$sidebar, 999]), [
             'direction' => 'up',
         ]);
 

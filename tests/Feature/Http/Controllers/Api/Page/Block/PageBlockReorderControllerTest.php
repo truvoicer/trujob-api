@@ -6,6 +6,7 @@ use App\Models\Page;
 use App\Models\PageBlock;
 
 use App\Enums\SiteStatus;
+use App\Models\Block;
 use App\Models\Role;
 use App\Models\Sidebar;
 use App\Models\Site;
@@ -14,6 +15,7 @@ use App\Models\User;
 use App\Models\Widget;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class PageBlockReorderControllerTest extends TestCase
@@ -36,19 +38,22 @@ class PageBlockReorderControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_can_reorder_a_page_block(): void
     {
-        $user = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $user->site_id]);
-        $pageBlock1 = PageBlock::factory()->create(['page_id' => $page->id, 'order' => 1]);
-        $pageBlock2 = PageBlock::factory()->create(['page_id' => $page->id, 'order' => 2]);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-
+        $page = Page::factory()
+        ->has(
+            Block::factory()
+                ->count(2),
+        )
+        ->create(['site_id' => $this->site->id]);
+        $pageBlock1 = PageBlock::first();
+        $pageBlock2 = PageBlock::find(2);
         $response = $this
-            ->postJson(route('page.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock1->id]), [
+            ->patchJson(route('page.block.rel.reorder.update', ['page' => $page->id, 'pageBlock' => $pageBlock1->id]), [
                 'direction' => 'down',
             ]);
 
@@ -59,26 +64,32 @@ class PageBlockReorderControllerTest extends TestCase
 
         $this->assertDatabaseHas('page_blocks', [
             'id' => $pageBlock1->id,
-            'order' => 2,
+            'order' => 1,
         ]);
 
         $this->assertDatabaseHas('page_blocks', [
             'id' => $pageBlock2->id,
-            'order' => 1,
+            'order' => 0,
         ]);
 
 
     }
 
-    
+
     public function test_it_requires_a_valid_direction(): void
     {
-        $user = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $user->site_id]);
-        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
+        $page = Page::factory()
+        ->has(
+            Block::factory()
+                ->count(2),
+        )
+        ->create(['site_id' => $this->site->id]);
+        $pageBlock1 = PageBlock::first();
+        $pageBlock2 = PageBlock::find(2);
         $response = $this
-            ->postJson(route('page.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock->id]), [
+            ->patchJson(route('page.block.rel.reorder.update', ['page' => $page->id, 'pageBlock' => $pageBlock1->id]), [
                 'direction' => 'invalid',
             ]);
 
@@ -86,20 +97,26 @@ class PageBlockReorderControllerTest extends TestCase
             ->assertJsonValidationErrors(['direction']);
     }
 
-    
+
     public function test_it_returns_403_if_user_does_not_have_permission(): void
     {
         $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $otherUser->site_id]);
-        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+        Sanctum::actingAs($user, ['*']);
 
+        $page = Page::factory()
+        ->has(
+            Block::factory()
+                ->count(2),
+        )
+        ->create(['site_id' => $this->site->id]);
+        $pageBlock1 = PageBlock::first();
+        $pageBlock2 = PageBlock::find(2);
         $response = $this
-            ->postJson(route('page.blocks.reorder', ['page' => $page->id, 'page_block' => $pageBlock->id]), [
+            ->patchJson(route('page.block.rel.reorder.update', ['page' => $page->id, 'pageBlock' => $pageBlock1->id]), [
                 'direction' => 'down',
             ]);
-
-        $response->assertStatus(403);
+            // dd($response->getContent());
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
 

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Orderable;
 use Illuminate\Database\Eloquent\Model;
 
 class PageSidebar extends Model
 {
+    use Orderable;
     protected $fillable = [
         'order',
         'active',
@@ -20,7 +22,7 @@ class PageSidebar extends Model
     {
         return $this->belongsTo(PageBlock::class);
     }
-    
+
     public function sidebar()
     {
         return $this->belongsTo(Sidebar::class);

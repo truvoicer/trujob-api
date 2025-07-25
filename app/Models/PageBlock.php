@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Orderable;
 use App\Traits\Model\PermissionTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PageBlock extends Model
 {
-    use PermissionTrait, HasFactory;
-    
+    use PermissionTrait, HasFactory, Orderable;
+
     protected $fillable = [
         'properties',
         'has_sidebar',

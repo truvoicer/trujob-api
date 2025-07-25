@@ -4,6 +4,7 @@ namespace Tests\Unit\Models;
 
 use App\Models\Product;
 use App\Models\ProductReview;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,8 +19,11 @@ class ProductReviewTest extends TestCase
      */
     public function testProductRelationship()
     {
+        $user = User::factory()->create();
         // Create a product
-        $product = Product::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id,
+        ]);
 
         // Create a product review and associate it with the product
         $productReview = ProductReview::factory()->create(['product_id' => $product->id]);

@@ -43,7 +43,6 @@ use App\Http\Controllers\Api\Sidebar\SidebarWidgetController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupController;
 use App\Http\Controllers\Api\Messaging\MessagingGroupMessageController;
 use App\Http\Controllers\Api\Notification\NotificationController;
-use App\Http\Controllers\Api\Page\BatchDeletePageBlockController;
 use App\Http\Controllers\Api\Page\PageBlockController;
 use App\Http\Controllers\Api\Page\PageController;
 use App\Http\Controllers\Api\Page\PageViewController;
@@ -85,6 +84,7 @@ use App\Http\Controllers\Api\Price\PriceController;
 use App\Http\Controllers\Api\Price\Discount\PriceDiscountController;
 use App\Http\Controllers\Api\Price\TaxRate\PriceTaxRateController;
 use App\Http\Controllers\Api\Locale\RegionController;
+use App\Http\Controllers\Api\Page\BulkPageBlockController;
 use App\Http\Controllers\Api\PaymentGateway\AvailableSitePaymentGatewayController;
 use App\Http\Controllers\Api\PaymentGateway\PaymentGatewayEnvironmentController;
 use App\Http\Controllers\Api\PaymentGateway\SitePaymentGatewayController;
@@ -763,7 +763,7 @@ Route::middleware([
         Route::get('/', [RoleController::class, 'index'])->name('detail');
         Route::post('/store', [RoleController::class, 'store'])->name('store');
         Route::patch('/{role}/update', [RoleController::class, 'update'])->name('update');
-        Route::delete('/{role}/destroy', [RoleController::class, 'delete'])->name('destroy');
+        Route::delete('/{role}/destroy', [RoleController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('firebase')->name('firebase.')->group(function () {
@@ -856,7 +856,7 @@ Route::middleware([
         Route::prefix('{page}')->group(function () {
             Route::get('/', [PageController::class, 'show'])->name('show');
             Route::patch('/update', [PageController::class, 'update'])->name('update');
-            Route::delete('/destroy', [PageController::class, 'delete'])->name('destroy');
+            Route::delete('/destroy', [PageController::class, 'destroy'])->name('destroy');
             Route::prefix('role')->name('role.')->group(function () {
                 Route::get('/', [PageRoleController::class, 'index'])->name('index');
                 Route::prefix('{role}')->group(function () {
@@ -869,14 +869,16 @@ Route::middleware([
                 Route::prefix('{sidebar}')->group(function () {
                     Route::post('/store', [PageSidebarController::class, 'store'])->name('store');
                     Route::delete('/destroy', [PageSidebarController::class, 'destroy'])->name('destroy');
-                });
-                Route::prefix('reorder')->name('reorder.')->group(function () {
-                    Route::post('/', PageSidebarReorderController::class)->name('reorder');
+                    Route::prefix('reorder')->name('reorder.')->group(function () {
+                        Route::patch('/', [PageSidebarReorderController::class, 'update'])->name('update');
+                    });
                 });
             });
             Route::prefix('block')->name('block.')->group(function () {
                 Route::get('/', [PageBlockController::class, 'index'])->name('index');
-                Route::post('/batch/destroy', BatchDeletePageBlockController::class)->name('batch.delete');
+                Route::prefix('bulk')->name('bulk.')->group(function () {
+                    Route::delete('/destroy', [BulkPageBlockController::class, 'destroy'])->name('destroy');
+                });
 
                 Route::prefix('rel')->name('rel.')->group(function () {
                     Route::prefix('{pageBlock}')->group(function () {
@@ -884,7 +886,7 @@ Route::middleware([
                         Route::patch('/update', [PageBlockController::class, 'update'])->name('update');
                         Route::delete('/destroy', [PageBlockController::class, 'destroy'])->name('destroy');
                         Route::prefix('reorder')->name('reorder.')->group(function () {
-                            Route::post('/', PageBlockReorderController::class)->name('reorder');
+                            Route::patch('/', [PageBlockReorderController::class, 'update'])->name('update');
                         });
                         Route::prefix('role')->name('role.')->group(function () {
                             Route::get('/', [PageBlockRoleController::class, 'index'])->name('index');
@@ -903,7 +905,7 @@ Route::middleware([
                                 Route::prefix('{pageBlockSidebar}')->group(function () {
                                     Route::delete('/destroy', [PageBlockSidebarController::class, 'destroy'])->name('destroy');
                                     Route::prefix('reorder')->name('reorder.')->group(function () {
-                                        Route::post('/', PageBlockSidebarReorderController::class)->name('reorder');
+                                        Route::patch('/', [PageBlockSidebarReorderController::class, 'update'])->name('update');
                                     });
                                 });
                             });
@@ -985,7 +987,7 @@ Route::middleware([
                     Route::patch('/update', [MenuItemController::class, 'update'])->name('update');
                     Route::delete('/destroy', [MenuItemController::class, 'destroy'])->name('destroy');
                     Route::prefix('reorder')->name('reorder.')->group(function () {
-                        Route::post('/', MenuItemReorderController::class)->name('update');
+                        Route::patch('/', [MenuItemReorderController::class, 'update'])->name('update');
                     });
                     Route::prefix('role')->name('role.')->group(function () {
                         Route::get('/', [MenuItemRoleController::class, 'index'])->name('index');
@@ -999,11 +1001,11 @@ Route::middleware([
                         Route::prefix('{menuChild}')->group(function () {
                             Route::post('/store', [MenuItemMenuController::class, 'store'])->name('store');
                         });
-                        Route::prefix('rel')->name('rel')->group(function () {
+                        Route::prefix('rel')->name('rel.')->group(function () {
                             Route::prefix('{menuItemMenu}')->group(function () {
                                 Route::delete('/destroy', [MenuItemMenuController::class, 'destroy'])->name('destroy');
                                 Route::prefix('reorder')->name('reorder.')->group(function () {
-                                    Route::post('/', MenuItemMenuReorderController::class)->name('update');
+                                    Route::patch('/', [MenuItemMenuReorderController::class, 'update'])->name('update');
                                 });
                             });
                         });
@@ -1031,13 +1033,13 @@ Route::middleware([
             });
             Route::prefix('widget')->name('widget.')->group(function () {
                 Route::get('/', [SidebarWidgetController::class, 'index'])->name('index');
-                Route::prefix('rel')->name('rel')->group(function () {
+                Route::prefix('rel')->name('rel.')->group(function () {
                     Route::prefix('{sidebarWidget}')->group(function () {
                         Route::get('/', [SidebarWidgetController::class, 'show'])->name('show');
                         Route::patch('/update', [SidebarWidgetController::class, 'update'])->name('update');
                         Route::delete('/destroy', [SidebarWidgetController::class, 'destroy'])->name('destroy');
                         Route::prefix('reorder')->name('reorder.')->group(function () {
-                            Route::post('/', SidebarWidgetReorderController::class)->name('reorder');
+                            Route::patch('/', [SidebarWidgetReorderController::class, 'update'])->name('update');
                         });
                         Route::prefix('role')->name('role.')->group(function () {
                             Route::get('/', [SidebarWidgetRoleController::class, 'index'])->name('index');

@@ -82,7 +82,7 @@ class PageService extends BaseService
         if (is_array($sidebars)) {
             $this->syncSidebars($page->sidebars(), $sidebars);
         }
-        
+
         return $this->createBlockBatch($page, $blocks);
     }
 
@@ -99,7 +99,7 @@ class PageService extends BaseService
             $sidebars = $data['sidebars'];
             unset($data['sidebars']);
         }
-        
+
         $blocks = [];
         if (array_key_exists('blocks', $data) && is_array($data['blocks'])) {
             $blocks = $data['blocks'];
@@ -182,7 +182,7 @@ class PageService extends BaseService
         if (!empty($data['properties']) && is_array($data['properties'])) {
             $atts['properties'] = json_encode($data['properties']);
         }
-        
+
         $pageBlock = new PageBlock();
         $pageBlock->fill($atts);
         $pageBlock->block_id = $block->id;
@@ -264,6 +264,14 @@ class PageService extends BaseService
     public function deletePageBlocksByType(Page $page, string $type)
     {
         return $page->blocks()->where('type', $type)->delete();
+    }
+
+    public function deletePageBlocksByIds(Page $page, array $ids)
+    {
+        if (empty($ids)) {
+            return false;
+        }
+        return $page->blocks()->whereIn('page_blocks.id', $ids)->delete();
     }
 
     public function detachPageBlocks(Page $page)

@@ -12,16 +12,18 @@ use Symfony\Component\HttpFoundation\Response;
  * Contains api endpoint functions for permission related tasks
  *
  */
-class BatchDeletePageBlockController extends Controller
+class BulkPageBlockController extends Controller
 {
     public function __construct(
         private PageService $pageService
     ) {}
-    
-    public function __invoke(Page $page, BatchDeletePageBlockRequest $request)
+
+    public function destroy(Page $page, BatchDeletePageBlockRequest $request)
     {
-        $this->pageService->setUser($request->user());
-        if (!$this->pageService->deletePageBlocksByType($page, $request->get('type'))) {
+        $this->pageService->setUser($request->user()->user);
+        $this->pageService->setSite($request->user()->site);
+
+        if (!$this->pageService->deletePageBlocksByIds($page, $request->get('ids'))) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Error deleting page blocks',
@@ -29,7 +31,7 @@ class BatchDeletePageBlockController extends Controller
         }
         return response()->json([
             'status' => 'success',
-            'message' => 'Page block deleted',
+            'message' => 'Page blocks deleted',
         ]);
     }
 }

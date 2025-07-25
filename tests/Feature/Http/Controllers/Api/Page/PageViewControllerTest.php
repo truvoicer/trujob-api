@@ -18,7 +18,7 @@ class PageViewControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    
+
     protected SiteUser $siteUser;
     protected Site $site;
     protected User $user;
@@ -34,17 +34,19 @@ class PageViewControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
+
     }
 
     public function test_it_can_return_index_data()
     {
-        $response = $this->getJson(route('page-view.index'));
+        Sanctum::actingAs($this->siteUser, ['*']);
+        $response = $this->getJson(route('page.view.index'));
 
         $response->assertStatus(200)
             ->assertJson([
-                'message' => 'Page view controller index method',
-                'data' => collect(ViewType::cases())->pluck('value')->toArray(),
+                'data' => array_map(function ($viewType) {
+                    return $viewType->value;
+                }, ViewType::cases()),
             ]);
     }
 }

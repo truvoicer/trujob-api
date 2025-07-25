@@ -21,8 +21,11 @@ class UserMediaTest extends TestCase
     {
         parent::setUp();
 
+        $user = User::factory()->create();
         // Create a UserMedia instance for testing
-        $this->userMedia = UserMedia::factory()->create();
+        $this->userMedia = UserMedia::factory()->create([
+            'user_id' => $user->id,
+        ]);
     }
 
     public function test_it_has_a_user_relationship()

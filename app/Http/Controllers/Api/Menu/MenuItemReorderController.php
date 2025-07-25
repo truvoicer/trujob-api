@@ -16,7 +16,7 @@ class MenuItemReorderController extends Controller
     )
     {}
 
-    public function __invoke(Menu $menu, MenuItem $menuItem, MenuItemReorderRequest $request) {
+    public function update(Menu $menu, MenuItem $menuItem, MenuItemReorderRequest $request) {
         $this->menuService->setUser($request->user()->user);
         $this->menuService->setSite($request->user()->site);
         $this->menuService->moveMenuItem(

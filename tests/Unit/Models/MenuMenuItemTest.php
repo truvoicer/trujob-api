@@ -2,7 +2,10 @@
 
 namespace Tests\Unit\Models;
 
+use App\Models\Menu;
+use App\Models\MenuItem;
 use App\Models\MenuMenuItem;
+use App\Models\Site;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -29,27 +32,41 @@ class MenuMenuItemTest extends TestCase
         parent::tearDown();
     }
 
-    
+
     public function test_it_can_be_instantiated()
     {
         $this->assertInstanceOf(MenuMenuItem::class, $this->menuMenuItem);
     }
 
-    
+
     public function test_it_has_a_table_name()
     {
         $this->assertEquals('menu_menu_items', $this->menuMenuItem->getTable());
     }
 
-    
+
     public function test_it_can_create_a_menu_menu_item()
     {
+
+        $site = Site::factory()->create();
+        $menu = Menu::factory()->create([
+            'site_id' => $site->id
+        ]);
+        $menuItem = MenuItem::factory()->create([
+        ]);
         $menuMenuItem = MenuMenuItem::create([
-            // Add necessary attributes for your model, for now let's use a dummy one.
-            'name' => 'Test Menu Item',
+            'menu_id' => $menu->id,
+            'menu_item_id' => $menuItem->id,
+            'order' => 1,
+            'active' => true
         ]);
 
         $this->assertInstanceOf(MenuMenuItem::class, $menuMenuItem);
-        $this->assertDatabaseHas('menu_menu_items', ['name' => 'Test Menu Item']);
+        $this->assertDatabaseHas('menu_menu_items', [
+            'menu_id' => $menu->id,
+            'menu_item_id' => $menuItem->id,
+            'order' => 1,
+            'active' => true
+        ]);
     }
 }

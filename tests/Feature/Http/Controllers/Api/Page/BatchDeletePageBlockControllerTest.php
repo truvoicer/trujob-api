@@ -5,6 +5,7 @@ namespace Tests\Feature\Api\Page;
 use App\Models\Page;
 
 use App\Enums\SiteStatus;
+use App\Models\Block;
 use App\Models\Role;
 use App\Models\Sidebar;
 use App\Models\Site;
@@ -35,44 +36,52 @@ class BatchDeletePageBlockControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_can_batch_delete_page_blocks()
     {
-        $user = User::factory()->create();
-        $page = Page::factory()->create([
+        Sanctum::actingAs($this->siteUser, ['*']);
+        $page = Page::factory()
+        ->has(
+            Block::factory()->count(3),
+        )
+        ->create([
             'site_id' => $this->site->id,
         ]);
 
         $this
-            ->json('POST', route('page.batch-delete-block', ['page' => $page->id]), [
-                'type' => 'text'
+            ->deleteJson(route('page.block.bulk.destroy', ['page' => $page->id]), [
+                'ids' => [1,2]
             ])
             ->assertStatus(200)
             ->assertJson([
-                'status' => 'success',
-                'message' => 'Page block deleted',
+                'message' => 'Page blocks deleted',
             ]);
     }
 
-    
+
     public function test_it_returns_error_if_delete_fails()
     {
-        $user = User::factory()->create();
-        $page = Page::factory()->create([
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $page = Page::factory()
+        ->has(
+            Block::factory()->count(3),
+        )
+        ->create([
             'site_id' => $this->site->id,
         ]);
 
         // Mock the PageService to return false (indicating failure)
         $this->mock(\App\Services\Page\PageService::class, function ($mock) {
             $mock->shouldReceive('setUser')->andReturnSelf();
-            $mock->shouldReceive('deletePageBlocksByType')->andReturn(false);
+            $mock->shouldReceive('setSite')->andReturnSelf();
+            $mock->shouldReceive('deletePageBlocksByIds')->andReturn(false);
         });
 
         $this
-            ->json('POST', route('page.batch-delete-block', ['page' => $page->id]), [
-                'type' => 'text'
+            ->deleteJson(route('page.block.bulk.destroy', ['page' => $page->id]), [
+                'ids' => [1]
             ])
             ->assertStatus(422)
             ->assertJson([
@@ -81,31 +90,31 @@ class BatchDeletePageBlockControllerTest extends TestCase
             ]);
     }
 
-    
+
     public function test_it_requires_authentication()
     {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user, ['*']);
         $page = Page::factory()->create([
             'site_id' => $this->site->id,
         ]);
 
-        $this->json('POST', route('page.batch-delete-block', ['page' => $page->id]), [
-            'type' => 'text'
-        ])
+        $this->deleteJson(route('page.block.bulk.destroy', ['page' => $page->id]))
         ->assertStatus(401); // Or a redirect, depending on configuration
     }
 
 
-    
+
     public function test_it_validates_the_request()
     {
-        $user = User::factory()->create();
+        Sanctum::actingAs($this->siteUser, ['*']);
         $page = Page::factory()->create([
             'site_id' => $this->site->id,
         ]);
 
         $this
-            ->json('POST', route('page.batch-delete-block', ['page' => $page->id]), [])
+            ->deleteJson(route('page.block.bulk.destroy', ['page' => $page->id]))
             ->assertStatus(422)
-            ->assertJsonValidationErrors(['type']);
+            ->assertJsonValidationErrors(['ids']);
     }
 }

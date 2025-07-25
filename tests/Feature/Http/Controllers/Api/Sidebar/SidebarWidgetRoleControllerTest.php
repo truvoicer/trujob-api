@@ -38,16 +38,23 @@ class SidebarWidgetRoleControllerTest extends TestCase
 
     public function test_index_returns_roles_for_sidebar_widget()
     {
-        $sidebar = Sidebar::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $widget = Widget::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        // Arrange
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
         $roles = Role::factory()->count(3)->create();
 
         $sidebarWidget->roles()->attach($roles->pluck('id')->toArray());
@@ -57,7 +64,7 @@ class SidebarWidgetRoleControllerTest extends TestCase
             ['*']
         );
         $response = $this
-            ->getJson(route('sidebar.widget.relrole.index', [$sidebar->id, $sidebarWidget->id]));
+            ->getJson(route('sidebar.widget.rel.role.index', [$sidebar->id, $sidebarWidget->id]));
 
         $response->assertStatus(200);
         $response->assertJsonCount(3, 'data');
@@ -65,16 +72,23 @@ class SidebarWidgetRoleControllerTest extends TestCase
 
     public function test_store_assigns_role_to_sidebar_widget()
     {
-        $sidebar = Sidebar::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $widget = Widget::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        // Arrange
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
         $role = Role::factory()->create();
 
         Sanctum::actingAs(
@@ -84,7 +98,7 @@ class SidebarWidgetRoleControllerTest extends TestCase
         $response = $this
             ->postJson(
                 route(
-                    'sidebar.widget.relrole.store',
+                    'sidebar.widget.rel.role.store',
                     [$sidebar->id, $sidebarWidget->id, $role->id]
                 )
             );
@@ -101,16 +115,24 @@ class SidebarWidgetRoleControllerTest extends TestCase
     public function test_destroy_removes_role_from_sidebar_widget()
     {
 
-        $sidebar = Sidebar::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $widget = Widget::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        // Arrange
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
+
         $role = Role::factory()->create();
         $sidebarWidget->roles()->attach($role->id);
 
@@ -122,7 +144,7 @@ class SidebarWidgetRoleControllerTest extends TestCase
         $response = $this
             ->deleteJson(
                 route(
-                    'sidebar.widget.relrole.destroy',
+                    'sidebar.widget.rel.role.destroy',
                     [$sidebar->id, $sidebarWidget->id, $role->id]
                 )
             );

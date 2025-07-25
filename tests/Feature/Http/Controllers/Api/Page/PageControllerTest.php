@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Page;
 
 use App\Enums\SiteStatus;
+use App\Enums\ViewType;
 use App\Models\Role;
 use App\Models\Sidebar;
 use App\Models\Site;
@@ -37,17 +38,14 @@ class PageControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
-    
+
     public function test_it_can_list_pages()
     {
-        $site = Site::factory()->create([
-            'user_id' => $this->user->id,
-        ]);
         $pages = Page::factory(3)->create([
             'site_id' => $this->site->id,
         ]);
+
 
         Sanctum::actingAs($this->siteUser, ['*']);
 
@@ -57,14 +55,15 @@ class PageControllerTest extends TestCase
         $response->assertJsonCount(3, 'data');
     }
 
-    
+
     public function test_it_can_show_a_page()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $this->user->id]);
-        $page = Page::factory()->create(['site_id' => $site->id]);
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
 
-        Sanctum::actingAs($user, ['*']);
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $response = $this->getJson(route('page.show', $page));
 
@@ -72,17 +71,15 @@ class PageControllerTest extends TestCase
         $response->assertJson(['data' => ['id' => $page->id]]);
     }
 
-    
+
     public function test_it_can_create_a_page()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $this->user->id]);
-
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
+            'view' => ViewType::AdminPage->value,
+            'name' => $this->faker->slug,
             'title' => $this->faker->sentence,
-            'slug' => $this->faker->slug,
             'content' => $this->faker->paragraph,
         ];
 
@@ -92,13 +89,10 @@ class PageControllerTest extends TestCase
         $this->assertDatabaseHas('pages', $data);
     }
 
-     
+
     public function test_it_returns_error_if_page_creation_fails()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $this->user->id]);
-
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
             'title' => null, // Will cause validation error
@@ -112,18 +106,19 @@ class PageControllerTest extends TestCase
         $response->assertJsonValidationErrors('title');
     }
 
-    
+
     public function test_it_can_update_a_page()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $this->user->id]);
-        $page = Page::factory()->create(['site_id' => $site->id]);
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
 
-        Sanctum::actingAs($user, ['*']);
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $data = [
             'title' => $this->faker->sentence,
-            'slug' => $this->faker->slug,
+            'name' => $this->faker->slug,
             'content' => $this->faker->paragraph,
         ];
 
@@ -133,14 +128,14 @@ class PageControllerTest extends TestCase
         $this->assertDatabaseHas('pages', $data);
     }
 
-    
+
     public function test_it_can_delete_a_page()
     {
-        $user = User::factory()->create();
-        $site = Site::factory()->create(['user_id' => $this->user->id]);
-        $page = Page::factory()->create(['site_id' => $site->id]);
+        $page = Page::factory()->create([
+            'site_id' => $this->site->id,
+        ]);
 
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         $response = $this->deleteJson(route('page.destroy', $page));
 

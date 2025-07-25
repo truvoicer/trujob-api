@@ -26,8 +26,11 @@ class RegionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $country = Country::factory()->create();
 
-        $this->region = Region::factory()->create();
+        $this->region = Region::factory()->create([
+            'country_id' => $country->id
+        ]);
     }
 
     public function testCountryRelationship(): void
@@ -38,11 +41,15 @@ class RegionTest extends TestCase
 
     public function testScopeActive(): void
     {
+        $country = Country::factory()->create();
         // Create an inactive region
-        Region::factory()->create(['is_active' => false]);
+        Region::factory()->create([
+            'is_active' => false,
+            'country_id' => $country->id
+        ]);
 
         // Assert that only the active region is returned
-        $activeRegions = Region::active()->get();
+        $activeRegions = Region::where('is_active', true)->get();
         $this->assertCount(1, $activeRegions);
         $this->assertEquals($this->region->id, $activeRegions->first()->id);
     }

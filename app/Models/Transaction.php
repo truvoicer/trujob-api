@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
         'order_id',
@@ -33,10 +33,6 @@ class Transaction extends Model
         'currency_code' => 'string',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function order()
     {

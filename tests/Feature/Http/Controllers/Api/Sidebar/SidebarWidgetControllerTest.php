@@ -34,19 +34,15 @@ class SidebarWidgetControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
     }
     public function testIndex(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $sidebar = Sidebar::factory()->create([
             'site_id' => $this->site->id,
         ]);
         $widget = Widget::factory()->create([
             'site_id' => $this->site->id,
-        ]);
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id
         ]);
 
         $response = $this
@@ -73,18 +69,26 @@ class SidebarWidgetControllerTest extends TestCase
 
     public function testShow(): void
     {
-        $sidebar = Sidebar::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $widget = Widget::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id
-        ]);
 
-        $response = $this->getJson(route('sidebar.widget.relshow', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]));
+        // Arrange
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
+
+        $response = $this->getJson(route('sidebar.widget.rel.show', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]));
 
         $response->assertStatus(200);
 
@@ -104,6 +108,7 @@ class SidebarWidgetControllerTest extends TestCase
 
     public function testStore(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
         $sidebar = Sidebar::factory()->create([
             'site_id' => $this->site->id,
         ]);
@@ -129,6 +134,8 @@ class SidebarWidgetControllerTest extends TestCase
 
     public function testStoreValidationError(): void
     {
+        Sanctum::actingAs($this->siteUser, ['*']);
+
         $widget = Widget::factory()->create([
             'site_id' => $this->site->id,
         ]);
@@ -153,22 +160,29 @@ class SidebarWidgetControllerTest extends TestCase
 
     public function testUpdate(): void
     {
-        $widget = Widget::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebar = Sidebar::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        // Arrange
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
 
         $data = [
             'order' => $this->faker->numberBetween(11, 20),
         ];
 
-        $response = $this->patchJson(route('sidebar.widget.relupdate', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]), $data);
+        $response = $this->patchJson(route('sidebar.widget.rel.update', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]), $data);
 
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Sidebar widget updated']);
@@ -181,40 +195,54 @@ class SidebarWidgetControllerTest extends TestCase
 
     public function testUpdateValidationError(): void
     {
-        $widget = Widget::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebar = Sidebar::factory()->create([
-            'site_id' => $this->site->id,
-        ]);
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        // Arrange
+        Sanctum::actingAs($this->siteUser, ['*']);
+
+        $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
 
         $data = [
             'order' => 'invalid',
         ];
 
-        $response = $this->patchJson(route('sidebar.widget.relupdate', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]), $data);
+        $response = $this->patchJson(route('sidebar.widget.rel.update', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]), $data);
 
         $response->assertStatus(422);
     }
 
     public function testDestroy(): void
     {
-        $sidebar = Sidebar::factory()->create([
-            'site_id' => $this->site->id,
-        ])->first();
-        $widget = Widget::factory()->create([
-            'site_id' => $this->site->id,
-        ])->first();
-        $sidebarWidget = SidebarWidget::factory()->create([
-            'sidebar_id' => $sidebar->id,
-            'widget_id' => $widget->id,
-        ]);
+        // Arrange
+        Sanctum::actingAs($this->siteUser, ['*']);
 
-        $response = $this->deleteJson(route('sidebar.widget.reldestroy', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]));
+        $sidebar = Sidebar::factory()
+            ->has(
+                Widget::factory()
+                    ->state([
+                        'site_id' => $this->site->id,
+                    ])
+                ->count(2),
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+
+        $sidebarWidget = SidebarWidget::first();
+        $sidebarWidget2 = SidebarWidget::find(2);
+
+        $response = $this->deleteJson(route('sidebar.widget.rel.destroy', ['sidebar' => $sidebar->id, 'sidebarWidget' => $sidebarWidget->id]));
 
         $response->assertStatus(200);
         $response->assertJson(['message' => 'Sidebar widget deleted']);

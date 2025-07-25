@@ -24,9 +24,16 @@ class BatchDeletePageBlockRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => [
+            'ids' => [
                 'required',
-                Rule::enum(BlockType::class)
+                'array',
+            ],
+            'ids.*' => [
+                'required',
+                'integer',
+                Rule::exists('page_blocks', 'id')->where(function ($query) {
+                    $query->where('page_id', $this->route('page')->id);
+                }),
             ],
         ];
     }

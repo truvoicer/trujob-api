@@ -7,6 +7,7 @@ use App\Models\PageBlock;
 use App\Models\PageBlockSidebar;
 
 use App\Enums\SiteStatus;
+use App\Models\Block;
 use App\Models\Role;
 use App\Models\Sidebar;
 use App\Models\Site;
@@ -15,6 +16,7 @@ use App\Models\User;
 use App\Models\Widget;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class PageBlockSidebarReorderControllerTest extends TestCase
@@ -37,34 +39,42 @@ class PageBlockSidebarReorderControllerTest extends TestCase
             'site_id' => $this->site->id,
             'status' => SiteStatus::ACTIVE->value,
         ]);
-        Sanctum::actingAs($this->siteUser, ['*']);
+
     }
-    
+
     public function test_it_can_reorder_a_page_block_sidebar(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $user->site_id]);
-        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+        $pageBlock = PageBlock::factory()
+        ->for(
+            Page::factory()->create([
+                'site_id' => $this->site->id,
+            ]), 'page'
+        )
+        ->for(
+            Block::factory()->create(), 'block'
+        )
+        ->has(
+            Sidebar::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->count(2), 'sidebars'
+        )
+        ->create();
+        $pageBlock = PageBlock::first();
+        $pageBlockSidebar1 = PageBlockSidebar::first();
+        $pageBlockSidebar2 = PageBlockSidebar::find(2);
+        $page = $pageBlock->page;
 
-        // Create two page block sidebars for reordering.
-        $pageBlockSidebar1 = PageBlockSidebar::factory()->create([
-            'page_block_id' => $pageBlock->id,
-            'order' => 1,
-        ]);
-        $pageBlockSidebar2 = PageBlockSidebar::factory()->create([
-            'page_block_id' => $pageBlock->id,
-            'order' => 2,
-        ]);
-
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Act
-        $response = $this->postJson(
-            route('page.blocks.sidebars.reorder', [
+        $response = $this->patchJson(
+            route('page.block.rel.sidebar.rel.reorder.update', [
                 'page' => $page->id,
-                'page_block' => $pageBlock->id,
-                'page_block_sidebar' => $pageBlockSidebar1->id,
+                'pageBlock' => $pageBlock->id,
+                'pageBlockSidebar' => $pageBlockSidebar1->id,
             ]),
             ['direction' => 'down']
         );
@@ -76,26 +86,42 @@ class PageBlockSidebarReorderControllerTest extends TestCase
             ]);
 
         // Verify that the orders have been updated in the database.
-        $this->assertEquals(2, $pageBlockSidebar1->fresh()->order);
-        $this->assertEquals(1, $pageBlockSidebar2->fresh()->order);
+        $this->assertEquals(1, $pageBlockSidebar1->fresh()->order);
+        $this->assertEquals(0, $pageBlockSidebar2->fresh()->order);
     }
 
-    
+
     public function test_it_returns_404_if_page_does_not_exist(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        $pageBlock = PageBlock::factory()->create();
-        $pageBlockSidebar = PageBlockSidebar::factory()->create();
-
-        Sanctum::actingAs($user, ['*']);
+        $pageBlock = PageBlock::factory()
+        ->for(
+            Page::factory()->create([
+                'site_id' => $this->site->id,
+            ]), 'page'
+        )
+        ->for(
+            Block::factory()->create(), 'block'
+        )
+        ->has(
+            Sidebar::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->count(2), 'sidebars'
+        )
+        ->create();
+        $pageBlock = PageBlock::first();
+        $pageBlockSidebar = PageBlockSidebar::first();
+        $page = $pageBlock->page;
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Act
-        $response = $this->postJson(
-            route('page.blocks.sidebars.reorder', [
+        $response = $this->patchJson(
+            route('page.block.rel.sidebar.rel.reorder.update', [
                 'page' => 999,
-                'page_block' => $pageBlock->id,
-                'page_block_sidebar' => $pageBlockSidebar->id,
+                'pageBlock' => $pageBlock->id,
+                'pageBlockSidebar' => $pageBlockSidebar->id,
             ]),
             ['direction' => 'down']
         );
@@ -104,22 +130,39 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-    
+
     public function test_it_returns_404_if_page_block_does_not_exist(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $user->site_id]);
-        $pageBlockSidebar = PageBlockSidebar::factory()->create();
+        $pageBlock = PageBlock::factory()
+        ->for(
+            Page::factory()->create([
+                'site_id' => $this->site->id,
+            ]), 'page'
+        )
+        ->for(
+            Block::factory()->create(), 'block'
+        )
+        ->has(
+            Sidebar::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->count(2), 'sidebars'
+        )
+        ->create();
+        $pageBlock = PageBlock::first();
+        $pageBlockSidebar = PageBlockSidebar::first();
+        $page = $pageBlock->page;
 
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Act
-        $response = $this->postJson(
-            route('page.blocks.sidebars.reorder', [
+        $response = $this->patchJson(
+            route('page.block.rel.sidebar.rel.reorder.update', [
                 'page' => $page->id,
-                'page_block' => 999,
-                'page_block_sidebar' => $pageBlockSidebar->id,
+                'pageBlock' => 999,
+                'pageBlockSidebar' => $pageBlockSidebar->id,
             ]),
             ['direction' => 'down']
         );
@@ -128,22 +171,39 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-        
+
     public function test_it_returns_404_if_page_block_sidebar_does_not_exist(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $user->site_id]);
-        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
+        $pageBlock = PageBlock::factory()
+        ->for(
+            Page::factory()->create([
+                'site_id' => $this->site->id,
+            ]), 'page'
+        )
+        ->for(
+            Block::factory()->create(), 'block'
+        )
+        ->has(
+            Sidebar::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->count(2), 'sidebars'
+        )
+        ->create();
+        $pageBlock = PageBlock::first();
+        $pageBlockSidebar = PageBlockSidebar::first();
+        $page = $pageBlock->page;
 
-        Sanctum::actingAs($user, ['*']);
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Act
-        $response = $this->postJson(
-            route('page.blocks.sidebars.reorder', [
+        $response = $this->patchJson(
+            route('page.block.rel.sidebar.rel.reorder.update', [
                 'page' => $page->id,
-                'page_block' => $pageBlock->id,
-                'page_block_sidebar' => 999,
+                'pageBlock' => $pageBlock->id,
+                'pageBlockSidebar' => 999,
             ]),
             ['direction' => 'down']
         );
@@ -152,53 +212,86 @@ class PageBlockSidebarReorderControllerTest extends TestCase
         $response->assertNotFound();
     }
 
-    
+
     public function test_it_requires_a_direction(): void
     {
+
         // Arrange
-        $user = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $user->site_id]);
-        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
-        $pageBlockSidebar = PageBlockSidebar::factory()->create([
-            'page_block_id' => $pageBlock->id,
-            'order' => 1,
-        ]);
-        Sanctum::actingAs($user, ['*']);
+        $pageBlock = PageBlock::factory()
+        ->for(
+            Page::factory()->create([
+                'site_id' => $this->site->id,
+            ]), 'page'
+        )
+        ->for(
+            Block::factory()->create(), 'block'
+        )
+        ->has(
+            Sidebar::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->count(2), 'sidebars'
+        )
+        ->create();
+        $pageBlock = PageBlock::first();
+        $pageBlockSidebar = PageBlockSidebar::first();
+        $page = $pageBlock->page;
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Act
-        $response = $this->postJson(
-            route('page.blocks.sidebars.reorder', [
+        $response = $this->patchJson(
+            route('page.block.rel.sidebar.rel.reorder.update', [
                 'page' => $page->id,
-                'page_block' => $pageBlock->id,
-                'page_block_sidebar' => $pageBlockSidebar->id,
+                'pageBlock' => $pageBlock->id,
+                'pageBlockSidebar' => $pageBlockSidebar->id,
             ]),
             []
         );
 
         // Assert
-        $response->assertUnprocessable();
-        $response->assertJsonValidationErrors(['direction']);
+        $response->assertStatus(Response::HTTP_BAD_REQUEST);
+
+        $response->assertExactJson([
+            'message' => 'The request body cannot be empty for update operations. Please provide data to update.'
+        ]);
     }
 
-    
+
     public function test_it_requires_the_direction_to_be_a_valid_value(): void
     {
         // Arrange
-        $user = User::factory()->create();
-        $page = Page::factory()->create(['site_id' => $user->site_id]);
-        $pageBlock = PageBlock::factory()->create(['page_id' => $page->id]);
-        $pageBlockSidebar = PageBlockSidebar::factory()->create([
-            'page_block_id' => $pageBlock->id,
-            'order' => 1,
-        ]);
-        Sanctum::actingAs($user, ['*']);
+        $pageBlock = PageBlock::factory()
+        ->for(
+            Page::factory()->create([
+                'site_id' => $this->site->id,
+            ]), 'page'
+        )
+        ->for(
+            Block::factory()->create(), 'block'
+        )
+        ->has(
+            Sidebar::factory()
+            ->state([
+                'site_id' => $this->site->id,
+            ])
+            ->count(2), 'sidebars'
+        )
+        ->create();
+        $pageBlock = PageBlock::first();
+        $pageBlockSidebar = PageBlockSidebar::first();
+        $page = $pageBlock->page;
+
+
+        Sanctum::actingAs($this->siteUser, ['*']);
 
         // Act
-        $response = $this->postJson(
-            route('page.blocks.sidebars.reorder', [
+        $response = $this->patchJson(
+            route('page.block.rel.sidebar.rel.reorder.update', [
                 'page' => $page->id,
-                'page_block' => $pageBlock->id,
-                'page_block_sidebar' => $pageBlockSidebar->id,
+                'pageBlock' => $pageBlock->id,
+                'pageBlockSidebar' => $pageBlockSidebar->id,
             ]),
             ['direction' => 'invalid']
         );

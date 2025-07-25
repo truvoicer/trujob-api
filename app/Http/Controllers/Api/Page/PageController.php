@@ -48,7 +48,7 @@ class PageController extends Controller
         $this->pageRepository->setPage(
             $request->get('page', 1)
         );
-        
+
         return PageResource::collection(
             $this->pageRepository->findMany()
         );
@@ -67,14 +67,13 @@ class PageController extends Controller
             $request->validated()
         );
         if (!$create) {
-            return $this->sendErrorResponse(
-                'Error creating page',
-                [],
-                $this->pageService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error creating page',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Page created', [], $this->pageService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'Page created',
+        ]);
     }
 
     public function update(EditPageRequest $request, Page $page)
@@ -82,21 +81,20 @@ class PageController extends Controller
         $this->pageService->setUser($request->user()->user);
         $create = $this->pageService->updatePage($page, $request->validated());
         if (!$create) {
-            return $this->sendErrorResponse(
-                'Error updating page',
-                [],
-                $this->pageService->getResultsService()->getErrors(),
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
+            return response()->json([
+                'message' => 'Error updating page',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-        return $this->sendSuccessResponse('Page updated', [], $this->pageService->getResultsService()->getErrors());
+        return response()->json([
+            'message' => 'Page updated',
+        ]);
     }
 
     public function destroy(Page $page, Request $request)
     {
         $this->pageService->setUser($request->user()->user);
         $this->pageService->setSite($request->user()->site);
-        
+
         if (!$this->pageService->deletePage($page)) {
             return response()->json([
                 'message' => 'Error deleting page',

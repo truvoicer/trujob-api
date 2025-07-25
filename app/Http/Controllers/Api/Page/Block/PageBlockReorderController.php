@@ -15,7 +15,7 @@ class PageBlockReorderController extends Controller
         private PageService $pageService
     ) {}
 
-    public function __invoke(
+    public function update(
         Page $page,
         PageBlock $pageBlock,
         PageBlockReorderRequest $request

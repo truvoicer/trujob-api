@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Helpers\Db\DbHelpers;
 use App\Models\User;
+use App\Repositories\Traits\ManagesOrder;
 use App\Traits\Database\PaginationTrait;
 use App\Traits\Database\PermissionsTrait;
 use App\Traits\Error\ErrorTrait;
@@ -18,7 +19,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class BaseRepository
 {
-    use ErrorTrait, PermissionsTrait, PaginationTrait;
+    use ErrorTrait, PermissionsTrait, PaginationTrait, ManagesOrder;
 
     const DEFAULT_WHERE = [];
     const AVAILABLE_ORDER_DIRECTIONS = ['asc', 'desc'];
@@ -109,47 +110,36 @@ class BaseRepository
             $model,
             ['id' => $model->id]
         );
+
         if ($modelIndex === null) {
             return false;
         }
+        $resultsIds = $results->pluck('id')->toArray();
+        $dir = null;
         switch ($direction) {
             case 'up':
-                $newIndex = $modelIndex - 1;
-                if ($newIndex < 0) {
-                    return false;
-                }
+                $dir = -1;
                 break;
             case 'down':
-                $newIndex = $modelIndex + 1;
-                if ($newIndex > ($query->count() - 1)) {
-                    return false;
-                }
+                $dir = 1;
                 break;
             default:
                 return false;
         }
-
-        $modelToReplace = $results->slice($newIndex, 1)->first();
-
-        $modelToReplaceOrder = $modelToReplace->{$field};
-        $modelToMoveOrder = $model->{$field};
-        if (!$modelToReplace) {
+        if (!$dir) {
             return false;
         }
-        $model->{$field} = $modelToReplaceOrder;
-        if (!$model->save()) {
-            throw new \Exception(
-                "Error saving model to move | direction: {$direction} | id: {$model->id} | field: {$field} | value: {$modelToMoveOrder}"
-            );
+        $newIndex = $modelIndex + $dir;
+        if ($newIndex < 0 || $newIndex >= count($resultsIds)) {
+            return false;
         }
+        array_splice($resultsIds, $modelIndex, 1);
+        array_splice($resultsIds, $newIndex, 0, $model->id);
 
-        $modelToReplace->{$field} = $modelToMoveOrder;
-        if (!$modelToReplace->save()) {
-            throw new \Exception(
-                "Error saving model to replace | direction: {$direction} | id: {$modelToReplace->id} | field: {$field} | value: {$modelToReplaceOrder}"
-            );
-        }
-        return $this->reorderByField($query, $field);
+        return $this->reorderCollection(
+            $model::class,
+            $resultsIds,
+        );
     }
 
     public function reorderByField(

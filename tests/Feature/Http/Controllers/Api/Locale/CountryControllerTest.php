@@ -14,6 +14,7 @@ use App\Models\Widget;
 use Laravel\Sanctum\Sanctum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class CountryControllerTest extends TestCase
@@ -36,11 +37,11 @@ class CountryControllerTest extends TestCase
             'status' => SiteStatus::ACTIVE->value,
         ]);
     }
-    
+
     public function test_it_can_list_countries()
     {
         $user = User::factory()->create();
-       
+
         Sanctum::actingAs($this->siteUser, ['*']);
 
         Country::factory(3)->create();
@@ -67,7 +68,7 @@ class CountryControllerTest extends TestCase
         ]);
     }
 
-    
+
     public function test_it_can_show_a_country()
     {
         $user = User::factory()->create();
@@ -88,7 +89,7 @@ class CountryControllerTest extends TestCase
         ]);
     }
 
-    
+
     public function test_it_can_store_a_country()
     {
         $user = User::factory()->create();
@@ -113,7 +114,7 @@ class CountryControllerTest extends TestCase
         $this->assertDatabaseHas('countries', ['name' => $data['name']]);
     }
 
-    
+
     public function test_it_can_update_a_country()
     {
         $user = User::factory()->create();
@@ -137,7 +138,7 @@ class CountryControllerTest extends TestCase
         $this->assertDatabaseHas('countries', ['id' => $country->id, 'name' => $data['name']]);
     }
 
-    
+
     public function test_it_can_destroy_a_country()
     {
         $user = User::factory()->create();
@@ -156,7 +157,7 @@ class CountryControllerTest extends TestCase
         $this->assertDatabaseMissing('countries', ['id' => $country->id]);
     }
 
-        
+
     public function test_it_returns_unprocessable_entity_when_store_fails()
     {
         $user = User::factory()->create();
@@ -171,7 +172,7 @@ class CountryControllerTest extends TestCase
         $response->assertStatus(422);
     }
 
-    
+
     public function test_it_returns_unprocessable_entity_when_update_fails()
     {
         $user = User::factory()->create();
@@ -179,14 +180,25 @@ class CountryControllerTest extends TestCase
         Sanctum::actingAs($this->siteUser, ['*']);
 
         $country = Country::factory()->create();
-        $data = [];
+        $data = [
+            'name' => 'ssss',
+            'iso2' => 'XX', // Assuming iso2 is required
+        ];
+
+
+        // Mock the PageService to return false (indicating failure)
+        $this->mock(\App\Services\Locale\CountryService::class, function ($mock) {
+            $mock->shouldReceive('setUser')->andReturnSelf();
+            $mock->shouldReceive('setSite')->andReturnSelf();
+            $mock->shouldReceive('updateCountry')->andReturn(false);
+        });
 
         $response = $this->patchJson(route('locale.country.update', $country), $data);
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    
+
     public function test_it_returns_unprocessable_entity_when_delete_fails()
     {
         $user = User::factory()->create();

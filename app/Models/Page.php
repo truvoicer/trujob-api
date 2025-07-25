@@ -78,4 +78,9 @@ class Page extends Model
     {
         return $this->belongsToMany(Sidebar::class, 'page_sidebars');
     }
+
+    public function pageSidebars()
+    {
+        return $this->hasMany(PageSidebar::class);
+    }
 }

@@ -21,8 +21,11 @@ class UserReviewTest extends TestCase
     {
         parent::setUp();
 
+        $user = User::factory()->create();
         // Create a UserReview instance for testing
-        $this->userReview = UserReview::factory()->create();
+        $this->userReview = UserReview::factory()->create([
+            'user_id' => $user->id,
+        ]);
     }
 
     protected function tearDown(): void

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckForEmptyUpdateBody;
 use App\Http\Middleware\EncryptedRequest;
 use App\Http\Middleware\SetSiteCurrency;
 use Illuminate\Foundation\Application;
@@ -20,7 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
         ])
-        ->append(EncryptedRequest::class);
+        ->append(EncryptedRequest::class)
+        ->append(CheckForEmptyUpdateBody::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
