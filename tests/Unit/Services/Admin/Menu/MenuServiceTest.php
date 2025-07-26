@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services\Admin\Menu;
 
+use App\Enums\MenuItemType;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\MenuItemMenu;
@@ -66,16 +67,28 @@ class MenuServiceTest extends TestCase
     public function testMoveMenuItemMenu(): void
     {
         // Create a menu item and menu item menu
-        $menuItem = MenuItem::factory()->create();
-        $menuItemMenu = MenuItemMenu::factory()->create(['menu_item_id' => $menuItem->id]);
+        $menu = Menu::factory()
+            ->has(
+                MenuItem::factory()
+                    ->has(
+                        Menu::factory()->state([
+                            'site_id' => $this->site->id
+                        ])
+                    )
+            )
+            ->create([
+                'site_id' => $this->site->id
+            ]);
+        $menuItemMenu = MenuItemMenu::first();
 
         // Mock the reorderByDirection method of the MenuRepository
-        $this->menuRepository = $this->createMock(MenuRepository::class);
-        $this->menuRepository->expects($this->once())
+        $menuRepository = $this->createMock(MenuRepository::class);
+        $menuRepository->expects($this->once())
             ->method('reorderByDirection');
 
-        $this->menuService = new MenuService($this->resultsService, $this->menuRepository);
-        $this->menuService->setSite($this->site);
+        $menuService = app()->make(MenuService::class);
+        $menuService->setSite($this->site);
+        $menuService->setUser();
 
         // Call the moveMenuItemMenu method
         $this->menuService->moveMenuItemMenu($menuItem, $menuItemMenu, 'up');
@@ -123,24 +136,43 @@ class MenuServiceTest extends TestCase
     public function testCreateMenuItem(): void
     {
         // Create a menu
-        $menu = Menu::factory()->create(['name' => 'Test Menu', 'site_id' => $this->site->id]);
+        $menu = Menu::factory()->create([
+            'name' => 'Test Menu',
+            'site_id' => $this->site->id
+        ]);
 
         // Create menu item data
-        $data = ['label' => 'New Menu Item', 'url' => '/new-item'];
+        $data = [
+            'label' => 'New Menu Item',
+            'url' => '/new-item',
+            'type' => MenuItemType::URL,
+        ];
 
         // Call the createMenuItem method
         $this->menuService->createMenuItem($menu, $data);
 
         // Assert that the menu item was created
-        $this->assertDatabaseHas('menu_items', ['menu_id' => $menu->id, 'label' => 'New Menu Item', 'url' => '/new-item']);
+        $this->assertDatabaseHas(
+            'menu_items',
+            [
+                'label' => 'New Menu Item',
+                'url' => '/new-item'
+            ]
+        );
     }
 
     public function testUpdateMenuItem(): void
     {
         // Create a menu and menu item
-        $menu = Menu::factory()->create(['name' => 'Test Menu', 'site_id' => $this->site->id]);
-        $menuItem = MenuItem::factory()->create(['menu_id' => $menu->id, 'label' => 'Old Label']);
 
+        Menu::factory()
+            ->has(
+                MenuItem::factory()
+                    ->count(1)
+            )
+            ->create(['site_id' => $this->site->id]);
+
+        $menuItem = MenuItem::first();
         // Create updated menu item data
         $data = ['label' => 'New Label'];
 
@@ -153,11 +185,22 @@ class MenuServiceTest extends TestCase
 
     public function testMenuExistsInParents(): void
     {
-        $menu = Menu::factory()->create(['site_id' => $this->site->id]);
-        $menuItem = MenuItem::factory()->create(['menu_id' => $menu->id]);
 
-        $this->assertFalse($this->menuService->menuExistsInParents($menuItem, $menu));
+        Menu::factory()
+            ->has(
+                MenuItem::factory()
+                    ->has(
+                        Menu::factory()->state([
+                            'site_id' => $this->site->id
+                        ])
+                    )
+                    ->count(1)
+            )
+            ->create(['site_id' => $this->site->id]);
+        $menuItem = MenuItem::first();
+        $menu2 = Menu::find(2);
 
+        $this->assertFalse($this->menuService->menuExistsInParents($menuItem, $menu2));
     }
 
     public function testAddMenuToMenuItem(): void
@@ -173,8 +216,20 @@ class MenuServiceTest extends TestCase
     public function testRemoveMenuItem(): void
     {
         // Create a menu and menu item
-        $menu = Menu::factory()->create(['site_id' => $this->site->id]);
-        $menuItem = MenuItem::factory()->create(['menu_id' => $menu->id]);
+
+        Menu::factory()
+            ->has(
+                MenuItem::factory()
+                    ->has(
+                        Menu::factory()->state([
+                            'site_id' => $this->site->id
+                        ])
+                    )
+                    ->count(1)
+            )
+            ->create(['site_id' => $this->site->id]);
+        $menu = Menu::first();
+        $menuItem = MenuItem::first();
 
         // Call the removeMenuItem method
         $this->menuService->removeMenuItem($menu, $menuItem);
@@ -197,8 +252,19 @@ class MenuServiceTest extends TestCase
 
     public function testDeleteMenuItemMenu(): void
     {
+        Menu::factory()
+            ->has(
+                MenuItem::factory()
+                    ->has(
+                        Menu::factory()->state([
+                            'site_id' => $this->site->id
+                        ])
+                    )
+                    ->count(1)
+            )
+            ->create(['site_id' => $this->site->id]);
         // Create a menu item menu
-        $menuItemMenu = MenuItemMenu::factory()->create();
+        $menuItemMenu = MenuItemMenu::first();
 
         // Call the deleteMenuItemMenu method
         $this->menuService->deleteMenuItemMenu($menuItemMenu);
