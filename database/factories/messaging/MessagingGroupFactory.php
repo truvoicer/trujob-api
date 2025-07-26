@@ -25,6 +25,12 @@ class MessagingGroupFactory extends Factory
             $product = $messagingGroup->product()->first();
             if ($product->id === $messagingGroup->product_id) {
                 $newProduct = Product::where('id', '<>', $messagingGroup->product_id)->first();
+                if (!$newProduct) {
+
+                    $newProduct = Product::factory()->create([
+                        'user_id' => User::factory()->create()->id,
+                    ]);
+                }
                 $messagingGroup->product_id = $newProduct->id;
             }
             return $messagingGroup;

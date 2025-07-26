@@ -38,6 +38,7 @@ class PersonalAccessTokenRepository extends BaseRepository
         $token = $model->tokens()
             ->where('expires_at', '>', $dateTime->format('Y-m-d H:i:s'))
             ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->first();
         if (!$token instanceof PersonalAccessToken) {
             return null;

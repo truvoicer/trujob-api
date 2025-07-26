@@ -3,6 +3,7 @@
 namespace Tests\Unit\Repositories;
 
 use App\Models\AppMenu;
+use App\Models\Site;
 use App\Repositories\AppMenuRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -36,8 +37,11 @@ class AppMenuRepositoryTest extends TestCase
 
     public function testFindByParams(): void
     {
+        $site = Site::factory()->create();
         // Arrange
-        AppMenu::factory()->count(3)->create();
+        AppMenu::factory()->count(3)->create([
+            'site_id' => $site->id
+        ]);
         $sort = 'name';
         $order = 'asc';
         $count = 2;
@@ -55,8 +59,11 @@ class AppMenuRepositoryTest extends TestCase
 
     public function testFindByQueryParams(): void
     {
+        $site = Site::factory()->create();
         // Arrange
-        AppMenu::factory()->count(5)->create();
+        AppMenu::factory()->count(5)->create([
+            'site_id' => $site->id
+        ]);
         $query = []; // In the original class, the query is ignored
 
         // Act

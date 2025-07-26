@@ -15,6 +15,7 @@ class ShippingZone extends Model
         'description',
         'is_active',
         'all',
+        'order'
     ];
 
     protected $casts = [

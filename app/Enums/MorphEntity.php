@@ -16,9 +16,11 @@ use App\Models\Site;
 use App\Models\SiteUser;
 use App\Models\TaxRate;
 use App\Models\Ticket;
+use App\Models\User;
 
 enum MorphEntity: string
 {
+    case USER = 'user';
     case SITE = 'site';
     case SITE_USER = 'site_user';
     case ORDER_ITEM = 'order_item';
@@ -53,6 +55,7 @@ enum MorphEntity: string
             self::REGION => Region::class,
             self::COUNTRY => Country::class,
             self::PRICE => Price::class,
+            self::USER => User::class,
         };
     }
 }

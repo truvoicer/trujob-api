@@ -2,7 +2,10 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\ShippingMethod;
 use App\Models\ShippingRate;
+use App\Models\ShippingZone;
+use App\Models\User;
 use App\Repositories\ShippingRateRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -27,7 +30,13 @@ class ShippingRateRepositoryTest extends TestCase
 
     public function testFindByParamsReturnsCollectionOfShippingRates()
     {
-        ShippingRate::factory()->count(3)->create();
+
+        $shippingMethod = ShippingMethod::factory()->create();
+        $shippingZone = ShippingZone::factory()->create();
+        ShippingRate::factory()->count(3)->create([
+            'shipping_method_id' => $shippingMethod->id,
+            'shipping_zone_id' => $shippingZone->id,
+        ]);
 
         $result = $this->repository->findByParams('id', 'asc');
 
@@ -36,7 +45,12 @@ class ShippingRateRepositoryTest extends TestCase
 
     public function testFindByParamsWithCountReturnsCorrectNumberOfShippingRates()
     {
-        ShippingRate::factory()->count(5)->create();
+        $shippingMethod = ShippingMethod::factory()->create();
+        $shippingZone = ShippingZone::factory()->create();
+        ShippingRate::factory()->count(5)->create([
+            'shipping_method_id' => $shippingMethod->id,
+            'shipping_zone_id' => $shippingZone->id,
+        ]);
 
         $result = $this->repository->findByParams('id', 'asc', 2);
 
@@ -46,7 +60,12 @@ class ShippingRateRepositoryTest extends TestCase
 
     public function testFindByQueryParamsReturnsAllShippingRates()
     {
-        ShippingRate::factory()->count(2)->create();
+        $shippingMethod = ShippingMethod::factory()->create();
+        $shippingZone = ShippingZone::factory()->create();
+        ShippingRate::factory()->count(2)->create([
+            'shipping_method_id' => $shippingMethod->id,
+            'shipping_zone_id' => $shippingZone->id,
+        ]);
         $query = ShippingRate::query();
 
         $result = $this->repository->findByQuery($query);

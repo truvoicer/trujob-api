@@ -21,9 +21,5 @@ class ProductRepository extends BaseRepository
         return $this->findAllWithParams($sort, $order, $count);
     }
 
-    public function findByQuery($query)
-    {
-        return $this->findAll();
-    }
 
 }

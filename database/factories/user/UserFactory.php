@@ -2,10 +2,7 @@
 
 namespace Database\Factories\user;
 
-use App\Models\Country;
-use App\Models\Role;
 use App\Models\User;
-use App\Services\User\UserAdminService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -23,10 +20,6 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        $roleIds = array_map(function (array $role) {
-            return $role['id'];
-        }, Role::all()->toArray());
-
         $firstname = fake()->firstName();
         $lastname = fake()->lastName();
         return [

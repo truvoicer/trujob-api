@@ -2,7 +2,10 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Price;
+use App\Models\Product;
 use App\Models\ProductPrice;
+use App\Models\User;
 use App\Repositories\ProductPriceRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -33,8 +36,17 @@ class ProductPriceRepositoryTest extends TestCase
 
     public function testFindByParams(): void
     {
+        $user = User::factory()->create();
         // Create some ProductPrice records
-        ProductPrice::factory()->count(3)->create();
+        Product::factory()
+            ->has(
+                Price::factory()
+                    ->count(2)
+            )
+            ->count(5)
+            ->create([
+                'user_id' => $user->id
+            ]);
 
         $sort = 'id';
         $order = 'asc';
@@ -49,27 +61,45 @@ class ProductPriceRepositoryTest extends TestCase
 
     public function testFindByParamsWithoutCount(): void
     {
+        $user = User::factory()->create();
         // Create some ProductPrice records
-        ProductPrice::factory()->count(5)->create();
+        Product::factory()
+            ->has(
+                Price::factory()
+                    ->count(2)
+            )
+            ->count(5)
+            ->create([
+                'user_id' => $user->id,
+            ]);
 
         $sort = 'id';
         $order = 'asc';
 
         $results = $this->productPriceRepository->findByParams($sort, $order);
 
-        $this->assertCount(5, $results);
+        $this->assertCount(10, $results);
         $this->assertIsIterable($results);
         $this->assertInstanceOf(ProductPrice::class, $results->first());
     }
 
     public function testFindByQuery(): void
     {
+        $user = User::factory()->create();
         // Create some ProductPrice records
-        ProductPrice::factory()->count(4)->create();
+        Product::factory()
+            ->has(
+                Price::factory()
+                    ->count(2)
+            )
+            ->count(5)
+            ->create([
+                'user_id' => $user->id,
+            ]);
 
         $results = $this->productPriceRepository->findByQuery('some_query');
 
-        $this->assertCount(4, $results);
+        $this->assertCount(10, $results);
         $this->assertIsIterable($results);
         $this->assertInstanceOf(ProductPrice::class, $results->first());
     }

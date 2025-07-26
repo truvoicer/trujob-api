@@ -294,6 +294,12 @@ class BaseRepository
         return $find;
     }
 
+    public function findByQuery($query)
+    {
+        $this->setQuery($query);
+        return $this->findMany();
+    }
+
     public function findByModel(Model $model): ?object
     {
         return $this->findById($model->id);

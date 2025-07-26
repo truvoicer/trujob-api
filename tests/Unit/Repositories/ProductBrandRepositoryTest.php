@@ -2,7 +2,10 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Brand;
+use App\Models\Product;
 use App\Models\ProductBrand;
+use App\Models\User;
 use App\Repositories\ProductBrandRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -28,7 +31,7 @@ class ProductBrandRepositoryTest extends TestCase
         parent::tearDown();
     }
 
-    
+
     public function test_it_can_get_the_model()
     {
         $model = $this->productBrandRepository->getModel();
@@ -36,12 +39,21 @@ class ProductBrandRepositoryTest extends TestCase
         $this->assertInstanceOf(ProductBrand::class, $model);
     }
 
-    
+
     public function test_it_can_find_by_params()
     {
         // Arrange
-        ProductBrand::factory()->count(3)->create();
-        $sort = 'name';
+        $user = User::factory()->create();
+        Product::factory()
+            ->has(
+                Brand::factory()->count(3)
+            )
+            ->count(5)
+            ->create([
+                'user_id' => $user->id
+            ]);
+
+        $sort = 'id';
         $order = 'asc';
         $count = 2;
 
@@ -53,33 +65,49 @@ class ProductBrandRepositoryTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result);
     }
 
-     
+
     public function test_it_can_find_by_params_without_count()
     {
         // Arrange
-        ProductBrand::factory()->count(3)->create();
-        $sort = 'name';
+        $user = User::factory()->create();
+        Product::factory()
+            ->has(
+                Brand::factory()->count(3)
+            )
+            ->count(5)
+            ->create([
+                'user_id' => $user->id
+            ]);
+        $sort = 'id';
         $order = 'asc';
 
         // Act
         $result = $this->productBrandRepository->findByParams($sort, $order);
 
         // Assert
-        $this->assertCount(3, $result);
+        $this->assertCount(15, $result);
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result);
     }
 
-    
+
     public function test_it_can_find_by_query()
     {
         // Arrange
-        ProductBrand::factory()->count(5)->create();
+        $user = User::factory()->create();
+        Product::factory()
+            ->has(
+                Brand::factory()->count(3)
+            )
+            ->count(5)
+            ->create([
+                'user_id' => $user->id
+            ]);
 
         // Act
         $result = $this->productBrandRepository->findByQuery([]);
 
         // Assert
-        $this->assertCount(5, $result);
+        $this->assertCount(15, $result);
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $result);
     }
 }

@@ -2,7 +2,10 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\MessagingGroup;
 use App\Models\MessagingGroupMessage;
+use App\Models\Product;
+use App\Models\User;
 use App\Repositories\MessagingGroupMessageRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -37,7 +40,19 @@ class MessagingGroupMessageRepositoryTest extends TestCase
     public function testFindByParams(): void
     {
         // Arrange
-        MessagingGroupMessage::factory()->count(3)->create();
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $messagingGroup = MessagingGroup::factory()
+        ->has(
+            MessagingGroupMessage::factory()->count(3)
+        )
+        ->create([
+            'product_id' => $product->id,
+            'user_id' => $user->id,
+        ]);
         $sort = 'created_at';
         $order = 'asc';
 
@@ -55,7 +70,19 @@ class MessagingGroupMessageRepositoryTest extends TestCase
     public function testFindByParamsWithCount(): void
     {
         // Arrange
-        MessagingGroupMessage::factory()->count(5)->create();
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $messagingGroup = MessagingGroup::factory()
+        ->has(
+            MessagingGroupMessage::factory()->count(5)
+        )
+        ->create([
+            'product_id' => $product->id,
+            'user_id' => $user->id,
+        ]);
         $sort = 'created_at';
         $order = 'asc';
         $count = 2;
@@ -74,7 +101,19 @@ class MessagingGroupMessageRepositoryTest extends TestCase
     public function testFindByQuery(): void
     {
         // Arrange
-        MessagingGroupMessage::factory()->count(2)->create();
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'user_id' => $user->id,
+        ]);
+
+        $messagingGroup = MessagingGroup::factory()
+        ->has(
+            MessagingGroupMessage::factory()->count(2)
+        )
+        ->create([
+            'product_id' => $product->id,
+            'user_id' => $user->id,
+        ]);
 
         // Act
         $result = $this->repository->findByQuery(null);

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Country;
 use App\Models\Region;
 use App\Repositories\RegionRepository;
 use Illuminate\Database\Eloquent\Collection;
@@ -30,7 +31,8 @@ class RegionRepositoryTest extends TestCase
     public function testFindByParamsReturnsCorrectData(): void
     {
         // Arrange
-        Region::factory()->count(3)->create();
+        $country = Country::factory()->create();
+        Region::factory()->count(3)->create(['country_id' => $country->id]);
 
         // Act
         $result = $this->regionRepository->findByParams('name', 'asc');
@@ -43,7 +45,8 @@ class RegionRepositoryTest extends TestCase
     public function testFindByQueryParamsReturnsCorrectData(): void
     {
         // Arrange
-        Region::factory()->count(2)->create();
+        $country = Country::factory()->create();
+        Region::factory()->count(2)->create(['country_id' => $country->id]);
 
         // Act
         $result = $this->regionRepository->findByQuery('test query');
@@ -56,8 +59,9 @@ class RegionRepositoryTest extends TestCase
     public function testGetActiveRegionsReturnsOnlyActiveRegions(): void
     {
         // Arrange
-        Region::factory()->count(2)->create(['is_active' => true]);
-        Region::factory()->count(1)->create(['is_active' => false]);
+        $country = Country::factory()->create();
+        Region::factory()->count(2)->create(['is_active' => true, 'country_id' => $country->id]);
+        Region::factory()->count(1)->create(['is_active' => false, 'country_id' => $country->id]);
 
         // Act
         $activeRegions = $this->regionRepository->getActiveRegions();
@@ -73,19 +77,20 @@ class RegionRepositoryTest extends TestCase
     public function testGetByCountryReturnsRegionsForSpecificCountry(): void
     {
         // Arrange
-        $countryId = 1;
-        Region::factory()->count(2)->create(['country_id' => $countryId, 'is_active' => true]);
-        Region::factory()->count(1)->create(['country_id' => 2, 'is_active' => true]); // Different country
-        Region::factory()->count(1)->create(['country_id' => $countryId, 'is_active' => false]); // Inactive
+        $country = Country::factory()->create();
+        $country2 = Country::factory()->create();
+        Region::factory()->count(2)->create(['country_id' => $country->id, 'is_active' => true]);
+        Region::factory()->count(1)->create(['country_id' => $country2->id, 'is_active' => true]); // Different country
+        Region::factory()->count(1)->create(['country_id' => $country->id, 'is_active' => false]); // Inactive
 
         // Act
-        $regions = $this->regionRepository->getByCountry($countryId);
+        $regions = $this->regionRepository->getByCountry($country->id);
 
         // Assert
         $this->assertInstanceOf(Collection::class, $regions);
         $this->assertCount(2, $regions);
         foreach ($regions as $region) {
-            $this->assertEquals($countryId, $region->country_id);
+            $this->assertEquals($country->id, $region->country_id);
             $this->assertTrue($region->is_active);
         }
     }

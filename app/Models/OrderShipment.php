@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Order\Shipping\OrderShipmentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,6 +25,7 @@ class OrderShipment extends Model
     ];
 
     protected $casts = [
+        'status' => OrderShipmentStatus::class,
         'shipping_cost' => 'decimal:2',
         'weight' => 'decimal:2',
         'estimated_delivery_date' => 'date',

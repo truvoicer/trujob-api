@@ -2,7 +2,12 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Currency;
+use App\Models\Order;
 use App\Models\OrderShipment;
+use App\Models\Product;
+use App\Models\ShippingMethod;
+use App\Models\User;
 use App\Repositories\OrderShipmentRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -19,18 +24,29 @@ class OrderShipmentRepositoryTest extends TestCase
         $this->orderShipmentRepository = new OrderShipmentRepository();
     }
 
-    
+
     public function test_it_can_get_the_model()
     {
         $model = $this->orderShipmentRepository->getModel();
         $this->assertInstanceOf(OrderShipment::class, $model);
     }
 
-    
+
     public function test_it_can_find_by_params()
     {
         // Arrange
-        OrderShipment::factory()->count(3)->create();
+        $user = User::factory()->create();
+        $currency = Currency::factory()->create();
+        $shippingMethod = ShippingMethod::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
+        OrderShipment::factory()->count(3)->create([
+            'order_id' => $order->id,
+            'shipping_method_id' => $shippingMethod->id,
+            'currency_id' => $currency->id,
+        ]);
         $sort = 'id';
         $order = 'asc';
         $count = 2;
@@ -43,11 +59,22 @@ class OrderShipmentRepositoryTest extends TestCase
         $this->assertEquals(OrderShipment::orderBy($sort, $order)->limit($count)->get()->toArray(), $result->toArray());
     }
 
-    
+
     public function test_it_can_find_by_query()
     {
         // Arrange
-        OrderShipment::factory()->count(3)->create();
+        $user = User::factory()->create();
+        $currency = Currency::factory()->create();
+        $shippingMethod = ShippingMethod::factory()->create();
+        $order = Order::factory()->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
+        OrderShipment::factory()->count(3)->create([
+            'order_id' => $order->id,
+            'shipping_method_id' => $shippingMethod->id,
+            'currency_id' => $currency->id,
+        ]);
 
         // Act
         $result = $this->orderShipmentRepository->findByQuery([]);

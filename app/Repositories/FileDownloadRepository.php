@@ -22,12 +22,6 @@ class FileDownloadRepository extends BaseRepository
         return $this->findAllWithParams($sort, $order, $count);
     }
 
-    public function findByQuery($query)
-    {
-        $this->addWhere('download_key', $query, 'LIKE');
-        return $this->findAll();
-    }
-
     public function saveFileDownload(File $file, string $downloadKey, string $clientIp, null|string $userAgent = null): bool
     {
         $save = $file->fileDownloads()->create(

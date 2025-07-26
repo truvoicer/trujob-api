@@ -2,7 +2,9 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Currency;
 use App\Models\Order;
+use App\Models\User;
 use App\Repositories\OrderRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -28,7 +30,7 @@ class OrderRepositoryTest extends TestCase
         unset($this->orderRepository);
     }
 
-    
+
     public function test_it_can_get_the_model()
     {
         $model = $this->orderRepository->getModel();
@@ -36,11 +38,16 @@ class OrderRepositoryTest extends TestCase
         $this->assertInstanceOf(Order::class, $model);
     }
 
-    
+
     public function test_it_can_find_by_params()
     {
         // Arrange
-        Order::factory()->count(3)->create();
+        $user = User::factory()->create();
+        $currency = Currency::factory()->create();
+        Order::factory()->count(3)->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
         $sort = 'id';
         $order = 'asc';
         $count = 2;
@@ -54,11 +61,16 @@ class OrderRepositoryTest extends TestCase
         $this->assertEquals(2, $orders[1]->id);
     }
 
-    
+
     public function test_it_can_find_by_query()
     {
         // Arrange
-        Order::factory()->count(5)->create();
+        $user = User::factory()->create();
+        $currency = Currency::factory()->create();
+        Order::factory()->count(5)->create([
+            'user_id' => $user->id,
+            'currency_id' => $currency->id,
+        ]);
 
         // Act
         $orders = $this->orderRepository->findByQuery('some_query');

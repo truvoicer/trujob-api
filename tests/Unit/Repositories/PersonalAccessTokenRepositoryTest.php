@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Enums\PersonalAccessToken\PersonalAccessTokenableType;
 use App\Models\Site;
 use App\Models\SiteUser;
 use App\Models\User;
@@ -31,7 +32,16 @@ class PersonalAccessTokenRepositoryTest extends TestCase
 
     public function testUpdateTokenExpirySuccessfully(): void
     {
-        $token = PersonalAccessToken::factory()->create();
+        $user = User::factory()->create();
+
+        $user->tokens()->create([
+            'name' => 'token2',
+            'token' => hash('sha256', 'token2'),
+            'abilities' => ['*'],
+            'expires_at' => now()->addDays(2),
+            'created_at' => now(),
+        ]);
+        $token = $this->repository->getLatestAccessToken($user);
         $expiresAt = now()->addDays(7)->format('Y-m-d H:i:s');
         $data = ['expires_at' => $expiresAt];
 
@@ -46,13 +56,23 @@ class PersonalAccessTokenRepositoryTest extends TestCase
 
     public function testUpdateTokenExpiryWithInvalidData(): void
     {
-        $token = PersonalAccessToken::factory()->create();
+        $user = User::factory()->create();
+
+        $user->tokens()->create([
+            'name' => 'token2',
+            'token' => hash('sha256', 'token2'),
+            'abilities' => ['*'],
+            'expires_at' => now()->addDays(2),
+            'created_at' => now(),
+        ]);
+        $token = $this->repository->getLatestAccessToken($user);
+
         $data = ['invalid_data' => 'some value'];
 
         // Mock the update method to return false to simulate an error
         $mock = $this->mock(PersonalAccessTokenRepository::class);
-        $mock->shouldReceive('update')
-            ->with($data)
+        $mock->shouldReceive('updateTokenExpiry')
+            ->with($token, $data)
             ->once()
             ->andReturn(false);
 
@@ -71,6 +91,7 @@ class PersonalAccessTokenRepositoryTest extends TestCase
             'token' => hash('sha256', 'token1'),
             'abilities' => ['*'],
             'expires_at' => now()->addDay(),
+            'created_at' => now()->subDays(1),
         ]);
 
         $token2 = $user->tokens()->create([
@@ -78,6 +99,7 @@ class PersonalAccessTokenRepositoryTest extends TestCase
             'token' => hash('sha256', 'token2'),
             'abilities' => ['*'],
             'expires_at' => now()->addDays(2),
+            'created_at' => now(),
         ]);
 
         $latestToken = $this->repository->getLatestAccessToken($user);
@@ -102,7 +124,7 @@ class PersonalAccessTokenRepositoryTest extends TestCase
         $this->assertNull($latestToken);
     }
 
-     public function testGetLatestAccessTokenReturnsNullWhenNoTokenExists(): void
+    public function testGetLatestAccessTokenReturnsNullWhenNoTokenExists(): void
     {
         $user = User::factory()->create();
         $latestToken = $this->repository->getLatestAccessToken($user);
@@ -128,7 +150,12 @@ class PersonalAccessTokenRepositoryTest extends TestCase
 
     public function testGetLatestAccessTokenForSiteUser(): void
     {
-        $siteUser = SiteUser::factory()->create();
+        Site::factory()
+            ->has(
+                User::factory()
+            )
+            ->create();
+        $siteUser = SiteUser::first();
         $token = $siteUser->tokens()->create([
             'name' => 'site_user_token',
             'token' => hash('sha256', 'site_user_token'),

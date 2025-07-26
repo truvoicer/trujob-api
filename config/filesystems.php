@@ -45,6 +45,28 @@ return [
             'throw' => false,
         ],
 
+        'dummy' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/dummy'),
+            'url' => env('APP_URL').'/storage/dummy',
+            'file_download_url' => env('APP_URL').'/download/file',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'downloads' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/downloads'),
+            'url' => env('APP_URL').'/storage/downloads',
+            'file_download_url' => env('APP_URL').'/download/file',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+        'uploads' => [
+            'driver' => 'local',
+            'root' => storage_path('app/uploads'),
+            'visibility' => 'public',
+            'throw' => false,
+        ],
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

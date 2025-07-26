@@ -30,7 +30,10 @@ class PageRepositoryTest extends TestCase
 
     public function testFindByParamsReturnsCollection(): void
     {
-        Page::factory()->count(3)->create();
+        $site = Site::factory()->create();
+        Page::factory()->count(3)->create([
+            'site_id' => $site->id,
+        ]);
 
         $result = $this->pageRepository->findByParams('id', 'asc');
 
@@ -40,7 +43,10 @@ class PageRepositoryTest extends TestCase
 
     public function testFindByParamsReturnsLimitedCollection(): void
     {
-        Page::factory()->count(5)->create();
+        $site = Site::factory()->create();
+        Page::factory()->count(5)->create([
+            'site_id' => $site->id,
+        ]);
 
         $result = $this->pageRepository->findByParams('id', 'asc', 2);
 
@@ -50,7 +56,10 @@ class PageRepositoryTest extends TestCase
 
     public function testFindByQueryReturnsAllPages(): void
     {
-        Page::factory()->count(2)->create();
+        $site = Site::factory()->create();
+        Page::factory()->count(2)->create([
+            'site_id' => $site->id,
+        ]);
 
         $result = $this->pageRepository->findByQuery('some_query');
 
@@ -62,7 +71,9 @@ class PageRepositoryTest extends TestCase
     {
         $site = Site::factory()->create();
         $pages = Page::factory()->count(3)->create(['site_id' => $site->id]);
-        Page::factory()->count(2)->create(); // Create pages for another site
+        Page::factory()->count(2)->create([
+            'site_id' => Site::factory()->create()->id,
+        ]); // Create pages for another site
 
         $result = $this->pageRepository->getSitePages($site);
 

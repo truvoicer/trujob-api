@@ -28,7 +28,11 @@ class FileDownloadRepositoryTest extends TestCase
 
     public function testFindByParams(): void
     {
-        FileDownload::factory()->count(3)->create();
+        File::factory()
+        ->has(
+            FileDownload::factory()->count(3)
+        )
+        ->create();
 
         $results = $this->fileDownloadRepository->findByParams('id', 'asc');
         $this->assertCount(3, $results);
@@ -40,10 +44,26 @@ class FileDownloadRepositoryTest extends TestCase
 
     public function testFindByQuery(): void
     {
-        $fileDownload1 = FileDownload::factory()->create(['download_key' => 'test_key_123']);
-        FileDownload::factory()->create(['download_key' => 'another_key']);
 
-        $results = $this->fileDownloadRepository->findByQuery('test_key');
+        File::factory()
+        ->has(
+            FileDownload::factory()->state([
+                'download_key' => 'test_key_123'
+            ])
+        )
+        ->create();
+        File::factory()
+        ->has(
+            FileDownload::factory()->state([
+                'download_key' => 'another_key'
+            ])
+        )
+        ->create();
+        $fileDownload1 = FileDownload::where('download_key', 'test_key_123')->first();
+
+        $results = $this->fileDownloadRepository->findByQuery(
+            FileDownload::query()->where('download_key', 'LIKE', '%test_key%')
+        );
         $this->assertCount(1, $results);
         $this->assertEquals($fileDownload1->id, $results->first()->id);
     }
@@ -68,7 +88,14 @@ class FileDownloadRepositoryTest extends TestCase
 
     public function testDeleteFileDownload(): void
     {
-        $fileDownload = FileDownload::factory()->create();
+        File::factory()
+        ->has(
+            FileDownload::factory()->state([
+                'download_key' => 'test_key_123'
+            ])
+        )
+        ->create();
+        $fileDownload = FileDownload::where('download_key', 'test_key_123')->first();
 
         $result = $this->fileDownloadRepository->deleteFileDownload($fileDownload);
 

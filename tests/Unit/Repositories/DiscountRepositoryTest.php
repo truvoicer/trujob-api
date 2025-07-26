@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Currency;
 use App\Models\Discount;
 use App\Repositories\DiscountRepository;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -28,8 +29,11 @@ class DiscountRepositoryTest extends TestCase
 
     public function testFindByParams(): void
     {
+        $currency = Currency::factory()->create();
         // Arrange
-        Discount::factory()->count(3)->create();
+        Discount::factory()->count(3)->create([
+            'currency_id' => $currency->id
+        ]);
         $sort = 'id';
         $order = 'asc';
         $count = 2;
@@ -48,8 +52,11 @@ class DiscountRepositoryTest extends TestCase
 
     public function testFindByQueryParams(): void
     {
+        $currency = Currency::factory()->create();
         // Arrange
-        Discount::factory()->count(2)->create();
+        Discount::factory()->count(2)->create([
+            'currency_id' => $currency->id
+        ]);
 
         // Act
         $result = $this->discountRepository->findByQuery([]);
