@@ -29,7 +29,8 @@ class RegionTest extends TestCase
         $country = Country::factory()->create();
 
         $this->region = Region::factory()->create([
-            'country_id' => $country->id
+            'country_id' => $country->id,
+            'is_active' => true,
         ]);
     }
 

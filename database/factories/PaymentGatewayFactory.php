@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PaymentGateway>
@@ -16,9 +17,10 @@ class PaymentGatewayFactory extends Factory
      */
     public function definition(): array
     {
+        $label = $this->faker->unique()->word;
         return [
-            'name' => $this->faker->word,
-            'label' => $this->faker->word,
+            'name' => Str::slug($label),
+            'label' => $label,
             'description' => $this->faker->sentence,
             'icon' => $this->faker->word,
             'is_default' => $this->faker->boolean,

@@ -19,7 +19,7 @@ class PageFactory extends Factory
     {
         return [
             'view' => $this->faker->randomElement(ViewType::cases())->value,
-            'name' => $this->faker->word,
+            'name' => $this->faker->unique()->word,
             'title' => $this->faker->sentence,
             'content' => $this->faker->paragraph,
             'permalink' => $this->faker->slug,

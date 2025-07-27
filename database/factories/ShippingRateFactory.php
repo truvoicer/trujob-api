@@ -6,6 +6,7 @@ use App\Enums\Order\Shipping\ShippingRateType;
 use App\Enums\Order\Shipping\ShippingUnit;
 use App\Enums\Order\Shipping\ShippingWeightUnit;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ShippingRate>
@@ -19,12 +20,14 @@ class ShippingRateFactory extends Factory
      */
     public function definition(): array
     {
+        $label = $this->faker->unique()->word;
+        $name = Str::slug($label);
         return [
             'type' => $this->faker->randomElement(
                 ShippingRateType::cases()
             )->value,
-            'name' => $this->faker->word,
-            'label' => $this->faker->word,
+            'name' => $name,
+            'label' => $label,
             'description' => $this->faker->sentence,
             'is_active' => $this->faker->boolean,
             'has_max_dimension' => $this->faker->boolean,

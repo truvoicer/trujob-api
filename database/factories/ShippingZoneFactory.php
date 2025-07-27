@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ShippingZone>
@@ -16,9 +17,11 @@ class ShippingZoneFactory extends Factory
      */
     public function definition(): array
     {
+        $label = $this->faker->unique()->word;
+        $name = Str::slug($label);
         return [
-            'name' => $this->faker->word,
-            'label' => $this->faker->word,
+            'name' => $name,
+            'label' => $label,
             'description' => $this->faker->sentence,
             'is_active' => $this->faker->boolean,
             'all' => $this->faker->boolean,

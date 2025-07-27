@@ -18,13 +18,13 @@ class SidebarService extends BaseService
     use RoleTrait;
 
     public function __construct(
-        private ResultsService $resultsService, 
+        private ResultsService $resultsService,
         private SidebarRepository $sidebarRepository,
         private WidgetService $widgetService
     ){
         parent::__construct();
     }
-    
+
     public function sidebarFetch(string $sidebarName) {
         return Sidebar::where('name', $sidebarName)->first();
     }
@@ -54,8 +54,7 @@ class SidebarService extends BaseService
         }
         $sidebar = $this->site->sidebars()->create($data);
         if (!$sidebar->exists()) {
-            $this->resultsService->addError('Error adding app sidebar', $data);
-            return false;
+            throw new \Exception('Error creating app sidebar');
         }
         if (is_array($roles)) {
             $this->syncRoles($sidebar->roles(), $roles);
@@ -69,9 +68,6 @@ class SidebarService extends BaseService
                 throw new \Exception('Widget not found: ' . $sidebarWidget['name']);
             }
             $this->createSidebarWidget($sidebar, $findWidget, $sidebarWidget);
-        }
-        if ($this->resultsService->hasErrors()) {
-            return false;
         }
         return true;
     }
@@ -88,10 +84,9 @@ class SidebarService extends BaseService
             $roles = $data['roles'];
             unset($data['roles']);
         }
-        
+
         if (!$sidebar->update($data)) {
-            $this->resultsService->addError('Error updating app sidebar', $data);
-            return false;
+            throw new \Exception('Error updating app sidebar');
         }
         if (is_array($roles)) {
             $this->syncRoles($sidebar->roles(), $roles);
@@ -112,9 +107,8 @@ class SidebarService extends BaseService
     }
 
     public function deleteSidebar(Sidebar $sidebar) {
-        if (!$sidebar->delete()) {
-            $this->resultsService->addError('Error deleting app sidebar');
-            return false;
+            if (!$sidebar->delete()) {
+                throw new \Exception('Error deleting app sidebar');
         }
         return true;
     }
@@ -145,14 +139,13 @@ class SidebarService extends BaseService
 
     public function updateSidebarWidget(SidebarWidget $sidebarWidget, array $data) {
         $roles = null;
-        
+
         if (array_key_exists('roles', $data) && is_array($data['roles'])) {
             $roles = $data['roles'];
             unset($data['roles']);
         }
         if (!$sidebarWidget->update($data)) {
-            $this->resultsService->addError('Error updating app sidebar item', $data);
-            return false;
+            throw new \Exception('Error updating app sidebar item');
         }
 
         if (is_array($roles)) {
@@ -163,15 +156,13 @@ class SidebarService extends BaseService
 
     public function removeSidebarWidget(Sidebar $sidebar, SidebarWidget $sidebarWidget) {
         if (!$sidebar->sidebarWidgets()->delete($sidebarWidget)) {
-            $this->resultsService->addError('Error deleting app sidebar item');
-            return false;
+            throw new \Exception('Error deleting app sidebar item');
         }
         return true;
     }
     public function deleteSidebarWidget(SidebarWidget $sidebarWidget) {
         if (!$sidebarWidget->delete()) {
-            $this->resultsService->addError('Error deleting app sidebar item');
-            return false;
+            throw new \Exception('Error deleting app sidebar item');
         }
         return true;
     }
@@ -189,15 +180,6 @@ class SidebarService extends BaseService
         }
         return true;
     }
-
-    /**
-     * @return ResultsService
-     */
-    public function getResultsService(): ResultsService
-    {
-        return $this->resultsService;
-    }
-
 
     public function getSidebarRepository(): SidebarRepository
     {

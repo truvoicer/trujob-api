@@ -17,7 +17,7 @@ class MenuFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
+            'name' => $this->faker->unique()->word,
             'ul_class' => $this->faker->word,
             'active' => $this->faker->boolean,
         ];

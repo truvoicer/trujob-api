@@ -20,7 +20,7 @@ class DiscountFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
+            'name' => $this->faker->unique()->word,
             'label' => $this->faker->word,
             'description' => $this->faker->sentence,
             'type' => $this->faker->randomElement(DiscountType::cases())->value,

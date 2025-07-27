@@ -6,6 +6,7 @@ use App\Enums\Order\Tax\TaxRateAmountType;
 use App\Enums\Order\Tax\TaxRateType;
 use App\Enums\Order\Tax\TaxScope;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TaxRate>
@@ -19,9 +20,11 @@ class TaxRateFactory extends Factory
      */
     public function definition(): array
     {
+        $label = $this->faker->unique()->word;
+        $name = Str::slug($label);
         return [
-            'name' => $this->faker->word,
-            'label' => $this->faker->word,
+            'name' => $name,
+            'label' => $label,
             'type' => $this->faker->randomElement(
                 TaxRateType::cases()
             )->value,

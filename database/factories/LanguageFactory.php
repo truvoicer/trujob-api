@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Language>
@@ -16,8 +17,10 @@ class LanguageFactory extends Factory
      */
     public function definition(): array
     {
+        $label = $this->faker->unique()->word;
+        $name = Str::slug($label);
         return [
-            'name' => $this->faker->word,
+            'name' => $name,
             'iso639_1' => $this->faker->languageCode(),
             'iso639_2' => $this->faker->languageCode(),
         ];

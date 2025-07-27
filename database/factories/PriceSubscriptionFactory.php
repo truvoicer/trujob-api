@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Enums\Subscription\SubscriptionSetupFeeFailureAction;
 use App\Enums\Subscription\SubscriptionType;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PriceSubscription>
@@ -18,9 +19,11 @@ class PriceSubscriptionFactory extends Factory
      */
     public function definition(): array
     {
+        $label = $this->faker->unique()->word;
+        $name = Str::slug($label);
         return [
-            'name' => $this->faker->word,
-            'label' => $this->faker->word,
+            'name' => $name,
+            'label' => $label,
             'description' => $this->faker->sentence,
             'type' => SubscriptionType::FIXED->value,
             'start_time' => $this->faker->dateTime(),
